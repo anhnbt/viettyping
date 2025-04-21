@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Lesson } from '@/data/lessons';
 import { IoTimeOutline, IoRefreshOutline } from 'react-icons/io5';
+import { useTypingSound } from '@/hooks/useTypingSound';
+import VirtualKeyboard from './VirtualKeyboard';
 
 interface Props {
   lesson: Lesson;
@@ -12,8 +14,10 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [isComplete, setIsComplete] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
+  const [pressedKey, setPressedKey] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout>();
+  const { playCorrectSound, playWrongSound } = useTypingSound();
 
   const calculateStats = (currentInput = input, currentStartTime = startTime) => {
     if (!currentStartTime) return { wpm: 0, accuracy: 0, incorrectCount: 0 };
@@ -36,10 +40,22 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
       setStartTime(Date.now());
       startTimer();
     }
+
+    // Play sound based on the last character typed
+    if (newInput.length > input.length) {
+      const lastCharIndex = newInput.length - 1;
+      const isCorrect = newInput[lastCharIndex] === lesson.content[lastCharIndex];
+      if (isCorrect) {
+        playCorrectSound();
+      } else {
+        playWrongSound();
+      }
+    }
+
     setInput(newInput);
 
     if (newInput.length >= lesson.content.length) {
-      const stats = calculateStats();
+      const stats = calculateStats(newInput);
       completeLesson(stats);
     }
   };
@@ -81,6 +97,24 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
     handleRestart();
   }, [lesson]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      setPressedKey(e.key.toLowerCase());
+    };
+
+    const handleKeyUp = () => {
+      setPressedKey(null);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
+
   const { wpm, accuracy, incorrectCount } = calculateStats();
 
   return (
@@ -114,7 +148,9 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
                 ? input[i] === char
                   ? 'text-green-600'
                   : 'text-red-600'
-                : 'text-gray-800'
+                : i === input.length
+                ? 'bg-blue-200'
+                : ''
             }`}
           >
             {char}
@@ -122,13 +158,18 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
         ))}
       </div>
 
+      <VirtualKeyboard 
+        pressedKey={pressedKey} 
+        highlightKey={lesson.content[input.length]?.toLowerCase() ?? null} 
+      />
+
       <input
         ref={inputRef}
         type="text"
         value={input}
         onChange={handleInput}
         disabled={isComplete}
-        className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="w-full mt-4 p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         placeholder="Bắt đầu gõ tại đây..."
       />
 
