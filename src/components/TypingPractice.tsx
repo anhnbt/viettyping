@@ -165,7 +165,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
             value={selectedTime}
             onChange={(e) => handleTimeChange(Number(e.target.value))}
             disabled={!!startTime}
-            className="ml-2 p-1 text-base bg-white border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50"
+            className="ml-2 p-1 text-base bg-white border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 cursor-pointer"
           >
             {TIME_OPTIONS.map(time => (
               <option key={time} value={time}>
@@ -176,7 +176,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
         </div>
         <button
           onClick={handleRestart}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer"
         >
           <IoRefreshOutline className="text-xl" />
           <span>Làm lại</span>

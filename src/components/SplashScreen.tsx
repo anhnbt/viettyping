@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { IoPlayOutline } from 'react-icons/io5';
 
 interface Props {
   onStart: () => void;
@@ -30,11 +31,11 @@ export default function SplashScreen({ onStart }: Props) {
       </h1>
       <button
         onClick={onStart}
-        className="px-8 py-4 bg-blue-500 text-white text-xl rounded-lg
-                 shadow-lg hover:bg-blue-600 transform hover:scale-105
-                 transition-all duration-200 ease-in-out"
+        className="mt-8 px-8 py-3 bg-blue-500 text-white rounded-lg text-lg 
+          hover:bg-blue-600 transition-colors cursor-pointer flex items-center gap-2"
       >
-        Bắt đầu
+        <IoPlayOutline className="text-2xl" />
+        <span>Bắt đầu</span>
       </button>
     </div>
   );

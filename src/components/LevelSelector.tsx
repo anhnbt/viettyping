@@ -63,7 +63,7 @@ export default function LevelSelector({ lessons, onSelectLesson }: Props) {
                       setSelectedLevel(level);
                       onSelectLesson(lesson);
                     }}
-                    className="relative group"
+                    className="relative group cursor-pointer"
                   >
                     <div className="w-full aspect-square rounded-lg bg-gray-100 
                                   flex items-center justify-center text-2xl font-bold

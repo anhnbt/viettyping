@@ -64,7 +64,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSelectedLesson(null)}
-              className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
             >
               <IoArrowBack className="text-xl" />
               <span>Quay lại</span>
@@ -74,7 +74,7 @@ export default function Home() {
           {getNextLesson() && (
             <button
               onClick={handleNextLesson}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors cursor-pointer"
             >
               <span>Tiếp theo</span>
               <IoArrowForward className="text-xl" />
@@ -108,7 +108,7 @@ export default function Home() {
             {getNextLesson() && (
               <button
                 onClick={handleNextLesson}
-                className="mt-6 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                className="mt-6 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer"
               >
                 Bài tiếp theo
               </button>

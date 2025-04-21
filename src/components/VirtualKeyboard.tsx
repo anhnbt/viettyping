@@ -46,11 +46,11 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
                 <div
                   key={keyIndex}
                   className={`${width} h-10 m-0.5 rounded flex items-center justify-center 
-                    ${isPressed ? 'bg-blue-500 text-white' : 'bg-white'}
+                    ${isPressed ? 'bg-blue-500 text-white scale-95' : 'bg-white hover:bg-gray-50'}
                     ${shouldHighlight ? 'ring-2 ring-blue-400' : ''}
                     ${key === ' ' ? 'mx-2' : ''}
                     shadow transition-all duration-100 select-none text-sm
-                    hover:bg-gray-50`}
+                    cursor-pointer active:scale-95 hover:shadow-md`}
                 >
                   {displayKey}
                 </div>
