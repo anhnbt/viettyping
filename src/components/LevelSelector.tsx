@@ -6,6 +6,21 @@ interface Props {
   onSelectLesson: (lesson: Lesson) => void;
 }
 
+const levelNames: Record<string, { name: string; description: string }> = {
+  basic: {
+    name: 'Cơ bản',
+    description: 'Làm quen với bàn phím và các dấu tiếng Việt'
+  },
+  intermediate: {
+    name: 'Trung cấp',
+    description: 'Luyện gõ từ ghép và câu văn ngắn'
+  },
+  advanced: {
+    name: 'Nâng cao',
+    description: 'Thực hành với văn bản dài và phức tạp'
+  }
+};
+
 export default function LevelSelector({ lessons, onSelectLesson }: Props) {
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const levels = ['basic', 'intermediate', 'advanced'];
@@ -31,7 +46,14 @@ export default function LevelSelector({ lessons, onSelectLesson }: Props) {
                 : 'bg-white hover:bg-gray-50'
               } transition-all duration-200`}
             >
-              <h2 className="text-2xl font-semibold capitalize mb-6">{level}</h2>
+              <div className="mb-4">
+                <h2 className="text-2xl font-semibold mb-1">
+                  {levelNames[level].name}
+                </h2>
+                <p className="text-gray-600">
+                  {levelNames[level].description}
+                </p>
+              </div>
               
               <div className="grid grid-cols-5 gap-4 max-h-110 overflow-y-auto pr-2 scrollbar-thin">
                 {getLessonsForLevel(level).map((lesson, index) => (
