@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Lesson } from '@/data/lessons';
 import { IoTimeOutline, IoRefreshOutline } from 'react-icons/io5';
 import { useTypingSound } from '@/hooks/useTypingSound';
@@ -6,13 +6,16 @@ import VirtualKeyboard from './VirtualKeyboard';
 
 interface Props {
   lesson: Lesson;
-  onComplete: (wpm: number, accuracy: number) => void;
+  onComplete: (stats: { wpm: number; accuracy: number; incorrectCount: number }) => void;
 }
+
+const TIME_OPTIONS = [15, 30, 60, 120];
 
 export default function TypingPractice({ lesson, onComplete }: Props) {
   const [input, setInput] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
   const [isComplete, setIsComplete] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(60);
   const [timeLeft, setTimeLeft] = useState(60);
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +32,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
     const typedChars = currentInput.split('');
     const correctChars = typedChars.filter((char, i) => char === lesson.content[i]).length;
     const incorrectCount = Math.min(typedChars.length - correctChars, typedChars.length);
-    const accuracy = Math.round((correctChars / lesson.content.length) * 100);
+    const accuracy = Math.round((correctChars / typedChars.length) * 100) || 0;
     
     return { wpm, accuracy, incorrectCount };
   };
@@ -76,17 +79,24 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
   const completeLesson = (stats: { wpm: number; accuracy: number; incorrectCount: number }) => {
     setIsComplete(true);
     clearInterval(timerRef.current);
-    onComplete(stats.wpm, stats.accuracy);
+    onComplete(stats);
   };
 
-  const handleRestart = () => {
+  const handleRestart = useCallback(() => {
     setInput('');
     setStartTime(null);
     setIsComplete(false);
-    setTimeLeft(60);
+    setTimeLeft(selectedTime);
     clearInterval(timerRef.current);
     inputRef.current?.focus();
-  };
+  }, [selectedTime]);
+
+  const handleTimeChange = useCallback((newTime: number) => {
+    if (!startTime) {
+      setSelectedTime(newTime);
+      setTimeLeft(newTime);
+    }
+  }, [startTime]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -95,7 +105,17 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
 
   useEffect(() => {
     handleRestart();
-  }, [lesson]);
+  }, [lesson, handleRestart]);
+
+  useEffect(() => {
+    setTimeLeft(selectedTime);
+    setInput('');
+    setStartTime(null);
+    setIsComplete(false);
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+  }, [lesson, selectedTime]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -135,10 +155,24 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
       </div>
 
       <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2 text-xl font-mono">
-          <IoTimeOutline className="text-gray-600" />
-          {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:
-          {String(timeLeft % 60).padStart(2, '0')}
+        <div className="flex items-center gap-4 text-xl font-mono">
+          <div className="flex items-center gap-2">
+            <IoTimeOutline className="text-gray-600" />
+            {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:
+            {String(timeLeft % 60).padStart(2, '0')}
+          </div>
+          <select
+            value={selectedTime}
+            onChange={(e) => handleTimeChange(Number(e.target.value))}
+            disabled={!!startTime}
+            className="ml-2 p-1 text-base bg-white border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50"
+          >
+            {TIME_OPTIONS.map(time => (
+              <option key={time} value={time}>
+                {time}s
+              </option>
+            ))}
+          </select>
         </div>
         <button
           onClick={handleRestart}
@@ -159,7 +193,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
                   ? 'text-green-600'
                   : 'text-red-600'
                 : i === input.length
-                ? 'cursor-blink px-0.5'
+                ? 'cursor-blink'
                 : ''
             } relative`}
           >
