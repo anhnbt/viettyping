@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Lesson } from '@/data/lessons';
+import { IoTimeOutline, IoRefreshOutline } from 'react-icons/io5';
 
 interface Props {
   lesson: Lesson;
@@ -90,15 +91,17 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
       </div>
 
       <div className="flex justify-between items-center mb-4">
-        <div className="text-xl font-mono">
+        <div className="flex items-center gap-2 text-xl font-mono">
+          <IoTimeOutline className="text-gray-600" />
           {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:
           {String(timeLeft % 60).padStart(2, '0')}
         </div>
         <button
           onClick={handleRestart}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
         >
-          Làm lại
+          <IoRefreshOutline className="text-xl" />
+          <span>Làm lại</span>
         </button>
       </div>
 
