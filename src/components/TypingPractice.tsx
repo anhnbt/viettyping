@@ -119,6 +119,16 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
+      <style jsx>{`
+        @keyframes blink {
+          0%, 100% { background-color: rgb(96 165 250); }
+          50% { background-color: transparent; }
+        }
+        .cursor-blink {
+          animation: blink 1s ease-in-out infinite;
+        }
+      `}</style>
+
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-2">{lesson.title}</h2>
         <p className="text-gray-600 mb-4">{lesson.description}</p>
@@ -149,9 +159,9 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
                   ? 'text-green-600'
                   : 'text-red-600'
                 : i === input.length
-                ? 'bg-blue-200'
+                ? 'cursor-blink px-0.5'
                 : ''
-            }`}
+            } relative`}
           >
             {char}
           </span>
