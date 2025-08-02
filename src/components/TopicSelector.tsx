@@ -1,17 +1,16 @@
 import React from 'react';
 import { Subject, Topic } from '@/data/subjects';
 import { IoArrowBack, IoTime, IoTrophy } from 'react-icons/io5';
+import Link from 'next/link';
 
 interface TopicSelectorProps {
   subject: Subject;
   onSelectTopic: (topic: Topic) => void;
-  onBack: () => void;
 }
 
 const TopicSelector: React.FC<TopicSelectorProps> = ({
   subject,
   onSelectTopic,
-  onBack,
 }) => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -43,13 +42,13 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <button
-          onClick={onBack}
+        <Link
+          href="/"
           className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors"
         >
           <IoArrowBack className="text-xl" />
           <span>Quay lại</span>
-        </button>
+        </Link>
         <div className="text-center flex-1">
           <div
             className={`inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r ${subject.color} text-white mb-2`}

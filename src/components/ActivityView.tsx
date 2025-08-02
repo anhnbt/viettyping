@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { Topic, Activity } from '@/data/subjects';
 import { IoArrowBack, IoCheckmark, IoPlay } from 'react-icons/io5';
 import TypingPractice from './TypingPractice';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 interface ActivityViewProps {
   topic: Topic;
-  onBack: () => void;
   onComplete: (activityId: string, score: number) => void;
 }
 
-const ActivityView: React.FC<ActivityViewProps> = ({
-  topic,
-  onBack,
-  onComplete,
-}) => {
+const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
+  const params = useParams();
+  const subjectId = params.subjectId as string;
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
   const [completedActivities, setCompletedActivities] = useState<Set<string>>(
     new Set()
@@ -221,13 +220,13 @@ const ActivityView: React.FC<ActivityViewProps> = ({
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <button
-          onClick={onBack}
+        <Link
+          href={`/subjects/${subjectId}`}
           className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors"
         >
           <IoArrowBack className="text-xl" />
           <span>Quay lại</span>
-        </button>
+        </Link>
 
         <div className="text-center flex-1">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
