@@ -6,7 +6,10 @@ interface SubjectSelectorProps {
   onSelectSubject: (subject: Subject) => void;
 }
 
-const SubjectSelector: React.FC<SubjectSelectorProps> = ({ subjects, onSelectSubject }) => {
+const SubjectSelector: React.FC<SubjectSelectorProps> = ({
+  subjects,
+  onSelectSubject,
+}) => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="text-center mb-12">
@@ -41,13 +44,21 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({ subjects, onSelectSub
                   {subject.topics.length} chủ đề
                 </span>
                 <div className="bg-white bg-opacity-20 rounded-full p-2">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
               </div>
             </div>
-            
+
             {/* Hiệu ứng background */}
             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
           </div>

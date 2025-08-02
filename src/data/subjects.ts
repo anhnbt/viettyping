@@ -10,7 +10,14 @@ export interface Topic {
 
 export interface Activity {
   id: string;
-  type: 'typing' | 'quiz' | 'drawing' | 'listening' | 'reading' | 'math' | 'game';
+  type:
+    | 'typing'
+    | 'quiz'
+    | 'drawing'
+    | 'listening'
+    | 'reading'
+    | 'math'
+    | 'game';
   title: string;
   content: string;
   instructions: string;
@@ -43,23 +50,24 @@ export const subjects: Subject[] = [
         description: 'Học cách yêu thương và tôn trọng gia đình',
         difficulty: 'easy',
         estimatedTime: 15,
-        content: 'Gia đình là nơi quan trọng nhất. Con cần yêu thương bố mẹ, anh chị em.',
+        content:
+          'Gia đình là nơi quan trọng nhất. Con cần yêu thương bố mẹ, anh chị em.',
         activities: [
           {
             id: 'dd-1-1',
             type: 'typing',
             title: 'Gõ từ về gia đình',
             content: 'bố mẹ gia đình yêu thương',
-            instructions: 'Hãy gõ các từ về gia đình'
+            instructions: 'Hãy gõ các từ về gia đình',
           },
           {
             id: 'dd-1-2',
             type: 'quiz',
             title: 'Câu hỏi về gia đình',
             content: 'Ai là người quan trọng nhất với con?',
-            instructions: 'Chọn đáp án đúng'
-          }
-        ]
+            instructions: 'Chọn đáp án đúng',
+          },
+        ],
       },
       {
         id: 'dao-duc-2',
@@ -67,18 +75,19 @@ export const subjects: Subject[] = [
         description: 'Học cách giữ gìn sức khỏe',
         difficulty: 'easy',
         estimatedTime: 20,
-        content: 'Chăm sóc sức khỏe là việc rất quan trọng. Con cần ăn uống đủ chất, tập thể dục.',
+        content:
+          'Chăm sóc sức khỏe là việc rất quan trọng. Con cần ăn uống đủ chất, tập thể dục.',
         activities: [
           {
             id: 'dd-2-1',
             type: 'typing',
             title: 'Gõ từ về sức khỏe',
             content: 'sức khỏe ăn uống tập thể dục',
-            instructions: 'Gõ các từ về chăm sóc sức khỏe'
-          }
-        ]
-      }
-    ]
+            instructions: 'Gõ các từ về chăm sóc sức khỏe',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'am-nhac',
@@ -101,18 +110,18 @@ export const subjects: Subject[] = [
             type: 'typing',
             title: 'Gõ tên các nốt nhạc',
             content: 'Đồ Rê Mi Fa Sol La Si',
-            instructions: 'Gõ tên 7 nốt nhạc'
+            instructions: 'Gõ tên 7 nốt nhạc',
           },
           {
             id: 'an-1-2',
             type: 'listening',
             title: 'Nghe và nhận biết nốt nhạc',
             content: 'Nghe âm thanh và chọn nốt nhạc đúng',
-            instructions: 'Lắng nghe và chọn nốt nhạc'
-          }
-        ]
-      }
-    ]
+            instructions: 'Lắng nghe và chọn nốt nhạc',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'toan',
@@ -135,16 +144,16 @@ export const subjects: Subject[] = [
             type: 'typing',
             title: 'Gõ số từ 1 đến 10',
             content: '1 2 3 4 5 6 7 8 9 10',
-            instructions: 'Gõ các số từ 1 đến 10'
+            instructions: 'Gõ các số từ 1 đến 10',
           },
           {
             id: 't-1-2',
             type: 'math',
             title: 'Bài tập đếm',
             content: 'Đếm số lượng vật thể',
-            instructions: 'Đếm và chọn số đúng'
-          }
-        ]
+            instructions: 'Đếm và chọn số đúng',
+          },
+        ],
       },
       {
         id: 'toan-2',
@@ -159,11 +168,45 @@ export const subjects: Subject[] = [
             type: 'math',
             title: 'Bài tập phép cộng',
             content: 'Giải các phép cộng đơn giản',
-            instructions: 'Tính toán và điền kết quả'
-          }
-        ]
-      }
-    ]
+            instructions: 'Tính toán và điền kết quả',
+          },
+        ],
+      },
+      {
+        id: 'toan-3',
+        title: 'Phép trừ cơ bản',
+        description: 'Học phép trừ với các số nhỏ',
+        difficulty: 'medium',
+        estimatedTime: 25,
+        content: 'Phép trừ: 5 - 2 = 3, 10 - 5 = 5, 8 - 3 = 5',
+        activities: [
+          {
+            id: 't-3-1',
+            type: 'math',
+            title: 'Bài tập phép trừ',
+            content: 'Giải các phép trừ đơn giản',
+            instructions: 'Tính toán và điền kết quả',
+          },
+        ],
+      },
+      {
+        id: 'toan-4',
+        title: 'Hình học cơ bản',
+        description: 'Học về các hình: vuông, tròn, tam giác',
+        difficulty: 'easy',
+        estimatedTime: 20,
+        content: 'Hình vuông có 4 cạnh bằng nhau. Hình tròn không có góc.',
+        activities: [
+          {
+            id: 't-4-1',
+            type: 'quiz',
+            title: 'Nhận biết hình dạng',
+            content: 'Hình nào có 3 cạnh?',
+            instructions: 'Chọn hình đúng',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'tieng-viet',
@@ -185,10 +228,11 @@ export const subjects: Subject[] = [
             id: 'tv-1-1',
             type: 'typing',
             title: 'Gõ bảng chữ cái',
-            content: 'A Ă Â B C D Đ E Ê G H I K L M N O Ô Ơ P Q R S T U Ư V X Y',
-            instructions: 'Gõ các chữ cái tiếng Việt'
-          }
-        ]
+            content:
+              'A Ă Â B C D Đ E Ê G H I K L M N O Ô Ơ P Q R S T U Ư V X Y',
+            instructions: 'Gõ các chữ cái tiếng Việt',
+          },
+        ],
       },
       {
         id: 'tv-2',
@@ -203,11 +247,11 @@ export const subjects: Subject[] = [
             type: 'typing',
             title: 'Gõ từ đơn giản',
             content: 'mẹ bố em con nhà trường',
-            instructions: 'Gõ các từ tiếng Việt đơn giản'
-          }
-        ]
-      }
-    ]
+            instructions: 'Gõ các từ tiếng Việt đơn giản',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'hoat-dong-trai-nghiem',
@@ -230,11 +274,11 @@ export const subjects: Subject[] = [
             type: 'reading',
             title: 'Đọc về cây xanh',
             content: 'Cây xanh có vai trò quan trọng trong cuộc sống',
-            instructions: 'Đọc và hiểu nội dung'
-          }
-        ]
-      }
-    ]
+            instructions: 'Đọc và hiểu nội dung',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'tieng-anh',
@@ -257,9 +301,9 @@ export const subjects: Subject[] = [
             type: 'typing',
             title: 'Gõ bảng chữ cái tiếng Anh',
             content: 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z',
-            instructions: 'Gõ các chữ cái tiếng Anh'
-          }
-        ]
+            instructions: 'Gõ các chữ cái tiếng Anh',
+          },
+        ],
       },
       {
         id: 'ta-2',
@@ -274,11 +318,11 @@ export const subjects: Subject[] = [
             type: 'typing',
             title: 'Gõ từ vựng cơ bản',
             content: 'hello goodbye thank you please',
-            instructions: 'Gõ các từ tiếng Anh cơ bản'
-          }
-        ]
-      }
-    ]
+            instructions: 'Gõ các từ tiếng Anh cơ bản',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'tu-nhien-xa-hoi',
@@ -301,11 +345,11 @@ export const subjects: Subject[] = [
             type: 'typing',
             title: 'Gõ tên động vật',
             content: 'chó mèo gà vịt bò heo',
-            instructions: 'Gõ tên các loài động vật'
-          }
-        ]
-      }
-    ]
+            instructions: 'Gõ tên các loài động vật',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'my-thuat',
@@ -321,24 +365,25 @@ export const subjects: Subject[] = [
         description: 'Học về màu sắc cơ bản',
         difficulty: 'easy',
         estimatedTime: 20,
-        content: 'Có 7 màu cơ bản: đỏ, cam, vàng, xanh lá, xanh dương, chàm, tím',
+        content:
+          'Có 7 màu cơ bản: đỏ, cam, vàng, xanh lá, xanh dương, chàm, tím',
         activities: [
           {
             id: 'mt-1-1',
             type: 'typing',
             title: 'Gõ tên các màu',
             content: 'đỏ cam vàng xanh lá xanh dương chàm tím',
-            instructions: 'Gõ tên các màu cơ bản'
+            instructions: 'Gõ tên các màu cơ bản',
           },
           {
             id: 'mt-1-2',
             type: 'drawing',
             title: 'Tô màu',
             content: 'Chọn màu và tô vào hình',
-            instructions: 'Sử dụng các màu để tô hình'
-          }
-        ]
-      }
-    ]
-  }
+            instructions: 'Sử dụng các màu để tô hình',
+          },
+        ],
+      },
+    ],
+  },
 ];

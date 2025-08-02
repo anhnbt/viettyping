@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { lessons, Lesson } from '@/data/lessons';
@@ -9,7 +9,7 @@ import SplashScreen from '@/components/SplashScreen';
 import SubjectSelector from '@/components/SubjectSelector';
 import TopicSelector from '@/components/TopicSelector';
 import ActivityView from '@/components/ActivityView';
-import { IoArrowBack, IoArrowForward } from "react-icons/io5";
+import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
 
 interface Stats {
   wpm: number;
@@ -17,7 +17,13 @@ interface Stats {
   incorrectCount: number;
 }
 
-type ViewType = 'splash' | 'subjects' | 'typing-lessons' | 'topics' | 'activities' | 'typing-practice';
+type ViewType =
+  | 'splash'
+  | 'subjects'
+  | 'typing-lessons'
+  | 'topics'
+  | 'activities'
+  | 'typing-practice';
 
 export default function Home() {
   const [currentView, setCurrentView] = useState<ViewType>('splash');
@@ -38,7 +44,7 @@ export default function Home() {
 
   const getNextLesson = () => {
     if (!selectedLesson) return null;
-    const currentIndex = lessons.findIndex(l => l.id === selectedLesson.id);
+    const currentIndex = lessons.findIndex((l) => l.id === selectedLesson.id);
     return lessons[currentIndex + 1] || null;
   };
 
@@ -88,7 +94,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        
+
         <SubjectSelector
           subjects={subjects}
           onSelectSubject={(subject) => {
@@ -225,7 +231,9 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="text-gray-600">Số lỗi</p>
-                  <p className="text-2xl font-bold text-red-500">{stats.incorrectCount}</p>
+                  <p className="text-2xl font-bold text-red-500">
+                    {stats.incorrectCount}
+                  </p>
                 </div>
               </div>
 

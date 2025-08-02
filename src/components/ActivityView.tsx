@@ -9,25 +9,35 @@ interface ActivityViewProps {
   onComplete: (activityId: string, score: number) => void;
 }
 
-const ActivityView: React.FC<ActivityViewProps> = ({ topic, onBack, onComplete }) => {
+const ActivityView: React.FC<ActivityViewProps> = ({
+  topic,
+  onBack,
+  onComplete,
+}) => {
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
-  const [completedActivities, setCompletedActivities] = useState<Set<string>>(new Set());
+  const [completedActivities, setCompletedActivities] = useState<Set<string>>(
+    new Set()
+  );
   const [showTypingPractice, setShowTypingPractice] = useState(false);
 
   const currentActivity = topic.activities[currentActivityIndex];
 
   const handleActivityComplete = (score: number) => {
     const activityId = currentActivity.id;
-    setCompletedActivities(prev => new Set([...prev, activityId]));
+    setCompletedActivities((prev) => new Set([...prev, activityId]));
     onComplete(activityId, score);
-    
+
     // Chuyển sang hoạt động tiếp theo
     if (currentActivityIndex < topic.activities.length - 1) {
-      setCurrentActivityIndex(prev => prev + 1);
+      setCurrentActivityIndex((prev) => prev + 1);
     }
   };
 
-  const handleTypingComplete = (stats: { wpm: number; accuracy: number; incorrectCount: number }) => {
+  const handleTypingComplete = (stats: {
+    wpm: number;
+    accuracy: number;
+    incorrectCount: number;
+  }) => {
     const accuracy = stats.accuracy;
     setShowTypingPractice(false);
     handleActivityComplete(accuracy);
@@ -47,7 +57,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onBack, onComplete }
             targetWPM: 20,
             minAccuracy: 85,
           };
-          
+
           return (
             <div>
               <button
@@ -64,7 +74,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onBack, onComplete }
             </div>
           );
         }
-        
+
         return (
           <div className="text-center">
             <div className="mb-6">
@@ -137,7 +147,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onBack, onComplete }
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
               <div className="text-3xl font-bold mb-4">2 + 3 = ?</div>
               <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
-                {[4, 5, 6].map(num => (
+                {[4, 5, 6].map((num) => (
                   <button
                     key={num}
                     onClick={() => handleActivityComplete(num === 5 ? 100 : 0)}
@@ -197,7 +207,9 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onBack, onComplete }
       default:
         return (
           <div className="text-center">
-            <p className="text-gray-500">Loại hoạt động này đang được phát triển...</p>
+            <p className="text-gray-500">
+              Loại hoạt động này đang được phát triển...
+            </p>
           </div>
         );
     }
@@ -216,12 +228,14 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onBack, onComplete }
           <IoArrowBack className="text-xl" />
           <span>Quay lại</span>
         </button>
-        
+
         <div className="text-center flex-1">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">{topic.title}</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            {topic.title}
+          </h1>
           <p className="text-gray-600">{topic.description}</p>
         </div>
-        
+
         <div className="w-20"></div>
       </div>
 
@@ -234,7 +248,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onBack, onComplete }
           </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3">
-          <div 
+          <div
             className="bg-green-500 h-3 rounded-full transition-all duration-300"
             style={{ width: `${progress}%` }}
           ></div>
@@ -255,11 +269,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onBack, onComplete }
                 : 'bg-gray-200 text-gray-600'
             }`}
           >
-            {completedActivities.has(activity.id) ? (
-              <IoCheckmark />
-            ) : (
-              index + 1
-            )}
+            {completedActivities.has(activity.id) ? <IoCheckmark /> : index + 1}
           </button>
         ))}
       </div>

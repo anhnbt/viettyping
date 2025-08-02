@@ -22,4 +22,4 @@ module.exports = {
     require('tailwind-scrollbar')({ nocompatible: true }),
     require('@tailwindcss/line-clamp'),
   ],
-}
+};
