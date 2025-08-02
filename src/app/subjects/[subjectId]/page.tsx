@@ -7,14 +7,15 @@ import TopicSelector from '@/components/TopicSelector';
 import Link from 'next/link';
 
 interface Props {
-  params: {
+  params: Promise<{
     subjectId: string;
-  };
+  }>;
 }
 
 export default function SubjectPage({ params }: Props) {
   const router = useRouter();
-  const subject = subjects.find((s) => s.id === params.subjectId);
+  const resolvedParams = React.use(params);
+  const subject = subjects.find((s) => s.id === resolvedParams.subjectId);
 
   if (!subject) {
     notFound();

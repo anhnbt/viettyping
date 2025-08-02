@@ -8,9 +8,9 @@ import Link from 'next/link';
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
 
 interface Props {
-  params: {
+  params: Promise<{
     lessonId: string;
-  };
+  }>;
 }
 
 interface Stats {
@@ -24,7 +24,8 @@ export default function LessonPage({ params }: Props) {
   const [stats, setStats] = useState<Stats | null>(null);
   const [showStats, setShowStats] = useState(false);
 
-  const lesson = lessons.find((l) => l.id === params.lessonId);
+  const resolvedParams = React.use(params);
+  const lesson = lessons.find((l) => l.id === resolvedParams.lessonId);
 
   if (!lesson) {
     notFound();

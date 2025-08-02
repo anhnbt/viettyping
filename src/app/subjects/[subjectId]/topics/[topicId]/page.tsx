@@ -7,15 +7,16 @@ import ActivityView from '@/components/ActivityView';
 import Link from 'next/link';
 
 interface Props {
-  params: {
+  params: Promise<{
     subjectId: string;
     topicId: string;
-  };
+  }>;
 }
 
 export default function TopicPage({ params }: Props) {
-  const subject = subjects.find((s) => s.id === params.subjectId);
-  const topic = subject?.topics.find((t) => t.id === params.topicId);
+  const resolvedParams = React.use(params);
+  const subject = subjects.find((s) => s.id === resolvedParams.subjectId);
+  const topic = subject?.topics.find((t) => t.id === resolvedParams.topicId);
 
   if (!subject || !topic) {
     notFound();
