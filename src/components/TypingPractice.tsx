@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Lesson } from '@/data/lessons';
 import { IoTimeOutline, IoRefreshOutline, IoStar, IoStarOutline } from 'react-icons/io5';
 import { useTypingSound } from '@/hooks/useTypingSound';
+import confetti from 'canvas-confetti';
 import VirtualKeyboard from './VirtualKeyboard';
 
 interface Props {
@@ -76,9 +77,68 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
     }, 1000);
   };
 
+  const fireConfetti = useCallback(() => {
+    const duration = 2500;
+    const end = Date.now() + duration;
+
+    const colors = ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#fbb1bd',
+      '#60a5fa', '#34d399', '#fbbf24', '#a78bfa', '#f472b6'];
+
+    // Side cannons
+    const frame = () => {
+      confetti({
+        particleCount: 3,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.7 },
+        colors,
+      });
+      confetti({
+        particleCount: 3,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.7 },
+        colors,
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
+
+    // Big center burst
+    confetti({
+      particleCount: 120,
+      spread: 100,
+      origin: { y: 0.6 },
+      colors,
+      startVelocity: 35,
+      gravity: 0.8,
+      scalar: 1.2,
+      ticks: 100,
+    });
+
+    // Delayed star-shaped burst
+    setTimeout(() => {
+      confetti({
+        particleCount: 60,
+        spread: 360,
+        origin: { x: 0.5, y: 0.4 },
+        colors,
+        startVelocity: 25,
+        gravity: 0.6,
+        shapes: ['circle', 'square'],
+        scalar: 1.5,
+        ticks: 80,
+      });
+    }, 600);
+  }, []);
+
   const completeLesson = (stats: { wpm: number; accuracy: number; incorrectCount: number }) => {
     setIsComplete(true);
     clearInterval(timerRef.current);
+    fireConfetti();
     onComplete(stats);
   };
 
@@ -202,12 +262,12 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
           <span
             key={i}
             className={`${i < input.length
-                ? input[i] === char
-                  ? 'text-green-600 font-bold'
-                  : 'text-red-500 font-bold bg-red-100 rounded'
-                : i === input.length
-                  ? 'cursor-blink border-b-4 border-blue-500'
-                  : 'text-gray-400'
+              ? input[i] === char
+                ? 'text-green-600 font-bold'
+                : 'text-red-500 font-bold bg-red-100 rounded'
+              : i === input.length
+                ? 'cursor-blink border-b-4 border-blue-500'
+                : 'text-gray-400'
               } relative transition-all duration-200`}
           >
             {char === ' ' ? '\u00A0' : char}
