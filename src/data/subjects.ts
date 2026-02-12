@@ -37,6 +37,195 @@ export interface Subject {
 
 export const subjects: Subject[] = [
   {
+    id: 'luyen-go-10-ngon',
+    name: 'Luyện gõ 10 ngón',
+    description: 'Bài tập luyện gõ 10 ngón cơ bản cho bé',
+    icon: '⌨️',
+    color: 'from-cyan-400 to-cyan-600',
+    grade: 'Cơ bản',
+    topics: [
+      {
+        id: 'lg-1',
+        title: 'Hàng cơ sở (Home Row)',
+        description: 'Làm quen với các phím chính: A S D F J K L ;',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'a s d f j k l ;',
+        activities: [
+          {
+            id: 'lg-1-1',
+            type: 'typing',
+            title: 'Ngón trỏ: F và J',
+            content: 'f j f f j j fj jf f j',
+            instructions: 'Đặt ngón trỏ trái lên F, ngón trỏ phải lên J',
+          },
+          {
+            id: 'lg-1-2',
+            type: 'typing',
+            title: 'Ngón giữa: D và K',
+            content: 'd k d d k k dk kd d k',
+            instructions: 'Đặt ngón giữa trái lên D, ngón giữa phải lên K',
+          },
+          {
+            id: 'lg-1-3',
+            type: 'typing',
+            title: 'Kết hợp F J D K',
+            content: 'fd jk df kj fjdk',
+            instructions: 'Gõ kết hợp các phím đã học',
+          },
+           {
+            id: 'lg-1-4',
+            type: 'typing',
+            title: 'Ngón áp út: S và L',
+            content: 's l s s l l sl ls s l',
+            instructions: 'Ngón áp út trái S, ngón áp út phải L',
+          },
+           {
+            id: 'lg-1-5',
+            type: 'typing',
+            title: 'Ngón út: A và ;',
+            content: 'a ; a a ; ; a; ;a a ;',
+            instructions: 'Ngón út trái A, ngón út phải ;',
+          },
+          {
+            id: 'lg-1-6',
+            type: 'typing',
+            title: 'Ôn tập Hàng cơ sở',
+            content: 'asdf jkl; a s d f j k l ;',
+            instructions: 'Gõ tất cả các phím hàng cơ sở',
+          },
+        ],
+      },
+      {
+        id: 'lg-2',
+        title: 'Hàng trên (Top Row)',
+        description: 'Các phím hàng trên: Q W E R T Y U I O P',
+        difficulty: 'medium',
+        estimatedTime: 20,
+        content: 'q w e r t y u i o p',
+        activities: [
+          {
+             id: 'lg-2-1',
+             type: 'typing',
+             title: 'Ngón trỏ vươn lên: R T Y U',
+             content: 'r t y u rt yu tr uy',
+             instructions: 'Vươn ngón trỏ lên hàng trên',
+          },
+          {
+             id: 'lg-2-2',
+             type: 'typing',
+             title: 'Ngón giữa vươn lên: E I',
+             content: 'e i e e i i ei ie',
+             instructions: 'Vươn ngón giữa lên E và I',
+          },
+           {
+             id: 'lg-2-3',
+             type: 'typing',
+             title: 'Ngón áp út vươn lên: W O',
+             content: 'w o w w o o wo ow',
+             instructions: 'Vươn ngón áp út lên W và O',
+          },
+           {
+             id: 'lg-2-4',
+             type: 'typing',
+             title: 'Ngón út vươn lên: Q P',
+             content: 'q p q q p p qp pq',
+             instructions: 'Vươn ngón út lên Q và P',
+          },
+        ]
+      },
+      {
+        id: 'lg-3',
+        title: 'Hàng dưới (Bottom Row)',
+        description: 'Các phím hàng dưới: Z X C V B N M , . /',
+        difficulty: 'medium',
+        estimatedTime: 20,
+        content: 'z x c v b n m , . /',
+        activities: [
+           {
+             id: 'lg-3-1',
+             type: 'typing',
+             title: 'Luyện tập hàng dưới',
+             content: 'z x c v b n m , . /',
+             instructions: 'Gõ các phím hàng dưới',
+          },
+        ]
+      },
+      {
+        id: 'lg-4',
+        title: 'Dấu Tiếng Việt (Telex)',
+        description: 'Các dấu: Sắc (s), Huyền (f), Hỏi (r), Ngã (x), Nặng (j)',
+        difficulty: 'medium',
+        estimatedTime: 25,
+        content: 's f r x j',
+        activities: [
+           {
+             id: 'lg-4-1',
+             type: 'typing',
+             title: 'Các dấu cơ bản',
+             content: 's f r x j cais caf car cax caj',
+             instructions: 'Gõ dấu bằng kiểu Telex',
+          },
+           {
+             id: 'lg-4-2',
+             type: 'typing',
+             title: 'Chữ cái đặc biệt',
+             content: 'aa aw ee oo ow dd a a e o o d',
+             instructions: 'Gõ â ă ê ô ơ đ',
+          },
+        ]
+      },
+      {
+        id: 'lg-5',
+        title: 'Từ vựng đơn giản',
+        description: 'Luyện gõ các từ thân thuộc',
+        difficulty: 'medium',
+        estimatedTime: 15,
+        content: 'ba mẹ ông bà',
+        activities: [
+           {
+             id: 'lg-5-1',
+             type: 'typing',
+             title: 'Gia đình',
+             content: 'ba mẹ ông bà anh chị em',
+             instructions: 'Gõ các từ chỉ người thân',
+          },
+           {
+             id: 'lg-5-2',
+             type: 'typing',
+             title: 'Con vật',
+             content: 'chó mèo gà vịt cá heo',
+             instructions: 'Gõ tên các con vật',
+          },
+        ]
+      },
+       {
+        id: 'lg-6',
+        title: 'Thơ và Ca dao',
+        description: 'Luyện gõ câu ngắn',
+        difficulty: 'hard',
+        estimatedTime: 20,
+        content: 'công cha như núi thái sơn',
+        activities: [
+           {
+             id: 'lg-6-1',
+             type: 'typing',
+             title: 'Công cha nghĩa mẹ',
+             content: 'công cha như núi thái sơn nghĩa mẹ như nước trong nguồn chảy ra',
+             instructions: 'Gõ câu ca dao quen thuộc',
+          },
+           {
+             id: 'lg-6-2',
+             type: 'typing',
+             title: 'Bầu ơi thương lấy bí cùng',
+             content: 'bầu ơi thương lấy bí cùng tuy rằng khác giống nhưng chung một giàn',
+             instructions: 'Gõ câu ca dao về tình thương',
+          },
+        ]
+      }
+    ],
+  },
+  {
     id: 'dao-duc',
     name: 'Đạo đức',
     description: 'Học về những giá trị đạo đức, phẩm chất tốt',
