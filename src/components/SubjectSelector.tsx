@@ -1,5 +1,6 @@
 import React from 'react';
 import { Subject } from '@/data/subjects';
+import { useProgress } from '@/hooks/useProgress';
 
 interface SubjectSelectorProps {
   subjects: Subject[];
@@ -10,6 +11,10 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
   subjects,
   onSelectSubject,
 }) => {
+  const { getTopicProgress, isLoaded } = useProgress();
+
+  if (!isLoaded) return null;
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="text-center mb-12">
@@ -57,6 +62,17 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
                   </svg>
                 </div>
               </div>
+
+              {/* Progress Bar */}
+              <div className="mt-4">
+                <div className="w-full bg-black bg-opacity-20 rounded-full h-1.5">
+                   <div
+                      className="bg-white h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: `${getTopicProgress(subject.topics.flatMap(t => t.activities.map(a => a.id)))}%` }}
+                   ></div>
+                </div>
+              </div>
+
             </div>
 
             {/* Hiệu ứng background */}
