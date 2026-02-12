@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Topic, Activity } from '@/data/subjects';
 import { IoArrowBack, IoCheckmark, IoPlay } from 'react-icons/io5';
 import TypingPractice from './TypingPractice';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useProgress } from '@/hooks/useProgress';
 
 interface ActivityViewProps {
   topic: Topic;
@@ -14,16 +15,14 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const params = useParams();
   const subjectId = params.subjectId as string;
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
-  const [completedActivities, setCompletedActivities] = useState<Set<string>>(
-    new Set()
-  );
   const [showTypingPractice, setShowTypingPractice] = useState(false);
+  const { isActivityCompleted, saveProgress, isLoaded, getTopicProgress } = useProgress();
 
   const currentActivity = topic.activities[currentActivityIndex];
 
   const handleActivityComplete = (score: number) => {
     const activityId = currentActivity.id;
-    setCompletedActivities((prev) => new Set([...prev, activityId]));
+    saveProgress(activityId, score);
     onComplete(activityId, score);
 
     // Chuyển sang hoạt động tiếp theo
@@ -214,7 +213,11 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
     }
   };
 
-  const progress = (completedActivities.size / topic.activities.length) * 100;
+  if (!isLoaded) return null;
+
+  const activityIds = topic.activities.map(a => a.id);
+  const progress = getTopicProgress(activityIds);
+  const isTopicComplete = progress === 100;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -243,7 +246,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-700">Tiến độ</span>
           <span className="text-sm font-medium text-gray-700">
-            {completedActivities.size}/{topic.activities.length}
+            {progress}%
           </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3">
@@ -255,22 +258,25 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
       </div>
 
       {/* Activity Navigation */}
-      <div className="flex items-center justify-center gap-2 mb-8">
-        {topic.activities.map((activity, index) => (
-          <button
-            key={activity.id}
-            onClick={() => setCurrentActivityIndex(index)}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-              index === currentActivityIndex
-                ? 'bg-blue-500 text-white'
-                : completedActivities.has(activity.id)
-                ? 'bg-green-500 text-white'
-                : 'bg-gray-200 text-gray-600'
-            }`}
-          >
-            {completedActivities.has(activity.id) ? <IoCheckmark /> : index + 1}
-          </button>
-        ))}
+      <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
+        {topic.activities.map((activity, index) => {
+          const isCompleted = isActivityCompleted(activity.id);
+          return (
+            <button
+              key={activity.id}
+              onClick={() => setCurrentActivityIndex(index)}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                index === currentActivityIndex
+                  ? 'bg-blue-500 text-white ring-4 ring-blue-200'
+                  : isCompleted
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-200 text-gray-600'
+              }`}
+            >
+              {isCompleted ? <IoCheckmark /> : index + 1}
+            </button>
+          );
+        })}
       </div>
 
       {/* Current Activity */}
@@ -279,15 +285,18 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
       </div>
 
       {/* Completion Message */}
-      {completedActivities.size === topic.activities.length && (
-        <div className="mt-8 p-6 bg-green-100 rounded-lg text-center">
-          <div className="text-green-600 text-4xl mb-4">🎉</div>
-          <h3 className="text-xl font-bold text-green-800 mb-2">
-            Chúc mừng! Bạn đã hoàn thành chủ đề này!
+      {isTopicComplete && (
+        <div className="mt-8 p-6 bg-green-100 rounded-lg text-center animate-bounce-in">
+          <div className="text-green-600 text-6xl mb-4">🎉</div>
+          <h3 className="text-2xl font-bold text-green-800 mb-2">
+            Chúc mừng! Con đã hoàn thành chủ đề này!
           </h3>
-          <p className="text-green-700">
-            Hãy tiếp tục với các chủ đề khác để học thêm nhiều kiến thức mới.
+          <p className="text-green-700 text-lg">
+            Hãy chọn bài học khác để tiếp tục nhé!
           </p>
+          <Link href={`/subjects/${subjectId}`} className="inline-block mt-4 px-6 py-3 bg-green-600 text-white rounded-full font-bold hover:bg-green-700 transition-colors">
+             Quay lại danh sách bài học
+          </Link>
         </div>
       )}
     </div>

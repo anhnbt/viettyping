@@ -170,8 +170,8 @@ export const subjects: Subject[] = [
              id: 'lg-4-2',
              type: 'typing',
              title: 'Chữ cái đặc biệt',
-             content: 'aa aw ee oo ow dd a a e o o d',
-             instructions: 'Gõ â ă ê ô ơ đ',
+             content: 'â ă ê ô ơ đ â ă ê ô ơ đ',
+             instructions: 'Gõ các chữ cái đặc biệt bằng kiểu Telex',
           },
         ]
       },

@@ -300,35 +300,35 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
             className="bg-gradient-to-r from-blue-400 to-blue-600 h-6 rounded-full transition-all duration-300 relative"
             style={{ width: `${Math.min(100, (input.length / lesson.content.length) * 100)}%` }}
           >
-            <div className="absolute top-0 right-0 bottom-0 w-full animate-pulse bg-white opacity-20"></div>
+              <div className="absolute top-0 right-0 bottom-0 w-full animate-pulse bg-white opacity-20"></div>
           </div>
         </div>
       </div>
 
       {isComplete && (
         <div className="mt-8 p-8 bg-gradient-to-b from-yellow-50 to-orange-50 rounded-2xl border-4 border-yellow-200 text-center shadow-xl animate-bounce-in">
-          <div className="flex justify-center gap-4 mb-6">
-            {[1, 2, 3].map(star => (
-              <span key={star} className="text-6xl filter drop-shadow-md transition-all hover:scale-110 transform">
-                {star <= stars ? <IoStar className="text-yellow-400" /> : <IoStarOutline className="text-gray-300" />}
-              </span>
-            ))}
-          </div>
+           <div className="flex justify-center gap-4 mb-6">
+             {[1, 2, 3].map(star => (
+               <span key={star} className="text-6xl filter drop-shadow-md transition-all hover:scale-110 transform">
+                 {star <= stars ? <IoStar className="text-yellow-400" /> : <IoStarOutline className="text-gray-300" />}
+               </span>
+             ))}
+           </div>
 
-          <h3 className="text-3xl font-bold text-yellow-800 mb-4">
-            {stars === 3 ? 'Tuyệt vời! Con làm tốt lắm! 🎉' :
+           <h3 className="text-3xl font-bold text-yellow-800 mb-4">
+             {stars === 3 ? 'Tuyệt vời! Con làm tốt lắm! 🎉' :
               stars === 2 ? 'Rất tốt! Cố gắng thêm chút nữa nhé! 🌟' :
-                'Cố lên! Con làm được mà! 💪'}
-          </h3>
+              'Cố lên! Con làm được mà! 💪'}
+           </h3>
 
-          <div className="text-gray-600 text-lg flex justify-center gap-8 mt-4">
-            <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
-              Chính xác: <span className="font-bold text-blue-600">{accuracy}%</span>
-            </div>
-            <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
-              Lỗi: <span className="font-bold text-red-500">{incorrectCount}</span>
-            </div>
-          </div>
+           <div className="text-gray-600 text-lg flex justify-center gap-8 mt-4">
+              <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
+                Chính xác: <span className="font-bold text-blue-600">{accuracy}%</span>
+              </div>
+              <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
+                Lỗi: <span className="font-bold text-red-500">{incorrectCount}</span>
+              </div>
+           </div>
         </div>
       )}
     </div>
