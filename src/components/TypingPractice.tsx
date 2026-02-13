@@ -207,7 +207,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
   const stars = calculateStars(accuracy);
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
+    <div className="w-full h-full flex flex-col">
       <style jsx>{`
         @keyframes blink {
           0%, 100% { background-color: rgb(96 165 250); }
@@ -218,88 +218,74 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
         }
       `}</style>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
-        {/* Left Sidebar: Stats & Info */}
-        <div className="lg:col-span-3 space-y-4">
-          <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-            <div className="flex flex-col gap-3">
-              <div className="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm">
-                <span className="text-gray-500 text-sm">Thời gian</span>
-                <div className="flex items-center gap-1 font-mono font-bold text-blue-600">
-                  <IoTimeOutline />
-                  {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:
-                  {String(timeLeft % 60).padStart(2, '0')}
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm">
-                <span className="text-gray-500 text-sm">Tiến độ</span>
-                <span className="font-bold text-gray-700">{Math.round((input.length / lesson.content.length) * 100)}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${Math.min(100, (input.length / lesson.content.length) * 100)}%` }}
-                ></div>
-              </div>
-
-              <div className="pt-2 border-t border-blue-100 mt-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Tốc độ</span>
-                  <span className="font-bold text-green-600">{wpm} WPM</span>
-                </div>
-                <div className="flex justify-between text-sm mt-1">
-                  <span className="text-gray-500">Chính xác</span>
-                  <span className="font-bold text-blue-600">{accuracy}%</span>
-                </div>
-              </div>
-            </div>
+      {/* Compact Stats Bar */}
+      <div className="flex items-center justify-between gap-4 px-4 py-2 bg-white/80 rounded-xl border border-gray-100 mb-3 shrink-0">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1.5 font-mono font-bold text-blue-600 text-sm">
+            <IoTimeOutline className="text-base" />
+            {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
           </div>
-
+          <div className="h-4 w-px bg-gray-200" />
+          <span className="text-xs text-gray-500">Tốc độ: <span className="font-bold text-green-600">{wpm}</span> WPM</span>
+          <div className="h-4 w-px bg-gray-200" />
+          <span className="text-xs text-gray-500">Chính xác: <span className="font-bold text-blue-600">{accuracy}%</span></span>
+        </div>
+        <div className="flex items-center gap-3">
+          {/* Progress */}
+          <div className="flex items-center gap-2">
+            <div className="w-24 bg-gray-200 rounded-full h-1.5">
+              <div
+                className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
+                style={{ width: `${Math.min(100, (input.length / lesson.content.length) * 100)}%` }}
+              ></div>
+            </div>
+            <span className="text-xs font-bold text-gray-500">{Math.round((input.length / lesson.content.length) * 100)}%</span>
+          </div>
           <button
             onClick={handleRestart}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-blue-100 text-blue-600 rounded-xl hover:bg-blue-50 transition-colors font-bold shadow-sm"
+            className="flex items-center gap-1 px-3 py-1.5 text-xs bg-gray-50 border border-gray-200 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors font-medium"
           >
-            <IoRefreshOutline className="text-xl" />
-            <span>Làm lại</span>
+            <IoRefreshOutline className="text-sm" />
+            Làm lại
           </button>
         </div>
+      </div>
 
-        {/* Main Content: Typing Area & Keyboard */}
-        <div className="lg:col-span-9">
-          <div className="relative mb-6 p-6 bg-blue-50 rounded-2xl text-3xl font-mono leading-relaxed tracking-wide shadow-inner border-2 border-blue-100 min-h-[120px] flex flex-wrap content-center items-center justify-center text-center">
-            {/* Hidden input for focus */}
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={handleInput}
-              disabled={isComplete}
-              className="absolute opacity-0 w-full h-full cursor-default z-10"
-              autoFocus
-            />
-            {lesson.content.split('').map((char, i) => (
-              <span
-                key={i}
-                className={`${i < input.length
-                  ? input[i] === char
-                    ? 'text-green-600 font-bold'
-                    : 'text-red-500 font-bold bg-red-100 rounded'
-                  : i === input.length
-                    ? 'cursor-blink border-b-4 border-blue-500'
-                    : 'text-gray-400'
-                  } relative transition-all duration-200`}
-              >
-                {char === ' ' ? '\u00A0' : char}
-              </span>
-            ))}
-          </div>
+      {/* Typing Display Area */}
+      <div className="relative mb-3 p-6 bg-blue-50 rounded-2xl text-3xl font-mono leading-relaxed tracking-wide shadow-inner border-2 border-blue-100 min-h-[100px] flex flex-wrap content-center items-center justify-center text-center flex-1 min-h-0 overflow-y-auto">
+        {/* Hidden input for focus */}
+        <input
+          ref={inputRef}
+          type="text"
+          value={input}
+          onChange={handleInput}
+          disabled={isComplete}
+          className="absolute inset-0 opacity-0 cursor-default z-10"
+          autoFocus
+        />
+        {lesson.content.split('').map((char, i) => (
+          <span
+            key={i}
+            className={`${i < input.length
+              ? input[i] === char
+                ? 'text-green-600 font-bold'
+                : 'text-red-500 font-bold bg-red-100 rounded'
+              : i === input.length
+                ? 'cursor-blink border-b-4 border-blue-500'
+                : 'text-gray-400'
+              } relative transition-all duration-200`}
+          >
+            {char === ' ' ? '\u00A0' : char}
+          </span>
+        ))}
+      </div>
 
-          <VirtualKeyboard
-            pressedKey={pressedKey}
-            highlightKey={lesson.content[input.length]?.toLowerCase() ?? null}
-          />
-        </div>
+      {/* Keyboard */}
+      <div className="shrink-0">
+        <VirtualKeyboard
+          pressedKey={pressedKey}
+          highlightKey={lesson.content[input.length]?.toLowerCase() ?? null}
+        />
       </div>
 
       {isComplete && (
