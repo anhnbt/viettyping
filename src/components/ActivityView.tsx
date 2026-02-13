@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Topic, Activity } from '@/data/subjects';
+import { Topic, Activity, subjects } from '@/data/subjects';
 import { IoArrowBack, IoCheckmark, IoPlay, IoRefresh, IoMusicalNotes, IoClose } from 'react-icons/io5';
 import TypingPractice from './TypingPractice';
 import CompletionModal from './CompletionModal';
@@ -15,6 +15,7 @@ interface ActivityViewProps {
 const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const params = useParams();
   const subjectId = params.subjectId as string;
+  const subject = subjects.find(s => s.id === subjectId);
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
   const [showTypingModal, setShowTypingModal] = useState(false);
   const [typingStats, setTypingStats] = useState<{ wpm: number; accuracy: number; incorrectCount: number } | null>(null);
@@ -344,49 +345,67 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-gray-50">
-      {/* 1. Header (Topic Title, Progress, Controls) */}
-      <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shrink-0 z-20 shadow-sm">
-        <div className="flex items-center gap-4">
+      {/* Professional Header */}
+      <header className="h-14 bg-white/80 backdrop-blur-lg border-b border-gray-200/60 flex items-center justify-between px-4 shrink-0 z-20 shadow-sm">
+        <div className="flex items-center gap-3">
+          {/* Back Button */}
           <Link
             href={`/subjects/${subjectId}`}
-            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
-            title="Quay lại danh sách bài học"
+            className="group flex items-center gap-1.5 p-2 -ml-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+            title="Quay lại"
           >
-            <IoArrowBack className="text-2xl" />
+            <IoArrowBack className="text-xl group-hover:-translate-x-0.5 transition-transform" />
           </Link>
-          <div>
-            <h1 className="text-lg font-bold text-gray-800 leading-tight">
-              {topic.title}
-            </h1>
-            <p className="text-xs text-gray-500 font-medium">
-              {currentActivityIndex + 1} / {topic.activities.length} hoạt động
-            </p>
+
+          {/* Separator */}
+          <div className="h-6 w-px bg-gray-200" />
+
+          {/* Subject Icon + Title */}
+          <div className="flex items-center gap-2.5">
+            {subject && (
+              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${subject.color} flex items-center justify-center text-white text-sm shrink-0 shadow-sm`}>
+                {subject.icon}
+              </div>
+            )}
+            <div className="min-w-0">
+              <h1 className="text-sm font-bold text-gray-900 truncate leading-tight">
+                {topic.title}
+              </h1>
+              <p className="text-xs text-gray-500 truncate">
+                {currentActivityIndex + 1}/{topic.activities.length} hoạt động
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Activity Progress Bar (Dots) */}
-        <div className="flex items-center gap-2">
-          {topic.activities.map((activity, index) => {
-            const isCompleted = isActivityCompleted(activity.id);
-            const isActive = index === currentActivityIndex;
-            return (
-              <button
-                key={activity.id}
-                onClick={() => setCurrentActivityIndex(index)}
-                className={`w-3 h-3 rounded-full transition-all ${isActive
-                  ? 'bg-blue-600 scale-125 ring-2 ring-blue-200'
-                  : isCompleted
-                    ? 'bg-green-500 hover:bg-green-600'
-                    : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                title={activity.title}
-              />
-            );
-          })}
-        </div>
+        {/* Progress Dots + Badge */}
+        <div className="flex items-center gap-3">
+          {/* Activity Progress Dots */}
+          <div className="hidden sm:flex items-center gap-1.5">
+            {topic.activities.map((activity, index) => {
+              const isCompleted = isActivityCompleted(activity.id);
+              const isActive = index === currentActivityIndex;
+              return (
+                <button
+                  key={activity.id}
+                  onClick={() => setCurrentActivityIndex(index)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${isActive
+                      ? 'bg-blue-600 scale-125 ring-2 ring-blue-200'
+                      : isCompleted
+                        ? 'bg-green-500 hover:bg-green-600'
+                        : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                  title={activity.title}
+                />
+              );
+            })}
+          </div>
 
-        <div className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 hidden md:block">
-          {Math.round(progress)}% Hoàn thành
+          {/* Progress Badge */}
+          <div className={`px-3 py-1 rounded-full text-xs font-bold ${progress === 100 ? 'bg-green-100 text-green-700' : 'bg-blue-50 text-blue-600 border border-blue-100'
+            }`}>
+            {Math.round(progress)}%
+          </div>
         </div>
       </header>
 
