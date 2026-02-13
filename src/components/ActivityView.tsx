@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Topic, Activity } from '@/data/subjects';
 import { IoArrowBack, IoCheckmark, IoPlay, IoRefresh, IoMusicalNotes } from 'react-icons/io5';
-import TypingPractice from './TypingPractice';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useProgress } from '@/hooks/useProgress';
@@ -15,7 +14,6 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const params = useParams();
   const subjectId = params.subjectId as string;
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
-  const [showTypingPractice, setShowTypingPractice] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -52,15 +50,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
     }
   };
 
-  const handleTypingComplete = (stats: {
-    wpm: number;
-    accuracy: number;
-    incorrectCount: number;
-  }) => {
-    const accuracy = stats.accuracy;
-    setShowTypingPractice(false);
-    handleActivityComplete(accuracy);
-  };
+
 
   const checkAnswer = (answer: string) => {
     setSelectedOption(answer);
@@ -137,27 +127,6 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const renderActivity = (activity: Activity) => {
     switch (activity.type) {
       case 'typing':
-        if (showTypingPractice) {
-          const lesson = {
-            id: activity.id,
-            level: 'basic' as const,
-            title: activity.title,
-            description: activity.instructions,
-            content: activity.content,
-            targetWPM: 20,
-            minAccuracy: 85,
-          };
-
-          return (
-            <div className="w-full h-full">
-              <TypingPractice
-                lesson={lesson}
-                onComplete={handleTypingComplete}
-              />
-            </div>
-          );
-        }
-
         return (
           <div className="text-center">
             <div className="mb-6">
@@ -167,13 +136,13 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
             <div className="bg-gray-100 rounded-lg p-6 mb-6">
               <p className="text-lg font-mono">{activity.content}</p>
             </div>
-            <button
-              onClick={() => setShowTypingPractice(true)}
+            <Link
+              href={`/subjects/${subjectId}/topics/${topic.id}/practice`}
               className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
               <IoPlay />
               Bắt đầu luyện tập
-            </button>
+            </Link>
           </div>
         );
 
