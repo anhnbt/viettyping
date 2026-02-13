@@ -132,10 +132,10 @@ interface Activity {
 - [x] Hoạt động gõ phím
 - [x] Hoạt động trắc nghiệm cơ bản
 - [x] Giao diện responsive
-- [ ] Hệ thống âm thanh
-- [ ] Lưu tiến độ học tập
+- [x] Hệ thống âm thanh
+- [x] Lưu tiến độ học tập
 - [ ] Chế độ chơi nhóm
-- [ ] Báo cáo chi tiết cho phụ huynh
+- [x] Báo cáo chi tiết cho phụ huynh
 - [ ] Thêm animation và hiệu ứng
 - [ ] Hỗ trợ offline
 

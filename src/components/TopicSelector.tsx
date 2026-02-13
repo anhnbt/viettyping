@@ -1,8 +1,11 @@
+'use client';
+
 import React from 'react';
 import { Subject, Topic } from '@/data/subjects';
 import { IoArrowBack, IoTime, IoTrophy, IoCheckmarkCircle } from 'react-icons/io5';
 import Link from 'next/link';
 import { useProgress } from '@/hooks/useProgress';
+import { motion } from 'framer-motion';
 
 interface TopicSelectorProps {
   subject: Subject;
@@ -103,10 +106,12 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({
           const isComplete = progress === 100;
 
           return (
-            <div
+            <motion.div
               key={topic.id}
               onClick={() => onSelectTopic(topic)}
-              className={`bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 border ${isComplete ? 'border-green-200 ring-2 ring-green-100' : 'border-gray-100'}`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer border ${isComplete ? 'border-green-200 ring-2 ring-green-100' : 'border-gray-100'}`}
             >
               <div className="p-6">
                 {/* Topic number badge */}
@@ -178,7 +183,7 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({
                    <div className="text-xs font-bold text-blue-600">{progress}%</div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>

@@ -20,7 +20,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
   const [timeLeft, setTimeLeft] = useState(60);
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const timerRef = useRef<NodeJS.Timeout>();
+  const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const { playCorrectSound, playWrongSound } = useTypingSound();
 
   const calculateStats = (currentInput = input, currentStartTime = startTime) => {
@@ -322,6 +322,9 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
            </h3>
 
            <div className="text-gray-600 text-lg flex justify-center gap-8 mt-4">
+              <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
+                Tốc độ: <span className="font-bold text-green-600">{wpm} WPM</span>
+              </div>
               <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
                 Chính xác: <span className="font-bold text-blue-600">{accuracy}%</span>
               </div>

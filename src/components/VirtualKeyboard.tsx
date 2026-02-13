@@ -75,12 +75,6 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
           <div key={rowIndex} className="flex justify-center mb-2 last:mb-0 gap-1">
             {row.map((key, keyIndex) => {
               const displayKey = getKeyDisplay(key);
-              // Handle special mapping for Shift which appears twice
-              let lookupKey = key;
-              if (key === 'Shift' && keyIndex > 5) {
-                 // Right shift
-                 // For now, simple mapping
-              }
 
               const isPressed = key === ' ' ? pressedKey === ' ' || pressedKey === 'space' :
                                pressedKey === key.toLowerCase();
