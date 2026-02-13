@@ -218,120 +218,117 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
         }
       `}</style>
 
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2 text-blue-800">{lesson.title}</h2>
-        <p className="text-gray-600 mb-4 text-lg">{lesson.description}</p>
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+        {/* Left Sidebar: Stats & Info */}
+        <div className="lg:col-span-3 space-y-4">
+          <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm">
+                <span className="text-gray-500 text-sm">Thời gian</span>
+                <div className="flex items-center gap-1 font-mono font-bold text-blue-600">
+                  <IoTimeOutline />
+                  {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:
+                  {String(timeLeft % 60).padStart(2, '0')}
+                </div>
+              </div>
 
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-4 text-xl font-mono bg-blue-50 px-4 py-2 rounded-full">
-          <div className="flex items-center gap-2 font-bold text-blue-600">
-            <IoTimeOutline className="text-2xl" />
-            {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:
-            {String(timeLeft % 60).padStart(2, '0')}
+              <div className="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm">
+                <span className="text-gray-500 text-sm">Tiến độ</span>
+                <span className="font-bold text-gray-700">{Math.round((input.length / lesson.content.length) * 100)}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${Math.min(100, (input.length / lesson.content.length) * 100)}%` }}
+                ></div>
+              </div>
+
+              <div className="pt-2 border-t border-blue-100 mt-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Tốc độ</span>
+                  <span className="font-bold text-green-600">{wpm} WPM</span>
+                </div>
+                <div className="flex justify-between text-sm mt-1">
+                  <span className="text-gray-500">Chính xác</span>
+                  <span className="font-bold text-blue-600">{accuracy}%</span>
+                </div>
+              </div>
+            </div>
           </div>
+
+          <button
+            onClick={handleRestart}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-blue-100 text-blue-600 rounded-xl hover:bg-blue-50 transition-colors font-bold shadow-sm"
+          >
+            <IoRefreshOutline className="text-xl" />
+            <span>Làm lại</span>
+          </button>
         </div>
 
-        <div className="hidden">
-          {/* Hidden time selector for simplicity, defaulting to preset or kept in state */}
-          <select
-            value={selectedTime}
-            onChange={(e) => handleTimeChange(Number(e.target.value))}
-            disabled={!!startTime}
-            className="ml-2 p-1 text-base bg-white border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 cursor-pointer"
-          >
-            {TIME_OPTIONS.map(time => (
-              <option key={time} value={time}>
-                {time}s
-              </option>
+        {/* Main Content: Typing Area & Keyboard */}
+        <div className="lg:col-span-9">
+          <div className="relative mb-6 p-6 bg-blue-50 rounded-2xl text-3xl font-mono leading-relaxed tracking-wide shadow-inner border-2 border-blue-100 min-h-[120px] flex flex-wrap content-center items-center justify-center text-center">
+            {/* Hidden input for focus */}
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={handleInput}
+              disabled={isComplete}
+              className="absolute opacity-0 w-full h-full cursor-default z-10"
+              autoFocus
+            />
+            {lesson.content.split('').map((char, i) => (
+              <span
+                key={i}
+                className={`${i < input.length
+                  ? input[i] === char
+                    ? 'text-green-600 font-bold'
+                    : 'text-red-500 font-bold bg-red-100 rounded'
+                  : i === input.length
+                    ? 'cursor-blink border-b-4 border-blue-500'
+                    : 'text-gray-400'
+                  } relative transition-all duration-200`}
+              >
+                {char === ' ' ? '\u00A0' : char}
+              </span>
             ))}
-          </select>
-        </div>
-
-        <button
-          onClick={handleRestart}
-          className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors cursor-pointer font-bold shadow-md hover:shadow-lg active:scale-95 transform"
-        >
-          <IoRefreshOutline className="text-2xl" />
-          <span>Làm lại</span>
-        </button>
-      </div>
-
-      <div className="mb-6 p-8 bg-blue-50 rounded-3xl text-4xl font-mono leading-relaxed tracking-wide shadow-inner border-4 border-blue-100 min-h-[150px] flex flex-wrap content-center items-center justify-center text-center">
-        {lesson.content.split('').map((char, i) => (
-          <span
-            key={i}
-            className={`${i < input.length
-              ? input[i] === char
-                ? 'text-green-600 font-bold'
-                : 'text-red-500 font-bold bg-red-100 rounded'
-              : i === input.length
-                ? 'cursor-blink border-b-4 border-blue-500'
-                : 'text-gray-400'
-              } relative transition-all duration-200`}
-          >
-            {char === ' ' ? '\u00A0' : char}
-          </span>
-        ))}
-      </div>
-
-      <VirtualKeyboard
-        pressedKey={pressedKey}
-        highlightKey={lesson.content[input.length]?.toLowerCase() ?? null}
-      />
-
-      <input
-        ref={inputRef}
-        type="text"
-        value={input}
-        onChange={handleInput}
-        disabled={isComplete}
-        className="w-full mt-6 p-4 text-2xl border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-400 focus:border-blue-400 transition-all shadow-sm"
-        placeholder="Bé hãy gõ vào đây nhé..."
-      />
-
-      <div className="mt-8">
-        <div className="flex justify-between items-center mb-2 text-gray-600 font-medium">
-          <span>Tiến độ</span>
-          <span>{Math.round((input.length / lesson.content.length) * 100)}%</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-6 shadow-inner overflow-hidden">
-          <div
-            className="bg-gradient-to-r from-blue-400 to-blue-600 h-6 rounded-full transition-all duration-300 relative"
-            style={{ width: `${Math.min(100, (input.length / lesson.content.length) * 100)}%` }}
-          >
-              <div className="absolute top-0 right-0 bottom-0 w-full animate-pulse bg-white opacity-20"></div>
           </div>
+
+          <VirtualKeyboard
+            pressedKey={pressedKey}
+            highlightKey={lesson.content[input.length]?.toLowerCase() ?? null}
+          />
         </div>
       </div>
 
       {isComplete && (
         <div className="mt-8 p-8 bg-gradient-to-b from-yellow-50 to-orange-50 rounded-2xl border-4 border-yellow-200 text-center shadow-xl animate-bounce-in">
-           <div className="flex justify-center gap-4 mb-6">
-             {[1, 2, 3].map(star => (
-               <span key={star} className="text-6xl filter drop-shadow-md transition-all hover:scale-110 transform">
-                 {star <= stars ? <IoStar className="text-yellow-400" /> : <IoStarOutline className="text-gray-300" />}
-               </span>
-             ))}
-           </div>
+          <div className="flex justify-center gap-4 mb-6">
+            {[1, 2, 3].map(star => (
+              <span key={star} className="text-6xl filter drop-shadow-md transition-all hover:scale-110 transform">
+                {star <= stars ? <IoStar className="text-yellow-400" /> : <IoStarOutline className="text-gray-300" />}
+              </span>
+            ))}
+          </div>
 
-           <h3 className="text-3xl font-bold text-yellow-800 mb-4">
-             {stars === 3 ? 'Tuyệt vời! Con làm tốt lắm! 🎉' :
+          <h3 className="text-3xl font-bold text-yellow-800 mb-4">
+            {stars === 3 ? 'Tuyệt vời! Con làm tốt lắm! 🎉' :
               stars === 2 ? 'Rất tốt! Cố gắng thêm chút nữa nhé! 🌟' :
-              'Cố lên! Con làm được mà! 💪'}
-           </h3>
+                'Cố lên! Con làm được mà! 💪'}
+          </h3>
 
-           <div className="text-gray-600 text-lg flex justify-center gap-8 mt-4">
-              <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
-                Tốc độ: <span className="font-bold text-green-600">{wpm} WPM</span>
-              </div>
-              <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
-                Chính xác: <span className="font-bold text-blue-600">{accuracy}%</span>
-              </div>
-              <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
-                Lỗi: <span className="font-bold text-red-500">{incorrectCount}</span>
-              </div>
-           </div>
+          <div className="text-gray-600 text-lg flex justify-center gap-8 mt-4">
+            <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
+              Tốc độ: <span className="font-bold text-green-600">{wpm} WPM</span>
+            </div>
+            <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
+              Chính xác: <span className="font-bold text-blue-600">{accuracy}%</span>
+            </div>
+            <div className="bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-100">
+              Lỗi: <span className="font-bold text-red-500">{incorrectCount}</span>
+            </div>
+          </div>
         </div>
       )}
     </div>

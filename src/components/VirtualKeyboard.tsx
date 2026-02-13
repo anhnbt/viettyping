@@ -66,41 +66,38 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
   };
 
   return (
-    <div className="mt-8">
-      <div className="bg-gray-50 p-6 rounded-xl shadow-lg max-w-5xl mx-auto border border-gray-200">
-        <div className="mb-4 text-center text-sm text-gray-500 italic">
-          Màu sắc giúp bé đặt ngón tay đúng vị trí
-        </div>
+    <div className="mt-2">
+      <div className="bg-white p-2 rounded-xl border border-gray-100">
         {keyboardLayout.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex justify-center mb-2 last:mb-0 gap-1">
+          <div key={rowIndex} className="flex justify-center mb-1 last:mb-0 gap-1">
             {row.map((key, keyIndex) => {
               const displayKey = getKeyDisplay(key);
 
               const isPressed = key === ' ' ? pressedKey === ' ' || pressedKey === 'space' :
-                               pressedKey === key.toLowerCase();
+                pressedKey === key.toLowerCase();
 
               const shouldHighlight = key === ' ' ? highlightKey === ' ' || highlightKey === 'space' :
-                                     highlightKey === key.toLowerCase();
+                highlightKey === key.toLowerCase();
 
               const baseColor = getFingerColor(key);
 
-              const width = 
-                key === ' ' ? 'w-80' :
-                key === '⌫' ? 'w-16' :
-                key === 'Tab' ? 'w-20' :
-                key === 'Caps' ? 'w-24' :
-                key === 'Enter' ? 'w-24' :
-                key === 'Shift' ? 'w-28' :
-                'w-12';
+              const width =
+                key === ' ' ? 'w-64' :
+                  key === '⌫' ? 'w-14' :
+                    key === 'Tab' ? 'w-16' :
+                      key === 'Caps' ? 'w-20' :
+                        key === 'Enter' ? 'w-20' :
+                          key === 'Shift' ? 'w-24' :
+                            'w-10';
 
               return (
                 <div
                   key={keyIndex}
-                  className={`${width} h-12 rounded-lg flex items-center justify-center
-                    border-b-4 active:border-b-0 active:translate-y-1
+                  className={`${width} h-10 rounded-md flex items-center justify-center
+                    border-b-2 active:border-b-0 active:translate-y-0.5
                     ${isPressed ? 'bg-blue-500 text-white border-blue-600' : `${baseColor} hover:brightness-95`}
-                    ${shouldHighlight ? 'ring-4 ring-blue-400 z-10 scale-105 transition-transform' : ''}
-                    font-medium text-gray-700 shadow-sm transition-all duration-75 select-none text-base`}
+                    ${shouldHighlight ? 'ring-2 ring-blue-400 z-10 scale-105 transition-transform' : ''}
+                    font-medium text-gray-700 shadow-sm transition-all duration-75 select-none text-sm`}
                 >
                   {displayKey}
                 </div>

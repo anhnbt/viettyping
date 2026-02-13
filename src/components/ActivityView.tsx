@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Topic, Activity } from '@/data/subjects';
-import { IoArrowBack, IoCheckmark, IoPlay } from 'react-icons/io5';
+import { IoArrowBack, IoCheckmark, IoPlay, IoRefresh, IoMusicalNotes } from 'react-icons/io5';
 import TypingPractice from './TypingPractice';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -16,9 +16,28 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const subjectId = params.subjectId as string;
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
   const [showTypingPractice, setShowTypingPractice] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
   const { isActivityCompleted, saveProgress, isLoaded, getTopicProgress } = useProgress();
 
   const currentActivity = topic.activities[currentActivityIndex];
+
+  // Reset state when changing activity
+  useEffect(() => {
+    setSelectedOption(null);
+    setFeedback(null);
+    setIsDrawing(false);
+
+    // Clear canvas if it exists
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    }
+  }, [currentActivityIndex]);
 
   const handleActivityComplete = (score: number) => {
     const activityId = currentActivity.id;
@@ -27,7 +46,9 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
 
     // Chuyển sang hoạt động tiếp theo
     if (currentActivityIndex < topic.activities.length - 1) {
-      setCurrentActivityIndex((prev) => prev + 1);
+      setTimeout(() => {
+        setCurrentActivityIndex((prev) => prev + 1);
+      }, 1000); // Wait 1s before moving next
     }
   };
 
@@ -41,11 +62,82 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
     handleActivityComplete(accuracy);
   };
 
+  const checkAnswer = (answer: string) => {
+    setSelectedOption(answer);
+    if (answer === currentActivity.correctAnswer) {
+      setFeedback('correct');
+      handleActivityComplete(100);
+    } else {
+      setFeedback('incorrect');
+    }
+  };
+
+  const playNote = (frequency: number) => {
+    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+
+    gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 1);
+  };
+
+  // Drawing Logic
+  const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+    setIsDrawing(true);
+    draw(e);
+  };
+
+  const stopDrawing = () => {
+    setIsDrawing(false);
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext('2d');
+      if (ctx) ctx.beginPath(); // Start new path to avoid connecting lines
+    }
+  };
+
+  const draw = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDrawing || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+    let x, y;
+
+    if ('touches' in e) {
+      x = e.touches[0].clientX - rect.left;
+      y = e.touches[0].clientY - rect.top;
+    } else {
+      x = (e as React.MouseEvent).clientX - rect.left;
+      y = (e as React.MouseEvent).clientY - rect.top;
+    }
+
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#ec4899'; // Pink color
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  };
+
+  // Need to handle mouse up outside canvas to verify completion
+  // For simplicity, we add a button to finish drawing
+
   const renderActivity = (activity: Activity) => {
     switch (activity.type) {
       case 'typing':
         if (showTypingPractice) {
-          // Chuyển đổi activity thành lesson format
           const lesson = {
             id: activity.id,
             level: 'basic' as const,
@@ -93,25 +185,44 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
         );
 
       case 'quiz':
+      case 'math':
         return (
           <div className="text-center">
             <div className="mb-6">
               <h3 className="text-2xl font-bold mb-2">{activity.title}</h3>
               <p className="text-gray-600">{activity.instructions}</p>
             </div>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
-              <p className="text-lg">{activity.content}</p>
-            </div>
-            <div className="space-y-3">
-              <button className="block w-full p-3 text-left bg-white border border-gray-200 rounded-lg hover:bg-blue-50 transition-colors">
-                A. Bố mẹ
-              </button>
-              <button className="block w-full p-3 text-left bg-white border border-gray-200 rounded-lg hover:bg-blue-50 transition-colors">
-                B. Bạn bè
-              </button>
-              <button className="block w-full p-3 text-left bg-white border border-gray-200 rounded-lg hover:bg-blue-50 transition-colors">
-                C. Thầy cô
-              </button>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+              <div className="text-3xl font-bold mb-4">{activity.content}</div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                {activity.options?.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => checkAnswer(option)}
+                    disabled={feedback === 'correct'}
+                    className={`p-4 border-2 rounded-xl text-xl font-bold transition-all transform hover:scale-105 ${selectedOption === option
+                      ? feedback === 'correct'
+                        ? 'bg-green-100 border-green-500 text-green-700'
+                        : 'bg-red-100 border-red-500 text-red-700'
+                      : 'bg-white border-gray-200 hover:border-blue-400'
+                      }`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+
+              {feedback === 'correct' && (
+                <div className="mt-6 text-green-600 font-bold text-xl animate-bounce">
+                  Chính xác! Làm tốt lắm! 🎉
+                </div>
+              )}
+              {feedback === 'incorrect' && (
+                <div className="mt-6 text-red-500 font-bold text-xl">
+                  Chưa đúng rồi, thử lại nhé! 🤔
+                </div>
+              )}
             </div>
           </div>
         );
@@ -135,30 +246,6 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           </div>
         );
 
-      case 'math':
-        return (
-          <div className="text-center">
-            <div className="mb-6">
-              <h3 className="text-2xl font-bold mb-2">{activity.title}</h3>
-              <p className="text-gray-600">{activity.instructions}</p>
-            </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-              <div className="text-3xl font-bold mb-4">2 + 3 = ?</div>
-              <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
-                {[4, 5, 6].map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => handleActivityComplete(num === 5 ? 100 : 0)}
-                    className="p-4 bg-white border border-gray-300 rounded-lg hover:bg-blue-100 transition-colors text-xl font-bold"
-                  >
-                    {num}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-
       case 'drawing':
         return (
           <div className="text-center">
@@ -166,17 +253,38 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
               <h3 className="text-2xl font-bold mb-2">{activity.title}</h3>
               <p className="text-gray-600">{activity.instructions}</p>
             </div>
-            <div className="bg-pink-50 border border-pink-200 rounded-lg p-6 mb-6">
-              <div className="w-full h-64 bg-white border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                <p className="text-gray-500">Khu vực vẽ (Demo)</p>
-              </div>
+            <div className="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-6 inline-block">
+              <canvas
+                ref={canvasRef}
+                width={500}
+                height={300}
+                className="bg-white border-2 border-dashed border-gray-300 rounded-lg cursor-crosshair touch-none"
+                onMouseDown={startDrawing}
+                onMouseUp={stopDrawing}
+                onMouseLeave={stopDrawing}
+                onMouseMove={draw}
+                onTouchStart={startDrawing}
+                onTouchEnd={stopDrawing}
+                onTouchMove={draw}
+              />
             </div>
-            <button
-              onClick={() => handleActivityComplete(100)}
-              className="px-6 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors"
-            >
-              Hoàn thành vẽ
-            </button>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => {
+                  const ctx = canvasRef.current?.getContext('2d');
+                  if (ctx && canvasRef.current) ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+                }}
+                className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-2"
+              >
+                <IoRefresh /> Xóa
+              </button>
+              <button
+                onClick={() => handleActivityComplete(100)}
+                className="px-6 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors"
+              >
+                Hoàn thành vẽ
+              </button>
+            </div>
           </div>
         );
 
@@ -188,17 +296,43 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
               <p className="text-gray-600">{activity.instructions}</p>
             </div>
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-6">
-              <div className="w-24 h-24 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <IoPlay className="text-white text-3xl" />
-              </div>
-              <p className="text-lg">Nhấn để nghe âm thanh</p>
+              {activity.data?.notes ? (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {activity.data.notes.map((note: any, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => playNote(note.frequency)}
+                      className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all text-purple-600"
+                    >
+                      <IoMusicalNotes className="text-3xl mb-2" />
+                      <span className="font-bold">{note.name}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="w-24 h-24 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 cursor-pointer hover:scale-110 transition-transform" onClick={() => playNote(440)}>
+                  <IoPlay className="text-white text-3xl" />
+                </div>
+              )}
             </div>
-            <button
-              onClick={() => handleActivityComplete(100)}
-              className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-            >
-              Đã nghe xong
-            </button>
+
+            {!activity.data?.notes && (
+              <button
+                onClick={() => handleActivityComplete(100)}
+                className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+              >
+                Đã nghe xong
+              </button>
+            )}
+
+            {activity.data?.notes && (
+              <button
+                onClick={() => handleActivityComplete(100)}
+                className="mt-6 px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+              >
+                Hoàn thành bài nghe
+              </button>
+            )}
           </div>
         );
 
@@ -220,85 +354,124 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const isTopicComplete = progress === 100;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <Link
-          href={`/subjects/${subjectId}`}
-          className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          <IoArrowBack className="text-xl" />
-          <span>Quay lại</span>
-        </Link>
-
-        <div className="text-center flex-1">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            {topic.title}
-          </h1>
-          <p className="text-gray-600">{topic.description}</p>
-        </div>
-
-        <div className="w-20"></div>
-      </div>
-
-      {/* Progress */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">Tiến độ</span>
-          <span className="text-sm font-medium text-gray-700">
-            {progress}%
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-3">
-          <div
-            className="bg-green-500 h-3 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
-      </div>
-
-      {/* Activity Navigation */}
-      <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
-        {topic.activities.map((activity, index) => {
-          const isCompleted = isActivityCompleted(activity.id);
-          return (
-            <button
-              key={activity.id}
-              onClick={() => setCurrentActivityIndex(index)}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                index === currentActivityIndex
-                  ? 'bg-blue-500 text-white ring-4 ring-blue-200'
-                  : isCompleted
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 text-gray-600'
-              }`}
-            >
-              {isCompleted ? <IoCheckmark /> : index + 1}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Current Activity */}
-      <div className="bg-white rounded-xl shadow-lg p-8">
-        {renderActivity(currentActivity)}
-      </div>
-
-      {/* Completion Message */}
-      {isTopicComplete && (
-        <div className="mt-8 p-6 bg-green-100 rounded-lg text-center animate-bounce-in">
-          <div className="text-green-600 text-6xl mb-4">🎉</div>
-          <h3 className="text-2xl font-bold text-green-800 mb-2">
-            Chúc mừng! Con đã hoàn thành chủ đề này!
-          </h3>
-          <p className="text-green-700 text-lg">
-            Hãy chọn bài học khác để tiếp tục nhé!
-          </p>
-          <Link href={`/subjects/${subjectId}`} className="inline-block mt-4 px-6 py-3 bg-green-600 text-white rounded-full font-bold hover:bg-green-700 transition-colors">
-             Quay lại danh sách bài học
+    <div className="flex flex-col h-screen overflow-hidden bg-gray-50">
+      {/* 1. Header (Topic Title, Progress, Controls) */}
+      <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shrink-0 z-20 shadow-sm">
+        <div className="flex items-center gap-4">
+          <Link
+            href={`/subjects/${subjectId}`}
+            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+            title="Quay lại danh sách bài học"
+          >
+            <IoArrowBack className="text-2xl" />
           </Link>
+          <div>
+            <h1 className="text-lg font-bold text-gray-800 leading-tight">
+              {topic.title}
+            </h1>
+            <p className="text-xs text-gray-500 font-medium">
+              {currentActivityIndex + 1} / {topic.activities.length} hoạt động
+            </p>
+          </div>
         </div>
-      )}
+
+        {/* Activity Progress Bar (Dots) */}
+        <div className="flex items-center gap-2">
+          {topic.activities.map((activity, index) => {
+            const isCompleted = isActivityCompleted(activity.id);
+            const isActive = index === currentActivityIndex;
+            return (
+              <button
+                key={activity.id}
+                onClick={() => setCurrentActivityIndex(index)}
+                className={`w-3 h-3 rounded-full transition-all ${isActive
+                  ? 'bg-blue-600 scale-125 ring-2 ring-blue-200'
+                  : isCompleted
+                    ? 'bg-green-500 hover:bg-green-600'
+                    : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                title={activity.title}
+              />
+            );
+          })}
+        </div>
+
+        <div className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 hidden md:block">
+          {Math.round(progress)}% Hoàn thành
+        </div>
+      </header>
+
+      {/* 2. Main Content (Split Screen) */}
+      <div className="flex flex-1 overflow-hidden relative">
+
+        {/* Left Panel: Instructions & Avatar */}
+        <div className="w-80 md:w-96 bg-white border-r border-gray-200 flex flex-col shrink-0 overflow-y-auto z-10 hidden lg:flex">
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold">
+                {currentActivityIndex + 1}
+              </div>
+              <h2 className="text-xl font-bold text-gray-800">
+                {currentActivity.title}
+              </h2>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-xl text-gray-700 leading-relaxed border border-blue-100 mb-6">
+              {currentActivity.instructions}
+            </div>
+
+            {/* Context/Mascot placeholder - Makes it friendly for kids */}
+            <div className="mt-auto pt-8 flex justify-center opacity-80">
+              <img src="/mascot-placeholder.png" alt="Mascot" className="h-32 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
+            </div>
+          </div>
+        </div>
+
+        {/* Right Panel: Workspace / Activity Area */}
+        <div className="flex-1 bg-gray-100/50 flex flex-col relative overflow-hidden">
+          {/* Mobile Instruction Toggle (Visible only on small screens) */}
+          <div className="lg:hidden p-4 bg-white border-b border-gray-200 shrink-0">
+            <h2 className="font-bold text-gray-800 mb-1">{currentActivity.title}</h2>
+            <p className="text-sm text-gray-600 line-clamp-2">{currentActivity.instructions}</p>
+          </div>
+
+          {/* Scrollable Content Area */}
+          <div className="flex-1 overflow-y-auto p-4 md:p-8 flex items-center justify-center">
+            <div className="w-full max-w-5xl">
+              {renderActivity(currentActivity)}
+            </div>
+          </div>
+        </div>
+
+        {/* Completion Overlay */}
+        {isTopicComplete && (
+          <div className="absolute inset-0 bg-white/90 z-50 flex items-center justify-center backdrop-blur-sm animate-fade-in">
+            <div className="text-center p-8 bg-white rounded-3xl shadow-2xl border-4 border-green-100 max-w-lg mx-4">
+              <div className="text-8xl mb-4 animate-bounce">🎉</div>
+              <h3 className="text-3xl font-bold text-green-800 mb-2">
+                Hoàn thành xuất sắc!
+              </h3>
+              <p className="text-gray-600 text-lg mb-8">
+                Con đã hoàn thành toàn bộ chủ đề <span className="font-bold text-blue-600">{topic.title}</span>.
+              </p>
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => {
+                    // Reset progress locally if needed, or just stay
+                    window.location.reload();
+                  }}
+                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors"
+                >
+                  Làm lại
+                </button>
+                <Link href={`/subjects/${subjectId}`} className="px-8 py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition-colors shadow-lg hover:shadow-green-200">
+                  Bài học tiếp theo
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
