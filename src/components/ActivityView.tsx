@@ -23,7 +23,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const { isActivityCompleted, saveProgress, isLoaded, getTopicProgress } = useProgress();
+  const { isActivityCompleted, saveProgress, isLoaded, getTopicProgress, clearTopicProgress } = useProgress();
 
   const currentActivity = topic.activities[currentActivityIndex];
 
@@ -446,8 +446,11 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
               <div className="flex gap-4 justify-center">
                 <button
                   onClick={() => {
-                    // Reset progress locally if needed, or just stay
-                    window.location.reload();
+                    const activityIds = topic.activities.map(a => a.id);
+                    clearTopicProgress(activityIds);
+                    setCurrentActivityIndex(0);
+                    setSelectedOption(null);
+                    setFeedback(null);
                   }}
                   className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors"
                 >

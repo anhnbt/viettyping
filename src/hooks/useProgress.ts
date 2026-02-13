@@ -56,6 +56,15 @@ export const useProgress = () => {
     return Math.round((completedCount / activityIds.length) * 100);
   };
 
+  const clearTopicProgress = (activityIds: string[]) => {
+    setProgress((prev) => {
+      const newProgress = { ...prev };
+      activityIds.forEach((id) => delete newProgress[id]);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newProgress));
+      return newProgress;
+    });
+  };
+
   return {
     progress,
     isLoaded,
@@ -63,5 +72,6 @@ export const useProgress = () => {
     getProgress,
     isActivityCompleted,
     getTopicProgress,
+    clearTopicProgress,
   };
 };
