@@ -11,18 +11,21 @@ export interface Topic {
 export interface Activity {
   id: string;
   type:
-    | 'typing'
-    | 'quiz'
-    | 'drawing'
-    | 'listening'
-    | 'reading'
-    | 'math'
-    | 'game';
+  | 'typing'
+  | 'quiz'
+  | 'drawing'
+  | 'listening'
+  | 'reading'
+  | 'math'
+  | 'game';
   title: string;
   content: string;
   instructions: string;
   targetScore?: number;
   timeLimit?: number; // giây
+  options?: string[];
+  correctAnswer?: string;
+  data?: any;
 }
 
 export interface Subject {
@@ -73,14 +76,14 @@ export const subjects: Subject[] = [
             content: 'fd jk df kj fjdk',
             instructions: 'Gõ kết hợp các phím đã học',
           },
-           {
+          {
             id: 'lg-1-4',
             type: 'typing',
             title: 'Ngón áp út: S và L',
             content: 's l s s l l sl ls s l',
             instructions: 'Ngón áp út trái S, ngón áp út phải L',
           },
-           {
+          {
             id: 'lg-1-5',
             type: 'typing',
             title: 'Ngón út: A và ;',
@@ -105,32 +108,32 @@ export const subjects: Subject[] = [
         content: 'q w e r t y u i o p',
         activities: [
           {
-             id: 'lg-2-1',
-             type: 'typing',
-             title: 'Ngón trỏ vươn lên: R T Y U',
-             content: 'r t y u rt yu tr uy',
-             instructions: 'Vươn ngón trỏ lên hàng trên',
+            id: 'lg-2-1',
+            type: 'typing',
+            title: 'Ngón trỏ vươn lên: R T Y U',
+            content: 'r t y u rt yu tr uy',
+            instructions: 'Vươn ngón trỏ lên hàng trên',
           },
           {
-             id: 'lg-2-2',
-             type: 'typing',
-             title: 'Ngón giữa vươn lên: E I',
-             content: 'e i e e i i ei ie',
-             instructions: 'Vươn ngón giữa lên E và I',
+            id: 'lg-2-2',
+            type: 'typing',
+            title: 'Ngón giữa vươn lên: E I',
+            content: 'e i e e i i ei ie',
+            instructions: 'Vươn ngón giữa lên E và I',
           },
-           {
-             id: 'lg-2-3',
-             type: 'typing',
-             title: 'Ngón áp út vươn lên: W O',
-             content: 'w o w w o o wo ow',
-             instructions: 'Vươn ngón áp út lên W và O',
+          {
+            id: 'lg-2-3',
+            type: 'typing',
+            title: 'Ngón áp út vươn lên: W O',
+            content: 'w o w w o o wo ow',
+            instructions: 'Vươn ngón áp út lên W và O',
           },
-           {
-             id: 'lg-2-4',
-             type: 'typing',
-             title: 'Ngón út vươn lên: Q P',
-             content: 'q p q q p p qp pq',
-             instructions: 'Vươn ngón út lên Q và P',
+          {
+            id: 'lg-2-4',
+            type: 'typing',
+            title: 'Ngón út vươn lên: Q P',
+            content: 'q p q q p p qp pq',
+            instructions: 'Vươn ngón út lên Q và P',
           },
         ]
       },
@@ -142,12 +145,12 @@ export const subjects: Subject[] = [
         estimatedTime: 20,
         content: 'z x c v b n m , . /',
         activities: [
-           {
-             id: 'lg-3-1',
-             type: 'typing',
-             title: 'Luyện tập hàng dưới',
-             content: 'z x c v b n m , . /',
-             instructions: 'Gõ các phím hàng dưới',
+          {
+            id: 'lg-3-1',
+            type: 'typing',
+            title: 'Luyện tập hàng dưới',
+            content: 'z x c v b n m , . /',
+            instructions: 'Gõ các phím hàng dưới',
           },
         ]
       },
@@ -159,19 +162,19 @@ export const subjects: Subject[] = [
         estimatedTime: 25,
         content: 's f r x j',
         activities: [
-           {
-             id: 'lg-4-1',
-             type: 'typing',
-             title: 'Các dấu cơ bản',
-             content: 's f r x j cais caf car cax caj',
-             instructions: 'Gõ dấu bằng kiểu Telex',
+          {
+            id: 'lg-4-1',
+            type: 'typing',
+            title: 'Các dấu cơ bản',
+            content: 's f r x j cais caf car cax caj',
+            instructions: 'Gõ dấu bằng kiểu Telex',
           },
-           {
-             id: 'lg-4-2',
-             type: 'typing',
-             title: 'Chữ cái đặc biệt',
-             content: 'â ă ê ô ơ đ â ă ê ô ơ đ',
-             instructions: 'Gõ các chữ cái đặc biệt bằng kiểu Telex',
+          {
+            id: 'lg-4-2',
+            type: 'typing',
+            title: 'Chữ cái đặc biệt',
+            content: 'â ă ê ô ơ đ â ă ê ô ơ đ',
+            instructions: 'Gõ các chữ cái đặc biệt bằng kiểu Telex',
           },
         ]
       },
@@ -183,23 +186,23 @@ export const subjects: Subject[] = [
         estimatedTime: 15,
         content: 'ba mẹ ông bà',
         activities: [
-           {
-             id: 'lg-5-1',
-             type: 'typing',
-             title: 'Gia đình',
-             content: 'ba mẹ ông bà anh chị em',
-             instructions: 'Gõ các từ chỉ người thân',
+          {
+            id: 'lg-5-1',
+            type: 'typing',
+            title: 'Gia đình',
+            content: 'ba mẹ ông bà anh chị em',
+            instructions: 'Gõ các từ chỉ người thân',
           },
-           {
-             id: 'lg-5-2',
-             type: 'typing',
-             title: 'Con vật',
-             content: 'chó mèo gà vịt cá heo',
-             instructions: 'Gõ tên các con vật',
+          {
+            id: 'lg-5-2',
+            type: 'typing',
+            title: 'Con vật',
+            content: 'chó mèo gà vịt cá heo',
+            instructions: 'Gõ tên các con vật',
           },
         ]
       },
-       {
+      {
         id: 'lg-6',
         title: 'Thơ và Ca dao',
         description: 'Luyện gõ câu ngắn',
@@ -207,19 +210,19 @@ export const subjects: Subject[] = [
         estimatedTime: 20,
         content: 'công cha như núi thái sơn',
         activities: [
-           {
-             id: 'lg-6-1',
-             type: 'typing',
-             title: 'Công cha nghĩa mẹ',
-             content: 'công cha như núi thái sơn nghĩa mẹ như nước trong nguồn chảy ra',
-             instructions: 'Gõ câu ca dao quen thuộc',
+          {
+            id: 'lg-6-1',
+            type: 'typing',
+            title: 'Công cha nghĩa mẹ',
+            content: 'công cha như núi thái sơn nghĩa mẹ như nước trong nguồn chảy ra',
+            instructions: 'Gõ câu ca dao quen thuộc',
           },
-           {
-             id: 'lg-6-2',
-             type: 'typing',
-             title: 'Bầu ơi thương lấy bí cùng',
-             content: 'bầu ơi thương lấy bí cùng tuy rằng khác giống nhưng chung một giàn',
-             instructions: 'Gõ câu ca dao về tình thương',
+          {
+            id: 'lg-6-2',
+            type: 'typing',
+            title: 'Bầu ơi thương lấy bí cùng',
+            content: 'bầu ơi thương lấy bí cùng tuy rằng khác giống nhưng chung một giàn',
+            instructions: 'Gõ câu ca dao về tình thương',
           },
         ]
       }
@@ -253,8 +256,10 @@ export const subjects: Subject[] = [
             id: 'dd-1-2',
             type: 'quiz',
             title: 'Câu hỏi về gia đình',
-            content: 'Ai là người quan trọng nhất với con?',
-            instructions: 'Chọn đáp án đúng',
+            content: 'Ai là người sinh ra và nuôi dưỡng con?',
+            instructions: 'Chọn đáp án đúng nhất',
+            options: ['Bố mẹ', 'Bạn bè', 'Thầy cô'],
+            correctAnswer: 'Bố mẹ'
           },
         ],
       },
@@ -307,6 +312,17 @@ export const subjects: Subject[] = [
             title: 'Nghe và nhận biết nốt nhạc',
             content: 'Nghe âm thanh và chọn nốt nhạc đúng',
             instructions: 'Lắng nghe và chọn nốt nhạc',
+            data: {
+              notes: [
+                { name: 'Đồ (C)', frequency: 261.63 },
+                { name: 'Rê (D)', frequency: 293.66 },
+                { name: 'Mi (E)', frequency: 329.63 },
+                { name: 'Fa (F)', frequency: 349.23 },
+                { name: 'Sol (G)', frequency: 392.00 },
+                { name: 'La (A)', frequency: 440.00 },
+                { name: 'Si (B)', frequency: 493.88 },
+              ]
+            }
           },
         ],
       },
@@ -373,8 +389,10 @@ export const subjects: Subject[] = [
             id: 't-3-1',
             type: 'math',
             title: 'Bài tập phép trừ',
-            content: 'Giải các phép trừ đơn giản',
-            instructions: 'Tính toán và điền kết quả',
+            content: '5 - 2 = ?',
+            instructions: 'Tính toán và chọn kết quả đúng',
+            options: ['2', '3', '4'],
+            correctAnswer: '3'
           },
         ],
       },
@@ -392,6 +410,8 @@ export const subjects: Subject[] = [
             title: 'Nhận biết hình dạng',
             content: 'Hình nào có 3 cạnh?',
             instructions: 'Chọn hình đúng',
+            options: ['Hình vuông', 'Hình tròn', 'Hình tam giác'],
+            correctAnswer: 'Hình tam giác'
           },
         ],
       },

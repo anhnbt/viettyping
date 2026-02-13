@@ -1,40 +1,16 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback } from 'react';
+import { useSound } from '@/contexts/SoundContext';
 
 export function useTypingSound() {
-  const correctAudioRef = useRef<HTMLAudioElement | null>(null);
-  const wrongAudioRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    correctAudioRef.current = new Audio('/sounds/correct.wav');
-    wrongAudioRef.current = new Audio('/sounds/correct.wav');
-
-    // Set volume
-    if (correctAudioRef.current) correctAudioRef.current.volume = 0.2;
-    if (wrongAudioRef.current) wrongAudioRef.current.volume = 0.2;
-
-    return () => {
-      correctAudioRef.current = null;
-      wrongAudioRef.current = null;
-    };
-  }, []);
+  const { playSound } = useSound();
 
   const playCorrectSound = useCallback(() => {
-    if (correctAudioRef.current) {
-      correctAudioRef.current.currentTime = 0;
-      correctAudioRef.current.play().catch(() => {
-        // Ignore autoplay errors
-      });
-    }
-  }, []);
+    playSound('correct');
+  }, [playSound]);
 
   const playWrongSound = useCallback(() => {
-    if (wrongAudioRef.current) {
-      wrongAudioRef.current.currentTime = 0;
-      wrongAudioRef.current.play().catch(() => {
-        // Ignore autoplay errors
-      });
-    }
-  }, []);
+    playSound('wrong');
+  }, [playSound]);
 
   return { playCorrectSound, playWrongSound };
 }
