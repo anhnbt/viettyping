@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-type SoundType = 'correct' | 'wrong' | 'click' | 'complete';
+type SoundType = 'correct' | 'wrong' | 'click' | 'complete' | 'tick' | 'tada';
 
 interface SoundContextType {
   isMuted: boolean;
@@ -123,6 +123,48 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         playNote(523.25, now, 0.2); // C5
         playNote(659.25, now + 0.2, 0.2); // E5
         playNote(783.99, now + 0.4, 0.4); // G5
+        break;
+      }
+
+      case 'tick': {
+        // Quick subtle tick for counter
+        const osc = audioContext.createOscillator();
+        const gn = audioContext.createGain();
+        osc.connect(gn);
+        gn.connect(audioContext.destination);
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, now);
+
+        gn.gain.setValueAtTime(0.05, now);
+        gn.gain.exponentialRampToValueAtTime(0.01, now + 0.03);
+
+        osc.start(now);
+        osc.stop(now + 0.03);
+        break;
+      }
+
+      case 'tada': {
+        // Celebration fanfare
+        const playN = (freq: number, startTime: number, duration: number, vol: number) => {
+          const osc = audioContext.createOscillator();
+          const gn = audioContext.createGain();
+          osc.connect(gn);
+          gn.connect(audioContext.destination);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, startTime);
+          gn.gain.setValueAtTime(vol, startTime);
+          gn.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+          osc.start(startTime);
+          osc.stop(startTime + duration);
+        };
+        // Rising arpeggio + chord
+        playN(523.25, now, 0.15, 0.25);       // C5
+        playN(659.25, now + 0.12, 0.15, 0.25); // E5
+        playN(783.99, now + 0.24, 0.15, 0.25); // G5
+        playN(1046.50, now + 0.36, 0.5, 0.3);  // C6 (hold)
+        playN(783.99, now + 0.36, 0.5, 0.2);   // G5 chord
+        playN(659.25, now + 0.36, 0.5, 0.15);  // E5 chord
         break;
       }
     }

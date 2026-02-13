@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Topic, Activity } from '@/data/subjects';
-import { IoArrowBack, IoCheckmark, IoPlay, IoRefresh, IoMusicalNotes } from 'react-icons/io5';
+import { IoArrowBack, IoCheckmark, IoPlay, IoRefresh, IoMusicalNotes, IoClose } from 'react-icons/io5';
+import TypingPractice from './TypingPractice';
+import CompletionModal from './CompletionModal';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useProgress } from '@/hooks/useProgress';
@@ -14,6 +16,9 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const params = useParams();
   const subjectId = params.subjectId as string;
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
+  const [showTypingModal, setShowTypingModal] = useState(false);
+  const [typingStats, setTypingStats] = useState<{ wpm: number; accuracy: number; incorrectCount: number } | null>(null);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -49,6 +54,28 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
       }, 1000); // Wait 1s before moving next
     }
   };
+
+  const handleTypingComplete = useCallback((stats: { wpm: number; accuracy: number; incorrectCount: number }) => {
+    setTypingStats(stats);
+    setShowCompletionModal(true);
+  }, []);
+
+  const handleTypingRestart = useCallback(() => {
+    setShowCompletionModal(false);
+    setTypingStats(null);
+    setShowTypingModal(false);
+    // Re-open the modal to restart
+    setTimeout(() => setShowTypingModal(true), 100);
+  }, []);
+
+  const handleTypingContinue = useCallback(() => {
+    setShowCompletionModal(false);
+    setShowTypingModal(false);
+    if (typingStats) {
+      handleActivityComplete(typingStats.accuracy);
+    }
+    setTypingStats(null);
+  }, [typingStats]);
 
 
 
@@ -136,13 +163,13 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
             <div className="bg-gray-100 rounded-lg p-6 mb-6">
               <p className="text-lg font-mono">{activity.content}</p>
             </div>
-            <Link
-              href={`/subjects/${subjectId}/topics/${topic.id}/practice`}
+            <button
+              onClick={() => setShowTypingModal(true)}
               className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
               <IoPlay />
               Bắt đầu luyện tập
-            </Link>
+            </button>
           </div>
         );
 
@@ -434,6 +461,64 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           </div>
         )}
       </div>
+
+      {/* Typing Practice Modal */}
+      {showTypingModal && currentActivity.type === 'typing' && (
+        <div className="fixed inset-0 z-40 bg-gray-50 flex flex-col">
+          {/* Modal Header */}
+          <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0 shadow-sm">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  setShowTypingModal(false);
+                  setTypingStats(null);
+                  setShowCompletionModal(false);
+                }}
+                className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                title="Đóng"
+              >
+                <IoClose className="text-xl" />
+              </button>
+              <div>
+                <h1 className="text-sm font-bold text-gray-800 leading-tight">
+                  {currentActivity.title}
+                </h1>
+                <p className="text-xs text-gray-500">{topic.title}</p>
+              </div>
+            </div>
+          </header>
+
+          {/* Practice Area */}
+          <div className="flex-1 overflow-hidden p-4">
+            <div className="w-full h-full">
+              <TypingPractice
+                key={showTypingModal ? 'open' : 'closed'}
+                lesson={{
+                  id: currentActivity.id,
+                  level: 'basic' as const,
+                  title: currentActivity.title,
+                  description: currentActivity.instructions,
+                  content: currentActivity.content,
+                  targetWPM: 20,
+                  minAccuracy: 85,
+                }}
+                onComplete={handleTypingComplete}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Completion Modal */}
+      {typingStats && (
+        <CompletionModal
+          isOpen={showCompletionModal}
+          stats={typingStats}
+          onRestart={handleTypingRestart}
+          onContinue={handleTypingContinue}
+          continueLabel="Tiếp tục"
+        />
+      )}
     </div>
   );
 };
