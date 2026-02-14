@@ -3,9 +3,11 @@ import { Topic, Activity, subjects } from '@/data/subjects';
 import { IoArrowBack, IoCheckmark, IoPlay, IoRefresh, IoMusicalNotes, IoClose } from 'react-icons/io5';
 import TypingPractice from './TypingPractice';
 import CompletionModal from './CompletionModal';
+import TelexGuide from './TelexGuide';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useProgress } from '@/hooks/useProgress';
+import { hasVietnameseDiacritics } from '@/utils/vietnameseUtils';
 
 interface ActivityViewProps {
   topic: Topic;
@@ -390,10 +392,10 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
                   key={activity.id}
                   onClick={() => setCurrentActivityIndex(index)}
                   className={`w-2.5 h-2.5 rounded-full transition-all ${isActive
-                      ? 'bg-blue-600 scale-125 ring-2 ring-blue-200'
-                      : isCompleted
-                        ? 'bg-green-500 hover:bg-green-600'
-                        : 'bg-gray-300 hover:bg-gray-400'
+                    ? 'bg-blue-600 scale-125 ring-2 ring-blue-200'
+                    : isCompleted
+                      ? 'bg-green-500 hover:bg-green-600'
+                      : 'bg-gray-300 hover:bg-gray-400'
                     }`}
                   title={activity.title}
                 />
@@ -428,6 +430,11 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
               {currentActivity.instructions}
             </div>
 
+            {/* TELEX Guide - shown for Vietnamese typing activities */}
+            {currentActivity.type === 'typing' && hasVietnameseDiacritics(currentActivity.content) && (
+              <TelexGuide />
+            )}
+
             {/* Context/Mascot placeholder - Makes it friendly for kids */}
             <div className="mt-auto pt-8 flex justify-center opacity-80">
               <img src="/mascot-placeholder.png" alt="Mascot" className="h-32 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
@@ -440,7 +447,10 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           {/* Mobile Instruction Toggle (Visible only on small screens) */}
           <div className="lg:hidden p-4 bg-white border-b border-gray-200 shrink-0">
             <h2 className="font-bold text-gray-800 mb-1">{currentActivity.title}</h2>
-            <p className="text-sm text-gray-600 line-clamp-2">{currentActivity.instructions}</p>
+            <p className="text-sm text-gray-600 line-clamp-2 mb-2">{currentActivity.instructions}</p>
+            {currentActivity.type === 'typing' && hasVietnameseDiacritics(currentActivity.content) && (
+              <TelexGuide />
+            )}
           </div>
 
           {/* Scrollable Content Area */}
