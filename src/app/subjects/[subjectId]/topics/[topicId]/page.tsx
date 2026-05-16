@@ -4,7 +4,6 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { subjects } from '@/data/subjects';
 import ActivityView from '@/components/ActivityView';
-import Link from 'next/link';
 
 interface Props {
   params: Promise<{

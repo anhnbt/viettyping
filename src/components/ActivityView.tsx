@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Topic, Activity, subjects } from '@/data/subjects';
-import { IoArrowBack, IoCheckmark, IoPlay, IoRefresh, IoMusicalNotes, IoClose } from 'react-icons/io5';
+import { IoArrowBack, IoPlay, IoRefresh, IoMusicalNotes, IoClose } from 'react-icons/io5';
 import TypingPractice from './TypingPractice';
 import CompletionModal from './CompletionModal';
 import TelexGuide from './TelexGuide';
@@ -78,6 +78,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
       handleActivityComplete(typingStats.accuracy);
     }
     setTypingStats(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typingStats]);
 
 
@@ -93,6 +94,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   };
 
   const playNote = (frequency: number) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
@@ -290,7 +292,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-6">
               {activity.data?.notes ? (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {activity.data.notes.map((note: any, idx: number) => (
+                  {activity.data.notes.map((note: { name: string; frequency: number }, idx: number) => (
                     <button
                       key={idx}
                       onClick={() => playNote(note.frequency)}
@@ -437,6 +439,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
 
             {/* Context/Mascot placeholder - Makes it friendly for kids */}
             <div className="mt-auto pt-8 flex justify-center opacity-80">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/mascot-placeholder.png" alt="Mascot" className="h-32 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
             </div>
           </div>

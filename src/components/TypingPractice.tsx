@@ -9,13 +9,12 @@ interface Props {
   onComplete: (stats: { wpm: number; accuracy: number; incorrectCount: number }) => void;
 }
 
-const TIME_OPTIONS = [15, 30, 60, 120];
 
 export default function TypingPractice({ lesson, onComplete }: Props) {
   const [input, setInput] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
   const [isComplete, setIsComplete] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(60);
+  const [selectedTime] = useState(60);
   const [timeLeft, setTimeLeft] = useState(60);
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,13 +91,6 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
     clearInterval(timerRef.current);
     inputRef.current?.focus();
   }, [selectedTime]);
-
-  const handleTimeChange = useCallback((newTime: number) => {
-    if (!startTime) {
-      setSelectedTime(newTime);
-      setTimeLeft(newTime);
-    }
-  }, [startTime]);
 
   useEffect(() => {
     inputRef.current?.focus();

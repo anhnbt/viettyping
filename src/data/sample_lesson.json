@@ -1,0 +1,78 @@
+{
+  "lesson_title": "Làm quen với chữ B và vần BA",
+  "topic": "Siêu anh hùng và Ô tô",
+  
+  "flashcards": [
+    {
+      "word": "ba",
+      "word_uppercase": "BA",
+      "spelling_guide": "bờ - a - ba",
+      "example_sentence": "Ba đưa bé đi chơi bóng.",
+      "image_prompt": "A cute cartoon superhero boy playing with his dad, vibrant colors, 2d vector art, for kids.",
+      "image_url": "/assets/ba.png"
+    },
+    {
+      "word": "bóng",
+      "word_uppercase": "BÓNG",
+      "spelling_guide": "bờ - ong - bong - sắc - bóng",
+      "example_sentence": "Bé đá bóng rất giỏi.",
+      "image_prompt": "A cool soccer ball with superhero colors glowing, 2d vector art, for kids.",
+      "image_url": "/assets/bong.png"
+    },
+    {
+      "word": "bò",
+      "word_uppercase": "BÒ",
+      "spelling_guide": "bờ - o - bo - huyền - bò",
+      "example_sentence": "Siêu bò tót dũng mãnh.",
+      "image_prompt": "A cute cartoon bull wearing a superhero cape, vibrant red and blue, 2d vector art, for kids.",
+      "image_url": "/assets/bo.png"
+    }
+  ],
+
+  "mini_games": {
+    "matching_game": [
+      {
+        "word": "ba",
+        "image_prompt": "Cartoon superhero dad"
+      },
+      {
+        "word": "bóng",
+        "image_prompt": "Glowing superhero soccer ball"
+      }
+    ],
+    "true_false_game": [
+      {
+        "correct_word": "bóng",
+        "distractor_word": "bong",
+        "image_prompt": "Soccer ball"
+      }
+    ],
+    "spin_wheel_items": [
+      "ba", "bóng", "bò", "bé", "bàn"
+    ],
+    "fill_in_the_blank": [
+      {
+        "full_word": "bóng",
+        "missing_char": "ó",
+        "sentence": "Bé đá b_ng."
+      }
+    ],
+    "multiple_choice": [
+      {
+        "question": "Chữ nào bắt đầu bằng chữ B?",
+        "correct_answer": "bóng",
+        "distractors": [
+          "cá",
+          "gà"
+        ]
+      }
+    ]
+  },
+
+  "base_rewards": {
+    "completion_xp": 100,
+    "badge_unlock_id": "badge_super_b",
+    "badge_name_vi": "Huy hiệu Siêu B",
+    "celebration_type": "fireworks"
+  }
+}

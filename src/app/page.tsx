@@ -60,6 +60,13 @@ export default function Home() {
             Tiếng Anh, Tự nhiên và xã hội, Mỹ thuật một cách thú vị
           </p>
 
+          <Link
+            href="/lesson"
+            className="inline-block bg-white text-purple-600 font-bold text-xl px-8 py-4 rounded-full shadow-[0_8px_0_0_#e0e7ff] hover:shadow-[0_4px_0_0_#e0e7ff] hover:translate-y-1 hover:bg-purple-50 transition-all mb-8"
+          >
+            Bắt đầu bài học mẫu!
+          </Link>
+
           {/* Feature badges */}
           <div className="flex flex-wrap justify-center gap-3 md:gap-4">
             {[
