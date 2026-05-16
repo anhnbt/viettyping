@@ -1,0 +1,182 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Check, X } from "lucide-react";
+import confetti from "canvas-confetti";
+
+export interface MultipleChoiceItem {
+  question: string;
+  correct_answer: string;
+  distractors: string[];
+}
+
+interface MultipleChoiceGameProps {
+  items: MultipleChoiceItem[];
+  onComplete: () => void;
+}
+
+// Utility to shuffle an array
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
+
+export default function MultipleChoiceGame({ items, onComplete }: MultipleChoiceGameProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [choices, setChoices] = useState<string[]>([]);
+  const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<"none" | "correct" | "incorrect">("none");
+
+  const currentItem = items[currentIndex];
+
+  useEffect(() => {
+    if (currentItem) {
+      const allChoices = [currentItem.correct_answer, ...currentItem.distractors];
+      setChoices(shuffleArray(allChoices));
+      setSelectedChoice(null);
+      setFeedback("none");
+    }
+  }, [currentIndex, currentItem]);
+
+  const handleChoice = (choice: string) => {
+    if (feedback !== "none") return; // Ngăn chặn bấm nhiều lần
+
+    setSelectedChoice(choice);
+    const isCorrect = choice === currentItem.correct_answer;
+
+    if (isCorrect) {
+      setFeedback("correct");
+      
+      // Phát âm thanh đúng
+      try {
+        const audio = new Audio("/correct.mp3");
+        audio.volume = 0.5;
+        audio.play().catch((e) => console.warn("Audio play failed:", e));
+      } catch (error) {
+        console.warn("Audio not supported", error);
+      }
+      
+      confetti({
+        particleCount: 50,
+        spread: 40,
+        origin: { y: 0.6 },
+        colors: ["#10b981", "#34d399"] // green confetti
+      });
+
+      setTimeout(() => {
+        if (currentIndex < items.length - 1) {
+          setCurrentIndex((prev) => prev + 1);
+        } else {
+          onComplete();
+        }
+      }, 1500);
+    } else {
+      setFeedback("incorrect");
+      
+      // Phát âm thanh sai
+      try {
+        const audio = new Audio("/incorrect.mp3");
+        audio.volume = 0.5;
+        audio.play().catch((e) => console.warn("Audio play failed:", e));
+      } catch (error) {
+        console.warn("Audio not supported", error);
+      }
+
+      setTimeout(() => {
+        setFeedback("none");
+        setSelectedChoice(null);
+      }, 1000);
+    }
+  };
+
+  if (!currentItem) return null;
+
+  return (
+    <div className="w-full flex flex-col items-center">
+      {/* Question Area */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentItem.question}
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 20, opacity: 0 }}
+          className="bg-white/90 backdrop-blur-sm px-8 py-6 rounded-3xl shadow-lg border-b-8 border-blue-200 mb-10 w-full max-w-2xl text-center"
+        >
+          <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+            {currentItem.question}
+          </h3>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Choices Area */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl">
+        <AnimatePresence>
+          {choices.map((choice, index) => {
+            const isSelected = selectedChoice === choice;
+            
+            let buttonStateClass = "from-purple-400 to-pink-500 hover:from-purple-300 hover:to-pink-400 shadow-[0_8px_0_0_#9d174d] hover:shadow-[0_4px_0_0_#9d174d]";
+            let icon = null;
+
+            if (feedback !== "none" && isSelected) {
+              if (feedback === "correct") {
+                buttonStateClass = "from-green-400 to-green-500 shadow-[0_8px_0_0_#166534] scale-105 z-10";
+                icon = <Check className="text-white drop-shadow-md w-8 h-8 md:w-10 md:h-10" strokeWidth={4} />;
+              } else if (feedback === "incorrect") {
+                buttonStateClass = "from-red-400 to-red-500 shadow-[0_8px_0_0_#991b1b]";
+                icon = <X className="text-white drop-shadow-md w-8 h-8 md:w-10 md:h-10" strokeWidth={4} />;
+              }
+            } else if (feedback !== "none" && !isSelected) {
+              // Dim other buttons when an answer is selected
+              buttonStateClass = "from-gray-300 to-gray-400 shadow-[0_8px_0_0_#6b7280] opacity-50";
+            }
+
+            return (
+              <motion.button
+                key={`${choice}-${index}`}
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={
+                  feedback === "incorrect" && isSelected
+                    ? { x: [-10, 10, -10, 10, 0], opacity: 1, scale: 1, y: 0 }
+                    : feedback === "correct" && isSelected
+                    ? { scale: [1, 1.1, 1], opacity: 1, y: 0 }
+                    : { opacity: 1, scale: 1, y: 0 }
+                }
+                transition={
+                  feedback === "correct" && isSelected
+                    ? { duration: 0.5, times: [0, 0.5, 1], ease: "easeInOut" }
+                    : { duration: 0.3, delay: index * 0.1 }
+                }
+                whileHover={feedback === "none" ? { scale: 1.05 } : {}}
+                whileTap={feedback === "none" ? { scale: 0.95 } : {}}
+                onClick={() => handleChoice(choice)}
+                disabled={feedback !== "none"}
+                className={`
+                  relative flex-1 bg-gradient-to-b text-white font-black text-2xl md:text-3xl py-6 md:py-8 rounded-3xl 
+                  transition-all flex items-center justify-center gap-3 disabled:cursor-not-allowed
+                  ${buttonStateClass}
+                  ${feedback === "none" ? "hover:translate-y-1 active:shadow-none active:translate-y-2" : ""}
+                `}
+              >
+                {choice}
+                {icon && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute right-6"
+                  >
+                    {icon}
+                  </motion.div>
+                )}
+              </motion.button>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
