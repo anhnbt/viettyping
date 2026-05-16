@@ -36,7 +36,13 @@ export default function Flashcard({
   };
 
   return (
-    <div className="w-80 h-96 perspective-1000 cursor-pointer" onClick={handleFlip}>
+    <motion.div 
+      className="w-full max-w-xs sm:w-80 h-96 perspective-1000 cursor-pointer" 
+      onClick={handleFlip}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
       <motion.div
         className="w-full h-full relative preserve-3d transition-transform duration-500"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
@@ -44,17 +50,17 @@ export default function Flashcard({
       >
         {/* Front */}
         <div
-          className="absolute w-full h-full backface-hidden rounded-3xl p-6 flex flex-col items-center justify-between shadow-xl border-4 border-white"
+          className="absolute w-full h-full backface-hidden rounded-3xl p-6 flex flex-col items-center justify-between shadow-2xl shadow-pink-200/50 border-4 border-white backdrop-blur-sm"
           style={{
-            background: "linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%)",
+            background: "linear-gradient(135deg, rgba(255,154,158,0.9) 0%, rgba(254,207,239,0.9) 100%)",
             backfaceVisibility: "hidden"
           }}
         >
-          <div className="w-full h-40 bg-white/50 rounded-2xl flex items-center justify-center p-2 border-2 border-dashed border-white/80 overflow-hidden relative">
+          <div className="w-full h-40 bg-white/60 rounded-2xl flex items-center justify-center p-2 border-2 border-dashed border-white overflow-hidden relative shadow-inner">
             {imageUrl ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={imageUrl} alt={wordUppercase} className="w-full h-full object-contain rounded-xl" />
+                <img src={imageUrl} alt={wordUppercase} className="w-full h-full object-contain rounded-xl drop-shadow-sm" />
               </>
             ) : (
               <span className="text-center text-sm font-semibold text-pink-600">
@@ -65,47 +71,51 @@ export default function Flashcard({
           </div>
           
           <div className="flex-1 flex flex-col items-center justify-center">
-            <h1 className="text-6xl font-black text-white drop-shadow-md tracking-wider">
+            <h1 className="text-6xl font-black text-white drop-shadow-lg tracking-wider">
               {wordUppercase}
             </h1>
           </div>
 
-          <button
+          <motion.button
             onClick={playSound}
-            className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform text-pink-500"
+            whileHover={{ scale: 1.15, rotate: 5 }}
+            whileTap={{ scale: 0.9 }}
+            className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg text-pink-500 hover:text-pink-600 transition-colors"
           >
             <Volume2 size={28} />
-          </button>
+          </motion.button>
         </div>
 
         {/* Back */}
         <div
-          className="absolute w-full h-full backface-hidden rounded-3xl p-6 flex flex-col items-center justify-center shadow-xl border-4 border-white"
+          className="absolute w-full h-full backface-hidden rounded-3xl p-6 flex flex-col items-center justify-center shadow-2xl shadow-teal-200/50 border-4 border-white backdrop-blur-sm"
           style={{
-            background: "linear-gradient(135deg, #84FAB0 0%, #8FD3F4 100%)",
+            background: "linear-gradient(135deg, rgba(132,250,176,0.9) 0%, rgba(143,211,244,0.9) 100%)",
             transform: "rotateY(180deg)",
             backfaceVisibility: "hidden"
           }}
         >
-          <h2 className="text-4xl font-bold text-white mb-6 drop-shadow-md">
+          <h2 className="text-4xl font-black text-white mb-6 drop-shadow-lg">
             {word}
           </h2>
-          <div className="bg-white/40 px-6 py-3 rounded-2xl mb-6 backdrop-blur-sm">
-            <p className="text-xl font-medium text-teal-800 text-center">
+          <div className="bg-white/50 px-6 py-3 rounded-2xl mb-6 backdrop-blur-md shadow-sm border border-white/50">
+            <p className="text-xl font-bold text-teal-800 text-center tracking-wide">
               {spellingGuide}
             </p>
           </div>
-          <p className="text-2xl font-bold text-center text-white leading-relaxed drop-shadow-sm">
+          <p className="text-2xl font-bold text-center text-white leading-relaxed drop-shadow-md">
             {exampleSentence}
           </p>
-          <button
+          <motion.button
             onClick={playSound}
-            className="mt-8 w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform text-teal-500"
+            whileHover={{ scale: 1.15, rotate: 5 }}
+            whileTap={{ scale: 0.9 }}
+            className="mt-8 w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg text-teal-500 hover:text-teal-600 transition-colors"
           >
             <Volume2 size={28} />
-          </button>
+          </motion.button>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
