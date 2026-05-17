@@ -45,7 +45,7 @@ export default function SpinWheelGame({ items, onComplete }: SpinWheelGameProps)
       tickAudioRef.current.play().catch(() => console.warn("Audio play blocked"));
     }
 
-    const spinDuration = 3000; // 3 seconds
+
     const spinSpins = 5; // 5 full rotations
     const sliceAngle = 360 / items.length;
     
