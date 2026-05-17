@@ -25,6 +25,7 @@ export default function TypingPractice({ task, onComplete }: Props) {
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const wrongSoundTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const { playCorrectSound, playWrongSound } = useTypingSound();
 
   const calculateStats = (currentInput = input, currentStartTime = startTime) => {
@@ -49,20 +50,27 @@ export default function TypingPractice({ task, onComplete }: Props) {
       startTimer();
     }
 
-    // Play sound based on the last character typed
-    if (newInput.length > input.length) {
-      const lastCharIndex = newInput.length - 1;
-      const isCorrect = newInput[lastCharIndex] === task.content[lastCharIndex];
-      if (isCorrect) {
+    if (wrongSoundTimeoutRef.current) {
+      clearTimeout(wrongSoundTimeoutRef.current);
+      wrongSoundTimeoutRef.current = undefined;
+    }
+
+    const isNowCorrect = task.content.startsWith(newInput);
+    const wasCorrect = task.content.startsWith(input);
+
+    if (newInput.length > 0) {
+      if (isNowCorrect && ((!wasCorrect && newInput.length >= input.length) || newInput.length > input.length)) {
         playCorrectSound();
-      } else {
-        playWrongSound();
+      } else if (!isNowCorrect && newInput.length >= input.length) {
+        wrongSoundTimeoutRef.current = setTimeout(() => {
+          playWrongSound();
+        }, 500);
       }
     }
 
     setInput(newInput);
 
-    if (newInput.length >= task.content.length) {
+    if (newInput === task.content) {
       const stats = calculateStats(newInput);
       completeLesson(stats);
     }

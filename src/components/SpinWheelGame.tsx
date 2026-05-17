@@ -15,6 +15,7 @@ export default function SpinWheelGame({ items, onComplete }: SpinWheelGameProps)
   const [rotation, setRotation] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [pendingWinnerIndex, setPendingWinnerIndex] = useState<number | null>(null);
 
   // Audio refs
   const tickAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -50,41 +51,20 @@ export default function SpinWheelGame({ items, onComplete }: SpinWheelGameProps)
     
     // Pick a random winner
     const winnerIndex = Math.floor(Math.random() * items.length);
-    const winnerAngle = winnerIndex * sliceAngle;
+    const winnerTextAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
     
     // Calculate final rotation
     // We want the winner slice to be at the top (or pointing to a pointer). 
     // Usually pointer is at the top (0 degrees).
-    // If the wheel rotates clockwise, the winner slice needs to stop at 360 - winnerAngle
+    // If the wheel rotates clockwise, the winner slice needs to stop at 360 - winnerTextAngle
     // to be at the top. Let's add a random offset within the slice to make it look natural.
-    const randomOffset = Math.random() * (sliceAngle * 0.8) - (sliceAngle * 0.4);
+    // Tighter offset to ensure pointer is clearly within the slice bounds
+    const randomOffset = Math.random() * (sliceAngle * 0.6) - (sliceAngle * 0.3);
     
-    const targetRotation = rotation + (spinSpins * 360) + (360 - winnerAngle) - (rotation % 360) + randomOffset;
+    const targetRotation = rotation + (spinSpins * 360) + (360 - winnerTextAngle) - (rotation % 360) + randomOffset;
 
     setRotation(targetRotation);
-
-    setTimeout(() => {
-      setIsSpinning(false);
-      setSelectedItem(items[winnerIndex]);
-      setShowPopup(true);
-      
-      if (tickAudioRef.current) {
-        tickAudioRef.current.pause();
-      }
-      
-      if (tadaAudioRef.current) {
-        tadaAudioRef.current.currentTime = 0;
-        tadaAudioRef.current.play().catch(() => console.warn("Audio play blocked"));
-      }
-
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']
-      });
-
-    }, spinDuration);
+    setPendingWinnerIndex(winnerIndex);
   };
 
   const playTTS = (text: string) => {
@@ -115,11 +95,35 @@ export default function SpinWheelGame({ items, onComplete }: SpinWheelGameProps)
           </svg>
         </div>
 
-        {/* The Wheel */}
         <motion.div 
           className="w-full h-full rounded-full border-8 border-white shadow-2xl overflow-hidden relative"
           animate={{ rotate: rotation }}
           transition={{ duration: 3, ease: "circOut" }}
+          onAnimationComplete={() => {
+            if (isSpinning && pendingWinnerIndex !== null) {
+              setIsSpinning(false);
+              setSelectedItem(items[pendingWinnerIndex]);
+              setShowPopup(true);
+              
+              if (tickAudioRef.current) {
+                tickAudioRef.current.pause();
+              }
+              
+              if (tadaAudioRef.current) {
+                tadaAudioRef.current.currentTime = 0;
+                tadaAudioRef.current.play().catch(() => console.warn("Audio play blocked"));
+              }
+
+              confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']
+              });
+              
+              setPendingWinnerIndex(null);
+            }
+          }}
           style={{ 
             transformOrigin: "center center",
             background: `conic-gradient(${items.map((_, i) => {
