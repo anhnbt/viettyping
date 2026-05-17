@@ -528,14 +528,11 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
             <div className="w-full h-full">
               <TypingPractice
                 key={showTypingModal ? 'open' : 'closed'}
-                lesson={{
-                  id: currentActivity.id,
-                  level: 'basic' as const,
-                  title: currentActivity.title,
-                  description: currentActivity.instructions,
+                task={{
                   content: currentActivity.content,
-                  targetWPM: 20,
-                  minAccuracy: 85,
+                  type: 'word',
+                  description: currentActivity.instructions,
+                  time_limit_seconds: 60,
                 }}
                 onComplete={handleTypingComplete}
               />

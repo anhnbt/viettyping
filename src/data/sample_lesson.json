@@ -29,6 +29,38 @@
     }
   ],
 
+  "typing_practice": [
+    {
+      "content": "ba",
+      "type": "word",
+      "description": "bờ - a - ba",
+      "time_limit_seconds": 15
+    },
+    {
+      "content": "bóng",
+      "type": "word",
+      "description": "bờ - ong - bong - sắc - bóng",
+      "time_limit_seconds": 15
+    },
+    {
+      "content": "bò",
+      "type": "word",
+      "description": "bờ - o - bo - huyền - bò",
+      "time_limit_seconds": 15
+    },
+    {
+      "content": "Ba đưa bé đi chơi bóng.",
+      "type": "sentence",
+      "description": "Gõ cả câu",
+      "time_limit_seconds": 30
+    }
+  ],
+
+  "summary_config": {
+    "show_typing_summary": true,
+    "celebration_message": "Bé gõ chữ siêu quá!"
+  },
+
   "mini_games": {
     "matching_game": [
       {

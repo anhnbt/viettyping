@@ -1,21 +1,27 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Lesson } from '@/data/lessons';
+
 import { IoTimeOutline, IoRefreshOutline } from 'react-icons/io5';
 import { useTypingSound } from '@/hooks/useTypingSound';
 import VirtualKeyboard from './VirtualKeyboard';
 
+export interface TypingTask {
+  content: string;
+  type: string;
+  description: string;
+  time_limit_seconds: number;
+}
+
 interface Props {
-  lesson: Lesson;
+  task: TypingTask;
   onComplete: (stats: { wpm: number; accuracy: number; incorrectCount: number }) => void;
 }
 
 
-export default function TypingPractice({ lesson, onComplete }: Props) {
+export default function TypingPractice({ task, onComplete }: Props) {
   const [input, setInput] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
   const [isComplete, setIsComplete] = useState(false);
-  const [selectedTime] = useState(60);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(task.time_limit_seconds || 60);
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -29,7 +35,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
     const wpm = Math.round(words / timeInMinutes);
 
     const typedChars = currentInput.split('');
-    const correctChars = typedChars.filter((char, i) => char === lesson.content[i]).length;
+    const correctChars = typedChars.filter((char, i) => char === task.content[i]).length;
     const incorrectCount = Math.min(typedChars.length - correctChars, typedChars.length);
     const accuracy = Math.round((correctChars / typedChars.length) * 100) || 0;
 
@@ -46,7 +52,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
     // Play sound based on the last character typed
     if (newInput.length > input.length) {
       const lastCharIndex = newInput.length - 1;
-      const isCorrect = newInput[lastCharIndex] === lesson.content[lastCharIndex];
+      const isCorrect = newInput[lastCharIndex] === task.content[lastCharIndex];
       if (isCorrect) {
         playCorrectSound();
       } else {
@@ -56,7 +62,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
 
     setInput(newInput);
 
-    if (newInput.length >= lesson.content.length) {
+    if (newInput.length >= task.content.length) {
       const stats = calculateStats(newInput);
       completeLesson(stats);
     }
@@ -87,10 +93,10 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
     setInput('');
     setStartTime(null);
     setIsComplete(false);
-    setTimeLeft(selectedTime);
+    setTimeLeft(task.time_limit_seconds || 60);
     clearInterval(timerRef.current);
     inputRef.current?.focus();
-  }, [selectedTime]);
+  }, [task.time_limit_seconds]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -99,17 +105,17 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
 
   useEffect(() => {
     handleRestart();
-  }, [lesson, handleRestart]);
+  }, [task, handleRestart]);
 
   useEffect(() => {
-    setTimeLeft(selectedTime);
+    setTimeLeft(task.time_limit_seconds || 60);
     setInput('');
     setStartTime(null);
     setIsComplete(false);
     if (inputRef.current) {
       inputRef.current.value = '';
     }
-  }, [lesson, selectedTime]);
+  }, [task]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -161,10 +167,10 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
             <div className="w-24 bg-gray-200 rounded-full h-1.5">
               <div
                 className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
-                style={{ width: `${Math.min(100, (input.length / lesson.content.length) * 100)}%` }}
+                style={{ width: `${Math.min(100, (input.length / task.content.length) * 100)}%` }}
               ></div>
             </div>
-            <span className="text-xs font-bold text-gray-500">{Math.round((input.length / lesson.content.length) * 100)}%</span>
+            <span className="text-xs font-bold text-gray-500">{Math.round((input.length / task.content.length) * 100)}%</span>
           </div>
           <button
             onClick={handleRestart}
@@ -188,7 +194,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
           className="absolute inset-0 opacity-0 cursor-default z-10"
           autoFocus
         />
-        {lesson.content.split('').map((char, i) => (
+        {task.content.split('').map((char, i) => (
           <span
             key={i}
             className={`${i < input.length
@@ -209,7 +215,7 @@ export default function TypingPractice({ lesson, onComplete }: Props) {
       <div className="shrink-0">
         <VirtualKeyboard
           pressedKey={pressedKey}
-          highlightKey={lesson.content[input.length]?.toLowerCase() ?? null}
+          highlightKey={task.content[input.length]?.toLowerCase() ?? null}
         />
       </div>
 

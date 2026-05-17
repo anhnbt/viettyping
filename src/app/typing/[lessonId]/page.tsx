@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { lessons } from '@/data/lessons';
-import TypingPractice from '@/components/TypingPractice';
+import TypingPractice, { TypingTask } from '@/components/TypingPractice';
 import Link from 'next/link';
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
 
@@ -89,7 +89,7 @@ export default function LessonPage({ params }: Props) {
           )}
         </div>
 
-        <TypingPractice lesson={lesson} onComplete={handleLessonComplete} />
+        <TypingPractice task={lesson as unknown as TypingTask} onComplete={handleLessonComplete} />
 
         {showStats && stats && (
           <div className="mt-8 p-6 bg-green-100 rounded-lg">

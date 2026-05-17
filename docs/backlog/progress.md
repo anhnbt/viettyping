@@ -64,3 +64,13 @@ Dự án VietTyping là hệ thống Web App học tiếng Việt tương tác c
   - [x] Viết kiểm thử cho State Management để đảm bảo tiến trình bài học không bị lỗi.
 - [x] **[Task 09]** Tối ưu hóa UI/UX (Polishing) ([Chi tiết](./tasks/task-09-ui-ux-optimization.md))
   - [x] Tối ưu hóa UI/UX, thêm các vi hiệu ứng (micro-animations) để tăng độ mượt mà.
+
+---
+
+## 📅 SPRINT 6: Quản trị Dữ liệu Động (Admin CMS - Phase 2)
+**Trạng thái:** ⏳ Kế hoạch (Backlog)
+
+- [ ] **[Task 10]** Admin CMS Dashboard ([Chi tiết](./tasks/task-10-admin-cms.md))
+  - [ ] Thiết lập cấu trúc giao diện Admin (`/admin`).
+  - [ ] Xây dựng Dynamic Forms cho phép tạo Lesson Config (JSON) trực quan.
+  - [ ] Kết nối Backend Java Spring Boot và MySQL qua Next.js SSR/ISR.

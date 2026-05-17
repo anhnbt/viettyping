@@ -1,40 +1,30 @@
-# Hệ Thống Học Tập Cho Bé
+# VietTyping - Luyện Gõ Phím Đa Môn Học Cho Học Sinh Lớp 1
 
-Một ứng dụng web tương tác giúp trẻ em học tập các môn học cơ bản một cách thú vị và hiệu quả.
+Một ứng dụng web tương tác được thiết kế chuyên biệt để giúp trẻ em (đặc biệt là học sinh lớp 1) rèn luyện kỹ năng **gõ phím máy tính**, đồng thời ôn tập và tiếp thu kiến thức của **tất cả các môn học cơ bản** một cách thú vị và hiệu quả.
 
-## 🎯 Tính năng chính
+## 🎯 Tính năng chính & Triết lý giáo dục
 
-### 📚 8 Môn học được hỗ trợ:
+### ⌨️ Luyện Gõ Phím Là Cốt Lõi:
+Toàn bộ hệ thống bài học và mini-game được tối ưu hóa cho thao tác gõ phím. Trẻ vừa học chữ, làm toán, tìm hiểu thế giới, vừa hình thành phản xạ gõ phím chính xác từ nhỏ.
 
-1. **Đạo đức** - Giáo dục giá trị sống và đạo đức
-2. **Âm nhạc** - Học nốt nhạc và cảm thụ âm nhạc
-3. **Toán** - Số học và hình học cơ bản
-4. **Tiếng Việt** - Bảng chữ cái và từ vựng
-5. **Hoạt động trải nghiệm** - Các hoạt động thực hành
-6. **Tiếng Anh** - Bảng chữ cái và từ vựng cơ bản
-7. **Tự nhiên và xã hội** - Tìm hiểu thế giới xung quanh
-8. **Mỹ thuật** - Màu sắc và nghệ thuật
+### 📚 Bao phủ toàn bộ môn học Lớp 1:
 
-### 🎮 Các loại hoạt động:
-
-- **Gõ phím**: Luyện tập đánh máy với nội dung học tập
-- **Trắc nghiệm**: Câu hỏi kiểm tra kiến thức
-- **Vẽ**: Hoạt động sáng tạo với màu sắc
-- **Nghe**: Luyện tập kỹ năng nghe
-- **Đọc**: Đọc hiểu văn bản
-- **Toán**: Bài tập tính toán
-- **Trò chơi**: Học qua chơi
+1. **Tiếng Việt** - Gõ bảng chữ cái, tập đánh vần, gõ từ vựng và câu ngắn.
+2. **Toán** - Gõ các phép tính cộng trừ, số học cơ bản (Ví dụ: gõ `1 + 1 = 2`).
+3. **Tự nhiên và xã hội** - Gõ tên các loài vật, cây cối, hiện tượng thiên nhiên.
+4. **Đạo đức** - Gõ các từ khóa về giá trị sống, câu chào hỏi lễ phép.
+5. **Âm nhạc** - Gõ tên nốt nhạc, lời bài hát ngắn.
+6. **Hoạt động trải nghiệm** - Gõ các từ khóa kỹ năng sống cơ bản.
+7. **Tiếng Anh** - Luyện gõ từ vựng Tiếng Anh căn bản.
+8. **Mỹ thuật** - Gõ tên các màu sắc, hình khối.
 
 ## 🚀 Cách sử dụng
 
-1. **Khởi động**: Nhấn "Bắt đầu học ngay!" từ màn hình chào mừng
-2. **Chọn chế độ**:
-   - "📚 Học các môn" - Truy cập hệ thống học tập đa môn
-   - "⌨️ Luyện gõ phím" - Tập trung vào luyện tập đánh máy
-3. **Chọn môn học**: Bấm vào môn học bạn muốn học
-4. **Chọn chủ đề**: Mỗi môn có nhiều chủ đề với độ khó khác nhau
-5. **Hoàn thành hoạt động**: Làm các bài tập trong từng chủ đề
-6. **Theo dõi tiến độ**: Xem tiến độ học tập của bạn
+1. **Khởi động**: Nhấn "Bắt đầu học ngay!" từ màn hình chào mừng.
+2. **Chọn môn học**: Trẻ chọn môn học muốn ôn tập (ví dụ: Toán, Tiếng Việt) hoặc chọn mục luyện gõ chung.
+3. **Chọn bài học/chủ đề**: Hệ thống sẽ tải dữ liệu cấu hình bài học của môn đó.
+4. **Luyện gõ phím**: Trẻ tương tác với các trò chơi (gõ từ đang xuất hiện, điền vào chỗ trống bằng bàn phím, hoặc trắc nghiệm bằng cách nhấn phím số 1-4) để vượt qua thử thách.
+5. **Nhận thưởng**: Theo dõi tiến độ, nhận XP và Huy hiệu khi gõ nhanh, chính xác.
 
 ## 🎨 Đặc điểm nổi bật
 
@@ -125,6 +115,17 @@ interface Activity {
   timeLimit?: number; // Giới hạn thời gian (giây)
 }
 ```
+
+## 🚀 Giai đoạn 2 (Phase 2): Quản trị dữ liệu động & Hoàn thiện luồng học
+
+Sau khi hoàn thành bộ khung tĩnh ở Phase 1, Phase 2 sẽ tập trung vào:
+1. **Hệ thống Quản trị (Admin Panel) & Headless CMS:**
+   - Tích hợp một Headless CMS (như Sanity, Supabase) hoặc tự xây dựng Admin Dashboard bằng Next.js.
+   - Hỗ trợ giáo viên/phụ huynh quản lý, tạo mới và upload các bài học dưới dạng JSON động (Lesson Config) mà không cần can thiệp vào code gốc.
+2. **Tinh chỉnh luồng học (Flow Refinement):**
+   - Bổ sung **Màn hình Tổng kết (Stats Summary)** sinh động (hiệu ứng Confetti, XP, Streak, số từ gõ đúng) ngay sau khi bé hoàn thành phần Luyện gõ (TypingPractice) trước khi chuyển qua Mini-games.
+3. **Lưu trữ dữ liệu (Database Integration):**
+   - Kết nối Database để lưu trữ đồng bộ tiến độ học tập thực tế và tài khoản học sinh.
 
 ## 🎯 Lộ trình phát triển
 
