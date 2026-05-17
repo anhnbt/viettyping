@@ -14,10 +14,10 @@ export default function LessonPage() {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const { currentXP, progress, setTotalActivities, markActivityCompleted } = useLesson();
 
-  // Initialize total activities on mount: 1 for flashcards + number of mini games
+  // Initialize total activities on mount: 1 for flashcards + 1 for typing + number of mini games
   useEffect(() => {
     const gamesCount = Object.keys(mini_games).length;
-    setTotalActivities(1 + gamesCount);
+    setTotalActivities(1 + 1 + gamesCount); // flashcards + typing + games
   }, [mini_games, setTotalActivities]);
 
   const nextCard = () => {
@@ -153,12 +153,12 @@ export default function LessonPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Link
-                href="/lesson/games"
+                href="/lesson/typing"
                 onClick={handleStartGames}
                 className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 font-black text-white text-xl rounded-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 shadow-[0_10px_0_0_#9333ea] hover:shadow-[0_5px_0_0_#9333ea] hover:translate-y-1 transition-all"
               >
                 <IoGameController size={28} className="group-hover:animate-bounce" />
-                Chơi Game Ngay!
+                Luyện Gõ Phím!
               </Link>
             </motion.div>
         </motion.div>

@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { subjects } from '@/data/subjects';
-import TypingPractice from '@/components/TypingPractice';
+import TypingPractice, { TypingTask } from '@/components/TypingPractice';
 import CompletionModal from '@/components/CompletionModal';
 import { IoArrowBack } from 'react-icons/io5';
 import Link from 'next/link';
@@ -111,7 +111,7 @@ export default function PracticePage({ params }: Props) {
                 <div className="w-full h-full">
                     <TypingPractice
                         key={currentActivityIndex}
-                        lesson={lesson}
+                        task={lesson as unknown as TypingTask}
                         onComplete={handleComplete}
                     />
                 </div>
