@@ -146,7 +146,7 @@ export default function LessonPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-12"
+          className="mt-12 flex flex-col items-center gap-4"
         >
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -159,6 +159,24 @@ export default function LessonPage() {
               >
                 <IoGameController size={28} className="group-hover:animate-bounce" />
                 Luyện Gõ Phím!
+              </Link>
+            </motion.div>
+
+            {/* Bỏ qua Luyện Gõ - Chỉ hiện trên Mobile (ẩn trên md: desktop) */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="md:hidden mt-2"
+            >
+              <Link
+                href="/lesson/games"
+                onClick={() => {
+                  markActivityCompleted("flashcards");
+                  markActivityCompleted("typing");
+                }}
+                className="text-purple-600 font-bold underline hover:text-purple-800 transition-colors text-lg"
+              >
+                Bỏ qua Luyện gõ
               </Link>
             </motion.div>
         </motion.div>

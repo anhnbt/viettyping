@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-import { IoTimeOutline, IoRefreshOutline } from 'react-icons/io5';
+import { IoTimeOutline, IoRefreshOutline, IoWarning } from 'react-icons/io5';
 import { useTypingSound } from '@/hooks/useTypingSound';
 import VirtualKeyboard from './VirtualKeyboard';
 
@@ -157,77 +157,93 @@ export default function TypingPractice({ task, onComplete }: Props) {
         }
       `}</style>
 
-      {/* Compact Stats Bar */}
-      <div className="flex items-center justify-between gap-4 px-4 py-2 bg-white/80 rounded-xl border border-gray-100 mb-3 shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5 font-mono font-bold text-blue-600 text-sm">
-            <IoTimeOutline className="text-base" />
-            {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
-          </div>
-          <div className="h-4 w-px bg-gray-200" />
-          <span className="text-xs text-gray-500">Tốc độ: <span className="font-bold text-green-600">{wpm}</span> WPM</span>
-          <div className="h-4 w-px bg-gray-200" />
-          <span className="text-xs text-gray-500">Chính xác: <span className="font-bold text-blue-600">{accuracy}%</span></span>
+      {/* Mobile Blocker */}
+      <div className="md:hidden flex flex-col items-center justify-center h-full p-8 text-center bg-white/90 rounded-3xl shadow-lg border border-red-100">
+        <div className="w-24 h-24 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
+          <IoWarning size={48} />
         </div>
-        <div className="flex items-center gap-3">
-          {/* Progress */}
-          <div className="flex items-center gap-2">
-            <div className="w-24 bg-gray-200 rounded-full h-1.5">
-              <div
-                className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
-                style={{ width: `${Math.min(100, (input.length / task.content.length) * 100)}%` }}
-              ></div>
+        <h2 className="text-2xl font-black text-red-600 mb-4">
+          Cần bàn phím vật lý!
+        </h2>
+        <p className="text-gray-600 text-lg">
+          Bài tập luyện gõ phím 10 ngón được thiết kế tối ưu nhất khi sử dụng máy tính (Desktop/Laptop). 
+          <br/><br/>
+          Bé hoặc phụ huynh hãy mở trên thiết bị có bàn phím vật lý để thực hành nhé!
+        </p>
+      </div>
+
+      {/* Desktop/Tablet Content */}
+      <div className="hidden md:flex flex-col w-full h-full min-h-0">
+        {/* Compact Stats Bar */}
+        <div className="flex items-center justify-between gap-4 px-4 py-2 bg-white/80 rounded-xl border border-gray-100 mb-3 shrink-0">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 font-mono font-bold text-blue-600 text-sm">
+              <IoTimeOutline className="text-base" />
+              {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
             </div>
-            <span className="text-xs font-bold text-gray-500">{Math.round((input.length / task.content.length) * 100)}%</span>
+            <div className="h-4 w-px bg-gray-200" />
+            <span className="text-xs text-gray-500">Tốc độ: <span className="font-bold text-green-600">{wpm}</span> WPM</span>
+            <div className="h-4 w-px bg-gray-200" />
+            <span className="text-xs text-gray-500">Chính xác: <span className="font-bold text-blue-600">{accuracy}%</span></span>
           </div>
-          <button
-            onClick={handleRestart}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs bg-gray-50 border border-gray-200 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors font-medium"
-          >
-            <IoRefreshOutline className="text-sm" />
-            Làm lại
-          </button>
+          <div className="flex items-center gap-3">
+            {/* Progress */}
+            <div className="flex items-center gap-2">
+              <div className="w-24 bg-gray-200 rounded-full h-1.5">
+                <div
+                  className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
+                  style={{ width: `${Math.min(100, (input.length / task.content.length) * 100)}%` }}
+                ></div>
+              </div>
+              <span className="text-xs font-bold text-gray-500">{Math.round((input.length / task.content.length) * 100)}%</span>
+            </div>
+            <button
+              onClick={handleRestart}
+              className="flex items-center gap-1 px-3 py-1.5 text-xs bg-gray-50 border border-gray-200 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors font-medium"
+            >
+              <IoRefreshOutline className="text-sm" />
+              Làm lại
+            </button>
+          </div>
+        </div>
+
+        {/* Typing Display Area */}
+        <div className="relative mb-3 p-6 bg-blue-50 rounded-2xl text-3xl font-mono leading-relaxed tracking-wide shadow-inner border-2 border-blue-100 flex flex-wrap content-center items-center justify-center text-center flex-1 min-h-0 overflow-y-auto">
+          {/* Hidden input for focus */}
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={handleInput}
+            disabled={isComplete}
+            className="absolute inset-0 opacity-0 cursor-default z-10"
+            autoFocus
+          />
+          {task.content.split('').map((char, i) => (
+            <span
+              key={i}
+              className={`${i < input.length
+                ? input[i] === char
+                  ? 'text-green-600 font-bold'
+                  : 'text-red-500 font-bold bg-red-100 rounded'
+                : i === input.length
+                  ? 'cursor-blink border-b-4 border-blue-500'
+                  : 'text-gray-400'
+                } relative transition-all duration-200`}
+            >
+              {char === ' ' ? '\u00A0' : char}
+            </span>
+          ))}
+        </div>
+
+        {/* Keyboard */}
+        <div className="shrink-0">
+          <VirtualKeyboard
+            pressedKey={pressedKey}
+            highlightKey={task.content[input.length]?.toLowerCase() ?? null}
+          />
         </div>
       </div>
-
-      {/* Typing Display Area */}
-      <div className="relative mb-3 p-6 bg-blue-50 rounded-2xl text-3xl font-mono leading-relaxed tracking-wide shadow-inner border-2 border-blue-100 min-h-[100px] flex flex-wrap content-center items-center justify-center text-center flex-1 min-h-0 overflow-y-auto">
-        {/* Hidden input for focus */}
-        <input
-          ref={inputRef}
-          type="text"
-          value={input}
-          onChange={handleInput}
-          disabled={isComplete}
-          className="absolute inset-0 opacity-0 cursor-default z-10"
-          autoFocus
-        />
-        {task.content.split('').map((char, i) => (
-          <span
-            key={i}
-            className={`${i < input.length
-              ? input[i] === char
-                ? 'text-green-600 font-bold'
-                : 'text-red-500 font-bold bg-red-100 rounded'
-              : i === input.length
-                ? 'cursor-blink border-b-4 border-blue-500'
-                : 'text-gray-400'
-              } relative transition-all duration-200`}
-          >
-            {char === ' ' ? '\u00A0' : char}
-          </span>
-        ))}
-      </div>
-
-      {/* Keyboard */}
-      <div className="shrink-0">
-        <VirtualKeyboard
-          pressedKey={pressedKey}
-          highlightKey={task.content[input.length]?.toLowerCase() ?? null}
-        />
-      </div>
-
-
     </div>
   );
 }

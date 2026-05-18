@@ -1,7 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { DndContext, useDraggable, useDroppable, DragEndEvent } from "@dnd-kit/core";
+import { 
+  DndContext, 
+  useDraggable, 
+  useDroppable, 
+  DragEndEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -25,8 +34,9 @@ function DraggableWord({ id, word }: { id: string; word: string }) {
         transform: CSS.Translate.toString(transform),
         zIndex: isDragging ? 50 : 1,
         position: isDragging ? ("relative" as const) : ("static" as const),
+        touchAction: "none", // Prevent scrolling when dragging on mobile
       }
-    : undefined;
+    : { touchAction: "none" };
 
   return (
     <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
@@ -104,6 +114,20 @@ export default function MatchingGame({ items, onComplete }: MatchingGameProps) {
   const [errorSlot, setErrorSlot] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 5,
+      },
+    })
+  );
+
   // Xáo trộn vị trí các từ và render
   useEffect(() => {
     setIsClient(true);
@@ -158,7 +182,7 @@ export default function MatchingGame({ items, onComplete }: MatchingGameProps) {
 
   return (
     <div className="w-full flex flex-col items-center gap-10">
-      <DndContext onDragEnd={handleDragEnd}>
+      <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
         
         {/* Vùng Hình Ảnh (Droppable Slots) */}
         <div className="flex flex-wrap justify-center gap-6 md:gap-12 w-full">
