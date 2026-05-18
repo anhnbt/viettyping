@@ -39,7 +39,7 @@ export default function LessonPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 font-sans overflow-hidden flex flex-col">
       {/* Header */}
-      <header className="p-4 md:p-6 flex flex-col gap-4 relative z-10">
+      <header className="p-2 md:p-6 flex flex-col gap-3 md:gap-4 relative z-10">
         <div className="flex items-center justify-between">
           <Link
             href="/"
@@ -61,12 +61,12 @@ export default function LessonPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="text-center mb-4 md:mb-8"
         >
-          <h1 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-sm mb-3">
+          <h1 className="text-2xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-sm mb-2 md:mb-3">
             {lesson_title}
           </h1>
-          <p className="text-lg md:text-xl font-bold text-purple-800/70 bg-white/40 inline-block px-6 py-2 rounded-full backdrop-blur-sm">
+          <p className="text-base md:text-xl font-bold text-purple-800/70 bg-white/40 inline-block px-4 py-1 md:px-6 md:py-2 rounded-full backdrop-blur-sm">
             Chủ đề: {topic}
           </p>
         </motion.div>
@@ -79,17 +79,17 @@ export default function LessonPage() {
             whileTap={currentCardIndex !== 0 ? { scale: 0.9 } : {}}
             onClick={prevCard}
             disabled={currentCardIndex === 0}
-            className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all ${
+            className={`w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-full flex items-center justify-center shadow-lg transition-all ${
               currentCardIndex === 0
                 ? "bg-white/40 text-gray-400 cursor-not-allowed"
                 : "bg-white text-purple-600 hover:bg-purple-50"
             }`}
           >
-            <IoChevronBack size={32} />
+            <IoChevronBack className="text-2xl md:text-3xl" />
           </motion.button>
 
           {/* Card Container */}
-          <div className="w-full max-w-xs sm:w-80 h-96 relative perspective-1000">
+          <div className="w-full max-w-xs sm:w-80 h-72 md:h-96 relative perspective-1000">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentCardIndex}
@@ -117,22 +117,22 @@ export default function LessonPage() {
             whileTap={currentCardIndex !== flashcards.length - 1 ? { scale: 0.9 } : {}}
             onClick={nextCard}
             disabled={currentCardIndex === flashcards.length - 1}
-            className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all ${
+            className={`w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-full flex items-center justify-center shadow-lg transition-all ${
               currentCardIndex === flashcards.length - 1
                 ? "bg-white/40 text-gray-400 cursor-not-allowed"
                 : "bg-white text-pink-600 hover:bg-pink-50"
             }`}
           >
-            <IoChevronBack size={32} className="rotate-180" />
+            <IoChevronBack className="rotate-180 text-2xl md:text-3xl" />
           </motion.button>
         </div>
 
         {/* Progress Dots */}
-        <div className="flex gap-3 mt-8">
+        <div className="flex gap-2 md:gap-3 mt-4 md:mt-8">
           {flashcards.map((_, index) => (
             <div
               key={index}
-              className={`w-4 h-4 rounded-full transition-all duration-300 ${
+              className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ${
                 index === currentCardIndex
                   ? "bg-pink-500 scale-125 shadow-md"
                   : "bg-white/60 hover:bg-white"
@@ -146,7 +146,7 @@ export default function LessonPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-12 flex flex-col items-center gap-4"
+          className="mt-6 md:mt-12 flex flex-col items-center gap-2 md:gap-4"
         >
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -155,9 +155,9 @@ export default function LessonPage() {
               <Link
                 href="/lesson/typing"
                 onClick={handleStartGames}
-                className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 font-black text-white text-xl rounded-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 shadow-[0_10px_0_0_#9333ea] hover:shadow-[0_5px_0_0_#9333ea] hover:translate-y-1 transition-all"
+                className="group relative inline-flex items-center justify-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 font-black text-white text-lg md:text-xl rounded-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 shadow-[0_8px_0_0_#9333ea] md:shadow-[0_10px_0_0_#9333ea] hover:shadow-[0_4px_0_0_#9333ea] md:hover:shadow-[0_5px_0_0_#9333ea] hover:translate-y-1 transition-all"
               >
-                <IoGameController size={28} className="group-hover:animate-bounce" />
+                <IoGameController className="text-2xl md:text-3xl group-hover:animate-bounce" />
                 Luyện Gõ Phím!
               </Link>
             </motion.div>
