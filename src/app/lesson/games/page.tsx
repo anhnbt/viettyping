@@ -4,134 +4,63 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { IoChevronBack, IoStar, IoCheckmarkCircle, IoRibbon } from "react-icons/io5";
+import { IoChevronBack, IoStar, IoRibbon } from "react-icons/io5";
 import confetti from "canvas-confetti";
-import lessonData from "@/data/sample_lesson.json";
+import lessonDataJson from "@/data/sample_lesson.json";
+import { LessonConfig } from "@/types/lesson";
 import { useLesson } from "@/contexts/LessonContext";
 import ProgressBar from "@/components/ProgressBar";
-import MatchingGame from "@/components/MatchingGame";
-import TrueFalseGame from "@/components/TrueFalseGame";
-import SpinWheelGame from "@/components/SpinWheelGame";
-import FillInTheBlankGame from "@/components/FillInTheBlankGame";
-import MultipleChoiceGame from "@/components/MultipleChoiceGame";
+import LessonRunner from "@/components/lesson/LessonRunner";
 
-export default function GameController() {
-  const { mini_games, base_rewards } = lessonData;
-  const gameTypes = Object.keys(mini_games); // e.g. ["matching_game", "true_false_game", ...]
-  const [currentGameIndex, setCurrentGameIndex] = useState(0);
+// Cast JSON to our validated type
+const lessonData = lessonDataJson as LessonConfig;
+
+export default function GameControllerPage() {
   const [showCompletionPopup, setShowCompletionPopup] = useState(false);
   const router = useRouter();
-
   const { currentXP, progress, addXP, markActivityCompleted, unlockBadge } = useLesson();
 
-  const currentGameType = gameTypes[currentGameIndex];
+  const handleGameComplete = (gameId: string, score: number, duration: number) => {
+    // Record intermediate progress if desired
+    console.log(`Completed game ${gameId} with score ${score} in ${duration}s`);
+  };
 
-  const handleGameComplete = () => {
-    // Phân bổ XP (tùy chỉnh sau nếu muốn từng game có điểm riêng)
-    const xpPerGame = Math.round(base_rewards.completion_xp / gameTypes.length);
-    addXP(xpPerGame);
-    markActivityCompleted(currentGameType);
+  const handleAllGamesComplete = (summary: { totalScore: number; totalDuration: number }) => {
+    // 1. Phân bổ tổng XP
+    addXP(lessonData.base_rewards.completion_xp);
+    // Lưu lại trạng thái hoàn thành activity (hoặc lesson)
+    markActivityCompleted("all_games");
 
-    if (currentGameIndex < gameTypes.length - 1) {
-      setCurrentGameIndex((prev) => prev + 1);
-    } else {
-      // Hoàn thành tất cả mini games
-      // 1. Confetti
+    // 2. Confetti
+    if (lessonData.base_rewards.celebration_type === "fireworks") {
       confetti({
         particleCount: 150,
         spread: 70,
         origin: { y: 0.6 },
         colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']
       });
-
-      // 2. Play Cheer Sound
-      try {
-        const cheerAudio = new Audio('/cheer.mp3');
-        cheerAudio.volume = 0.5;
-        cheerAudio.play().catch(e => console.warn("Audio play failed:", e));
-      } catch (error) {
-        console.warn("Audio not supported", error);
-      }
-
-      // 3. Unlock Badge
-      unlockBadge(base_rewards.badge_unlock_id);
-
-      // 4. Show Popup
-      setShowCompletionPopup(true);
     }
+
+    // 3. Play Cheer Sound
+    try {
+      const cheerAudio = new Audio('/cheer.mp3');
+      cheerAudio.volume = 0.5;
+      cheerAudio.play().catch(e => console.warn("Audio play failed:", e));
+    } catch (error) {
+      console.warn("Audio not supported", error);
+    }
+
+    // 4. Unlock Badge
+    unlockBadge(lessonData.base_rewards.badge_unlock_id);
+
+    // 5. Show Popup
+    setShowCompletionPopup(true);
   };
 
   const handleFinishLesson = () => {
     setShowCompletionPopup(false);
     router.push("/");
   };
-
-  const renderCurrentGame = () => {
-    switch (currentGameType) {
-      case "matching_game": {
-        const matchingGameItems = mini_games.matching_game.map((item: { word: string }) => {
-          const flashcard = lessonData.flashcards.find((f) => f.word === item.word);
-          return {
-            word: item.word,
-            image_url: flashcard?.image_url || "/assets/placeholder.png",
-          };
-        });
-        return <MatchingGame items={matchingGameItems} onComplete={handleGameComplete} />;
-      }
-      case "true_false_game": {
-        const tfItems = mini_games.true_false_game.map((item: { correct_word: string, distractor_word: string }) => {
-          const flashcard = lessonData.flashcards.find((f) => f.word === item.correct_word);
-          return {
-            correct_word: item.correct_word,
-            distractor_word: item.distractor_word,
-            image_url: flashcard?.image_url || "/assets/placeholder.png",
-          };
-        });
-        return <TrueFalseGame items={tfItems} onComplete={handleGameComplete} />;
-      }
-      case "spin_wheel_items": {
-        const spinItems = mini_games.spin_wheel_items as string[];
-        return <SpinWheelGame items={spinItems} onComplete={handleGameComplete} />;
-      }
-      case "fill_in_the_blank": {
-        const fillBlankItems = mini_games.fill_in_the_blank.map((item: { full_word: string, missing_char: string, sentence: string }) => ({
-          full_word: item.full_word,
-          missing_char: item.missing_char,
-          sentence: item.sentence
-        }));
-        return <FillInTheBlankGame items={fillBlankItems} onComplete={handleGameComplete} />;
-      }
-      case "multiple_choice": {
-        const mcItems = mini_games.multiple_choice.map((item: { question: string, correct_answer: string, distractors: string[] }) => ({
-          question: item.question,
-          correct_answer: item.correct_answer,
-          distractors: item.distractors
-        }));
-        return <MultipleChoiceGame items={mcItems} onComplete={handleGameComplete} />;
-      }
-      default:
-        return (
-          <>
-            <p className="text-gray-600 mb-8 text-lg">
-              (Giao diện game cụ thể sẽ được hiện thực ở các task sau)
-            </p>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleGameComplete}
-              className="bg-green-500 hover:bg-green-400 text-white font-black text-xl px-8 py-4 rounded-full shadow-[0_6px_0_0_#166534] hover:shadow-[0_3px_0_0_#166534] hover:translate-y-1 transition-all flex items-center gap-2 active:shadow-none active:translate-y-2"
-            >
-              <IoCheckmarkCircle size={28} />
-              Hoàn Thành Game Này!
-            </motion.button>
-          </>
-        );
-    }
-  };
-
-  // Convert progress sang string format `w-[x%]` thì Tailwind không support dynamic kiểu width-${progress}%. 
-  // Cách tốt nhất là dùng style={{ width: `${progress}%` }} cho motion.div
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 font-sans overflow-hidden flex flex-col">
@@ -157,22 +86,11 @@ export default function GameController() {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentGameType}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.2 }}
-            transition={{ duration: 0.4 }}
-            className="w-full max-w-4xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-8 flex flex-col items-center min-h-[400px] justify-center text-center"
-          >
-            <h2 className="text-3xl font-black text-purple-700 mb-6 capitalize">
-              Đang chơi: {currentGameType.replace(/_/g, " ")}
-            </h2>
-            
-            {renderCurrentGame()}
-          </motion.div>
-        </AnimatePresence>
+        <LessonRunner 
+          config={lessonData} 
+          onGameComplete={handleGameComplete}
+          onAllGamesComplete={handleAllGamesComplete} 
+        />
       </main>
       
       {/* Background Decor */}
@@ -209,13 +127,13 @@ export default function GameController() {
               <p className="text-gray-600 mb-6 font-medium">
                 Bạn nhận được Huy hiệu:<br/>
                 <span className="text-xl font-bold text-purple-600 block mt-2">
-                  {base_rewards.badge_name_vi}
+                  {lessonData.base_rewards.badge_name_vi}
                 </span>
               </p>
 
               <div className="bg-purple-50 rounded-2xl p-4 mb-6">
                 <div className="text-sm text-purple-600 font-bold mb-1">Phần thưởng XP</div>
-                <div className="text-3xl font-black text-purple-700">+{base_rewards.completion_xp} XP</div>
+                <div className="text-3xl font-black text-purple-700">+{lessonData.base_rewards.completion_xp} XP</div>
               </div>
 
               <motion.button

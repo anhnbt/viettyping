@@ -57,49 +57,69 @@
     "show_typing_summary": true,
     "celebration_message": "Bé gõ chữ siêu quá!"
   },
-  "mini_games": {
-    "matching_game": [
-      {
-        "word": "ba",
-        "image_prompt": "Cartoon superhero dad"
-      },
-      {
-        "word": "bóng",
-        "image_prompt": "Glowing superhero soccer ball"
-      }
-    ],
-    "true_false_game": [
-      {
-        "correct_word": "bóng",
-        "distractor_word": "bong",
-        "image_prompt": "Soccer ball"
-      }
-    ],
-    "spin_wheel_items": [
-      "ba",
-      "bóng",
-      "bò",
-      "bé",
-      "bàn"
-    ],
-    "fill_in_the_blank": [
-      {
-        "full_word": "bóng",
-        "missing_char": "ó",
-        "sentence": "Bé đá b_ng."
-      }
-    ],
-    "multiple_choice": [
-      {
-        "question": "Chữ nào bắt đầu bằng chữ B?",
-        "correct_answer": "bóng",
-        "distractors": [
-          "cá",
-          "gà"
-        ]
-      }
-    ]
-  },
+  "mini_games": [
+    {
+      "id": "game_matching_1",
+      "type": "matching_game",
+      "items": [
+        {
+          "word": "ba",
+          "image_prompt": "Cartoon superhero dad"
+        },
+        {
+          "word": "bóng",
+          "image_prompt": "Glowing superhero soccer ball"
+        }
+      ]
+    },
+    {
+      "id": "game_tf_1",
+      "type": "true_false_game",
+      "items": [
+        {
+          "correct_word": "bóng",
+          "distractor_word": "bong",
+          "image_prompt": "Soccer ball"
+        }
+      ]
+    },
+    {
+      "id": "game_spin_1",
+      "type": "spin_wheel_items",
+      "items": [
+        "ba",
+        "bóng",
+        "bò",
+        "bé",
+        "bàn"
+      ]
+    },
+    {
+      "id": "game_fill_1",
+      "type": "fill_in_the_blank",
+      "items": [
+        {
+          "full_word": "bóng",
+          "missing_char": "ó",
+          "sentence": "Bé đá b_ng."
+        }
+      ]
+    },
+    {
+      "id": "game_mc_1",
+      "type": "multiple_choice",
+      "items": [
+        {
+          "question": "Chữ nào bắt đầu bằng chữ B?",
+          "correct_answer": "bóng",
+          "distractors": [
+            "cá",
+            "gà"
+          ]
+        }
+      ]
+    }
+  ],
   "base_rewards": {
     "completion_xp": 100,
     "badge_unlock_id": "badge_super_b",
