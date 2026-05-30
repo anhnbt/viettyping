@@ -29,7 +29,35 @@ const fingerColors: Record<string, string> = {
   'pinky-right': 'bg-purple-100 border-purple-200',
 };
 
+const shiftKeyMap: Record<string, string> = {
+  '+': '=',
+  '_': '-',
+  ')': '0',
+  '(': '9',
+  '*': '8',
+  '&': '7',
+  '^': '6',
+  '%': '5',
+  '$': '4',
+  '#': '3',
+  '@': '2',
+  '!': '1',
+  '~': '`',
+  '{': '[',
+  '}': ']',
+  '|': '\\',
+  ':': ';',
+  '"': '\'',
+  '<': ',',
+  '>': '.',
+  '?': '/'
+};
+
 export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
+  // Chuẩn hóa props thành string | null để tránh lỗi crash khi truyền kiểu số (number) hoặc đối tượng khác
+  const highlightKeyStr = highlightKey !== null && highlightKey !== undefined ? String(highlightKey) : null;
+  const pressedKeyStr = pressedKey !== null && pressedKey !== undefined ? String(pressedKey) : null;
+
   const getKeyDisplay = (key: string) => {
     switch (key) {
       case ' ': return 'Space';
@@ -39,25 +67,25 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
   };
 
   const shouldHighlightKey = (key: string, rowIndex: number, keyIndex: number) => {
-    if (!highlightKey) return false;
+    if (!highlightKeyStr) return false;
 
     const isLeftShift = rowIndex === 3 && keyIndex === 0;
     const isRightShift = rowIndex === 3 && keyIndex === 11;
 
-    // Kiểm tra xem highlightKey có phải là chữ viết hoa tiếng Việt
-    const isCapital = highlightKey.length === 1 && 
-      highlightKey !== highlightKey.toLowerCase() && 
-      /[A-ZÀ-ỸĐ]/.test(highlightKey);
+    // Kiểm tra xem highlightKeyStr có phải là chữ viết hoa hoặc ký tự cần Shift
+    const isShiftRequired = /[A-ZÀ-ỸĐ]/.test(highlightKeyStr) || highlightKeyStr in shiftKeyMap;
 
-    if (isCapital) {
-      const lowerChar = highlightKey.toLowerCase();
+    if (isShiftRequired) {
+      const baseChar = /[A-ZÀ-ỸĐ]/.test(highlightKeyStr) 
+        ? highlightKeyStr.toLowerCase() 
+        : shiftKeyMap[highlightKeyStr];
       
-      // Nếu phím hiện tại là phím chữ cái tương ứng
-      if (key.toLowerCase() === lowerChar) return true;
+      // Nếu phím hiện tại là phím cơ bản tương ứng
+      if (key.toLowerCase() === baseChar.toLowerCase()) return true;
 
       // Nếu phím hiện tại là phím Shift tương ứng
       if (key === 'Shift') {
-        const finger = fingerMap[lowerChar];
+        const finger = fingerMap[baseChar];
         const isLeftHand = finger && finger.includes('left');
         
         if (isLeftHand && isRightShift) return true;
@@ -68,10 +96,10 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
     }
 
     if (key === ' ') {
-      return highlightKey === ' ' || highlightKey === 'space';
+      return highlightKeyStr === ' ' || highlightKeyStr === 'space';
     }
     
-    return highlightKey.toLowerCase() === key.toLowerCase();
+    return highlightKeyStr.toLowerCase() === key.toLowerCase();
   };
 
   const getFingerColor = (key: string) => {
@@ -87,8 +115,8 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
             {row.map((key, keyIndex) => {
               const displayKey = getKeyDisplay(key);
 
-              const isPressed = key === ' ' ? pressedKey === ' ' || pressedKey === 'space' :
-                pressedKey === key.toLowerCase();
+              const isPressed = key === ' ' ? pressedKeyStr === ' ' || pressedKeyStr === 'space' :
+                pressedKeyStr === key.toLowerCase();
 
               const shouldHighlight = shouldHighlightKey(key, rowIndex, keyIndex);
 
@@ -120,7 +148,7 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
         ))}
       </div>
 
-      <FingersVisualizer highlightKey={highlightKey} pressedKey={pressedKey} />
+      <FingersVisualizer highlightKey={highlightKeyStr} pressedKey={pressedKeyStr} />
 
       {/* Legend for Fingers */}
       <div className="mt-6 flex flex-wrap justify-center gap-4 text-xs text-gray-600">

@@ -327,6 +327,35 @@ export const subjects: Subject[] = [
           },
         ],
       },
+      {
+        id: 'am-nhac-hat',
+        title: 'Rèn hát đúng giai điệu & Nốt nhạc',
+        description: 'Học cách cảm thụ giai điệu và gõ lời các ca khúc thiếu nhi quen thuộc',
+        difficulty: 'medium',
+        estimatedTime: 20,
+        content: 'Ba thương con vì con giống mẹ. Mẹ thương con vì con giống ba.',
+        activities: [
+          {
+            id: 'an-hat-1',
+            type: 'typing',
+            title: 'Gõ lời ca khúc: Cả nhà thương nhau',
+            content: 'ba thuong con vi con giong me me thuong con vi con giong ba ca nha ta cung thuong yeu nhau xa la nho gap nhau la cuoi',
+            instructions: 'Hãy gõ lời bài hát để vừa nhớ chữ vừa nhẩm theo giai điệu vui tươi nhé!',
+          },
+          {
+            id: 'an-hat-2',
+            type: 'listening',
+            title: 'Nghe giai điệu nốt nhạc',
+            content: 'Nghe nốt Sol và chọn nốt đúng',
+            instructions: 'Lắng nghe âm thanh và chọn nốt nhạc tương ứng',
+            data: {
+              notes: [
+                { name: 'Sol (G)', frequency: 392.00 }
+              ]
+            }
+          }
+        ]
+      }
     ],
   },
   {
@@ -416,6 +445,32 @@ export const subjects: Subject[] = [
           },
         ],
       },
+      {
+        id: 'toan-thuc-te',
+        title: 'Toán học thực tế & Cẩn thận',
+        description: 'Giải toán có lời văn thực tế và rèn luyện tính toán chính xác',
+        difficulty: 'medium',
+        estimatedTime: 20,
+        content: 'Vận dụng phép cộng, phép trừ vào các bài toán thực tế hàng ngày.',
+        activities: [
+          {
+            id: 't-thucte-1',
+            type: 'quiz',
+            title: 'Đi chợ mua quả',
+            content: 'Mẹ mua 5 quả táo, ba mua thêm 3 quả táo nữa. Hỏi nhà mình có tất cả bao nhiêu quả táo?',
+            instructions: 'Hãy suy nghĩ cẩn thận và chọn đáp án chính xác nhé!',
+            options: ['6 quả', '8 quả', '10 quả'],
+            correctAnswer: '8 quả'
+          },
+          {
+            id: 't-thucte-2',
+            type: 'typing',
+            title: 'Gõ phép tính cẩn thận',
+            content: '5 + 3 = 8; 10 - 4 = 6; 7 - 2 = 5; 6 + 4 = 10',
+            instructions: 'Gõ thật cẩn thận và chính xác từng số và dấu phép tính!',
+          }
+        ]
+      }
     ],
   },
   {
@@ -461,6 +516,32 @@ export const subjects: Subject[] = [
           },
         ],
       },
+      {
+        id: 'tv-toc-do',
+        title: 'Luyện gõ đúng tốc độ & Đọc hiểu',
+        description: 'Rèn luyện kỹ năng đọc hiểu và đạt tốc độ gõ phím tiêu chuẩn',
+        difficulty: 'medium',
+        estimatedTime: 20,
+        content: 'Con rùa và con thỏ chạy thi. Rùa kiên trì nên đã chiến thắng thỏ kiêu ngạo.',
+        activities: [
+          {
+            id: 'tv-tocdo-1',
+            type: 'typing',
+            title: 'Luyện gõ đúng tốc độ: Rùa và Thỏ',
+            content: 'Rùa bò chậm chạp nhưng kiên trì. Thỏ chạy nhanh nhưng ham chơi. Cuối cùng rùa đã về đích trước.',
+            instructions: 'Hãy cố gắng gõ đều tay và đạt tốc độ gõ nhanh dần nhé!',
+          },
+          {
+            id: 'tv-tocdo-2',
+            type: 'quiz',
+            title: 'Đọc hiểu: Ai là người chiến thắng?',
+            content: 'Trong câu chuyện Rùa và Thỏ chạy thi, ai đã giành chiến thắng chung cuộc?',
+            instructions: 'Dựa vào bài đã gõ ở trên để chọn câu trả lời đúng',
+            options: ['Con Thỏ', 'Con Rùa', 'Cả hai cùng về đích'],
+            correctAnswer: 'Con Rùa'
+          }
+        ]
+      }
     ],
   },
   {
@@ -488,6 +569,32 @@ export const subjects: Subject[] = [
           },
         ],
       },
+      {
+        id: 'hdtn-tap-trung',
+        title: 'Rèn luyện sự tập trung chú ý',
+        description: 'Rèn luyện khả năng chú ý và tập trung cao độ trong giờ học',
+        difficulty: 'hard',
+        estimatedTime: 15,
+        content: 'Tập trung học tập giúp con hiểu bài nhanh và nhớ lâu hơn.',
+        activities: [
+          {
+            id: 'hdtn-taptrung-1',
+            type: 'typing',
+            title: 'Gõ nhanh luyện tập trung',
+            content: 'chu y lang nghe hoc tap cham chi tu giac phat bieu',
+            instructions: 'Gõ nhanh và chính xác các từ này mà không nhìn bàn phím nhé!',
+          },
+          {
+            id: 'hdtn-taptrung-2',
+            type: 'quiz',
+            title: 'Hành vi tập trung trong lớp',
+            content: 'Hành động nào dưới đây thể hiện sự tập trung nghe giảng trong giờ học?',
+            instructions: 'Chọn hành vi đúng đắn nhất',
+            options: ['Nói chuyện riêng với bạn bên cạnh', 'Chăm chú lắng nghe cô giáo và hăng hái phát biểu', 'Vẽ bậy ra sách vở'],
+            correctAnswer: 'Chăm chú lắng nghe cô giáo và hăng hái phát biểu'
+          }
+        ]
+      }
     ],
   },
   {
@@ -594,6 +701,72 @@ export const subjects: Subject[] = [
           },
         ],
       },
+      {
+        id: 'mt-khung-hinh',
+        title: 'Bố cục khung hình & Tô màu đều',
+        description: 'Học cách nhận biết khung hình đẹp và tô màu đều tay',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'Bức tranh đẹp cần vẽ đúng khung hình và tô màu thật đều tay.',
+        activities: [
+          {
+            id: 'mt-khunghinh-1',
+            type: 'quiz',
+            title: 'Nhận biết khung hình đúng',
+            content: 'Khi vẽ một ngôi nhà, chúng ta nên vẽ ngôi nhà ở vị trí nào của tờ giấy để cân đối nhất?',
+            instructions: 'Chọn đáp án thể hiện bố cục cân đối nhất',
+            options: ['Nằm lệch hoàn toàn sang góc trái', 'Nằm chính giữa tờ giấy', 'Nằm sát mép dưới tờ giấy'],
+            correctAnswer: 'Nằm chính giữa tờ giấy'
+          },
+          {
+            id: 'mt-khunghinh-2',
+            type: 'drawing',
+            title: 'Tập tô màu đều tay',
+            content: 'Tô màu đỏ cho mái ngói và màu vàng cho tường nhà',
+            instructions: 'Hãy di chuyển chuột hoặc ngón tay để tô màu thật đều trong khung hình nhé!',
+            data: {
+              outlineSvgName: 'house',
+              targetCoveragePercent: 70
+            }
+          }
+        ]
+      }
     ],
   },
+  {
+    id: 'the-duc',
+    name: 'Giáo dục thể chất',
+    description: 'Rèn luyện sức khỏe, các động tác cơ bản và tư thế học tập',
+    icon: '🏃',
+    color: 'from-amber-400 to-amber-600',
+    grade: 'Lớp 1-5',
+    topics: [
+      {
+        id: 'td-1',
+        title: 'Tư thế ngồi gõ phím & Sức khỏe',
+        description: 'Học cách ngồi thẳng lưng, bảo vệ mắt và rèn luyện thể chất',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'Ngồi thẳng lưng, mắt cách màn hình 30cm, nghỉ ngơi sau 20 phút.',
+        activities: [
+          {
+            id: 'td-1-1',
+            type: 'typing',
+            title: 'Quy tắc ngồi gõ phím đúng cách',
+            content: 'ngoi thang lung mat cach man hinh ba muoi xentimet giu vai tha long thu gian tay',
+            instructions: 'Gõ các quy tắc ngồi đúng tư thế khi học máy tính',
+          },
+          {
+            id: 'td-1-2',
+            type: 'quiz',
+            title: 'Chọn tư thế ngồi đúng',
+            content: 'Khi ngồi học trên máy tính, lưng của chúng ta nên như thế nào?',
+            instructions: 'Chọn tư thế ngồi tốt nhất cho cột sống của con',
+            options: ['Còng lưng sát vào màn hình', 'Ngồi thẳng lưng thoải mái', 'Nằm ra bàn học'],
+            correctAnswer: 'Ngồi thẳng lưng thoải mái'
+          }
+        ]
+      }
+    ]
+  }
 ];

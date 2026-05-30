@@ -2,8 +2,8 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { IoColorPaletteOutline, IoTrashOutline, IoCheckmarkCircle, IoAlertCircle } from "react-icons/io5";
-import { GameAdapterProps, TelemetryPayload, ColoringCanvasItem } from "@/types/lesson";
+import { IoTrashOutline, IoCheckmarkCircle, IoAlertCircle, IoSparkles } from "react-icons/io5";
+import { GameAdapterProps, ColoringCanvasItem, TelemetryPayload } from "@/types/lesson";
 
 const SHAPES: Record<string, { path: string; stroke: string; width: number; height: number; viewBox: string }> = {
   heart: {
@@ -26,18 +26,25 @@ const SHAPES: Record<string, { path: string; stroke: string; width: number; heig
     width: 500,
     height: 450,
     viewBox: "0 0 500 450"
+  },
+  house: {
+    path: "M250,60 L420,210 L370,210 L370,390 L130,390 L130,210 L80,210 Z M210,390 L210,290 L290,290 L290,390 Z M170,270 L170,220 L220,220 L220,270 Z M280,270 L280,220 L330,220 L330,270 Z",
+    stroke: "#000000",
+    width: 500,
+    height: 450,
+    viewBox: "0 0 500 450"
   }
 };
 
 const COLORS = [
-  "#ef4444", // Red
-  "#f97316", // Orange
-  "#eab308", // Yellow
-  "#22c55e", // Green
-  "#3b82f6", // Blue
-  "#a855f7", // Purple
-  "#ec4899", // Pink
-  "#14b8a6", // Teal
+  { hex: "#ef4444", name: "Đỏ" },
+  { hex: "#f97316", name: "Cam" },
+  { hex: "#eab308", name: "Vàng" },
+  { hex: "#22c55e", name: "Lá" },
+  { hex: "#3b82f6", name: "Dương" },
+  { hex: "#a855f7", name: "Tím" },
+  { hex: "#ec4899", name: "Hồng" },
+  { hex: "#14b8a6", name: "Ngọc" },
 ];
 
 export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterProps<ColoringCanvasItem>) {
@@ -48,8 +55,8 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(COLORS[6]); // Mặc định màu hồng
-  const [brushSize, setBrushSize] = useState(16);
+  const [selectedColor, setSelectedColor] = useState(COLORS[6].hex); // Mặc định hồng
+  const [brushSize, setBrushSize] = useState(20);
   const [isClient, setIsClient] = useState(false);
   
   // Realtime stats
@@ -70,6 +77,16 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     setTimeout(drawOutline, 100);
   }, [gameId, shapeKey]);
 
+  // Transform parameters to scale and center shape inside canvas
+  const getTransformParams = (canvasWidth: number, canvasHeight: number) => {
+    const scaleX = canvasWidth / shape.width;
+    const scaleY = canvasHeight / shape.height;
+    const scale = Math.min(scaleX, scaleY) * 0.85; // Scale down slightly for margin (85%)
+    const translateX = (canvasWidth - shape.width * scale) / 2;
+    const translateY = (canvasHeight - shape.height * scale) / 2;
+    return { scale, translateX, translateY };
+  };
+
   const drawOutline = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -79,10 +96,14 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw the shape outline path
+    // Draw the shape outline path with scale and translate
     ctx.save();
+    const { scale, translateX, translateY } = getTransformParams(canvas.width, canvas.height);
+    ctx.translate(translateX, translateY);
+    ctx.scale(scale, scale);
+
     ctx.strokeStyle = "#475569"; // Slate gray border
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 6 / scale; // Keep border thick regardless of scale
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     
@@ -109,7 +130,6 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
         ctx.beginPath();
       }
     }
-    // Calculate coverage and bleed in real-time on draw end
     calculateCoverageAndBleed();
   };
 
@@ -122,12 +142,14 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     const rect = canvas.getBoundingClientRect();
     let x, y;
 
+    // Get correct mouse/touch coordinates relative to canvas width/height attributes
+    // rect.width and rect.height could be smaller/larger due to responsive styling
     if ("touches" in e) {
-      x = e.touches[0].clientX - rect.left;
-      y = e.touches[0].clientY - rect.top;
+      x = ((e.touches[0].clientX - rect.left) / rect.width) * canvas.width;
+      y = ((e.touches[0].clientY - rect.top) / rect.height) * canvas.height;
     } else {
-      x = (e as React.MouseEvent).clientX - rect.left;
-      y = (e as React.MouseEvent).clientY - rect.top;
+      x = (((e as React.MouseEvent).clientX - rect.left) / rect.width) * canvas.width;
+      y = (((e as React.MouseEvent).clientY - rect.top) / rect.height) * canvas.height;
     }
 
     ctx.save();
@@ -135,7 +157,7 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.strokeStyle = selectedColor;
-    ctx.globalCompositeOperation = "destination-over"; // Vẽ đằng sau nét viền đen của outline
+    ctx.globalCompositeOperation = "destination-over"; // Draw behind outline black lines
 
     ctx.lineTo(x, y);
     ctx.stroke();
@@ -143,12 +165,16 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     ctx.moveTo(x, y);
     ctx.restore();
 
-    // Redraw black outline on top just in case paint went over it
+    // Redraw outline on top so it doesn't get covered by paint
     ctx.save();
+    const { scale, translateX, translateY } = getTransformParams(canvas.width, canvas.height);
+    ctx.translate(translateX, translateY);
+    ctx.scale(scale, scale);
+
     ctx.strokeStyle = "#475569";
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 6 / scale;
     const p = new Path2D(shape.path);
-    ctx.globalCompositeOperation = "source-over"; // Vẽ nét viền đè lên trên màu tô
+    ctx.globalCompositeOperation = "source-over"; // Draw outline on top
     ctx.stroke(p);
     ctx.restore();
   };
@@ -164,37 +190,47 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     
     // Path definition
     const path = new Path2D(shape.path);
+    const { scale, translateX, translateY } = getTransformParams(canvas.width, canvas.height);
 
     // Sample points in a grid
-    const step = 8; // Kích thước lưới lấy mẫu
+    const step = 8;
     let insideTotal = 0;
     let insidePainted = 0;
     let outsidePainted = 0;
 
     for (let x = step; x < width; x += step) {
       for (let y = step; y < height; y += step) {
-        const isInside = ctx.isPointInPath(path, x, y);
+        // Dịch ngược tọa độ canvas về hệ tọa độ gốc của path để kiểm tra isPointInPath
+        const xOrig = (x - translateX) / scale;
+        const yOrig = (y - translateY) / scale;
         
-        // Check pixel paint (alpha channel)
+        const isInside = ctx.isPointInPath(path, xOrig, yOrig);
+        
         const imgData = ctx.getImageData(x, y, 1, 1).data;
-        const isPainted = imgData[3] > 30; // check alpha value
+        const isPainted = imgData[3] > 30; // Check alpha channel
 
         if (isInside) {
           insideTotal++;
           if (isPainted) {
-            // make sure we don't count the initial gray outline color (it is painted)
-            // check if it is not just grey outline color
+            // Exclude the outline color itself (#475569)
             const r = imgData[0];
             const g = imgData[1];
             const b = imgData[2];
-            const isGrayOutline = r === 0x47 && g === 0x55 && b === 0x69;
-            if (!isGrayOutline) {
+            const isOutlineColor = r === 0x47 && g === 0x55 && b === 0x69;
+            if (!isOutlineColor) {
               insidePainted++;
             }
           }
         } else {
           if (isPainted) {
-            outsidePainted++;
+            // Count as bleed if it is painted and not the outline color
+            const r = imgData[0];
+            const g = imgData[1];
+            const b = imgData[2];
+            const isOutlineColor = r === 0x47 && g === 0x55 && b === 0x69;
+            if (!isOutlineColor) {
+              outsidePainted++;
+            }
           }
         }
       }
@@ -213,15 +249,12 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
   };
 
   const handleFinish = () => {
-    const target = currentItem.targetCoveragePercent || 70;
-    
-    if (coveragePercent < 30) {
+    if (coveragePercent < 35) {
       setErrorMessage("Bé ơi, hãy tô màu thêm một chút nữa trước khi hoàn thành nhé!");
       return;
     }
 
     const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
-    // Tính điểm: Độ phủ trừ đi một phần độ lem
     const score = Math.max(10, Math.min(100, coveragePercent - Math.round(bleedPercent * 0.5)));
 
     onComplete({
@@ -237,102 +270,80 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
   if (!isClient) return null;
 
   return (
-    <div className="w-full flex flex-col items-center gap-6">
+    <div className="w-full flex flex-col items-center gap-5 max-w-3xl mx-auto px-4">
       
-      {/* Title block */}
-      <div className="w-full max-w-xl bg-pink-50 border border-pink-100 rounded-3xl p-5 shadow-sm">
-        <h4 className="text-xl md:text-2xl font-black text-pink-700 mb-1 leading-snug">
-          {currentItem.title}
+      {/* Title Block */}
+      <div className="w-full bg-pink-50 border-2 border-pink-100 rounded-3xl p-4 shadow-sm text-center">
+        <h4 className="text-xl md:text-2xl font-black text-pink-700 mb-1 leading-snug flex items-center justify-center gap-2">
+          <IoSparkles className="text-pink-500 animate-pulse" />
+          <span>{currentItem.title}</span>
+          <IoSparkles className="text-pink-500 animate-pulse" />
         </h4>
-        <p className="text-xs text-slate-500 font-bold">
-          Nhiệm vụ: Chọn các màu sắc yêu thích và di cọ vẽ để tô kín bên trong hình nhé!
+        <p className="text-slate-600 text-xs md:text-sm font-semibold">
+          Nhiệm vụ: Chọn bút sáp màu bên dưới và di cọ vẽ để tô kín bên trong hình nhé!
         </p>
       </div>
 
-      {/* Workspace */}
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-6 w-full py-2">
+      {/* Canvas painting area (750x500 for Premium Desktop size) */}
+      <div className="bg-gradient-to-tr from-pink-100/30 via-purple-50/20 to-indigo-100/30 border-2 border-slate-200/60 rounded-[32px] p-4 shadow-sm relative w-full">
+        <canvas
+          ref={canvasRef}
+          width={750}
+          height={500}
+          className="bg-white border-4 border-dashed border-slate-200 rounded-[24px] cursor-crosshair touch-none w-full shadow-inner aspect-[1.5/1]"
+          onMouseDown={startDrawing}
+          onMouseUp={stopDrawing}
+          onMouseLeave={stopDrawing}
+          onMouseMove={draw}
+          onTouchStart={startDrawing}
+          onTouchEnd={stopDrawing}
+          onTouchMove={draw}
+        />
+      </div>
+
+      {/* Colors Palette: Beautiful 3D Crayons Box */}
+      <div className="flex flex-col items-center p-4 bg-amber-50 rounded-3xl border-2 border-amber-200/60 shadow-[4px_4px_0px_0px_#fde68a] w-full">
+        <div className="text-xs font-black text-amber-800 uppercase tracking-wider mb-3 text-center">
+          🖍️ Hộp Bút Màu Sáp
+        </div>
         
-        {/* Colors Palette & Tooling */}
-        <div className="flex flex-row lg:flex-col gap-3 p-4 bg-white/90 backdrop-blur-sm rounded-3xl border border-slate-100 shadow-sm w-full lg:w-auto justify-center flex-wrap">
-          <div className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1 hidden lg:block text-center flex-1">
-            Màu vẽ
-          </div>
-          {COLORS.map((c) => (
-            <motion.button
-              key={c}
-              onClick={() => setSelectedColor(c)}
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.9 }}
-              className={`w-10 h-10 rounded-full border-4 shadow-inner transition-all ${
-                selectedColor === c ? "border-slate-700 scale-110" : "border-transparent"
-              }`}
-              style={{ backgroundColor: c }}
-            />
-          ))}
-          <div className="h-px bg-slate-100 my-1 hidden lg:block" />
-          
-          {/* Brush size settings */}
-          <div className="flex items-center gap-2 lg:flex-col mt-1">
-            <button
-              onClick={() => setBrushSize(10)}
-              className={`w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center transition-colors border ${
-                brushSize === 10 ? "bg-slate-700 text-white border-slate-700" : "bg-slate-50 text-slate-500 border-slate-200"
-              }`}
-            >
-              Cọ Nhỏ
-            </button>
-            <button
-              onClick={() => setBrushSize(20)}
-              className={`w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center transition-colors border ${
-                brushSize === 20 ? "bg-slate-700 text-white border-slate-700" : "bg-slate-50 text-slate-500 border-slate-200"
-              }`}
-            >
-              Cọ To
-            </button>
-          </div>
+        {/* Crayon container - horizontal layout */}
+        <div className="flex flex-row gap-3 md:gap-5 justify-center items-end flex-wrap px-2 h-16 w-full">
+          {COLORS.map((c) => {
+            const isSelected = selectedColor === c.hex;
+            return (
+              <motion.button
+                key={c.hex}
+                onClick={() => setSelectedColor(c.hex)}
+                animate={isSelected ? { y: -12, scale: 1.1 } : { y: 0, scale: 1 }}
+                whileHover={{ y: -6 }}
+                transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                className="relative flex flex-col items-center focus:outline-none cursor-pointer"
+                title={c.name}
+              >
+                {/* Crayon Tip (Đầu bút nhọn) */}
+                <div 
+                  className="w-4 h-3.5 border border-slate-700/10"
+                  style={{ 
+                    backgroundColor: c.hex, 
+                    clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)" 
+                  }}
+                />
+                {/* Crayon Body (Thân bút sáp màu) */}
+                <div 
+                  className={`w-6 h-10 rounded-b border ${
+                    isSelected ? "border-slate-800 shadow-md" : "border-slate-700/20"
+                  } shadow-sm flex items-center justify-center text-[9px] font-black text-white/90 select-none`}
+                  style={{ backgroundColor: c.hex }}
+                >
+                  <span className="drop-shadow">{c.name[0]}</span>
+                </div>
+                {/* Shadow overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-black/20 rounded-b pointer-events-none" />
+              </motion.button>
+            );
+          })}
         </div>
-
-        {/* Canvas painting area */}
-        <div className="bg-gradient-to-tr from-pink-50/30 to-purple-50/30 border border-slate-200/50 rounded-[36px] p-5 shadow-sm relative w-full max-w-lg">
-          <canvas
-            ref={canvasRef}
-            width={500}
-            height={400}
-            className="bg-white border-2 border-dashed border-slate-200 rounded-[28px] cursor-crosshair touch-none w-full shadow-inner"
-            onMouseDown={startDrawing}
-            onMouseUp={stopDrawing}
-            onMouseLeave={stopDrawing}
-            onMouseMove={draw}
-            onTouchStart={startDrawing}
-            onTouchEnd={stopDrawing}
-            onTouchMove={draw}
-          />
-        </div>
-
-        {/* Real-time statistics display for Parents/Educators */}
-        <div className="flex flex-col gap-3 p-5 bg-white/90 backdrop-blur-sm rounded-3xl border border-slate-100 shadow-sm w-full max-w-xs text-sm">
-          <div className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1 text-center">
-            Chỉ số đánh giá độ khéo
-          </div>
-          <div className="flex justify-between items-center text-slate-600 font-bold">
-            <span>Độ phủ màu (Coverage):</span>
-            <span className="text-base font-black text-pink-600 bg-pink-50 px-3 py-1 rounded-full">
-              {coveragePercent}%
-            </span>
-          </div>
-          <div className="flex justify-between items-center text-slate-600 font-bold">
-            <span>Độ lem ngoài (Bleed):</span>
-            <span className={`text-base font-black px-3 py-1 rounded-full ${
-              bleedPercent > 15 ? "text-red-600 bg-red-50" : "text-green-600 bg-green-50"
-            }`}>
-              {bleedPercent}%
-            </span>
-          </div>
-          <div className="text-[10px] text-slate-400 leading-normal border-t border-slate-100 pt-2 italic mt-1">
-            * Mẹo: Bé hãy tô kín hình vẽ bên trong và chú ý không vẽ chệch ra ngoài đường viền đen nhé!
-          </div>
-        </div>
-
       </div>
 
       {/* Error alert message */}
@@ -342,32 +353,100 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex items-center gap-1.5 text-red-500 bg-red-50 px-4 py-2 rounded-xl font-bold border border-red-200"
+            className="flex items-center gap-1.5 text-red-500 bg-red-50 px-4 py-2 rounded-2xl font-bold border border-red-200 w-full justify-center text-xs"
           >
-            <IoAlertCircle className="text-lg" />
+            <IoAlertCircle className="text-base" />
             <span>{errorMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Actions */}
-      <div className="flex items-center justify-between w-full max-w-xl bg-slate-50 p-4 rounded-2xl border border-slate-100 shrink-0">
-        <button
-          onClick={handleClear}
-          className="flex items-center gap-1 px-5 py-2.5 bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-600 font-bold rounded-xl transition-colors shadow-sm text-sm"
-        >
-          <IoTrashOutline className="text-base" />
-          Tô lại
-        </button>
-        <button
-          onClick={handleFinish}
-          className="flex items-center gap-1.5 px-8 py-3 bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-50 hover:to-pink-600 text-white font-black text-lg rounded-2xl shadow-[0_4px_0_0_#db2777] hover:shadow-[0_2px_0_0_#db2777] transition-all hover:translate-y-[2px] active:shadow-none active:translate-y-[4px]"
-        >
-          <IoCheckmarkCircle size={20} />
-          Hoàn thành
-        </button>
+      {/* Bottom Control Station: Brush sizes, Stats, and Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full items-center bg-white p-4 rounded-3xl border-2 border-slate-100 shadow-sm">
+        
+        {/* Brush Size Selector */}
+        <div className="flex items-center justify-center gap-3">
+          <span className="text-xs font-black text-slate-500 uppercase tracking-wider">Cọ vẽ</span>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setBrushSize(12)}
+              className={`w-10 h-10 rounded-2xl flex flex-col items-center justify-center transition-all border-2 font-black cursor-pointer shadow-sm ${
+                brushSize === 12 ? "bg-amber-500 text-white border-amber-600 scale-105" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              <div className="w-2.5 h-2.5 bg-current rounded-full" />
+              <span className="text-[9px] mt-0.5 font-bold">Nhỏ</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setBrushSize(22)}
+              className={`w-10 h-10 rounded-2xl flex flex-col items-center justify-center transition-all border-2 font-black cursor-pointer shadow-sm ${
+                brushSize === 22 ? "bg-amber-500 text-white border-amber-600 scale-105" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              <div className="w-5 h-5 bg-current rounded-full" />
+              <span className="text-[9px] mt-0.5 font-bold">To</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Stats Display (Coverage and Bleed) */}
+        <div className="space-y-2 border-y md:border-y-0 md:border-x border-slate-100 py-2.5 md:py-0 px-4">
+          <div>
+            <div className="flex justify-between items-center text-slate-600 font-bold mb-1 text-[10px]">
+              <span>Phủ màu:</span>
+              <span className="text-[10px] font-black text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full">
+                {coveragePercent}% / {currentItem.targetCoveragePercent}%
+              </span>
+            </div>
+            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200">
+              <motion.div 
+                className="bg-gradient-to-r from-pink-400 to-rose-500 h-full rounded-full"
+                animate={{ width: `${coveragePercent}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between items-center text-slate-600 font-bold mb-1 text-[10px]">
+              <span>Lem viền:</span>
+              <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                {bleedPercent}%
+              </span>
+            </div>
+            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200">
+              <motion.div 
+                className={`h-full rounded-full ${bleedPercent > 18 ? "bg-red-500" : "bg-emerald-500"}`}
+                animate={{ width: `${bleedPercent}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-center gap-3">
+          <button
+            type="button"
+            onClick={handleClear}
+            className="flex items-center gap-1 px-4 py-2.5 bg-white border-2 border-slate-200 hover:bg-slate-50 text-slate-600 font-black rounded-xl transition-colors shadow-sm text-xs cursor-pointer"
+          >
+            <IoTrashOutline className="text-sm" />
+            <span>Tô lại</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleFinish}
+            className="flex items-center gap-1.5 px-6 py-3 bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white font-black text-sm rounded-xl border-b-2 border-pink-700 shadow-sm cursor-pointer active:translate-y-0.5 active:border-b-0"
+          >
+            <IoCheckmarkCircle size={16} />
+            <span>Hoàn thành</span>
+          </button>
+        </div>
       </div>
 
     </div>
   );
 }
+

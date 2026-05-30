@@ -205,7 +205,9 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
 
           {/* Scrollable Content Area */}
           <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">
-            <div className="w-full h-full flex items-center justify-center max-w-4xl mx-auto">
+            <div className={`w-full h-full flex items-center justify-center mx-auto ${
+              currentActivity.type === 'drawing' ? 'max-w-5xl' : 'max-w-4xl'
+            }`}>
               {renderActivity(currentActivity)}
             </div>
           </div>

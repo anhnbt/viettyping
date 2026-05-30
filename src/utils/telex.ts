@@ -226,7 +226,7 @@ export function getPossibleTelexKeys(word: string): string[][] {
   const match = normalizedWord.match(/^([\p{L}]+)([^\p{L}]*)$/u);
   
   if (!match) {
-    return [[normalizedWord.split('')]];
+    return [normalizedWord.split('')];
   }
   
   const alphaPart = match[1];

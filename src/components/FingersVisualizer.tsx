@@ -36,7 +36,35 @@ const signatureColors: Record<string, string> = {
 const skinFill = '#FFF5F0';
 const skinStroke = '#FCA5A5'; // rose-300
 
+const shiftKeyMap: Record<string, string> = {
+  '+': '=',
+  '_': '-',
+  ')': '0',
+  '(': '9',
+  '*': '8',
+  '&': '7',
+  '^': '6',
+  '%': '5',
+  '$': '4',
+  '#': '3',
+  '@': '2',
+  '!': '1',
+  '~': '`',
+  '{': '[',
+  '}': ']',
+  '|': '\\',
+  ':': ';',
+  '"': '\'',
+  '<': ',',
+  '>': '.',
+  '?': '/'
+};
+
 export default function FingersVisualizer({ highlightKey, pressedKey }: Props) {
+  // Chuẩn hóa props thành string | null để tránh lỗi crash khi truyền kiểu số (number) hoặc đối tượng khác
+  const highlightKeyStr = highlightKey !== null && highlightKey !== undefined ? String(highlightKey) : null;
+  const pressedKeyStr = pressedKey !== null && pressedKey !== undefined ? String(pressedKey) : null;
+
   const getFingerName = (key: string | null): string | null => {
     if (!key) return null;
     const lowerKey = key.toLowerCase();
@@ -45,17 +73,17 @@ export default function FingersVisualizer({ highlightKey, pressedKey }: Props) {
   };
 
   const activeFingers = React.useMemo(() => {
-    if (!highlightKey) return [];
+    if (!highlightKeyStr) return [];
     
-    const lowerChar = highlightKey.toLowerCase();
-    
-    // Kiểm tra xem có phải chữ viết hoa tiếng Việt
-    const isCapital = highlightKey.length === 1 && 
-      highlightKey !== highlightKey.toLowerCase() && 
-      /[A-ZÀ-ỸĐ]/.test(highlightKey);
+    // Kiểm tra xem highlightKeyStr có phải là chữ viết hoa hoặc ký tự cần Shift
+    const isShiftRequired = /[A-ZÀ-ỸĐ]/.test(highlightKeyStr) || highlightKeyStr in shiftKeyMap;
 
-    if (isCapital) {
-      const charFinger = fingerMap[lowerChar];
+    if (isShiftRequired) {
+      const baseChar = /[A-ZÀ-ỸĐ]/.test(highlightKeyStr) 
+        ? highlightKeyStr.toLowerCase() 
+        : shiftKeyMap[highlightKeyStr];
+        
+      const charFinger = fingerMap[baseChar];
       if (!charFinger) return [];
       
       const isLeftHand = charFinger.includes('left');
@@ -64,12 +92,13 @@ export default function FingersVisualizer({ highlightKey, pressedKey }: Props) {
       return [charFinger, shiftFinger];
     }
     
+    const lowerChar = highlightKeyStr.toLowerCase();
     if (lowerChar === ' ') return ['thumb'];
-    const finger = fingerMap[lowerChar] || fingerMap[highlightKey] || null;
+    const finger = fingerMap[lowerChar] || fingerMap[highlightKeyStr] || null;
     return finger ? [finger] : [];
-  }, [highlightKey]);
+  }, [highlightKeyStr]);
 
-  const pressedFinger = getFingerName(pressedKey);
+  const pressedFinger = getFingerName(pressedKeyStr);
 
   const renderFinger = (
     fingerId: string,
