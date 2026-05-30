@@ -84,7 +84,21 @@ export default function LessonRunner({
             image_url: flashcard?.image_url || "/assets/placeholder.png",
           };
         });
-        return <TrueFalseGame items={tfItems} onComplete={handleCurrentGameComplete} />;
+
+        const tfConfig = {
+          id: currentGame.id,
+          items: tfItems
+        };
+
+        return (
+          <TrueFalseGame
+            gameConfig={tfConfig}
+            onComplete={(telemetry) => {
+              console.log("[TrueFalseGame Telemetry]:", telemetry);
+              handleCurrentGameComplete();
+            }}
+          />
+        );
       }
       case "spin_wheel_items": {
         return <SpinWheelGame items={currentGame.items} onComplete={handleCurrentGameComplete} />;

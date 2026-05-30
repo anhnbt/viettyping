@@ -3,6 +3,7 @@ import { ActivityAdapterProps } from '@/types/activity';
 import { IoPlay, IoClose } from 'react-icons/io5';
 import TypingPractice from '@/components/TypingPractice';
 import CompletionModal from '@/components/CompletionModal';
+import { TelemetryPayload } from '@/types/lesson';
 
 export const TypingActivity: React.FC<ActivityAdapterProps> = ({ activity, onComplete, onProgressUpdate }) => {
   const [showTypingModal, setShowTypingModal] = useState(false);
@@ -14,7 +15,12 @@ export const TypingActivity: React.FC<ActivityAdapterProps> = ({ activity, onCom
     setStartTime(Date.now());
   }, []);
 
-  const handleTypingComplete = useCallback((stats: { wpm: number; accuracy: number; incorrectCount: number }) => {
+  const handleTypingComplete = useCallback((telemetry: TelemetryPayload) => {
+    const stats = {
+      wpm: telemetry.metadata?.wpm || 0,
+      accuracy: telemetry.score,
+      incorrectCount: telemetry.metadata?.incorrectCount || 0,
+    };
     setTypingStats(stats);
     setShowCompletionModal(true);
     if (onProgressUpdate) onProgressUpdate(100);

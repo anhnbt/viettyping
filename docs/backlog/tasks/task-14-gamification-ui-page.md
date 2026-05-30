@@ -2,25 +2,25 @@
 
 [PRD-GameController-Refactor](../PRD-GameController-Refactor.md)
 
-## What to build
+## Cần xây dựng (What to build)
 
-- Strip any remaining context calls or side-effects from `LessonRunner`.
-- Refactor `src/app/lesson/games/page.tsx` to act as an Adapter. It must:
-  - Fetch/Provide the JSON config to `LessonRunner`.
-  - Handle the `onAllGamesComplete` callback.
-  - Dispatch XP (`addXP`) and completion flags safely to `LessonContext`.
-  - Trigger Confetti, Audio, and show the Completion Popup.
-- This step ensures Gamification Context is cleanly separated from the Engine.
+- Loại bỏ hoàn toàn các hook Context hoặc các side-effect còn sót lại khỏi `LessonRunner`.
+- Tái cấu trúc `src/app/lesson/games/page.tsx` đóng vai trò là một Adapter. Cụ thể phải làm:
+  - Lấy/Truyền dữ liệu cấu hình JSON cho `LessonRunner`.
+  - Xử lý callback `onAllGamesComplete`.
+  - Gọi an toàn hàm cộng điểm (`addXP`) và các cờ hoàn thành vào `LessonContext`.
+  - Kích hoạt hiệu ứng pháo hoa (Confetti), âm thanh, và hiển thị Popup Hoàn thành.
+- Bước này đảm bảo phần Ngữ cảnh Gamification (Gamification Context) được tách biệt hoàn toàn khỏi Game Engine.
 
-## Acceptance criteria
+## Tiêu chí nghiệm thu (Acceptance criteria)
 
-- [ ] `LessonRunner` imports no Context hooks or side-effect libraries.
-- [ ] `page.tsx` correctly handles `onAllGamesComplete`.
-- [ ] XP and Badges are reliably updated in Context without race conditions.
-- [ ] Gamification UI (Confetti/Popup) runs exactly as before.
-- [ ] HITL: Review page transitions and Gamification Side-effects for memory leaks.
+- [x] `LessonRunner` không import bất kỳ Context hook hay thư viện side-effect nào.
+- [x] `page.tsx` xử lý chính xác hàm `onAllGamesComplete`.
+- [x] XP và Huy hiệu được cập nhật đáng tin cậy vào Context mà không xảy ra race conditions.
+- [x] Giao diện Gamification (Confetti/Popup) hoạt động chính xác như trước.
+- [x] HITL: Review lại các chuyển cảnh của page và các Side-effects của Gamification để đảm bảo không rò rỉ bộ nhớ (memory leaks).
 
-## Blocked by
+## Phụ thuộc (Blocked by)
 
 - [task-11-core-engine-matching.md](./task-11-core-engine-matching.md)
 - [task-12-true-false-spin-wheel.md](./task-12-true-false-spin-wheel.md)

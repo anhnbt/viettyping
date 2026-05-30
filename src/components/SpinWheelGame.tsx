@@ -4,22 +4,31 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, Play, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
 
-interface SpinWheelGameProps {
+export interface SpinWheelGameConfig {
+  id: string;
   items: string[];
-  onComplete: () => void;
 }
 
-export default function SpinWheelGame({ items, onComplete }: SpinWheelGameProps) {
+export default function SpinWheelGame({ gameConfig, onComplete }: GameAdapterProps<SpinWheelGameConfig>) {
+  const { id: gameId, items } = gameConfig;
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [pendingWinnerIndex, setPendingWinnerIndex] = useState<number | null>(null);
 
+  // Telemetry state
+  const startTimeRef = useRef<number>(Date.now());
+
   // Audio refs
   const tickAudioRef = useRef<HTMLAudioElement | null>(null);
   const tadaAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, [gameId]);
 
   useEffect(() => {
     // Setup audio
@@ -205,7 +214,13 @@ export default function SpinWheelGame({ items, onComplete }: SpinWheelGameProps)
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={onComplete}
+                  onClick={() => {
+                    const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
+                    onComplete({
+                      score: 100,
+                      durationSeconds,
+                    });
+                  }}
                   className="bg-green-500 hover:bg-green-400 text-white font-bold text-lg px-6 py-4 rounded-2xl shadow-[0_6px_0_0_#14532d] hover:shadow-[0_3px_0_0_#14532d] transition-all flex items-center gap-2 hover:translate-y-1 active:shadow-none active:translate-y-2"
                 >
                   <Check size={24} />

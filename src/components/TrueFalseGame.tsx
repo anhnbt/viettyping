@@ -1,30 +1,45 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X } from "lucide-react";
 import confetti from "canvas-confetti";
+import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
 
-export interface TrueFalseItem {
+export interface MappedTrueFalseItem {
   correct_word: string;
   distractor_word: string;
   image_url: string;
 }
 
-interface TrueFalseGameProps {
-  items: TrueFalseItem[];
-  onComplete: () => void;
+export interface TrueFalseGameConfig {
+  id: string;
+  items: MappedTrueFalseItem[];
 }
 
-export default function TrueFalseGame({ items, onComplete }: TrueFalseGameProps) {
+export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterProps<TrueFalseGameConfig>) {
+  const { id: gameId, items } = gameConfig;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayedWord, setDisplayedWord] = useState("");
   const [isCorrectWordShown, setIsCorrectWordShown] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState<boolean | null>(null);
   const [feedback, setFeedback] = useState<"none" | "correct" | "incorrect">("none");
 
+  // Telemetry state
+  const startTimeRef = useRef<number>(Date.now());
+  const failedAttemptsRef = useRef<Set<number>>(new Set());
+  const errorsRef = useRef<Array<{ questionId: string; userAnswer: string; correctAnswer: string }>>([]);
+
   const currentItem = items[currentIndex];
 
+  useEffect(() => {
+    // Reset timer when game starts (mount)
+    startTimeRef.current = Date.now();
+    failedAttemptsRef.current = new Set();
+    errorsRef.current = [];
+  }, [gameId]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (currentItem) {
       // Randomly decide whether to show the correct word or the distractor word
@@ -34,7 +49,7 @@ export default function TrueFalseGame({ items, onComplete }: TrueFalseGameProps)
       setSelectedChoice(null);
       setFeedback("none");
     }
-  }, [currentIndex, currentItem]);
+  }, [currentIndex, gameId]);
 
   const handleChoice = (isChoosingCorrect: boolean) => {
     if (feedback !== "none") return; // Prevent multiple clicks
@@ -64,11 +79,34 @@ export default function TrueFalseGame({ items, onComplete }: TrueFalseGameProps)
         if (currentIndex < items.length - 1) {
           setCurrentIndex((prev) => prev + 1);
         } else {
-          onComplete();
+          // Calculate telemetry on final completion
+          const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
+          const totalQuestions = items.length;
+          const correctFirstTry = totalQuestions - failedAttemptsRef.current.size;
+          const score = Math.round((correctFirstTry / totalQuestions) * 100);
+
+          const telemetry: TelemetryPayload = {
+            score,
+            durationSeconds,
+            errors: errorsRef.current.length > 0 ? errorsRef.current : undefined,
+          };
+
+          onComplete(telemetry);
         }
       }, 1500);
     } else {
       setFeedback("incorrect");
+      
+      // Record failed attempt for telemetry
+      if (!failedAttemptsRef.current.has(currentIndex)) {
+        failedAttemptsRef.current.add(currentIndex);
+        errorsRef.current.push({
+          questionId: `${gameId}_q${currentIndex}`,
+          userAnswer: isChoosingCorrect ? "Đúng" : "Sai",
+          correctAnswer: isCorrectWordShown ? "Đúng" : "Sai",
+        });
+      }
+
       // Play incorrect sound
       try {
         const audio = new Audio("/incorrect.mp3");
@@ -199,3 +237,4 @@ export default function TrueFalseGame({ items, onComplete }: TrueFalseGameProps)
     </div>
   );
 }
+

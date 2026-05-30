@@ -1,9 +1,14 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Be_Vietnam_Pro } from 'next/font/google'
 import './globals.css'
 import { SoundProvider } from '@/contexts/SoundContext'
 
-const inter = Inter({ subsets: ['latin'] })
+const beVietnamPro = Be_Vietnam_Pro({
+  weight: ['400', '500', '600', '700', '800', '900'],
+  subsets: ['latin', 'vietnamese'],
+  variable: '--font-be-vietnam-pro',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Luyện Gõ Phím Tiếng Việt',
@@ -16,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="vi">
-      <body className={inter.className}>
+    <html lang="vi" className={beVietnamPro.variable}>
+      <body className={beVietnamPro.className}>
         <SoundProvider>
           {children}
         </SoundProvider>
@@ -25,3 +30,4 @@ export default function RootLayout({
     </html>
   )
 }
+

@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
 
 export interface FillInTheBlankItem {
   full_word: string;
@@ -10,20 +11,37 @@ export interface FillInTheBlankItem {
   sentence: string;
 }
 
-interface FillInTheBlankGameProps {
+export interface FillInTheBlankGameConfig {
+  id: string;
   items: FillInTheBlankItem[];
-  onComplete: () => void;
 }
 
 const VIETNAMESE_CHARS = "aăâeêioôơuưyáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵbcdđghklmnpqrstvx".split("");
 
-export default function FillInTheBlankGame({ items, onComplete }: FillInTheBlankGameProps) {
+export default function FillInTheBlankGame({ gameConfig, onComplete }: GameAdapterProps<FillInTheBlankGameConfig>) {
+  const { id: gameId, items } = gameConfig;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedChar, setSelectedChar] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<"none" | "correct" | "incorrect">("none");
 
+  // Telemetry state
+  const startTimeRef = useRef<number>(Date.now());
+  const failedAttemptsRef = useRef<Set<number>>(new Set());
+  const errorsRef = useRef<Array<{ questionId: string; userAnswer: string; correctAnswer: string }>>([]);
+
   const currentItem = items[currentIndex];
 
+  useEffect(() => {
+    // Reset state and timers when gameConfig changes
+    setCurrentIndex(0);
+    setSelectedChar(null);
+    setFeedback("none");
+    startTimeRef.current = Date.now();
+    failedAttemptsRef.current = new Set();
+    errorsRef.current = [];
+  }, [gameId]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const keyboardOptions = useMemo(() => {
     if (!currentItem) return [];
     
@@ -43,7 +61,7 @@ export default function FillInTheBlankGame({ items, onComplete }: FillInTheBlank
       return options.map((c) => c.toUpperCase());
     }
     return options;
-  }, [currentItem]);
+  }, [currentIndex, gameId]);
 
   // Handle Text to Speech
   const speakWord = (text: string) => {
@@ -90,12 +108,32 @@ export default function FillInTheBlankGame({ items, onComplete }: FillInTheBlank
           setSelectedChar(null);
           setFeedback("none");
         } else {
-          onComplete();
+          const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
+          const totalQuestions = items.length;
+          const correctFirstTry = totalQuestions - failedAttemptsRef.current.size;
+          const score = Math.round((correctFirstTry / totalQuestions) * 100);
+
+          const telemetry: TelemetryPayload = {
+            score,
+            durationSeconds,
+            errors: errorsRef.current.length > 0 ? errorsRef.current : undefined,
+          };
+          onComplete(telemetry);
         }
       }, 2500); // Wait longer so the kid can hear the word
     } else {
       setFeedback("incorrect");
       
+      // Record failed attempt for telemetry
+      if (!failedAttemptsRef.current.has(currentIndex)) {
+        failedAttemptsRef.current.add(currentIndex);
+        errorsRef.current.push({
+          questionId: `${gameId}_q${currentIndex}`,
+          userAnswer: char,
+          correctAnswer: currentItem.missing_char,
+        });
+      }
+
       // Play incorrect sound
       try {
         const audio = new Audio("/incorrect.mp3");

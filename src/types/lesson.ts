@@ -32,12 +32,26 @@ export interface MultipleChoiceItem {
   items: { question: string; correct_answer: string; distractors: string[] }[];
 }
 
+export interface RealWorldMathGameItem {
+  id: string;
+  type: 'math_realworld_dragdrop';
+  items: { question: string; targetNum: number; itemType: 'apple' | 'candy' | 'coin'; sentence: string }[];
+}
+
+export interface ColoringCanvasItem {
+  id: string;
+  type: 'drawing_coloring_canvas';
+  items: { outlineSvgName: string; title: string; targetCoveragePercent: number }[];
+}
+
 export type MiniGameConfig = 
   | MatchingGameItem 
   | TrueFalseItem 
   | SpinWheelItem 
   | FillInTheBlankItem 
-  | MultipleChoiceItem;
+  | MultipleChoiceItem
+  | RealWorldMathGameItem
+  | ColoringCanvasItem;
 
 // --- Lesson Config Interfaces ---
 
@@ -76,3 +90,46 @@ export interface LessonConfig {
   mini_games: MiniGameConfig[];
   base_rewards: BaseRewards;
 }
+
+// --- Unified Game Seam & Telemetry Interfaces ---
+
+export interface TelemetryPayload {
+  score: number;
+  durationSeconds: number;
+  errors?: Array<{
+    questionId: string;
+    userAnswer: string;
+    correctAnswer: string;
+  }>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metadata?: Record<string, any>;
+}
+
+export interface GameAdapterProps<T> {
+  gameConfig: T;
+  onComplete: (telemetry: TelemetryPayload) => void;
+  onProgressUpdate?: (percent: number) => void;
+}
+
+export type LessonStep = "flashcards" | "typing_practice" | "mini_games" | "summary";
+
+export interface ActivityResult {
+  activityId: string;
+  type: "flashcards" | "typing_practice" | "mini_game";
+  score: number;
+  durationSeconds: number;
+  passed: boolean;
+  errors?: Array<{
+    questionId: string;
+    userAnswer: string;
+    correctAnswer: string;
+  }>;
+}
+
+export interface LessonSummary {
+  totalScore: number;
+  totalDuration: number;
+  activityResults: ActivityResult[];
+}
+
+

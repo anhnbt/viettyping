@@ -2,22 +2,22 @@
 
 [PRD-GameController-Refactor](../PRD-GameController-Refactor.md)
 
-## What to build
+## Cần xây dựng (What to build)
 
-- Define Discriminated Union Types for `MiniGameConfig` and `LessonConfig` in `src/types/lesson.ts`.
-- Restructure the `sample_lesson.json` so that `mini_games` is an array.
-- Create the `LessonRunner` pure component (Game Engine).
-- Ensure `MatchingGame` integrates correctly and runs end-to-end within the engine.
-- This slice establishes the architectural foundation (HITL required).
+- Định nghĩa Type theo kiểu Discriminated Unions cho `MiniGameConfig` và `LessonConfig` trong `src/types/lesson.ts`.
+- Tái cấu trúc file `sample_lesson.json` sao cho `mini_games` là một Mảng (Array).
+- Tạo component `LessonRunner` tinh gọn (Game Engine).
+- Đảm bảo `MatchingGame` tích hợp đúng và chạy mượt mà từ đầu đến cuối bên trong engine.
+- Tác vụ này thiết lập nền móng kiến trúc (Yêu cầu có sự tham gia của con người - HITL).
 
-## Acceptance criteria
+## Tiêu chí nghiệm thu (Acceptance criteria)
 
-- [ ] `src/types/lesson.ts` is fully typed using Discriminated Unions.
-- [ ] `sample_lesson.json` uses an Array for `mini_games`.
-- [ ] `LessonRunner` is a pure component (receives props, manages `currentIndex`, no side effects).
-- [ ] `LessonRunner` correctly renders `MatchingGame` based on the array sequence.
-- [ ] HITL: Architecture review of `LessonRunner` props and Type Definitions.
+- [x] `src/types/lesson.ts` được định kiểu đầy đủ sử dụng Discriminated Unions.
+- [x] `sample_lesson.json` sử dụng cấu trúc Mảng (Array) cho `mini_games`.
+- [x] `LessonRunner` là một component thuần túy (pure component - chỉ nhận props, quản lý `currentIndex`, không chứa side effects).
+- [x] `LessonRunner` render chính xác `MatchingGame` dựa trên thứ tự trong mảng.
+- [x] HITL: Review kiến trúc props của `LessonRunner` và cấu trúc Type Definitions.
 
-## Blocked by
+## Phụ thuộc (Blocked by)
 
-None - can start immediately
+Không có - có thể bắt đầu ngay lập tức
