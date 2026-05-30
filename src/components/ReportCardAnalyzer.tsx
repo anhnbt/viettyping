@@ -35,21 +35,22 @@ interface StudyTask {
   difficulty: 'easy' | 'medium' | 'hard';
 }
 
-const SAMPLE_COMMENT = `1. Tiếng Việt: Đọc to, rõ ràng; hiểu được nội dung bài đọc; lưu ý viết đúng tốc độ
-2. Toán: Tính toán cẩn thận, chính xác; vận dụng kĩ năng giải toán phù hợp với thực tế
-3. Ngoại ngữ/Tiếng Anh: Con học tốt trong học kỳ 2; nắm vững kiến thức và hoàn thành bài xuất sắc; tiếp tục phát huy
-4. Đạo đức: Thực hiện tốt các hành vi đã học; vận dụng linh hoạt các hành vi đạo đức vào cuộc sống
-5. Tự nhiên và xã hội: Hiểu tốt nội dung bài học; vận dụng tốt kiến thức đã học vào cuộc sống
-6. Giáo dục thể chất: Em đã thực hiện cơ bản nội dung, động tác đã học, cần cố gắng hơn trong tập luyện.
-7. Nghệ thuật (âm nhạc): Rèn hát đúng giai điệu các bài hát và các bài đọc nhạc.
-8. Nghệ thuật (mĩ thuật): Vẽ đúng khung hình, tô màu còn chưa đều.
-9. Hoạt động trải nghiệm: Thực hiện được một số yêu cầu cơ bản của chủ đề đã học; cần tập trung hơn trong giờ học.
-===
-Phẩm chất: Yêu nước, nhân ái, chăm chỉ, trung thực, trách nhiệm.
-Yêu quý thầy cô, giúp đỡ bạn bè; chăm học, thực hiện tốt nội quy lớp học; hăng hái phát biểu xây dựng bài.
-===
-Năng lực : Tự chủ và tự học, giao tiếp và hợp tác, giải quyết vấn đề sáng tạo.
-Tự giác, chủ động trong học tập, phối hợp tốt với các bạn trong nhóm; biết giải quyết một số tình huống`;
+const SAMPLE_COMMENT = `| Môn học / Hoạt động giáo dục | Nhận xét chi tiết của giáo viên |
+| :--- | :--- |
+| **Tiếng Việt** | Đọc to, rõ ràng; hiểu được nội dung bài đọc; lưu ý viết đúng tốc độ. |
+| **Toán** | Tính toán cẩn thận, chính xác; vận dụng kĩ năng giải toán phù hợp với thực tế. |
+| **Ngoại ngữ / Tiếng Anh** | Con học tốt trong học kỳ 2; nắm vững kiến thức và hoàn thành bài xuất sắc; tiếp tục phát huy. |
+| **Đạo đức** | Thực hiện tốt các hành vi đã học; vận dụng linh hoạt các hành vi đạo đức vào cuộc sống. |
+| **Tự nhiên và xã hội** | Hiểu tốt nội dung bài học; vận dụng tốt kiến thức đã học vào cuộc sống. |
+| **Giáo dục thể chất** | Em đã thực hiện cơ bản nội dung, động tác đã học, cần cố gắng hơn trong tập luyện. |
+| **Nghệ thuật (Âm nhạc)** | Rèn hát đúng giai điệu các bài hát và các bài đọc nhạc. |
+| **Nghệ thuật (Mĩ thuật)** | Vẽ đúng khung hình, tô màu còn chưa đều. |
+| **Hoạt động trải nghiệm** | Thực hiện được một số yêu cầu cơ bản của chủ đề đã học; cần tập trung hơn trong giờ học. |
+
+=== ĐÁNH GIÁ SỰ HÌNH THÀNH VÀ PHÁT TRIỂN NĂNG LỰC, PHẨM CHẤT ===
+
+* **Phẩm chất:** Yêu nước, nhân ái, chăm chỉ, trung thực, trách nhiệm. Yêu quý thầy cô, giúp đỡ bạn bè; chăm học, thực hiện tốt nội quy lớp học; hăng hái phát biểu xây dựng bài.
+* **Năng lực:** Tự chủ và tự học, giao tiếp và hợp tác, giải quyết vấn đề sáng tạo. Tự giác, chủ động trong học tập, phối hợp tốt với các bạn trong nhóm; biết giải quyết một số tình huống.`;
 
 export default function ReportCardAnalyzer() {
   const router = useRouter();
