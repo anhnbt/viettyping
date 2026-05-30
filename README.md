@@ -146,6 +146,13 @@ Sau khi hoàn thành bộ khung tĩnh ở Phase 1, Phase 2 sẽ tập trung vào
 - **Phụ huynh**: Hỗ trợ con em học tập tại nhà
 - **Giáo viên**: Công cụ hỗ trợ giảng dạy
 
+## 🤝 Đóng góp (Contributing)
+
+Dự án VietTyping luôn chào đón mọi sự đóng góp từ cộng đồng, đặc biệt là từ các ông bố, bà mẹ lập trình viên muốn xây dựng một ứng dụng học tập tuyệt vời cho con em mình.
+
+* **Hướng dẫn cài đặt & gửi đóng góp**: Xem chi tiết tại [CONTRIBUTING.md](file:///Users/wanbi/Code/oss/projects/viettyping/CONTRIBUTING.md).
+* **Quy chuẩn thiết kế giao diện trẻ em**: Xem các token và quy tắc UX/UI tại [DESIGN.md](file:///Users/wanbi/Code/oss/projects/viettyping/DESIGN.md).
+
 ## 📞 Liên hệ
 
 Nếu bạn có thắc mắc hoặc đề xuất, vui lòng tạo issue trên GitHub repository.
@@ -153,3 +160,4 @@ Nếu bạn có thắc mắc hoặc đề xuất, vui lòng tạo issue trên Gi
 ---
 
 **Chúc các bé học tập vui vẻ và hiệu quả! 🎉**
+
