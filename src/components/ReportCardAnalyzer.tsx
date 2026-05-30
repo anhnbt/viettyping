@@ -52,10 +52,138 @@ const SAMPLE_COMMENT = `| Môn học / Hoạt động giáo dục | Nhận xét 
 * **Phẩm chất:** Yêu nước, nhân ái, chăm chỉ, trung thực, trách nhiệm. Yêu quý thầy cô, giúp đỡ bạn bè; chăm học, thực hiện tốt nội quy lớp học; hăng hái phát biểu xây dựng bài.
 * **Năng lực:** Tự chủ và tự học, giao tiếp và hợp tác, giải quyết vấn đề sáng tạo. Tự giác, chủ động trong học tập, phối hợp tốt với các bạn trong nhóm; biết giải quyết một số tình huống.`;
 
+// Helper functions to parse basic markdown to JSX without external libraries
+function renderBoldText(text: string): React.ReactNode[] {
+  const parts = text.split(/\*\*([^*]+)\*\*/g);
+  return parts.map((part, idx) => {
+    if (idx % 2 === 1) {
+      return <strong key={idx} className="font-black text-slate-800">{part}</strong>;
+    }
+    return part;
+  });
+}
+
+function renderTableJSX(headers: string[], rows: string[][], keyIndex: number) {
+  return (
+    <div key={keyIndex} className="w-full overflow-x-auto border-2 border-slate-100 rounded-2xl shadow-sm my-5 bg-white max-w-full">
+      <table className="w-full text-left border-collapse text-xs md:text-sm min-w-[500px]">
+        <thead>
+          <tr className="bg-indigo-500 text-white font-black">
+            {headers.map((h, idx) => (
+              <th key={idx} className="p-3 md:p-3.5 font-black uppercase tracking-wider text-xs">
+                {renderBoldText(h)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100">
+          {rows.map((row, rowIdx) => (
+            <tr 
+              key={rowIdx} 
+              className={`font-semibold hover:bg-slate-50/50 transition-colors ${
+                rowIdx % 2 === 1 ? 'bg-slate-50/30' : 'bg-white'
+              }`}
+            >
+              {row.map((cell, cellIdx) => (
+                <td key={cellIdx} className="p-3 md:p-3.5 text-slate-700 leading-relaxed text-xs md:text-sm">
+                  {renderBoldText(cell)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function parseMarkdownToJSX(text: string) {
+  if (!text) return null;
+  const lines = text.split('\n');
+  const elements: React.ReactNode[] = [];
+  
+  let inTable = false;
+  let tableHeaders: string[] = [];
+  let tableRows: string[][] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    // Skip table divider row
+    if (line.startsWith('|') && (line.includes('---') || line.includes(':---'))) {
+      continue;
+    }
+    
+    // If it is a table row
+    if (line.startsWith('|') && line.endsWith('|')) {
+      const cells = line.split('|').map(c => c.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+      if (!inTable) {
+        inTable = true;
+        tableHeaders = cells;
+      } else {
+        tableRows.push(cells);
+      }
+      continue;
+    } else {
+      // If table ended, render accumulated table
+      if (inTable) {
+        elements.push(renderTableJSX(tableHeaders, tableRows, i - 1));
+        inTable = false;
+        tableHeaders = [];
+        tableRows = [];
+      }
+    }
+    
+    if (line === '') {
+      continue;
+    }
+
+    // Title divider e.g. === HEADER ===
+    if (line.startsWith('===') && line.endsWith('===')) {
+      const titleText = line.replace(/===/g, '').trim();
+      elements.push(
+        <div key={i} className="my-5 p-3 bg-indigo-50 border-l-4 border-indigo-500 rounded-r-xl text-indigo-900 font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm">
+          <span>{titleText}</span>
+        </div>
+      );
+      continue;
+    }
+
+    // Bullet list e.g. * **Item:** text
+    if (line.startsWith('*')) {
+      const content = line.substring(1).trim();
+      elements.push(
+        <div key={i} className="flex items-start gap-2 my-2 pl-1.5">
+          <span className="text-amber-500 text-base mt-0.5">✨</span>
+          <span className="text-slate-700 text-xs md:text-sm font-semibold leading-relaxed">
+            {renderBoldText(content)}
+          </span>
+        </div>
+      );
+      continue;
+    }
+
+    // Standard paragraph
+    elements.push(
+      <p key={i} className="text-slate-600 text-xs md:text-sm my-1.5 font-medium leading-relaxed">
+        {renderBoldText(line)}
+      </p>
+    );
+  }
+
+  // Handle case where table is at the end of the text
+  if (inTable) {
+    elements.push(renderTableJSX(tableHeaders, tableRows, lines.length));
+  }
+
+  return elements;
+}
+
 export default function ReportCardAnalyzer() {
   const router = useRouter();
   const { playSound } = useSound();
   const [commentText, setCommentText] = useState('');
+  const [inputMode, setInputMode] = useState<'edit' | 'preview'>('edit');
   const [analysisResult, setAnalysisResult] = useState<{
     title: string;
     strengths: string[];
@@ -302,12 +430,49 @@ export default function ReportCardAnalyzer() {
           Dán nhận xét học kỳ hoặc tổng kết của giáo viên vào ô bên dưới. Trí tuệ nhân tạo của VietTyping sẽ phân tích và lập kế hoạch rèn luyện các kỹ năng bé còn yếu thông qua trò chơi tương tác.
         </p>
 
-        <textarea
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-          placeholder="Dán nhận xét học bạ của bé tại đây... Ví dụ: Tiếng Việt đọc to rõ ràng, cần viết đúng tốc độ. Toán tính toán cẩn thận..."
-          className="w-full h-48 p-4 border-2 border-slate-200 rounded-[20px] focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all font-medium text-slate-700 placeholder-slate-400 text-sm md:text-base resize-none mb-4"
-        />
+        {/* Markdown Tabs Selector */}
+        <div className="flex border-b border-slate-100 mb-4 gap-2">
+          <button
+            type="button"
+            onClick={() => setInputMode('edit')}
+            className={`px-4 py-2 font-black text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
+              inputMode === 'edit'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-slate-400 hover:text-slate-500'
+            }`}
+          >
+            ✍️ Nhập nhận xét
+          </button>
+          <button
+            type="button"
+            disabled={!commentText.trim()}
+            onClick={() => {
+              setInputMode('preview');
+              playSound('click');
+            }}
+            className={`px-4 py-2 font-black text-xs md:text-sm border-b-2 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+              inputMode === 'preview'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-slate-400 hover:text-slate-500'
+            }`}
+          >
+            👁️ Xem trước học bạ
+          </button>
+        </div>
+
+        {/* Text Area vs Markdown Preview Render */}
+        {inputMode === 'edit' ? (
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Dán nhận xét học bạ của bé tại đây... Ví dụ: Tiếng Việt đọc to rõ ràng, cần viết đúng tốc độ. Toán tính toán cẩn thận..."
+            className="w-full h-52 p-4 border-2 border-slate-200 rounded-[20px] focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all font-medium text-slate-700 placeholder-slate-400 text-sm md:text-base resize-none mb-4"
+          />
+        ) : (
+          <div className="w-full h-52 p-5 border-2 border-dashed border-slate-200 rounded-[20px] bg-slate-50/50 mb-4 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+            {parseMarkdownToJSX(commentText)}
+          </div>
+        )}
 
         <div className="flex flex-col sm:flex-row gap-3 justify-between items-center">
           <button
