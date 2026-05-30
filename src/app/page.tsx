@@ -5,100 +5,287 @@ import { subjects } from '@/data/subjects';
 import SubjectSelector from '@/components/SubjectSelector';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { IoKeypad } from 'react-icons/io5';
+import { useSound } from '@/contexts/SoundContext';
+import { motion } from 'framer-motion';
+import { Sparkles, Trophy, Flame, Keyboard, GraduationCap, ArrowRight, Smile } from 'lucide-react';
+import { Be_Vietnam_Pro } from 'next/font/google';
+
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '500', '600', '700', '800', '900']
+});
+
+const titles = [
+  'Học Tập Kỳ Thú Cho Bé 🌟',
+  'Luyện Gõ Phím Cực Vui! ⌨️',
+  'Khám Phá Tri Thức Mới 📚',
+  'Trở Thành Siêu Nhân Gõ Phím! ⚡'
+];
 
 export default function Home() {
   const router = useRouter();
+  const { playSound } = useSound();
+  
+  const [xp, setXp] = useState<number>(0);
+  const [streak, setStreak] = useState<number>(0);
   const [typedText, setTypedText] = useState('');
-  const fullText = 'Hệ Thống Học Tập Cho Bé';
+  const [titleIndex, setTitleIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(100);
 
-  // Typing animation for hero title
+
+  // Đọc dữ liệu gamification từ localStorage
   useEffect(() => {
-    let currentIndex = 0;
-    const interval = setInterval(() => {
-      if (currentIndex <= fullText.length) {
-        setTypedText(fullText.slice(0, currentIndex));
-        currentIndex++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 80);
-    return () => clearInterval(interval);
+    try {
+      const savedXp = parseInt(localStorage.getItem('typing_xp') || '0', 10);
+      const savedStreak = parseInt(localStorage.getItem('typing_streak') || '0', 10);
+      setXp(savedXp);
+      setStreak(savedStreak);
+    } catch (e) {
+      console.error('Failed to load learning progress:', e);
+    }
   }, []);
 
+  // Xử lý hiệu ứng chữ chạy tự động thay đổi
+  useEffect(() => {
+    const currentFullText = titles[titleIndex];
+    
+    const handleTyping = () => {
+      if (!isDeleting) {
+        // Đang gõ chữ vào
+        setTypedText(currentFullText.slice(0, typedText.length + 1));
+        
+        if (typedText === currentFullText) {
+          // Gõ xong câu, dừng lại một lát rồi bắt đầu xóa
+          setTypingSpeed(2000); // Đợi 2 giây
+          setIsDeleting(true);
+        } else {
+          setTypingSpeed(80);
+        }
+      } else {
+        // Đang xóa chữ
+        setTypedText(currentFullText.slice(0, typedText.length - 1));
+        
+        if (typedText === '') {
+          setIsDeleting(false);
+          setTitleIndex((prev) => (prev + 1) % titles.length);
+          setTypingSpeed(300);
+        } else {
+          setTypingSpeed(45);
+        }
+      }
+    };
+
+    const timer = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [typedText, isDeleting, titleIndex, typingSpeed]);
+
+  const handleStartSampleLesson = () => {
+    playSound('tada');
+    router.push('/lesson');
+  };
+
+  const handleNavClick = (path: string) => {
+    playSound('click');
+    router.push(path);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b border-gray-200/60 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex items-center justify-between h-14">
-            <div className="flex items-center gap-2.5">
-              <span className="text-2xl">🎓</span>
-              <span className="text-base font-bold text-gray-800">VietTyping</span>
+    <div className={`min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 relative overflow-hidden pb-16 ${beVietnamPro.className}`}>
+      
+      {/* Các đám mây trôi tự động */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <motion.div 
+          className="absolute top-16 left-0 w-40 h-14 bg-white/60 rounded-full blur-[1px]"
+          animate={{ x: ['-200px', '100vw'] }}
+          transition={{ repeat: Infinity, duration: 45, ease: 'linear' }}
+        />
+        <motion.div 
+          className="absolute top-64 right-0 w-52 h-16 bg-white/50 rounded-full blur-[1px]"
+          animate={{ x: ['100vw', '-300px'] }}
+          transition={{ repeat: Infinity, duration: 60, ease: 'linear' }}
+        />
+        <motion.div 
+          className="absolute top-1/4 left-1/4 w-32 h-11 bg-white/40 rounded-full"
+          animate={{ x: ['-150px', '100vw'] }}
+          transition={{ repeat: Infinity, duration: 35, ease: 'linear' }}
+        />
+      </div>
+
+      {/* Bong bóng nổi nhẹ nhàng tạo hiệu ứng hoạt hình sinh động */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-white/20 border border-white/30"
+            style={{
+              width: Math.random() * 40 + 20,
+              height: Math.random() * 40 + 20,
+              left: `${Math.random() * 90 + 5}%`,
+              bottom: '-50px',
+            }}
+            animate={{
+              y: [0, -1200],
+              x: [0, Math.random() * 50 - 25, Math.random() * 50 - 25, 0],
+              opacity: [0, 0.8, 0.8, 0]
+            }}
+            transition={{
+              duration: Math.random() * 12 + 18,
+              repeat: Infinity,
+              delay: Math.random() * 6,
+              ease: 'linear'
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Sticky Header Glassmorphism */}
+      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b-2 border-indigo-100 shadow-sm px-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link
+            href="/"
+            onClick={() => playSound('click')}
+            className="flex items-center gap-2.5 group"
+          >
+            <div className="p-2 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-2xl text-white shadow-md transform group-hover:rotate-12 transition-transform duration-300">
+              <GraduationCap className="w-6 h-6" />
             </div>
-            <Link
-              href="/typing"
-              className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-semibold hover:bg-blue-100 transition-colors"
+            <span className="text-2xl font-black text-indigo-900 tracking-wide">VietTyping</span>
+          </Link>
+
+          {/* Gamification Stats & Navigation */}
+          <div className="flex items-center gap-3 md:gap-5">
+            {/* XP Display */}
+            {xp > 0 && (
+              <div className="hidden sm:flex items-center gap-1.5 bg-amber-50 border-2 border-amber-200 px-3 py-1.5 rounded-full shadow-sm">
+                <Trophy className="w-4 h-4 text-amber-500 animate-bounce" />
+                <span className="text-xs font-black text-amber-700">{xp} XP</span>
+              </div>
+            )}
+
+            {/* Streak Display */}
+            {streak > 0 && (
+              <div className="hidden sm:flex items-center gap-1.5 bg-orange-50 border-2 border-orange-200 px-3 py-1.5 rounded-full shadow-sm">
+                <Flame className="w-4 h-4 text-orange-500 animate-pulse" />
+                <span className="text-xs font-black text-orange-700">{streak} ngày</span>
+              </div>
+            )}
+
+            {/* Main CTA: Luyện gõ phím */}
+            <button
+              onClick={() => handleNavClick('/typing')}
+              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-[20px] text-sm font-black border-b-4 border-indigo-700 shadow-[3px_3px_0px_0px_#c7d2fe] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none active:border-b-0 cursor-pointer"
             >
-              <IoKeypad className="text-lg" />
-              Luyện gõ phím
-            </Link>
+              <Keyboard className="w-4 h-4 text-indigo-100" />
+              <span>Luyện gõ phím</span>
+            </button>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600 text-white py-12 md:py-16 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="text-6xl mb-5">🎓</div>
-          <h1 className="text-3xl md:text-5xl font-black mb-4 h-14 md:h-16">
-            {typedText}
-            <span className="animate-pulse text-blue-200">|</span>
-          </h1>
-          <p className="text-blue-100 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-            Học các môn Đạo đức, Âm nhạc, Toán, Tiếng Việt, Hoạt động trải nghiệm,
-            Tiếng Anh, Tự nhiên và xã hội, Mỹ thuật một cách thú vị
-          </p>
-
-          <Link
-            href="/lesson"
-            className="inline-block bg-white text-purple-600 font-bold text-xl px-8 py-4 rounded-full shadow-[0_8px_0_0_#e0e7ff] hover:shadow-[0_4px_0_0_#e0e7ff] hover:translate-y-1 hover:bg-purple-50 transition-all mb-8"
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-8 text-center">
+        <div className="inline-block relative mb-4">
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+            className="text-7xl md:text-8xl drop-shadow-md"
           >
-            Bắt đầu bài học mẫu!
-          </Link>
+            🎓
+          </motion.div>
+          <motion.div
+            animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+            transition={{ repeat: Infinity, duration: 4, delay: 1 }}
+            className="absolute -top-2 -right-4 text-3xl"
+          >
+            ✨
+          </motion.div>
+        </div>
 
-          {/* Feature badges */}
-          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-            {[
-              { icon: '📚', label: '8 môn học' },
-              { icon: '🎯', label: 'Hoạt động tương tác' },
-              { icon: '⌨️', label: 'Luyện gõ phím' },
-              { icon: '🎮', label: 'Trò chơi học tập' },
-            ].map((f) => (
-              <div
-                key={f.label}
-                className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium"
-              >
-                <span>{f.icon}</span>
-                <span>{f.label}</span>
-              </div>
-            ))}
+        {/* Typing Animated Hero Title */}
+        <h1 className="text-4xl md:text-6xl font-black text-indigo-900 mb-6 min-h-[60px] md:min-h-[80px] drop-shadow-sm tracking-wide">
+          {typedText}
+          <span className="animate-blink text-indigo-500 font-normal">|</span>
+        </h1>
+
+        <p className="text-gray-700 text-base md:text-xl max-w-2xl mx-auto mb-8 font-medium leading-relaxed">
+          Nơi bé vừa chơi vừa học các môn học thú vị: Đạo đức, Toán, Tiếng Việt, Tiếng Anh... và rèn luyện kỹ năng gõ 10 ngón thật điêu luyện!
+        </p>
+
+        {/* Nút hành động 3D Chunky chính */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleStartSampleLesson}
+          className="inline-flex items-center gap-3 bg-gradient-to-r from-red-400 to-pink-500 text-white font-black text-xl px-10 py-5 rounded-[26px] border-b-[6px] border-red-600 shadow-[0_8px_0_0_#fca5a5] hover:shadow-[0_4px_0_0_#fca5a5] transition-all mb-10 cursor-pointer"
+        >
+          <Sparkles className="w-6 h-6 animate-pulse" />
+          <span>Học Bài Mẫu Ngay!</span>
+          <ArrowRight className="w-5 h-5" />
+        </motion.button>
+
+        {/* Feature Badges */}
+        <div className="flex flex-wrap justify-center gap-3 md:gap-4 max-w-3xl mx-auto">
+          {[
+            { icon: '📚', label: '8 Môn Học Thú Vị', color: 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-emerald-100' },
+            { icon: '🎯', label: 'Bài Tập Tương Tác', color: 'bg-amber-50 border-amber-200 text-amber-700 shadow-amber-100' },
+            { icon: '⌨️', label: 'Gõ Phím 10 Ngón', color: 'bg-sky-50 border-sky-200 text-sky-700 shadow-sky-100' },
+            { icon: '🎮', label: 'Trò Chơi Trí Tuệ', color: 'bg-pink-50 border-pink-200 text-pink-700 shadow-pink-100' },
+          ].map((f, i) => (
+            <motion.div
+              key={f.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={`flex items-center gap-2 border-2 px-5 py-2.5 rounded-[20px] text-sm md:text-base font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,0.05)] ${f.color}`}
+            >
+              <span className="text-xl">{f.icon}</span>
+              <span>{f.label}</span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Grid Danh sách môn học */}
+      <div className="relative z-10 mt-8">
+        <SubjectSelector
+          subjects={subjects}
+          onSelectSubject={(subject) => {
+            playSound('click');
+            router.push(`/subjects/${subject.id}`);
+          }}
+        />
+      </div>
+
+      {/* Góc Phụ Huynh / Thông tin phụ */}
+      <div className="max-w-4xl mx-auto px-6 mt-12 text-center relative z-10">
+        <div className="inline-flex flex-col sm:flex-row items-center gap-4 bg-white/70 backdrop-blur-md border-2 border-indigo-100 p-6 rounded-3xl shadow-[5px_5px_0px_0px_#e0e7ff]">
+          <div className="p-3.5 bg-indigo-50 rounded-2xl text-3xl shrink-0">
+            👨‍👩‍👧‍👦
+          </div>
+          <div className="text-left">
+            <h4 className="text-indigo-950 font-black text-lg flex items-center gap-1.5">
+              <span>Bố mẹ ơi!</span>
+              <Smile className="w-5 h-5 text-indigo-500" />
+            </h4>
+            <p className="text-gray-600 text-sm md:text-base mt-1 font-medium leading-relaxed">
+              Hãy ghé thăm <Link href="/parents" onClick={() => playSound('click')} className="text-indigo-600 font-bold underline hover:text-indigo-800">Góc phụ huynh</Link> để theo dõi tiến trình học tập của bé, xem bảng điểm, thống kê WPM và chuỗi ngày học để động viên bé kịp thời nhé!
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Subject Grid — directly visible, no button click needed */}
-      <SubjectSelector
-        subjects={subjects}
-        onSelectSubject={(subject) => {
-          router.push(`/subjects/${subject.id}`);
-        }}
-      />
-
       {/* Footer */}
-      <div className="text-center py-8 text-sm text-gray-400">
-        Dành cho học sinh lớp 1-5 • VietTyping
-      </div>
+      <footer className="text-center mt-16 text-sm font-bold text-gray-500 relative z-10">
+        <div className="flex justify-center gap-6 mb-3">
+          <Link href="/parents" onClick={() => playSound('click')} className="hover:text-indigo-600 transition-colors">Góc phụ huynh</Link>
+          <span>•</span>
+          <Link href="/typing" onClick={() => playSound('click')} className="hover:text-indigo-600 transition-colors">Đảo Gõ Phím</Link>
+        </div>
+        <div>Thiết kế đặc biệt dành cho học sinh Lớp 1 - Lớp 5 ❤️ VietTyping</div>
+      </footer>
     </div>
   );
 }
+

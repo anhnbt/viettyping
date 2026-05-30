@@ -46,42 +46,61 @@ Chủ đề sinh dữ liệu: "[Nhập Môn học & Chủ đề ở đây - Ví 
     "show_typing_summary": true,
     "celebration_message": "Thông điệp chúc mừng sau khi gõ xong (Ví dụ: Bé gõ chữ siêu quá!)"
   },
-
-  "mini_games": {
-    "matching_game": [
-      {
-        "word": "Từ vựng đúng",
-        "image_prompt": "Mô tả ảnh minh họa bằng tiếng Anh"
-      }
-    ],
-    "true_false_game": [
-      {
-        "correct_word": "Từ viết đúng chính tả",
-        "distractor_word": "Từ viết sai chính tả hợp lý (Ví dụ: Cá -> Ca) do AI cố tình tạo ra để làm phương án nhiễu",
-        "image_prompt": "Mô tả ảnh minh họa bằng tiếng Anh"
-      }
-    ],
-    "spin_wheel_items": [
-      "Chữ/Vần 1", "Chữ/Vần 2", "Chữ/Vần 3"
-    ],
-    "fill_in_the_blank": [
-      {
-        "full_word": "Từ hoàn chỉnh (Ví dụ: Cá)",
-        "missing_char": "Ký tự/dấu bị khuyết (Ví dụ: á)",
-        "sentence": "Câu đố chứa khoảng trống (Ví dụ: Con C_ bơi dưới nước)"
-      }
-    ],
-    "multiple_choice": [
-      {
-        "question": "Câu hỏi trắc nghiệm ngắn gọn",
-        "correct_answer": "Đáp án đúng",
-        "distractors": [
-          "Đáp án sai 1 (Distractor)",
-          "Đáp án sai 2 (Distractor)"
-        ]
-      }
-    ]
-  },
+  "mini_games": [
+    {
+      "id": "game_1",
+      "type": "matching_game",
+      "items": [
+        {
+          "word": "Từ vựng đúng",
+          "image_prompt": "Mô tả ảnh minh họa bằng tiếng Anh"
+        }
+      ]
+    },
+    {
+      "id": "game_2",
+      "type": "true_false_game",
+      "items": [
+        {
+          "correct_word": "Từ viết đúng chính tả",
+          "distractor_word": "Từ viết sai chính tả hợp lý (Ví dụ: Cá -> Ca) do AI cố tình tạo ra để làm phương án nhiễu",
+          "image_prompt": "Mô tả ảnh minh họa bằng tiếng Anh"
+        }
+      ]
+    },
+    {
+      "id": "game_3",
+      "type": "spin_wheel_items",
+      "items": [
+        "Chữ/Vần 1", "Chữ/Vần 2", "Chữ/Vần 3"
+      ]
+    },
+    {
+      "id": "game_4",
+      "type": "fill_in_the_blank",
+      "items": [
+        {
+          "full_word": "Từ hoàn chỉnh (Ví dụ: Cá)",
+          "missing_char": "Ký tự/dấu bị khuyết (Ví dụ: á)",
+          "sentence": "Câu đố chứa khoảng trống (Ví dụ: Con C_ bơi dưới nước)"
+        }
+      ]
+    },
+    {
+      "id": "game_5",
+      "type": "multiple_choice",
+      "items": [
+        {
+          "question": "Câu hỏi trắc nghiệm ngắn gọn",
+          "correct_answer": "Đáp án đúng",
+          "distractors": [
+            "Đáp án sai 1 (Distractor)",
+            "Đáp án sai 2 (Distractor)"
+          ]
+        }
+      ]
+    }
+  ],
 
   "base_rewards": {
     "completion_xp": 50,

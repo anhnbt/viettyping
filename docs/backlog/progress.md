@@ -1,6 +1,6 @@
 # Tiến Độ Dự Án VietTyping (Sprint Planning)
 
-*Cập nhật lần cuối: 2026-05-16*
+*Cập nhật lần cuối: 2026-05-29*
 
 Dự án VietTyping là hệ thống Web App học tiếng Việt tương tác cao dành cho trẻ 6 tuổi, dựa trên cấu trúc Lesson Config (JSON) định nghĩa bởi AI và quản lý bởi Admin. Để dễ dàng quản lý, công việc được chia thành các Sprint.
 
@@ -64,6 +64,27 @@ Dự án VietTyping là hệ thống Web App học tiếng Việt tương tác c
   - [x] Viết kiểm thử cho State Management để đảm bảo tiến trình bài học không bị lỗi.
 - [x] **[Task 09]** Tối ưu hóa UI/UX (Polishing) ([Chi tiết](./tasks/task-09-ui-ux-optimization.md))
   - [x] Tối ưu hóa UI/UX, thêm các vi hiệu ứng (micro-animations) để tăng độ mượt mà.
+
+---
+
+## 🏃‍♂️ SPRINT 5.5: Tái cấu trúc Game Engine & Bộ điều phối (Game Engine Refactor)
+**Trạng thái:** ✅ Đã hoàn thành
+
+- [x] **[Task Refactor 01]** Thiết lập Interface Game chung & Chuyển đổi Game Đúng/Sai ([Chi tiết](./tasks/task-refactor-01-game-interface.md))
+- [x] **[Task Refactor 02]** Xây dựng bộ điều phối `LessonCoordinator` cốt lõi với Flashcard ([Chi tiết](./tasks/task-refactor-02-lesson-coordinator.md))
+- [x] **[Task Refactor 03]** Tích hợp Luyện gõ phím trực tiếp vào bộ điều phối ([Chi tiết](./tasks/task-refactor-03-typing-integration.md))
+- [x] **[Task Refactor 04]** Đồng bộ toàn bộ các Mini-game còn lại ([Chi tiết](./tasks/task-refactor-04-games-adaptation.md))
+- [x] **[Task Refactor 05]** Luồng Tổng kết & Vinh danh hoàn thành bài học ([Chi tiết](./tasks/task-refactor-05-rewards-flow.md))
+
+---
+
+## 📅 SPRINT 5.7: Cải tiến Sư phạm & Rèn luyện Kỹ năng Chuyên biệt (Pedagogical & Fine Motor Skills Improvements)
+**Trạng thái:** ✅ Đã hoàn thành
+
+- [x] **[Task 15]** Luyện tốc độ gõ phím & Chế độ Time Attack ([Chi tiết](./tasks/task-15-typing-speed-challenge.md))
+- [x] **[Task 16]** Trò chơi Toán thực tế kéo thả ([Chi tiết](./tasks/task-16-math-realworld-dragdrop.md))
+- [x] **[Task 17]** Trò chơi Tô màu thông minh trên Canvas ([Chi tiết](./tasks/task-17-drawing-coloring-canvas.md))
+- [x] **[Task 18]** Giao diện Siêu tập trung & Focus Badge ([Chi tiết](./tasks/task-18-focus-mode-gamification.md))
 
 ---
 

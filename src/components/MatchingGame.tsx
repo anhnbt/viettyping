@@ -14,15 +14,16 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
 
-interface MatchingGameItem {
+export interface MappedMatchingItem {
   word: string;
   image_url: string;
 }
 
-interface MatchingGameProps {
-  items: MatchingGameItem[];
-  onComplete: () => void;
+export interface MatchingGameConfig {
+  id: string;
+  items: MappedMatchingItem[];
 }
 
 // Draggable Component
@@ -108,11 +109,17 @@ function DroppableSlot({
   );
 }
 
-export default function MatchingGame({ items, onComplete }: MatchingGameProps) {
+export default function MatchingGame({ gameConfig, onComplete }: GameAdapterProps<MatchingGameConfig>) {
+  const { id: gameId, items } = gameConfig;
   const [matches, setMatches] = useState<Record<string, string>>({}); // Slot ID -> Word ID
   const [unmatchedWords, setUnmatchedWords] = useState<string[]>([]);
   const [errorSlot, setErrorSlot] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+
+  // Telemetry state
+  const startTimeRef = React.useRef<number>(Date.now());
+  const failedAttemptsRef = React.useRef<Set<string>>(new Set());
+  const errorsRef = React.useRef<Array<{ questionId: string; userAnswer: string; correctAnswer: string }>>([]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -128,21 +135,29 @@ export default function MatchingGame({ items, onComplete }: MatchingGameProps) {
     })
   );
 
-  // Xáo trộn vị trí các từ và render
+  // Reset telemetry and shuffle words when game config changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setIsClient(true);
+    startTimeRef.current = Date.now();
+    failedAttemptsRef.current = new Set();
+    errorsRef.current = [];
+    setMatches({});
     const shuffled = [...items].sort(() => Math.random() - 0.5);
     setUnmatchedWords(shuffled.map((i) => i.word));
-  }, [items]);
+  }, [gameId]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
     if (over) {
-      if (active.id === over.id) {
+      const activeIdStr = active.id as string;
+      const overIdStr = over.id as string;
+
+      if (activeIdStr === overIdStr) {
         // Nối đúng
-        setMatches((prev) => ({ ...prev, [over.id as string]: active.id as string }));
-        setUnmatchedWords((prev) => prev.filter((w) => w !== active.id));
+        setMatches((prev) => ({ ...prev, [overIdStr]: activeIdStr }));
+        setUnmatchedWords((prev) => prev.filter((w) => w !== activeIdStr));
         
         // Play correct sound
         try {
@@ -157,13 +172,33 @@ export default function MatchingGame({ items, onComplete }: MatchingGameProps) {
         if (unmatchedWords.length === 1) {
           // Add a small delay so user can see the final match effect before completing
           setTimeout(() => {
-            onComplete();
+            const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
+            const totalQuestions = items.length;
+            const correctFirstTry = totalQuestions - failedAttemptsRef.current.size;
+            const score = Math.round((correctFirstTry / totalQuestions) * 100);
+
+            const telemetry: TelemetryPayload = {
+              score,
+              durationSeconds,
+              errors: errorsRef.current.length > 0 ? errorsRef.current : undefined,
+            };
+            onComplete(telemetry);
           }, 1000);
         }
       } else {
         // Nối sai
-        setErrorSlot(over.id as string);
+        setErrorSlot(overIdStr);
         
+        // Record failed attempt for telemetry
+        if (!failedAttemptsRef.current.has(overIdStr)) {
+          failedAttemptsRef.current.add(overIdStr);
+          errorsRef.current.push({
+            questionId: `${gameId}_slot_${overIdStr}`,
+            userAnswer: activeIdStr,
+            correctAnswer: overIdStr,
+          });
+        }
+
         // Play error sound
         try {
           const audio = new Audio('/buzz.mp3'); // Fallback to a buzz sound if present

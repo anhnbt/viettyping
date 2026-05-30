@@ -1,191 +1,113 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { IoChevronBack, IoStar, IoGameController } from "react-icons/io5";
-import Flashcard from "@/components/Flashcard";
-import lessonData from "@/data/sample_lesson.json";
+import { IoChevronBack, IoStar } from "react-icons/io5";
+import confetti from "canvas-confetti";
+import lessonDataJson from "@/data/sample_lesson.json";
+import { LessonConfig } from "@/types/lesson";
 import { useLesson } from "@/contexts/LessonContext";
-import ProgressBar from "@/components/ProgressBar";
+import { useSound } from "@/contexts/SoundContext";
+import LessonCoordinator from "@/components/lesson/LessonCoordinator";
+
+// Cast JSON to our validated type
+const lessonData = lessonDataJson as LessonConfig;
 
 export default function LessonPage() {
-  const { lesson_title, topic, flashcards, mini_games } = lessonData;
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const { currentXP, progress, setTotalActivities, markActivityCompleted } = useLesson();
+  const { currentXP, addXP, markActivityCompleted, unlockBadge } = useLesson();
+  const { playSound } = useSound();
 
-  // Initialize total activities on mount: 1 for flashcards + 1 for typing + number of mini games
-  useEffect(() => {
-    const gamesCount = Object.keys(mini_games).length;
-    setTotalActivities(1 + 1 + gamesCount); // flashcards + typing + games
-  }, [mini_games, setTotalActivities]);
-
-  const nextCard = () => {
-    if (currentCardIndex < flashcards.length - 1) {
-      setCurrentCardIndex((prev) => prev + 1);
+  const handleAllActivitiesComplete = () => {
+    const rewards = lessonData.base_rewards;
+    
+    // 1. Cập nhật Context API
+    if (rewards) {
+      addXP(rewards.completion_xp);
+      unlockBadge(rewards.badge_unlock_id);
     }
-  };
+    markActivityCompleted("lesson_completed");
 
-  const prevCard = () => {
-    if (currentCardIndex > 0) {
-      setCurrentCardIndex((prev) => prev - 1);
+    // 2. Kích hoạt hiệu ứng pháo hoa confetti
+    if (rewards?.celebration_type === "fireworks") {
+      // Bắn pháo hoa rực rỡ từ nhiều phía
+      const duration = 3 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+      const randomInRange = (min: number, max: number) => {
+        return Math.random() * (max - min) + min;
+      };
+
+      const interval: NodeJS.Timeout = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        // Bắn từ bên trái
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+          colors: ["#ff0055", "#00ffcc", "#ffcc00", "#9900ff"]
+        });
+        // Bắn từ bên phải
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+          colors: ["#ff0055", "#00ffcc", "#ffcc00", "#9900ff"]
+        });
+      }, 250);
+    } else {
+      // Confetti đơn giản
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ["#ff0055", "#00ffcc", "#ffcc00", "#9900ff"]
+      });
     }
-  };
 
-  const handleStartGames = () => {
-    markActivityCompleted("flashcards");
+    // 3. Kích hoạt âm thanh tada chúc mừng
+    try {
+      playSound("tada");
+    } catch (e) {
+      console.warn("Lỗi phát âm thanh chúc mừng:", e);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 font-sans overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 font-sans overflow-y-auto flex flex-col pb-12">
       {/* Header */}
-      <header className="p-2 md:p-6 flex flex-col gap-3 md:gap-4 relative z-10">
-        <div className="flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl text-purple-700 font-bold hover:bg-white/90 transition-all shadow-sm"
-          >
-            <IoChevronBack size={24} />
-            Quay lại
-          </Link>
-          <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm">
-            <IoStar className="text-yellow-400 text-2xl" />
-            <span className="font-black text-purple-700 text-xl">{currentXP} XP</span>
-          </div>
+      <header className="p-4 md:p-6 flex items-center justify-between relative z-10 w-full max-w-4xl mx-auto">
+        <Link
+          href="/"
+          className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl text-purple-700 font-bold hover:bg-white/90 transition-all shadow-sm border border-white/20"
+        >
+          <IoChevronBack size={24} />
+          Quay lại
+        </Link>
+        <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-white/20">
+          <IoStar className="text-yellow-400 text-2xl animate-pulse" />
+          <span className="font-black text-purple-700 text-xl">{currentXP} XP</span>
         </div>
-        <ProgressBar progress={progress} />
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-4 md:mb-8"
-        >
-          <h1 className="text-2xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-sm mb-2 md:mb-3">
-            {lesson_title}
-          </h1>
-          <p className="text-base md:text-xl font-bold text-purple-800/70 bg-white/40 inline-block px-4 py-1 md:px-6 md:py-2 rounded-full backdrop-blur-sm">
-            Chủ đề: {topic}
-          </p>
-        </motion.div>
-
-        {/* Flashcard Area */}
-        <div className="w-full max-w-4xl flex items-center justify-center gap-4 md:gap-8 relative">
-          {/* Left Button */}
-          <motion.button
-            whileHover={currentCardIndex !== 0 ? { scale: 1.1 } : {}}
-            whileTap={currentCardIndex !== 0 ? { scale: 0.9 } : {}}
-            onClick={prevCard}
-            disabled={currentCardIndex === 0}
-            className={`w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-full flex items-center justify-center shadow-lg transition-all ${
-              currentCardIndex === 0
-                ? "bg-white/40 text-gray-400 cursor-not-allowed"
-                : "bg-white text-purple-600 hover:bg-purple-50"
-            }`}
-          >
-            <IoChevronBack className="text-2xl md:text-3xl" />
-          </motion.button>
-
-          {/* Card Container */}
-          <div className="w-full max-w-xs sm:w-80 h-72 md:h-96 relative perspective-1000">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentCardIndex}
-                initial={{ opacity: 0, x: 50, rotateY: -20 }}
-                animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                exit={{ opacity: 0, x: -50, rotateY: 20 }}
-                transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
-                className="absolute w-full h-full"
-              >
-                <Flashcard
-                  word={flashcards[currentCardIndex].word}
-                  wordUppercase={flashcards[currentCardIndex].word_uppercase}
-                  spellingGuide={flashcards[currentCardIndex].spelling_guide}
-                  exampleSentence={flashcards[currentCardIndex].example_sentence}
-                  imagePrompt={flashcards[currentCardIndex].image_prompt}
-                  imageUrl={flashcards[currentCardIndex].image_url}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Right Button */}
-          <motion.button
-            whileHover={currentCardIndex !== flashcards.length - 1 ? { scale: 1.1 } : {}}
-            whileTap={currentCardIndex !== flashcards.length - 1 ? { scale: 0.9 } : {}}
-            onClick={nextCard}
-            disabled={currentCardIndex === flashcards.length - 1}
-            className={`w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-full flex items-center justify-center shadow-lg transition-all ${
-              currentCardIndex === flashcards.length - 1
-                ? "bg-white/40 text-gray-400 cursor-not-allowed"
-                : "bg-white text-pink-600 hover:bg-pink-50"
-            }`}
-          >
-            <IoChevronBack className="rotate-180 text-2xl md:text-3xl" />
-          </motion.button>
-        </div>
-
-        {/* Progress Dots */}
-        <div className="flex gap-2 md:gap-3 mt-4 md:mt-8">
-          {flashcards.map((_, index) => (
-            <div
-              key={index}
-              className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ${
-                index === currentCardIndex
-                  ? "bg-pink-500 scale-125 shadow-md"
-                  : "bg-white/60 hover:bg-white"
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Action Button to Games */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mt-6 md:mt-12 flex flex-col items-center gap-2 md:gap-4"
-        >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link
-                href="/lesson/typing"
-                onClick={handleStartGames}
-                className="group relative inline-flex items-center justify-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 font-black text-white text-lg md:text-xl rounded-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 shadow-[0_8px_0_0_#9333ea] md:shadow-[0_10px_0_0_#9333ea] hover:shadow-[0_4px_0_0_#9333ea] md:hover:shadow-[0_5px_0_0_#9333ea] hover:translate-y-1 transition-all"
-              >
-                <IoGameController className="text-2xl md:text-3xl group-hover:animate-bounce" />
-                Luyện Gõ Phím!
-              </Link>
-            </motion.div>
-
-            {/* Bỏ qua Luyện Gõ - Chỉ hiện trên Mobile (ẩn trên md: desktop) */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="md:hidden mt-2"
-            >
-              <Link
-                href="/lesson/games"
-                onClick={() => {
-                  markActivityCompleted("flashcards");
-                  markActivityCompleted("typing");
-                }}
-                className="text-purple-600 font-bold underline hover:text-purple-800 transition-colors text-lg"
-              >
-                Bỏ qua Luyện gõ
-              </Link>
-            </motion.div>
-        </motion.div>
+      {/* Main Content với LessonCoordinator */}
+      <main className="flex-1 flex flex-col items-center justify-center p-4 relative z-10 w-full max-w-4xl mx-auto">
+        <LessonCoordinator
+          config={lessonData}
+          onAllActivitiesComplete={handleAllActivitiesComplete}
+        />
       </main>
 
       {/* Background Decor */}
-      <div className="fixed top-20 left-10 w-32 h-32 bg-yellow-300/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed top-20 left-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-3xl pointer-events-none" />
       <div className="fixed bottom-20 right-10 w-48 h-48 bg-pink-400/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl pointer-events-none" />
     </div>
   );
 }

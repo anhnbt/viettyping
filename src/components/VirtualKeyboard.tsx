@@ -1,4 +1,6 @@
 import React from 'react';
+import FingersVisualizer from './FingersVisualizer';
+import { fingerMap } from './keyboardConstants';
 
 interface Props {
   pressedKey: string | null;
@@ -13,31 +15,7 @@ const keyboardLayout = [
   ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Win', 'Menu', 'Ctrl']
 ];
 
-const fingerMap: Record<string, string> = {
-  // Left Hand
-  '`': 'pinky-left', '1': 'pinky-left', 'q': 'pinky-left', 'a': 'pinky-left', 'z': 'pinky-left',
-  '2': 'ring-left', 'w': 'ring-left', 's': 'ring-left', 'x': 'ring-left',
-  '3': 'middle-left', 'e': 'middle-left', 'd': 'middle-left', 'c': 'middle-left',
-  '4': 'index-left', '5': 'index-left', 'r': 'index-left', 't': 'index-left', 'f': 'index-left', 'g': 'index-left', 'v': 'index-left', 'b': 'index-left',
 
-  // Right Hand
-  '6': 'index-right', '7': 'index-right', 'y': 'index-right', 'u': 'index-right', 'h': 'index-right', 'j': 'index-right', 'n': 'index-right', 'm': 'index-right',
-  '8': 'middle-right', 'i': 'middle-right', 'k': 'middle-right', ',': 'middle-right',
-  '9': 'ring-right', 'o': 'ring-right', 'l': 'ring-right', '.': 'ring-right',
-  '0': 'pinky-right', '-': 'pinky-right', '=': 'pinky-right', 'p': 'pinky-right', '[': 'pinky-right', ']': 'pinky-right', '\\': 'pinky-right', ';': 'pinky-right', '\'': 'pinky-right', '/': 'pinky-right',
-
-  // Special Keys
-  ' ': 'thumb',
-  'Shift': 'pinky-left', // Default to left shift for simplicity in display, ideally context dependent
-  'Enter': 'pinky-right',
-  'Tab': 'pinky-left',
-  'Caps': 'pinky-left',
-  'Ctrl': 'pinky-left',
-  'Win': 'thumb',
-  'Alt': 'thumb',
-  'Menu': 'thumb',
-  '⌫': 'pinky-right'
-};
 
 const fingerColors: Record<string, string> = {
   'pinky-left': 'bg-red-100 border-red-200',
@@ -51,13 +29,77 @@ const fingerColors: Record<string, string> = {
   'pinky-right': 'bg-purple-100 border-purple-200',
 };
 
+const shiftKeyMap: Record<string, string> = {
+  '+': '=',
+  '_': '-',
+  ')': '0',
+  '(': '9',
+  '*': '8',
+  '&': '7',
+  '^': '6',
+  '%': '5',
+  '$': '4',
+  '#': '3',
+  '@': '2',
+  '!': '1',
+  '~': '`',
+  '{': '[',
+  '}': ']',
+  '|': '\\',
+  ':': ';',
+  '"': '\'',
+  '<': ',',
+  '>': '.',
+  '?': '/'
+};
+
 export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
+  // Chuẩn hóa props thành string | null để tránh lỗi crash khi truyền kiểu số (number) hoặc đối tượng khác
+  const highlightKeyStr = highlightKey !== null && highlightKey !== undefined ? String(highlightKey) : null;
+  const pressedKeyStr = pressedKey !== null && pressedKey !== undefined ? String(pressedKey) : null;
+
   const getKeyDisplay = (key: string) => {
     switch (key) {
       case ' ': return 'Space';
       case '⌫': return '⌫';
       default: return key;
     }
+  };
+
+  const shouldHighlightKey = (key: string, rowIndex: number, keyIndex: number) => {
+    if (!highlightKeyStr) return false;
+
+    const isLeftShift = rowIndex === 3 && keyIndex === 0;
+    const isRightShift = rowIndex === 3 && keyIndex === 11;
+
+    // Kiểm tra xem highlightKeyStr có phải là chữ viết hoa hoặc ký tự cần Shift
+    const isShiftRequired = /[A-ZÀ-ỸĐ]/.test(highlightKeyStr) || highlightKeyStr in shiftKeyMap;
+
+    if (isShiftRequired) {
+      const baseChar = /[A-ZÀ-ỸĐ]/.test(highlightKeyStr) 
+        ? highlightKeyStr.toLowerCase() 
+        : shiftKeyMap[highlightKeyStr];
+      
+      // Nếu phím hiện tại là phím cơ bản tương ứng
+      if (key.toLowerCase() === baseChar.toLowerCase()) return true;
+
+      // Nếu phím hiện tại là phím Shift tương ứng
+      if (key === 'Shift') {
+        const finger = fingerMap[baseChar];
+        const isLeftHand = finger && finger.includes('left');
+        
+        if (isLeftHand && isRightShift) return true;
+        if (!isLeftHand && isLeftShift) return true;
+      }
+      
+      return false;
+    }
+
+    if (key === ' ') {
+      return highlightKeyStr === ' ' || highlightKeyStr === 'space';
+    }
+    
+    return highlightKeyStr.toLowerCase() === key.toLowerCase();
   };
 
   const getFingerColor = (key: string) => {
@@ -73,11 +115,10 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
             {row.map((key, keyIndex) => {
               const displayKey = getKeyDisplay(key);
 
-              const isPressed = key === ' ' ? pressedKey === ' ' || pressedKey === 'space' :
-                pressedKey === key.toLowerCase();
+              const isPressed = key === ' ' ? pressedKeyStr === ' ' || pressedKeyStr === 'space' :
+                pressedKeyStr === key.toLowerCase();
 
-              const shouldHighlight = key === ' ' ? highlightKey === ' ' || highlightKey === 'space' :
-                highlightKey === key.toLowerCase();
+              const shouldHighlight = shouldHighlightKey(key, rowIndex, keyIndex);
 
               const baseColor = getFingerColor(key);
 
@@ -106,6 +147,8 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
           </div>
         ))}
       </div>
+
+      <FingersVisualizer highlightKey={highlightKeyStr} pressedKey={pressedKeyStr} />
 
       {/* Legend for Fingers */}
       <div className="mt-6 flex flex-wrap justify-center gap-4 text-xs text-gray-600">

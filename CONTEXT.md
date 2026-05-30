@@ -22,11 +22,14 @@ Xây dựng một ứng dụng web giáo dục tương tác cao, tập trung chu
 - **Tài nguyên tĩnh:** Hình ảnh minh họa được developer tạo ra dựa trên Image Prompt do AI sinh ra và lưu tĩnh trong thư mục `assets`. Ở Phase 1, toàn bộ dữ liệu nằm trong tệp JSON. Phase 2 mới lưu vào Database.
 
 ## Glossary
-- **Lesson Config** (Cấu hình Bài học): Cấu trúc dữ liệu bài học được tạo ra thông qua các Form UI trên Admin Dashboard, lưu trữ ở MySQL và trả về Web App dưới dạng JSON thông qua API.
-- **Web App** (Ứng dụng Web Client): Phần mềm hiển thị trò chơi và hoạt động học tập cho học sinh, tiêu thụ dữ liệu từ backend API. Tránh dùng bản in giấy.
-- **Admin Dashboard** (Màn hình Quản trị): Giao diện web dành riêng cho Admin (giáo viên/phụ huynh) với các Form trực quan để tạo mới và cấu hình nội dung bài học mà không cần hiểu biết về file JSON thô.
-- **Image Prompt**: Câu mô tả chi tiết (ưu tiên tiếng Anh) do AI sinh ra trong Lesson Config để developer tự tạo hình ảnh bằng công cụ gen ảnh.
-- **Distractor**: Các phương án sai/gây nhiễu hợp lý do AI sinh sẵn trong Lesson Config (chứ không phải Web App tự bóp méo từ).
+- **Subject** (Môn học): Khái niệm cấp cao nhất, ví dụ: Toán, Tiếng Việt, Tiếng Anh.
+- **Topic** (Chủ đề): Một phần nhỏ trong môn học, bao gồm nhiều bài học (Lesson) cùng chủ đề.
+- **Lesson** / **Lesson Config**: Tập hợp các Activity có cùng mục tiêu học tập. Dữ liệu bài học được tạo qua Form UI trên Admin Dashboard, lưu trữ ở MySQL và trả về dạng JSON.
+- **Activity**: Đơn vị học tập nhỏ nhất mà học sinh tương tác trực tiếp (Atomic Unit of Learning). Gồm các dạng: Quiz, Typing, Drawing, Game (các Mini-game như Matching, True/False bản chất là một loại Activity).
+- **Web App** (Ứng dụng Web Client): Phần mềm hiển thị trò chơi và hoạt động học tập cho học sinh, tiêu thụ dữ liệu từ backend API.
+- **Admin Dashboard** (Màn hình Quản trị): Giao diện web dành riêng cho Admin (giáo viên/phụ huynh) thiết kế nội dung bài học.
+- **Image Prompt**: Câu mô tả chi tiết do AI sinh ra trong Lesson Config để developer tự tạo hình ảnh.
+- **Distractor**: Các phương án sai/gây nhiễu do AI sinh sẵn trong Lesson Config.
 
 ## Decisions Log
 - **Kiến trúc dữ liệu:** Web App chỉ đọc tệp JSON (hoặc DB sau này), hoàn toàn không kết nối API AI theo thời gian thực để đảm bảo tốc độ và an toàn nội dung.
@@ -34,7 +37,10 @@ Xây dựng một ứng dụng web giáo dục tương tác cao, tập trung chu
 - **Loại hình bài học:** Xác định đây là Lesson Data (dữ liệu cấu trúc dành cho ứng dụng chạy mini-game), hoàn toàn không phải văn bản Markdown để phụ huynh đọc chay.
 - **Kiến trúc Admin Dashboard (Phase 2):** Gộp chung giao diện Admin vào dự án Next.js hiện tại (route `/admin`) để tái sử dụng UI component và hỗ trợ tính năng Live Preview cho người tạo nội dung.
 - **Chiến lược Fetch Data (Phase 2):** Dùng SSR / Incremental Static Regeneration (ISR) thông qua Next.js Server Components để gọi API đến Backend Java Spring Boot, nhằm tối ưu tốc độ tải trang cho học sinh, thay vì dùng `useEffect` ở client-side.
+- **Data Structure cho Mini-games:** Cấu trúc `mini_games` trong Lesson Config là một **Array** thay vì Object. Điều này đảm bảo Pedagogical Flow (thứ tự xuất hiện của game) và hỗ trợ Multi-instance (nhiều game cùng loại trong một bài học). Được bảo vệ chặt chẽ bằng **Discriminated Unions** trong TypeScript.
+- **Kiến trúc Game Engine (Separation of Concerns):** `LessonRunner` được thiết kế là một **Pure Orchestrator**, chỉ làm nhiệm vụ render game và quản lý state `currentIndex`. Tuyệt đối không gọi Context API hay trigger Gamification effects (Confetti, Audio). Việc lưu điểm (XP) và vinh danh được giao cho Route Page Adapter (`page.tsx`) xử lý qua callback `onAllGamesComplete` nhằm tránh Race Conditions và dễ dàng Unit Test/Tái sử dụng cho tính năng Admin Preview.
 
 ## Links & Resources
 - Tài liệu cấu trúc bài học: `SYSTEM_PROMPT.md`
-- Kế hoạch tiến độ: `progress.md`
+- Kế hoạch tiến độ: `docs/backlog/progress.md`
+- PRD Kiến trúc Game Engine: `docs/PRD-GameController-Refactor.md`

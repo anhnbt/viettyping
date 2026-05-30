@@ -8,6 +8,7 @@ import CompletionModal from '@/components/CompletionModal';
 import { IoArrowBack } from 'react-icons/io5';
 import Link from 'next/link';
 import { useProgress } from '@/hooks/useProgress';
+import { TelemetryPayload } from '@/types/lesson';
 
 interface Props {
     params: Promise<{
@@ -33,6 +34,7 @@ export default function PracticePage({ params }: Props) {
     const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
     const [stats, setStats] = useState<Stats | null>(null);
     const [showModal, setShowModal] = useState(false);
+    const [resetKey, setResetKey] = useState(0);
     const { saveProgress } = useProgress();
 
     if (!subject || !topic) {
@@ -57,17 +59,21 @@ export default function PracticePage({ params }: Props) {
         minAccuracy: 85,
     };
 
-    const handleComplete = useCallback((newStats: Stats) => {
+    const handleComplete = useCallback((telemetry: TelemetryPayload) => {
+        const newStats = {
+            wpm: telemetry.metadata?.wpm || 0,
+            accuracy: telemetry.score,
+            incorrectCount: telemetry.metadata?.incorrectCount || 0,
+        };
         setStats(newStats);
         setShowModal(true);
-        saveProgress(currentActivity.id, newStats.accuracy);
+        saveProgress(currentActivity.id, telemetry.score);
     }, [currentActivity.id, saveProgress]);
 
     const handleRestart = useCallback(() => {
         setShowModal(false);
         setStats(null);
-        // Force re-render by toggling index
-        setCurrentActivityIndex((prev) => prev);
+        setResetKey((prev) => prev + 1);
     }, []);
 
     const handleContinue = useCallback(() => {
@@ -110,7 +116,7 @@ export default function PracticePage({ params }: Props) {
             <div className="flex-1 overflow-hidden p-4">
                 <div className="w-full h-full">
                     <TypingPractice
-                        key={currentActivityIndex}
+                        key={`${currentActivityIndex}-${resetKey}`}
                         task={lesson as unknown as TypingTask}
                         onComplete={handleComplete}
                     />
