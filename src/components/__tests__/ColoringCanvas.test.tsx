@@ -27,10 +27,10 @@ describe('ColoringCanvas', () => {
     render(<ColoringCanvas gameConfig={mockGameConfig} onComplete={mockOnComplete} />);
     
     expect(screen.getByText('Tô màu hình Trái tim')).toBeInTheDocument();
-    expect(screen.getByText(/Nhiệm vụ: Chọn các màu sắc yêu thích/i)).toBeInTheDocument();
-    expect(screen.getByText('Chỉ số đánh giá độ khéo')).toBeInTheDocument();
-    expect(screen.getByText('Độ phủ màu (Coverage):')).toBeInTheDocument();
-    expect(screen.getByText('Độ lem ngoài (Bleed):')).toBeInTheDocument();
+    expect(screen.getByText(/Nhiệm vụ: Chọn bút sáp màu bên dưới/i)).toBeInTheDocument();
+    expect(screen.getByText('🖍️ Hộp Bút Màu Sáp')).toBeInTheDocument();
+    expect(screen.getByText(/Phủ màu:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Lem viền:/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Tô lại/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Hoàn thành/i })).toBeInTheDocument();
   });

@@ -6,6 +6,7 @@ import SubjectSelector from '@/components/SubjectSelector';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSound } from '@/contexts/SoundContext';
+import { useStudent } from '@/contexts/StudentContext';
 import { motion } from 'framer-motion';
 import { Sparkles, Trophy, Flame, Keyboard, GraduationCap, ArrowRight, Smile } from 'lucide-react';
 import { Be_Vietnam_Pro } from 'next/font/google';
@@ -25,6 +26,7 @@ const titles = [
 export default function Home() {
   const router = useRouter();
   const { playSound } = useSound();
+  const { studentInfo, setIsOpenConfig } = useStudent();
   
   const [xp, setXp] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
@@ -32,10 +34,12 @@ export default function Home() {
   const [titleIndex, setTitleIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(100);
+  const [isMounted, setIsMounted] = useState(false);
 
 
   // Đọc dữ liệu gamification từ localStorage
   useEffect(() => {
+    setIsMounted(true);
     try {
       const savedXp = parseInt(localStorage.getItem('typing_xp') || '0', 10);
       const savedStreak = parseInt(localStorage.getItem('typing_streak') || '0', 10);
@@ -114,7 +118,7 @@ export default function Home() {
 
       {/* Bong bóng nổi nhẹ nhàng tạo hiệu ứng hoạt hình sinh động */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        {[...Array(8)].map((_, i) => (
+        {isMounted && [...Array(8)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute rounded-full bg-white/20 border border-white/30"
@@ -122,7 +126,7 @@ export default function Home() {
               width: Math.random() * 40 + 20,
               height: Math.random() * 40 + 20,
               left: `${Math.random() * 90 + 5}%`,
-              bottom: '-50px',
+              bottom: '-55px',
             }}
             animate={{
               y: [0, -1200],
@@ -156,6 +160,21 @@ export default function Home() {
 
           {/* Gamification Stats & Navigation */}
           <div className="flex items-center gap-3 md:gap-5">
+            {/* Student Profile Bubble */}
+            <button
+              onClick={() => {
+                playSound('click');
+                setIsOpenConfig(true);
+              }}
+              className="flex items-center gap-2 px-3.5 py-1.5 bg-white border-2 border-slate-800 rounded-full shadow-[2px_2px_0px_0px_#1e293b] hover:bg-amber-105/40 transition-all active:translate-y-[1px] active:shadow-none cursor-pointer"
+              title="Cấu hình hồ sơ của bé"
+            >
+              <span className="text-xl animate-pulse">{studentInfo ? studentInfo.avatar : '👤'}</span>
+              <span className="text-xs font-black text-slate-750 max-w-[80px] md:max-w-[120px] truncate">
+                {studentInfo ? studentInfo.nickname : 'Bé là ai thế?'}
+              </span>
+            </button>
+
             {/* XP Display */}
             {xp > 0 && (
               <div className="hidden sm:flex items-center gap-1.5 bg-amber-50 border-2 border-amber-200 px-3 py-1.5 rounded-full shadow-sm">
@@ -202,6 +221,20 @@ export default function Home() {
             ✨
           </motion.div>
         </div>
+
+        {/* Lời chào cá nhân hóa cho bé */}
+        {studentInfo && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-6 inline-flex items-center gap-2.5 px-5 py-2.5 bg-white border-2 border-slate-800 rounded-2xl shadow-[4px_4px_0px_0px_#1e293b]"
+          >
+            <span className="text-2xl animate-bounce">{studentInfo.avatar}</span>
+            <span className="text-slate-800 font-black text-sm md:text-base">
+              Chào mừng <span className="text-indigo-600 font-black">{studentInfo.nickname}</span> ({studentInfo.grade}) đã đến với đảo học tập! 🌟
+            </span>
+          </motion.div>
+        )}
 
         {/* Typing Animated Hero Title */}
         <h1 className="text-4xl md:text-6xl font-black text-indigo-900 mb-6 min-h-[60px] md:min-h-[80px] drop-shadow-sm tracking-wide">

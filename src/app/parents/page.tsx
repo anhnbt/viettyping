@@ -7,11 +7,13 @@ import { subjects } from '@/data/subjects';
 import { IoArrowBack, IoStatsChart, IoTime, IoWarning, IoCheckmarkCircle } from 'react-icons/io5';
 import ReportCardAnalyzer from '@/components/ReportCardAnalyzer';
 import { useSound } from '@/contexts/SoundContext';
+import { useStudent } from '@/contexts/StudentContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ParentsPage() {
   const { progress, isLoaded } = useProgress();
   const { playSound } = useSound();
+  const { studentInfo, setIsOpenConfig } = useStudent();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'analyzer'>('dashboard');
 
   const stats = useMemo(() => {
@@ -107,7 +109,25 @@ export default function ParentsPage() {
             </Link>
             <div>
               <h1 className="text-3xl font-black text-slate-800 tracking-wide">Góc Phụ Huynh 👨‍👩‍👧‍👦</h1>
-              <p className="text-slate-500 text-sm font-semibold">Theo dõi tiến trình và xây dựng lộ trình học tập cho con</p>
+              {studentInfo ? (
+                <div className="flex items-center gap-1.5 mt-1 bg-white/50 px-3 py-1 rounded-xl border border-slate-205/40 shadow-sm w-fit">
+                  <span className="text-lg">{studentInfo.avatar}</span>
+                  <p className="text-slate-600 text-xs md:text-sm font-semibold">
+                    Đang xem tiến độ: <span className="font-black text-indigo-700">{studentInfo.name || studentInfo.nickname}</span> ({studentInfo.nickname}) • <span className="text-slate-500 font-bold">{studentInfo.grade}</span>
+                  </p>
+                  <button
+                    onClick={() => {
+                      playSound('click');
+                      setIsOpenConfig(true);
+                    }}
+                    className="text-xs text-indigo-650 hover:text-indigo-850 underline font-black ml-2 cursor-pointer"
+                  >
+                    Đổi
+                  </button>
+                </div>
+              ) : (
+                <p className="text-slate-500 text-sm font-semibold">Theo dõi tiến trình và xây dựng lộ trình học tập cho con</p>
+              )}
             </div>
           </div>
 
@@ -270,9 +290,9 @@ export default function ParentsPage() {
               <div className="bg-indigo-50 border-2 border-indigo-100 p-6 rounded-3xl text-center relative overflow-hidden">
                 <div className="absolute top-1/2 left-6 -translate-y-1/2 text-4xl opacity-20 pointer-events-none">💡</div>
                 <div className="absolute top-1/2 right-6 -translate-y-1/2 text-4xl opacity-20 pointer-events-none">✨</div>
-                <h3 className="font-black text-indigo-900 mb-1.5 text-lg">Đồng Hành Học Tập Cùng Con</h3>
+                <h3 className="font-black text-indigo-900 mb-1.5 text-lg">Đồng Hành Học Tập Cùng {studentInfo ? studentInfo.nickname : 'Con'}</h3>
                 <p className="text-indigo-600 text-sm max-w-xl mx-auto font-semibold leading-relaxed">
-                  Ba mẹ ơi, hãy chuyển sang tab <span className="underline font-bold">Phân Tích Học Bạ</span> ở góc trên để dán nhận xét học tập ở trường của con. Hệ thống sẽ đề xuất một lộ trình cải thiện kỹ năng tức thì cho con nhé!
+                  Ba mẹ ơi, hãy chuyển sang tab <span className="underline font-bold">Phân Tích Học Bạ</span> ở góc trên để dán nhận xét học tập ở trường của bé {studentInfo ? studentInfo.nickname : 'con'}. Hệ thống sẽ đề xuất một lộ trình cải thiện kỹ năng tức thì cho bé nhé!
                 </p>
               </div>
             </motion.div>
