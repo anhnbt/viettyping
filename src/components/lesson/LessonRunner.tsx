@@ -73,7 +73,16 @@ export default function LessonRunner({
             image_url: flashcard?.image_url || "/assets/placeholder.png",
           };
         });
-        return <MatchingGame items={matchingGameItems} onComplete={handleCurrentGameComplete} />;
+        const matchingConfig = {
+          id: currentGame.id,
+          items: matchingGameItems,
+        };
+        return (
+          <MatchingGame
+            gameConfig={matchingConfig}
+            onComplete={(telemetry) => handleCurrentGameComplete()}
+          />
+        );
       }
       case "true_false_game": {
         const tfItems = currentGame.items.map((item) => {
@@ -101,7 +110,17 @@ export default function LessonRunner({
         );
       }
       case "spin_wheel_items": {
-        return <SpinWheelGame items={currentGame.items} onComplete={handleCurrentGameComplete} />;
+        const spinConfig = {
+          id: currentGame.id,
+          items: currentGame.items,
+        };
+        return (
+          <SpinWheelGame
+            gameConfig={spinConfig}
+            flashcards={flashcards}
+            onComplete={(telemetry) => handleCurrentGameComplete()}
+          />
+        );
       }
       case "fill_in_the_blank": {
         const fillBlankItems = currentGame.items.map((item) => ({
@@ -109,7 +128,16 @@ export default function LessonRunner({
           missing_char: item.missing_char,
           sentence: item.sentence
         }));
-        return <FillInTheBlankGame items={fillBlankItems} onComplete={handleCurrentGameComplete} />;
+        const fillConfig = {
+          id: currentGame.id,
+          items: fillBlankItems,
+        };
+        return (
+          <FillInTheBlankGame
+            gameConfig={fillConfig}
+            onComplete={(telemetry) => handleCurrentGameComplete()}
+          />
+        );
       }
       case "multiple_choice": {
         const mcItems = currentGame.items.map((item) => ({
@@ -117,7 +145,17 @@ export default function LessonRunner({
           correct_answer: item.correct_answer,
           distractors: item.distractors
         }));
-        return <MultipleChoiceGame items={mcItems} onComplete={handleCurrentGameComplete} />;
+        const mcConfig = {
+          id: currentGame.id,
+          items: mcItems,
+        };
+        return (
+          <MultipleChoiceGame
+            gameConfig={mcConfig}
+            flashcards={flashcards}
+            onComplete={(telemetry) => handleCurrentGameComplete()}
+          />
+        );
       }
       default:
         return (

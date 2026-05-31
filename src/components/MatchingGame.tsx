@@ -15,6 +15,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
+import { useSound } from "@/contexts/SoundContext";
 
 export interface MappedMatchingItem {
   word: string;
@@ -112,6 +113,7 @@ function DroppableSlot({
 export default function MatchingGame({ gameConfig, onComplete }: GameAdapterProps<MatchingGameConfig>) {
   const { id: gameId, items } = gameConfig;
   const [matches, setMatches] = useState<Record<string, string>>({}); // Slot ID -> Word ID
+  const { playSound } = useSound();
   const [unmatchedWords, setUnmatchedWords] = useState<string[]>([]);
   const [errorSlot, setErrorSlot] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -160,13 +162,7 @@ export default function MatchingGame({ gameConfig, onComplete }: GameAdapterProp
         setUnmatchedWords((prev) => prev.filter((w) => w !== activeIdStr));
         
         // Play correct sound
-        try {
-          const audio = new Audio('/ting.mp3'); // Fallback to a ting sound if present
-          audio.volume = 0.6;
-          audio.play().catch(() => {});
-        } catch {
-          // Ignore error
-        }
+        playSound('coin');
 
         // Kiểm tra xem đã hoàn thành tất cả chưa
         if (unmatchedWords.length === 1) {
@@ -200,13 +196,7 @@ export default function MatchingGame({ gameConfig, onComplete }: GameAdapterProp
         }
 
         // Play error sound
-        try {
-          const audio = new Audio('/buzz.mp3'); // Fallback to a buzz sound if present
-          audio.volume = 0.5;
-          audio.play().catch(() => {});
-        } catch {
-          // Ignore error
-        }
+        playSound('boing');
 
         setTimeout(() => setErrorSlot(null), 500);
       }

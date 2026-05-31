@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-type SoundType = 'correct' | 'wrong' | 'click' | 'complete' | 'tick' | 'tada';
+type SoundType = 'correct' | 'wrong' | 'incorrect' | 'click' | 'complete' | 'tick' | 'tada' | 'keystroke' | 'keyrelease' | 'coin' | 'pop' | 'boing';
 
 interface SoundContextType {
   isMuted: boolean;
@@ -47,82 +47,220 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     switch (type) {
       case 'correct': {
-        // High pitch "ding"
+        // Tiếng ding nhẹ dịu dàng, đáng yêu cho bé
         const osc = audioContext.createOscillator();
         const gn = audioContext.createGain();
         osc.connect(gn);
         gn.connect(audioContext.destination);
 
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, now);
-        osc.frequency.exponentialRampToValueAtTime(1000, now + 0.1);
+        osc.frequency.setValueAtTime(523.25, now); // nốt C5
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.08); // trượt lên A5 ngọt ngào
 
-        gn.gain.setValueAtTime(0.3, now);
-        gn.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        gn.gain.setValueAtTime(0.2, now);
+        gn.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.start(now);
+        osc.stop(now + 0.25);
+        break;
+      }
+
+      case 'wrong':
+      case 'incorrect':
+      case 'boing': {
+        // Tiếng lò xo "boing" vui nhộn thay thế cho tiếng buzz còi hú đáng sợ
+        const osc = audioContext.createOscillator();
+        const gn = audioContext.createGain();
+        osc.connect(gn);
+        gn.connect(audioContext.destination);
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(180, now);
+        // Quét lên quét xuống nhanh tạo độ nẩy của lò xo
+        osc.frequency.linearRampToValueAtTime(320, now + 0.06);
+        osc.frequency.linearRampToValueAtTime(200, now + 0.12);
+        osc.frequency.linearRampToValueAtTime(280, now + 0.18);
+        osc.frequency.linearRampToValueAtTime(220, now + 0.24);
+
+        gn.gain.setValueAtTime(0.25, now);
+        gn.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
 
         osc.start(now);
         osc.stop(now + 0.3);
         break;
       }
 
-      case 'wrong': {
-        // Low pitch "buzz"
+      case 'click':
+      case 'pop': {
+        // Tiếng bong bóng vỡ "pop" giòn giã đáng yêu cho bé bấm nút
         const osc = audioContext.createOscillator();
         const gn = audioContext.createGain();
         osc.connect(gn);
         gn.connect(audioContext.destination);
 
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(1100, now + 0.04);
 
-        gn.gain.setValueAtTime(0.3, now);
-        gn.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-
-        osc.start(now);
-        osc.stop(now + 0.3);
-        break;
-      }
-
-      case 'click': {
-        // Short "tick"
-        const osc = audioContext.createOscillator();
-        const gn = audioContext.createGain();
-        osc.connect(gn);
-        gn.connect(audioContext.destination);
-
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(800, now);
-
-        gn.gain.setValueAtTime(0.1, now);
-        gn.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+        gn.gain.setValueAtTime(0.15, now);
+        gn.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
 
         osc.start(now);
         osc.stop(now + 0.05);
         break;
       }
 
-      case 'complete': {
-        // Simple fanfare
-        const playNote = (freq: number, startTime: number, duration: number) => {
+      case 'keystroke': {
+        // Tiếng gõ bàn phím cơ clack giòn giã chân thực
+        const pitchSkew = 0.95 + Math.random() * 0.1;
+        
+        // 1. Tiếng đập đáy nhựa (Bottom-out)
+        const osc = audioContext.createOscillator();
+        const gn = audioContext.createGain();
+        osc.connect(gn);
+        gn.connect(audioContext.destination);
+        osc.type = 'triangle';
+        const baseFreq = (180 + Math.random() * 30) * pitchSkew;
+        const decay = 0.065;
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(10, now + decay);
+        gn.gain.setValueAtTime(0.12, now);
+        gn.gain.exponentialRampToValueAtTime(0.001, now + decay);
+        osc.start(now);
+        osc.stop(now + decay + 0.02);
+
+        // 2. Tiếng ồn đục của vỏ phím (Lọc Lowpass Noise)
+        const nBufferSize = audioContext.sampleRate * 0.06;
+        const nBuffer = audioContext.createBuffer(1, nBufferSize, audioContext.sampleRate);
+        const nData = nBuffer.getChannelData(0);
+        for (let i = 0; i < nBufferSize; i++) {
+          nData[i] = Math.random() * 2 - 1;
+        }
+        const noise = audioContext.createBufferSource();
+        noise.buffer = nBuffer;
+        const noiseFilter = audioContext.createBiquadFilter();
+        noiseFilter.type = 'lowpass';
+        noiseFilter.frequency.setValueAtTime(650 * pitchSkew, now);
+        const noiseGain = audioContext.createGain();
+        noiseGain.gain.setValueAtTime(0.08, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + decay * 0.8);
+        
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(audioContext.destination);
+        noise.start(now);
+        noise.stop(now + decay + 0.03);
+
+        // 3. Tiếng click đanh nhẹ của switch cơ
+        const clickOsc = audioContext.createOscillator();
+        const clickFilter = audioContext.createBiquadFilter();
+        const clickGain = audioContext.createGain();
+        clickOsc.connect(clickFilter);
+        clickFilter.connect(clickGain);
+        clickGain.connect(audioContext.destination);
+        
+        clickOsc.type = 'sawtooth';
+        clickOsc.frequency.setValueAtTime(3200 * pitchSkew, now);
+        clickFilter.type = 'bandpass';
+        clickFilter.frequency.setValueAtTime(3600 * pitchSkew, now);
+        clickFilter.Q.setValueAtTime(5, now);
+        clickGain.gain.setValueAtTime(0.09, now);
+        clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.008);
+        clickOsc.start(now);
+        clickOsc.stop(now + 0.02);
+        break;
+      }
+
+      case 'keyrelease': {
+        // Tiếng phím nảy lên khẽ khàng (Upstroke)
+        const pitchSkew = 0.95 + Math.random() * 0.1;
+        const upOsc = audioContext.createOscillator();
+        const upGain = audioContext.createGain();
+        upOsc.connect(upGain);
+        upGain.connect(audioContext.destination);
+        
+        upOsc.type = 'sine';
+        const upFreq = (280 + Math.random() * 40) * pitchSkew;
+        const upDecay = 0.025;
+        upOsc.frequency.setValueAtTime(upFreq, now);
+        upGain.gain.setValueAtTime(0.035, now);
+        upGain.gain.exponentialRampToValueAtTime(0.001, now + upDecay);
+        upOsc.start(now);
+        upOsc.stop(now + upDecay + 0.01);
+        break;
+      }
+
+      case 'coin': {
+        // Tiếng nhặt đồng xu vàng leng keng vui tai của Mario
+        const playNote = (freq: number, startTime: number, duration: number, vol: number) => {
           const osc = audioContext.createOscillator();
           const gn = audioContext.createGain();
           osc.connect(gn);
           gn.connect(audioContext.destination);
-
+          
           osc.type = 'sine';
           osc.frequency.setValueAtTime(freq, startTime);
-
-          gn.gain.setValueAtTime(0.3, startTime);
-          gn.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-
+          gn.gain.setValueAtTime(vol, startTime);
+          gn.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
           osc.start(startTime);
           osc.stop(startTime + duration);
         };
+        playNote(987.77, now, 0.08, 0.15); // Nốt B5
+        playNote(1318.51, now + 0.08, 0.25, 0.15); // Nốt E6
+        break;
+      }
 
-        playNote(523.25, now, 0.2); // C5
-        playNote(659.25, now + 0.2, 0.2); // E5
-        playNote(783.99, now + 0.4, 0.4); // G5
+      case 'complete':
+      case 'tada': {
+        // Fanfare chúc mừng rực rỡ và tiếng pháo hoa nổ lốp bốp
+        const playN = (freq: number, startTime: number, duration: number, vol: number) => {
+          const osc = audioContext.createOscillator();
+          const gn = audioContext.createGain();
+          osc.connect(gn);
+          gn.connect(audioContext.destination);
+          
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, startTime);
+          gn.gain.setValueAtTime(vol, startTime);
+          gn.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+          osc.start(startTime);
+          osc.stop(startTime + duration);
+        };
+        // C5 -> E5 -> G5 -> C6 -> E6 -> G6 (hợp âm C major arpeggio vút lên)
+        playN(523.25, now, 0.12, 0.2); // C5
+        playN(659.25, now + 0.08, 0.12, 0.2); // E5
+        playN(783.99, now + 0.16, 0.12, 0.2); // G5
+        playN(1046.50, now + 0.24, 0.15, 0.2); // C6
+        playN(1318.51, now + 0.32, 0.15, 0.2); // E6
+        playN(1567.98, now + 0.40, 0.6, 0.25); // G6 (giữ)
+        playN(1046.50, now + 0.40, 0.6, 0.15); // C6 chord
+        playN(783.99, now + 0.40, 0.6, 0.1);  // G5 chord
+
+        // Hiệu ứng pháo hoa nổ nhẹ bằng noise burst lúc kết thúc arpeggio
+        setTimeout(() => {
+          if (!audioContext) return;
+          const pNow = audioContext.currentTime;
+          const pBufferSize = audioContext.sampleRate * 0.15;
+          const pBuffer = audioContext.createBuffer(1, pBufferSize, audioContext.sampleRate);
+          const pData = pBuffer.getChannelData(0);
+          for (let i = 0; i < pBufferSize; i++) {
+            pData[i] = Math.random() * 2 - 1;
+          }
+          const pNoise = audioContext.createBufferSource();
+          pNoise.buffer = pBuffer;
+          const pFilter = audioContext.createBiquadFilter();
+          pFilter.type = 'bandpass';
+          pFilter.frequency.setValueAtTime(1200, pNow);
+          const pGain = audioContext.createGain();
+          pGain.gain.setValueAtTime(0.04, pNow);
+          pGain.gain.exponentialRampToValueAtTime(0.001, pNow + 0.12);
+          
+          pNoise.connect(pFilter);
+          pFilter.connect(pGain);
+          pGain.connect(audioContext.destination);
+          pNoise.start(pNow);
+          pNoise.stop(pNow + 0.15);
+        }, 400);
         break;
       }
 
@@ -141,30 +279,6 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
         osc.start(now);
         osc.stop(now + 0.03);
-        break;
-      }
-
-      case 'tada': {
-        // Celebration fanfare
-        const playN = (freq: number, startTime: number, duration: number, vol: number) => {
-          const osc = audioContext.createOscillator();
-          const gn = audioContext.createGain();
-          osc.connect(gn);
-          gn.connect(audioContext.destination);
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, startTime);
-          gn.gain.setValueAtTime(vol, startTime);
-          gn.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-          osc.start(startTime);
-          osc.stop(startTime + duration);
-        };
-        // Rising arpeggio + chord
-        playN(523.25, now, 0.15, 0.25);       // C5
-        playN(659.25, now + 0.12, 0.15, 0.25); // E5
-        playN(783.99, now + 0.24, 0.15, 0.25); // G5
-        playN(1046.50, now + 0.36, 0.5, 0.3);  // C6 (hold)
-        playN(783.99, now + 0.36, 0.5, 0.2);   // G5 chord
-        playN(659.25, now + 0.36, 0.5, 0.15);  // E5 chord
         break;
       }
     }

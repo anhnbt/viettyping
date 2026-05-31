@@ -100,7 +100,7 @@ export default function HeroSlideBanner() {
       x: 0,
       opacity: 1,
       transition: {
-        x: { type: 'spring', stiffness: 300, damping: 25 },
+        x: { type: 'spring' as const, stiffness: 300, damping: 25 },
         opacity: { duration: 0.3 }
       }
     },
@@ -108,7 +108,7 @@ export default function HeroSlideBanner() {
       x: dir < 0 ? 300 : -300,
       opacity: 0,
       transition: {
-        x: { type: 'spring', stiffness: 300, damping: 25 },
+        x: { type: 'spring' as const, stiffness: 300, damping: 25 },
         opacity: { duration: 0.2 }
       }
     })

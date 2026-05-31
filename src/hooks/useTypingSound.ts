@@ -5,11 +5,11 @@ export function useTypingSound() {
   const { playSound } = useSound();
 
   const playCorrectSound = useCallback(() => {
-    playSound('correct');
+    playSound('keystroke');
   }, [playSound]);
 
   const playWrongSound = useCallback(() => {
-    playSound('wrong');
+    playSound('boing');
   }, [playSound]);
 
   return { playCorrectSound, playWrongSound };

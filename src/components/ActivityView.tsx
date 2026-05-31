@@ -18,6 +18,13 @@ import {
 } from '@/components/activities';
 import { ActivityTelemetry } from '@/types/activity';
 
+// Import Game Components
+import MatchingGame from '@/components/MatchingGame';
+import TrueFalseGame from '@/components/TrueFalseGame';
+import SpinWheelGame from '@/components/SpinWheelGame';
+import FillInTheBlankGame from '@/components/FillInTheBlankGame';
+import MultipleChoiceGame from '@/components/MultipleChoiceGame';
+
 interface ActivityViewProps {
   topic: Topic;
   onComplete: (activityId: string, score: number) => void;
@@ -74,6 +81,106 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
         return <DrawingActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
       case 'listening':
         return <ListeningActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
+      case 'game': {
+        const subtype = activity.data?.subtype;
+        switch (subtype) {
+          case 'spinwheel': {
+            const spinConfig = {
+              id: activity.id,
+              items: activity.data.items || [],
+            };
+            return (
+              <SpinWheelGame
+                key={activity.id}
+                gameConfig={spinConfig}
+                flashcards={activity.data.flashcards}
+                onComplete={(telemetry) => handleActivityComplete({
+                  score: telemetry.score,
+                  duration: telemetry.durationSeconds,
+                  rawPayload: telemetry
+                })}
+              />
+            );
+          }
+          case 'matching': {
+            const matchingConfig = {
+              id: activity.id,
+              items: activity.data.items || [],
+            };
+            return (
+              <MatchingGame
+                key={activity.id}
+                gameConfig={matchingConfig}
+                onComplete={(telemetry) => handleActivityComplete({
+                  score: telemetry.score,
+                  duration: telemetry.durationSeconds,
+                  rawPayload: telemetry
+                })}
+              />
+            );
+          }
+          case 'true_false': {
+            const tfConfig = {
+              id: activity.id,
+              items: activity.data.items || [],
+            };
+            return (
+              <TrueFalseGame
+                key={activity.id}
+                gameConfig={tfConfig}
+                onComplete={(telemetry) => handleActivityComplete({
+                  score: telemetry.score,
+                  duration: telemetry.durationSeconds,
+                  rawPayload: telemetry
+                })}
+              />
+            );
+          }
+          case 'fill_in_the_blank': {
+            const fillConfig = {
+              id: activity.id,
+              items: activity.data.items || [],
+            };
+            return (
+              <FillInTheBlankGame
+                key={activity.id}
+                gameConfig={fillConfig}
+                onComplete={(telemetry) => handleActivityComplete({
+                  score: telemetry.score,
+                  duration: telemetry.durationSeconds,
+                  rawPayload: telemetry
+                })}
+              />
+            );
+          }
+          case 'multiple_choice': {
+            const mcConfig = {
+              id: activity.id,
+              items: activity.data.items || [],
+            };
+            return (
+              <MultipleChoiceGame
+                key={activity.id}
+                gameConfig={mcConfig}
+                flashcards={activity.data.flashcards}
+                onComplete={(telemetry) => handleActivityComplete({
+                  score: telemetry.score,
+                  duration: telemetry.durationSeconds,
+                  rawPayload: telemetry
+                })}
+              />
+            );
+          }
+          default:
+            return (
+              <div className="text-center">
+                <p className="text-gray-500">
+                  Trò chơi loại "{subtype}" đang được phát triển...
+                </p>
+              </div>
+            );
+        }
+      }
       default:
         return (
           <div className="text-center">

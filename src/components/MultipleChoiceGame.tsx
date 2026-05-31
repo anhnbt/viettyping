@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, X } from "lucide-react";
 import confetti from "canvas-confetti";
 import { GameAdapterProps, TelemetryPayload, Flashcard } from "@/types/lesson";
+import { useSound } from "@/contexts/SoundContext";
 
 export interface MultipleChoiceItem {
   question: string;
@@ -37,6 +38,8 @@ export default function MultipleChoiceGame({ gameConfig, flashcards, onComplete 
   const [choices, setChoices] = useState<string[]>([]);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<"none" | "correct" | "incorrect">("none");
+
+  const { playSound } = useSound();
 
   // Telemetry state
   const startTimeRef = useRef<number>(Date.now());
@@ -74,15 +77,7 @@ export default function MultipleChoiceGame({ gameConfig, flashcards, onComplete 
 
     if (isCorrect) {
       setFeedback("correct");
-      
-      // Phát âm thanh đúng
-      try {
-        const audio = new Audio("/correct.mp3");
-        audio.volume = 0.5;
-        audio.play().catch((e) => console.warn("Audio play failed:", e));
-      } catch (error) {
-        console.warn("Audio not supported", error);
-      }
+      playSound('coin');
       
       confetti({
         particleCount: 50,
@@ -121,14 +116,7 @@ export default function MultipleChoiceGame({ gameConfig, flashcards, onComplete 
         });
       }
 
-      // Phát âm thanh sai
-      try {
-        const audio = new Audio("/incorrect.mp3");
-        audio.volume = 0.5;
-        audio.play().catch((e) => console.warn("Audio play failed:", e));
-      } catch (error) {
-        console.warn("Audio not supported", error);
-      }
+      playSound('boing');
 
       setTimeout(() => {
         setFeedback("none");
@@ -205,7 +193,7 @@ export default function MultipleChoiceGame({ gameConfig, flashcards, onComplete 
                 }
                 whileHover={feedback === "none" ? { scale: 1.05 } : {}}
                 whileTap={feedback === "none" ? { scale: 0.95 } : {}}
-                onClick={() => handleChoice(choice)}
+                onClick={() => { playSound('pop'); handleChoice(choice); }}
                 disabled={feedback !== "none"}
                 className={`
                   relative flex-1 bg-gradient-to-b text-white font-black text-2xl md:text-3xl 

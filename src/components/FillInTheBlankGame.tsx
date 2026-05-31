@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
+import { useSound } from "@/contexts/SoundContext";
 
 export interface FillInTheBlankItem {
   full_word: string;
@@ -23,6 +24,8 @@ export default function FillInTheBlankGame({ gameConfig, onComplete }: GameAdapt
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedChar, setSelectedChar] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<"none" | "correct" | "incorrect">("none");
+
+  const { playSound } = useSound();
 
   // Telemetry state
   const startTimeRef = useRef<number>(Date.now());
@@ -82,15 +85,7 @@ export default function FillInTheBlankGame({ gameConfig, onComplete }: GameAdapt
 
     if (char.toLowerCase() === currentItem.missing_char.toLowerCase()) {
       setFeedback("correct");
-      
-      // Play correct sound
-      try {
-        const audio = new Audio("/correct.mp3");
-        audio.volume = 0.5;
-        audio.play().catch((e) => console.warn("Audio play failed:", e));
-      } catch (error) {
-        console.warn("Audio not supported", error);
-      }
+      playSound('coin');
 
       confetti({
         particleCount: 80,
@@ -134,14 +129,7 @@ export default function FillInTheBlankGame({ gameConfig, onComplete }: GameAdapt
         });
       }
 
-      // Play incorrect sound
-      try {
-        const audio = new Audio("/incorrect.mp3");
-        audio.volume = 0.5;
-        audio.play().catch((e) => console.warn("Audio play failed:", e));
-      } catch (error) {
-        console.warn("Audio not supported", error);
-      }
+      playSound('boing');
 
       setTimeout(() => {
         setFeedback("none");
@@ -218,7 +206,7 @@ export default function FillInTheBlankGame({ gameConfig, onComplete }: GameAdapt
                   ? { x: [-10, 10, -10, 10, 0], transition: { duration: 0.4 } }
                   : {}
               }
-              onClick={() => handleKeyPress(char)}
+              onClick={() => { playSound('pop'); handleKeyPress(char); }}
               disabled={feedback !== "none"}
               className={`w-20 h-20 md:w-24 md:h-24 rounded-2xl font-black text-4xl shadow-[0_6px_0_0_rgba(0,0,0,0.1)] flex items-center justify-center transition-all disabled:cursor-not-allowed ${
                 isCorrect

@@ -6,6 +6,7 @@ import { Volume2, Play, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { GameAdapterProps, TelemetryPayload, Flashcard } from "@/types/lesson";
 import { useStudent } from "@/contexts/StudentContext";
+import { useSound } from "@/contexts/SoundContext";
 
 export interface SpinWheelGameConfig {
   id: string;
@@ -32,23 +33,11 @@ export default function SpinWheelGame({ gameConfig, onComplete, flashcards = [] 
   // Telemetry state
   const startTimeRef = useRef<number>(Date.now());
 
-  // Audio refs
-  const tickAudioRef = useRef<HTMLAudioElement | null>(null);
-  const tadaAudioRef = useRef<HTMLAudioElement | null>(null);
+  const { playSound } = useSound();
 
   useEffect(() => {
     startTimeRef.current = Date.now();
   }, [gameId]);
-
-  useEffect(() => {
-    // Setup audio
-    tickAudioRef.current = new Audio('/tick.mp3');
-    tadaAudioRef.current = new Audio('/tada.mp3');
-    
-    // Preload
-    if (tickAudioRef.current) tickAudioRef.current.load();
-    if (tadaAudioRef.current) tadaAudioRef.current.load();
-  }, []);
 
   const spinWheel = () => {
     if (isSpinning) return;
@@ -57,13 +46,22 @@ export default function SpinWheelGame({ gameConfig, onComplete, flashcards = [] 
     setSelectedItem(null);
     setShowPopup(false);
 
-    // Play tick sound continuously or just once
-    if (tickAudioRef.current) {
-      tickAudioRef.current.currentTime = 0;
-      tickAudioRef.current.loop = true;
-      tickAudioRef.current.play().catch(() => console.warn("Audio play blocked"));
-    }
-
+    // Phát tiếng tick quay bánh xe liên tục và chậm dần bằng Web Audio API
+    let tickInterval = 60; // ban đầu quay nhanh
+    let elapsed = 0;
+    const maxDuration = 2800; // Quay trong khoảng 2.8s
+    
+    const playTickLoop = () => {
+      if (elapsed >= maxDuration) return;
+      playSound('tick');
+      
+      elapsed += tickInterval;
+      // Chậm dần đều
+      tickInterval = 60 + (elapsed / maxDuration) * 320;
+      
+      setTimeout(playTickLoop, tickInterval);
+    };
+    playTickLoop();
 
     const spinSpins = 5; // 5 full rotations
     const sliceAngle = 360 / items.length;
@@ -73,11 +71,6 @@ export default function SpinWheelGame({ gameConfig, onComplete, flashcards = [] 
     const winnerTextAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
     
     // Calculate final rotation
-    // We want the winner slice to be at the top (or pointing to a pointer). 
-    // Usually pointer is at the top (0 degrees).
-    // If the wheel rotates clockwise, the winner slice needs to stop at 360 - winnerTextAngle
-    // to be at the top. Let's add a random offset within the slice to make it look natural.
-    // Tighter offset to ensure pointer is clearly within the slice bounds
     const randomOffset = Math.random() * (sliceAngle * 0.6) - (sliceAngle * 0.3);
     
     const targetRotation = rotation + (spinSpins * 360) + (360 - winnerTextAngle) - (rotation % 360) + randomOffset;
@@ -124,14 +117,7 @@ export default function SpinWheelGame({ gameConfig, onComplete, flashcards = [] 
               setSelectedItem(items[pendingWinnerIndex]);
               setShowPopup(true);
               
-              if (tickAudioRef.current) {
-                tickAudioRef.current.pause();
-              }
-              
-              if (tadaAudioRef.current) {
-                tadaAudioRef.current.currentTime = 0;
-                tadaAudioRef.current.play().catch(() => console.warn("Audio play blocked"));
-              }
+              playSound('tada');
 
               confetti({
                 particleCount: 100,
@@ -185,7 +171,7 @@ export default function SpinWheelGame({ gameConfig, onComplete, flashcards = [] 
       <motion.button
         whileHover={!isSpinning ? { scale: 1.05 } : {}}
         whileTap={!isSpinning ? { scale: 0.95 } : {}}
-        onClick={spinWheel}
+        onClick={() => { playSound('pop'); spinWheel(); }}
         disabled={isSpinning}
         className={`bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 text-white font-black text-2xl px-12 py-4 rounded-full shadow-[0_6px_0_0_#be185d] hover:shadow-[0_3px_0_0_#be185d] transition-all flex items-center gap-3 ${isSpinning ? 'opacity-50 cursor-not-allowed' : ''} ${!isSpinning ? 'hover:translate-y-1 active:shadow-none active:translate-y-2' : ''}`}
       >
@@ -231,7 +217,7 @@ export default function SpinWheelGame({ gameConfig, onComplete, flashcards = [] 
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => playTTS(selectedItem)}
+                  onClick={() => { playSound('pop'); playTTS(selectedItem); }}
                   className="flex-1 sm:flex-none bg-blue-500 hover:bg-blue-400 text-white font-bold text-sm sm:text-lg px-4 sm:px-6 py-3 sm:py-4 rounded-2xl shadow-[0_6px_0_0_#1e3a8a] hover:shadow-[0_3px_0_0_#1e3a8a] transition-all flex items-center justify-center gap-1.5 hover:translate-y-1 active:shadow-none active:translate-y-2 whitespace-nowrap"
                 >
                   <Volume2 size={20} className="shrink-0" />
@@ -242,6 +228,7 @@ export default function SpinWheelGame({ gameConfig, onComplete, flashcards = [] 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
+                    playSound('pop');
                     const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
                     onComplete({
                       score: 100,

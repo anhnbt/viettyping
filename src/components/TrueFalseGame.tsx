@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, X } from "lucide-react";
 import confetti from "canvas-confetti";
 import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
+import { useSound } from "@/contexts/SoundContext";
 
 export interface MappedTrueFalseItem {
   correct_word: string;
@@ -24,6 +25,8 @@ export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterPro
   const [isCorrectWordShown, setIsCorrectWordShown] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState<boolean | null>(null);
   const [feedback, setFeedback] = useState<"none" | "correct" | "incorrect">("none");
+
+  const { playSound } = useSound();
 
   // Telemetry state
   const startTimeRef = useRef<number>(Date.now());
@@ -59,14 +62,7 @@ export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterPro
 
     if (isCorrect) {
       setFeedback("correct");
-      // Play correct sound
-      try {
-        const audio = new Audio("/correct.mp3");
-        audio.volume = 0.5;
-        audio.play().catch((e) => console.warn("Audio play failed:", e));
-      } catch (error) {
-        console.warn("Audio not supported", error);
-      }
+      playSound('coin');
       
       confetti({
         particleCount: 50,
@@ -107,14 +103,7 @@ export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterPro
         });
       }
 
-      // Play incorrect sound
-      try {
-        const audio = new Audio("/incorrect.mp3");
-        audio.volume = 0.5;
-        audio.play().catch((e) => console.warn("Audio play failed:", e));
-      } catch (error) {
-        console.warn("Audio not supported", error);
-      }
+      playSound('boing');
 
       // Shake animation effect for incorrect will be handled by feedback state
       setTimeout(() => {
@@ -204,7 +193,7 @@ export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterPro
               ? { x: [-10, 10, -10, 10, 0], transition: { duration: 0.4 } }
               : {}
           }
-          onClick={() => handleChoice(true)}
+          onClick={() => { playSound('pop'); handleChoice(true); }}
           disabled={feedback !== "none"}
           className={`flex-1 bg-gradient-to-b from-green-400 to-green-500 hover:from-green-300 hover:to-green-400 text-white font-black text-3xl py-6 rounded-3xl shadow-[0_8px_0_0_#166534] hover:shadow-[0_4px_0_0_#166534] hover:translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed ${
             feedback === "none" ? "active:shadow-none active:translate-y-2" : ""
@@ -224,7 +213,7 @@ export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterPro
               ? { x: [-10, 10, -10, 10, 0], transition: { duration: 0.4 } }
               : {}
           }
-          onClick={() => handleChoice(false)}
+          onClick={() => { playSound('pop'); handleChoice(false); }}
           disabled={feedback !== "none"}
           className={`flex-1 bg-gradient-to-b from-red-400 to-red-500 hover:from-red-300 hover:to-red-400 text-white font-black text-3xl py-6 rounded-3xl shadow-[0_8px_0_0_#991b1b] hover:shadow-[0_4px_0_0_#991b1b] hover:translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed ${
             feedback === "none" ? "active:shadow-none active:translate-y-2" : ""

@@ -25,6 +25,7 @@ export interface Activity {
   timeLimit?: number; // giây
   options?: string[];
   correctAnswer?: string;
+  imageUrl?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
 }
@@ -390,8 +391,10 @@ export const subjects: Subject[] = [
             id: 't-1-2',
             type: 'math',
             title: 'Bài tập đếm',
-            content: 'Đếm số lượng vật thể',
-            instructions: 'Đếm và chọn số đúng',
+            content: '🍎 🍎 🍎 🍎 🍎 🍎',
+            instructions: 'Bé hãy đếm xem có bao nhiêu quả táo và chọn số đúng nhé!',
+            options: ['4', '5', '6', '7'],
+            correctAnswer: '6'
           },
         ],
       },
@@ -407,8 +410,10 @@ export const subjects: Subject[] = [
             id: 't-2-1',
             type: 'math',
             title: 'Bài tập phép cộng',
-            content: 'Giải các phép cộng đơn giản',
-            instructions: 'Tính toán và điền kết quả',
+            content: '3 + 4 = ?',
+            instructions: 'Tính toán và chọn kết quả đúng nhé!',
+            options: ['6', '7', '8', '9'],
+            correctAnswer: '7'
           },
           {
             id: 't-2-2',
@@ -469,10 +474,11 @@ export const subjects: Subject[] = [
             id: 't-4-1',
             type: 'quiz',
             title: 'Nhận biết hình dạng',
-            content: 'Hình nào có 3 cạnh?',
-            instructions: 'Chọn hình đúng',
-            options: ['Hình vuông', 'Hình tròn', 'Hình tam giác'],
-            correctAnswer: 'Hình tam giác'
+            content: 'Bạn hình tam giác đáng yêu trong tranh có màu gì thế bé nhỉ?',
+            instructions: 'Bé hãy nhìn vào bức tranh bên trên và chọn màu sắc đúng nhé!',
+            imageUrl: '/assets/shapes.png',
+            options: ['Màu đỏ 🟥', 'Màu vàng 🟡', 'Màu xanh da trời 💙'],
+            correctAnswer: 'Màu xanh da trời 💙'
           },
         ],
       },
@@ -499,6 +505,78 @@ export const subjects: Subject[] = [
             title: 'Gõ phép tính cẩn thận',
             content: '5 + 3 = 8; 10 - 4 = 6; 7 - 2 = 5; 6 + 4 = 10',
             instructions: 'Gõ thật cẩn thận và chính xác từng số và dấu phép tính!',
+          }
+        ]
+      },
+      {
+        id: 'toan-hinh-khoi',
+        title: 'Hình khối quanh bé',
+        description: 'Bé nhận biết hình cầu, hình lập phương, hình hộp chữ nhật trong thực tế',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'Hình cầu tròn trịa như viên bi. Hình lập phương vuông vắn như cục xúc xắc.',
+        activities: [
+          {
+            id: 't-hk-1',
+            type: 'quiz',
+            title: 'Hình cầu xinh xắn',
+            content: 'Đồ vật nào dưới đây có dạng hình cầu giống như viên bi hay Trái Đất của chúng ta?',
+            instructions: 'Bé hãy suy nghĩ và chọn đáp án có dạng hình tròn trịa nhé!',
+            options: ['Hộp sữa giấy', 'Quả bóng đá tròn ⚽', 'Hộp bút màu'],
+            correctAnswer: 'Quả bóng đá tròn ⚽'
+          },
+          {
+            id: 't-hk-2',
+            type: 'quiz',
+            title: 'Hình lập phương vuông vắn',
+            content: 'Cục xúc xắc xinh xắn bé dùng để chơi cá ngựa có dạng hình gì nhỉ?',
+            instructions: 'Chọn hình dạng vuông vắn có 6 mặt bằng nhau nhé bé!',
+            options: ['Hình cầu', 'Hình lập phương', 'Hình hộp chữ nhật'],
+            correctAnswer: 'Hình lập phương'
+          },
+          {
+            id: 't-hk-3',
+            type: 'quiz',
+            title: 'Hình hộp chữ nhật quen thuộc',
+            content: 'Chiếc tủ quần áo cao lớn ở trong phòng bé có hình dạng giống hình khối nào nhất?',
+            instructions: 'Bé hãy nhìn tủ quần áo và chọn khối hình phù hợp nhé!',
+            options: ['Hình hộp chữ nhật', 'Hình cầu', 'Hình lập phương'],
+            correctAnswer: 'Hình hộp chữ nhật'
+          }
+        ]
+      },
+      {
+        id: 'toan-cong-hoa-qua',
+        title: 'Phép cộng hoa quả sinh động',
+        description: 'Luyện đếm hoa quả và thực hiện phép cộng vui tươi',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'Cộng hoa quả giúp bé đếm nhanh và chính xác hơn.',
+        activities: [
+          {
+            id: 't-chq-1',
+            type: 'quiz',
+            title: 'Phép cộng táo đỏ',
+            content: '🍎 🍎 + 🍎 = ? Bé hãy đếm xem có tất cả bao nhiêu quả táo đỏ?',
+            instructions: 'Hãy đếm tổng số lượng táo ở cả hai bên và chọn đáp án đúng nhé!',
+            options: ['2 quả táo', '3 quả táo', '4 quả táo'],
+            correctAnswer: '3 quả táo'
+          },
+          {
+            id: 't-chq-2',
+            type: 'quiz',
+            title: 'Phép cộng chuối vàng',
+            content: '🍌 🍌 🍌 + 🍌 🍌 = ? Bé hãy đếm xem có tất cả bao nhiêu quả chuối vàng?',
+            instructions: 'Đếm tất cả số quả chuối và chọn đáp án chính xác nhé!',
+            options: ['4 quả chuối', '5 quả chuối', '6 quả chuối'],
+            correctAnswer: '5 quả chuối'
+          },
+          {
+            id: 't-chq-3',
+            type: 'typing',
+            title: 'Gõ phép tính hoa quả',
+            content: '2 + 1 = 3; 3 + 2 = 5; 4 + 4 = 8',
+            instructions: 'Gõ lại các phép tính bé vừa học thật chính xác nhé!',
           }
         ]
       }
@@ -776,6 +854,90 @@ export const subjects: Subject[] = [
           },
         ],
       },
+      {
+        id: 'ta-animals',
+        title: 'Từ vựng Con vật vui nhộn',
+        description: 'Học từ vựng con vật: dog, cat, pig, duck, bird qua trò chơi sinh động',
+        difficulty: 'easy',
+        estimatedTime: 20,
+        content: 'dog cat pig duck bird',
+        activities: [
+          {
+            id: 'ta-ani-1',
+            type: 'typing',
+            title: 'Luyện gõ từ vựng con vật',
+            content: 'dog cat pig duck bird',
+            instructions: 'Bé hãy gõ các từ vựng tiếng Anh chỉ con vật thật chính xác nhé!',
+          },
+          {
+            id: 'ta-ani-2',
+            type: 'game',
+            title: 'Vòng quay từ vựng con vật',
+            content: 'Vòng quay kỳ diệu con vật',
+            instructions: 'Bé hãy quay vòng quay và gõ từ vựng của con vật trúng thưởng nhé!',
+            data: {
+              subtype: 'spinwheel',
+              items: ['dog', 'cat', 'pig', 'duck', 'bird'],
+              flashcards: [
+                { word: 'dog', image_url: '/assets/animals/dog.png' },
+                { word: 'cat', image_url: '/assets/animals/cat.png' },
+                { word: 'pig', image_url: '/assets/animals/pig.png' },
+                { word: 'duck', image_url: '/assets/animals/duck.png' },
+                { word: 'bird', image_url: '/assets/animals/bird.png' }
+              ]
+            }
+          },
+          {
+            id: 'ta-ani-3',
+            type: 'game',
+            title: 'Ghép nối con vật',
+            content: 'Nối từ tiếng Anh với hình ảnh đúng',
+            instructions: 'Bé kéo thả các từ tiếng Anh nối với hình ảnh con vật tương ứng nhé!',
+            data: {
+              subtype: 'matching',
+              items: [
+                { word: 'dog', image_url: '/assets/animals/dog.png' },
+                { word: 'cat', image_url: '/assets/animals/cat.png' },
+                { word: 'pig', image_url: '/assets/animals/pig.png' },
+                { word: 'duck', image_url: '/assets/animals/duck.png' },
+                { word: 'bird', image_url: '/assets/animals/bird.png' }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        id: 'ta-family',
+        title: 'Gia đình yêu thương',
+        description: 'Học từ vựng về gia đình: dad, mom, baby qua trò chơi ghép hình',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'dad mom baby',
+        activities: [
+          {
+            id: 'ta-fam-1',
+            type: 'typing',
+            title: 'Luyện gõ từ vựng gia đình',
+            content: 'dad mom baby',
+            instructions: 'Gõ các từ vựng chỉ người thân yêu trong gia đình!',
+          },
+          {
+            id: 'ta-fam-2',
+            type: 'game',
+            title: 'Ghép tranh gia đình',
+            content: 'Nối từ với hình ảnh người thân',
+            instructions: 'Bé hãy kéo thả các từ tiếng Anh nối với đúng hình ảnh người thân yêu nhé!',
+            data: {
+              subtype: 'matching',
+              items: [
+                { word: 'dad', image_url: '/assets/family/dad.png' },
+                { word: 'mom', image_url: '/assets/family/mom.png' },
+                { word: 'baby', image_url: '/assets/family/baby.png' }
+              ]
+            }
+          }
+        ]
+      },
     ],
   },
   {
@@ -803,6 +965,41 @@ export const subjects: Subject[] = [
             instructions: 'Gõ tên các loài động vật',
           },
         ],
+      },
+      {
+        id: 'tnxh-bon-mua',
+        title: 'Bốn mùa kỳ diệu',
+        description: 'Bé khám phá các đặc điểm của 4 mùa Xuân, Hạ, Thu, Đông',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'Bốn mùa quanh năm: mùa xuân ấm áp, mùa hè nóng nực, mùa thu mát mẻ, mùa đông lạnh giá.',
+        activities: [
+          {
+            id: 'tnxh-bm-1',
+            type: 'typing',
+            title: 'Gõ tên các mùa',
+            content: 'xuan ha thu dong',
+            instructions: 'Bé hãy gõ tên các mùa trong năm nhé!',
+          },
+          {
+            id: 'tnxh-bm-2',
+            type: 'quiz',
+            title: 'Thời tiết mùa đông',
+            content: 'Mùa đông thường có tuyết rơi trắng xóa và thời tiết rất lạnh giá. Điều này đúng hay sai hả bé?',
+            instructions: 'Bé chọn Đúng hoặc Sai nhé!',
+            options: ['Đúng thế ❄️', 'Sai rồi ❌'],
+            correctAnswer: 'Đúng thế ❄️'
+          },
+          {
+            id: 'tnxh-bm-3',
+            type: 'quiz',
+            title: 'Mùa hè rực rỡ',
+            content: 'Mùa nào trong năm bé thường được nghỉ học, đi tắm biển và ăn kem mát lạnh nhỉ?',
+            instructions: 'Bé chọn mùa có ánh nắng rực rỡ nhất nhé!',
+            options: ['Mùa xuân', 'Mùa hè ☀️', 'Mùa đông'],
+            correctAnswer: 'Mùa hè ☀️'
+          }
+        ]
       },
     ],
   },
@@ -865,6 +1062,34 @@ export const subjects: Subject[] = [
             instructions: 'Hãy di chuyển chuột hoặc ngón tay để tô màu thật đều trong khung hình nhé!',
             data: {
               outlineSvgName: 'house',
+              targetCoveragePercent: 70
+            }
+          }
+        ]
+      },
+      {
+        id: 'mt-to-mau-gau',
+        title: 'Tô màu chú gấu con đáng yêu',
+        description: 'Bé tập tô màu đều tay cho chú gấu dễ thương',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'Tô màu giúp rèn luyện sự khéo léo của đôi bàn tay.',
+        activities: [
+          {
+            id: 'mt-tmg-1',
+            type: 'typing',
+            title: 'Quy tắc tô màu đẹp',
+            content: 'to mau deu tay khong lem ra ngoai phoi mau hai hoa',
+            instructions: 'Bé gõ các quy tắc để tô màu thật đẹp nhé!',
+          },
+          {
+            id: 'mt-tmg-2',
+            type: 'drawing',
+            title: 'Tô màu bạn gấu con',
+            content: 'Tô màu cho chú gấu con đáng yêu',
+            instructions: 'Bé di chuyển chuột hoặc ngón tay để tô các màu sắc yêu thích cho chú gấu con nhé!',
+            data: {
+              outlineSvgName: 'bear',
               targetCoveragePercent: 70
             }
           }
