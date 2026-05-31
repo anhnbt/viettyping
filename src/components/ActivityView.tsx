@@ -62,16 +62,16 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const renderActivity = (activity: Activity) => {
     switch (activity.type) {
       case 'typing':
-        return <TypingActivity activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
+        return <TypingActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
       case 'quiz':
       case 'math':
-        return <QuizActivity activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
+        return <QuizActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
       case 'reading':
-        return <ReadingActivity activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
+        return <ReadingActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
       case 'drawing':
-        return <DrawingActivity activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
+        return <DrawingActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
       case 'listening':
-        return <ListeningActivity activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
+        return <ListeningActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
       default:
         return (
           <div className="text-center">

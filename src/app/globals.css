@@ -25,3 +25,22 @@ body {
   font-family: var(--font-be-vietnam-pro), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Custom scrollbar cho các phần cuộn (như modal của bé) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #c7d2fe; /* indigo-200 */
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #818cf8; /* indigo-400 */
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #c7d2fe transparent;
+}
+
