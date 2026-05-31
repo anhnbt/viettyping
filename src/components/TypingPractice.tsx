@@ -257,7 +257,7 @@ export default function TypingPractice({ task, onComplete }: Props) {
             <div className="h-4 w-px bg-gray-200" />
             <div className="flex items-center gap-1.5 text-xs text-gray-500">
               <IoSpeedometerOutline className="text-base text-green-500" />
-              <span>Tốc độ: <span className="font-extrabold text-green-600 text-sm">{wpm}</span> WPM</span>
+              <span>Tốc độ: <span className="font-extrabold text-green-600 text-sm">{wpm}</span> WPM <span className={`ml-1 font-bold ${getSpeedColor()}`}>{wpm > 0 ? `(${getSpeedLabel()})` : ''}</span></span>
             </div>
             <div className="h-4 w-px bg-gray-200" />
             <div className="flex items-center gap-1.5 text-xs text-gray-500">
@@ -277,25 +277,16 @@ export default function TypingPractice({ task, onComplete }: Props) {
         </div>
 
         {/* Dynamic Animal Progress Meter */}
-        <div className="w-full bg-gradient-to-r from-slate-50 via-white to-slate-50 rounded-2xl p-2.5 border border-slate-100 shadow-sm mb-3 flex flex-col gap-1.5 relative overflow-hidden shrink-0">
-          <div className="flex justify-between items-center text-[11px] font-bold text-slate-500 px-1">
-            <span className="flex items-center gap-1.5">
-              🏁 <span className="text-[10px] text-slate-400 font-medium">Đường đua tiến độ:</span>
-              <span className="text-blue-600 font-black text-xs">{progressPercent}%</span>
-            </span>
-            <span className={`text-xs font-black transition-colors duration-300 ${getSpeedColor()}`}>
-              {getSpeedLabel()} {wpm > 0 && `(${wpm} WPM)`}
-            </span>
-          </div>
-          <div className="relative h-4 bg-slate-100 rounded-full border border-slate-200 overflow-visible flex items-center px-1">
-            <span className="absolute right-1 text-[11px] select-none">🏁</span>
+        <div className="w-full bg-gradient-to-r from-slate-50/50 via-white to-slate-50/50 rounded-2xl p-1.5 border border-slate-100/60 shadow-sm mb-3 relative overflow-visible flex items-center shrink-0 h-10">
+          <div className="relative w-full h-2.5 bg-slate-100/80 rounded-full border border-slate-205/40 flex items-center px-1">
+            <span className="absolute right-1 text-base select-none">🏁</span>
             
             {/* Running Animal */}
             <motion.div
-              className="absolute text-lg select-none"
-              animate={{ left: `calc(${progressPercent}% - 14px)` }}
+              className="absolute text-3xl select-none filter drop-shadow-md z-10"
+              animate={{ left: `calc(${progressPercent}% - 22px)` }}
               transition={{ type: 'spring', stiffness: 50, damping: 14 }}
-              style={{ left: 0 }}
+              style={{ left: 0, top: '-11px' }}
             >
               {getAnimal()}
             </motion.div>
