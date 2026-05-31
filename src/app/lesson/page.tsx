@@ -82,7 +82,7 @@ export default function LessonPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 font-sans overflow-y-auto flex flex-col pb-12">
       {/* Main Content với LessonCoordinator */}
-      <main className="flex-1 flex flex-col items-center justify-center p-2 relative z-10 w-full max-w-4xl mx-auto">
+      <main className="flex-1 flex flex-col items-center justify-center p-2 relative z-10 w-full max-w-6xl mx-auto">
         <LessonCoordinator
           config={lessonData}
           onAllActivitiesComplete={handleAllActivitiesComplete}
