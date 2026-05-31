@@ -184,10 +184,10 @@ export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterPro
               : { y: 0, opacity: 1, x: 0 }
           }
           exit={{ y: -20, opacity: 0 }}
-          className="bg-white px-12 py-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-b-8 border-purple-200 mb-12 relative overflow-hidden"
+          className="bg-white px-12 py-5 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-b-8 border-purple-200 mb-12 relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-purple-50" />
-          <h3 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500 relative z-10 tracking-wide">
+          <h3 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500 relative z-10 tracking-wide leading-normal pb-2">
             {displayedWord}
           </h3>
         </motion.div>
