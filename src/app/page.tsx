@@ -154,24 +154,24 @@ export default function Home() {
             className="flex items-center gap-2.5 group"
           >
             <div className="p-2 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-2xl text-white shadow-md transform group-hover:rotate-12 transition-transform duration-300">
-              <GraduationCap className="w-6 h-6" />
+              <GraduationCap className="w-5 h-5 md:w-6 md:h-6" />
             </div>
-            <span className="text-2xl font-black text-indigo-900 tracking-wide">VietTyping</span>
+            <span className="text-xl md:text-2xl font-black text-indigo-900 tracking-wide hidden sm:block">VietTyping</span>
           </Link>
 
           {/* Gamification Stats & Navigation */}
-          <div className="flex items-center gap-3 md:gap-5">
+          <div className="flex items-center gap-2 md:gap-5">
             {/* Student Profile Bubble */}
             <button
               onClick={() => {
                 playSound('click');
                 setIsOpenConfig(true);
               }}
-              className="flex items-center gap-2 px-3.5 py-1.5 bg-white border-2 border-slate-800 rounded-full shadow-[2px_2px_0px_0px_#1e293b] hover:bg-amber-105/40 transition-all active:translate-y-[1px] active:shadow-none cursor-pointer"
+              className="flex items-center gap-2 px-2.5 py-1.5 md:px-3.5 md:py-1.5 bg-white border-2 border-slate-800 rounded-full shadow-[2px_2px_0px_0px_#1e293b] hover:bg-amber-105/40 transition-all active:translate-y-[1px] active:shadow-none cursor-pointer"
               title="Cấu hình hồ sơ của bé"
             >
               <span className="text-xl animate-pulse">{studentInfo ? studentInfo.avatar : '👤'}</span>
-              <span className="text-xs font-black text-slate-750 max-w-[80px] md:max-w-[120px] truncate">
+              <span className="hidden sm:block text-xs font-black text-slate-750 max-w-[120px] truncate">
                 {studentInfo ? studentInfo.nickname : 'Bé là ai thế?'}
               </span>
             </button>
@@ -195,19 +195,19 @@ export default function Home() {
             {/* Leaderboard CTA Button */}
             <button
               onClick={() => handleNavClick('/leaderboard')}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 border-2 border-yellow-400 text-yellow-850 rounded-full shadow-sm hover:bg-yellow-100 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 bg-yellow-50 border-2 border-yellow-400 text-yellow-850 rounded-full shadow-sm hover:bg-yellow-100 transition-all cursor-pointer"
               title="Xem bảng xếp hạng"
             >
-              <Trophy className="w-4.5 h-4.5 text-amber-500 fill-amber-300 animate-pulse" />
-              <span className="text-xs font-black">Xếp Hạng</span>
+              <Trophy className="w-4 h-4 text-amber-500 fill-amber-300 animate-pulse" />
+              <span className="hidden md:inline text-xs font-black">Xếp Hạng</span>
             </button>
  
             {/* Main CTA: Luyện gõ phím */}
             <button
               onClick={() => handleNavClick('/typing')}
-              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-[20px] text-sm font-black border-b-4 border-indigo-700 shadow-[3px_3px_0px_0px_#c7d2fe] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none active:border-b-0 cursor-pointer"
+              className="flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-[20px] text-xs md:text-sm font-black border-b-4 border-indigo-700 shadow-[3px_3px_0px_0px_#c7d2fe] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none active:border-b-0 cursor-pointer"
             >
-              <Keyboard className="w-4 h-4 text-indigo-100" />
+              <Keyboard className="w-4 h-4 text-indigo-100 hidden sm:block" />
               <span>Luyện gõ phím</span>
             </button>
           </div>
@@ -232,7 +232,7 @@ export default function Home() {
         )}
 
         {/* Typing Animated Hero Title */}
-        <h1 className="text-4xl md:text-6xl font-black text-indigo-900 mb-4 min-h-[60px] md:min-h-[80px] drop-shadow-sm tracking-wide">
+        <h1 className="text-3xl md:text-6xl font-black text-indigo-900 mb-4 min-h-[60px] md:min-h-[80px] drop-shadow-sm tracking-wide">
           {typedText}
           <span className="animate-blink text-indigo-500 font-normal">|</span>
         </h1>
@@ -249,9 +249,9 @@ export default function Home() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleStartSampleLesson}
-          className="inline-flex items-center gap-3 bg-gradient-to-r from-red-400 to-pink-500 text-white font-black text-xl px-10 py-5 rounded-[26px] border-b-[6px] border-red-600 shadow-[0_8px_0_0_#fca5a5] hover:shadow-[0_4px_0_0_#fca5a5] transition-all mb-10 cursor-pointer"
+          className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-red-400 to-pink-500 text-white font-black text-lg md:text-xl w-full md:w-auto px-6 md:px-10 py-4 md:py-5 rounded-[26px] border-b-[6px] border-red-600 shadow-[0_8px_0_0_#fca5a5] hover:shadow-[0_4px_0_0_#fca5a5] transition-all mb-10 cursor-pointer"
         >
-          <Sparkles className="w-6 h-6 animate-pulse" />
+          <Sparkles className="w-5 h-5 md:w-6 md:h-6 animate-pulse" />
           <span>Học Bài Mẫu Ngay!</span>
           <ArrowRight className="w-5 h-5" />
         </motion.button>
@@ -292,12 +292,12 @@ export default function Home() {
 
       {/* Góc Phụ Huynh / Thông tin phụ */}
       <div className="max-w-4xl mx-auto px-6 mt-12 text-center relative z-10">
-        <div className="inline-flex flex-col sm:flex-row items-center gap-4 bg-white/70 backdrop-blur-md border-2 border-indigo-100 p-6 rounded-3xl shadow-[5px_5px_0px_0px_#e0e7ff]">
+        <div className="inline-flex flex-col md:flex-row items-center gap-4 bg-white/70 backdrop-blur-md border-2 border-indigo-100 p-6 rounded-3xl shadow-[5px_5px_0px_0px_#e0e7ff]">
           <div className="p-3.5 bg-indigo-50 rounded-2xl text-3xl shrink-0">
             👨‍👩‍👧‍👦
           </div>
-          <div className="text-left">
-            <h4 className="text-indigo-950 font-black text-lg flex items-center gap-1.5">
+          <div className="text-center md:text-left flex flex-col items-center md:items-start">
+            <h4 className="text-indigo-950 font-black text-lg flex items-center justify-center md:justify-start gap-1.5">
               <span>Bố mẹ ơi!</span>
               <Smile className="w-5 h-5 text-indigo-500" />
             </h4>
