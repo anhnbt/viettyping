@@ -18,6 +18,12 @@ import TypingPractice from "@/components/TypingPractice";
 import RealWorldMathGame from "@/components/RealWorldMathGame";
 import ColoringCanvas from "@/components/ColoringCanvas";
 
+const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+};
+
 export interface LessonCoordinatorProps {
   config: LessonConfig;
   onActivityComplete?: (activityId: string, telemetry: TelemetryPayload) => void;
@@ -696,6 +702,18 @@ export default function LessonCoordinator({
           </div>
 
           <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-white/20 text-sm md:text-base shrink-0">
+            {/* Đồng hồ đếm ngược nuôi cây tập trung */}
+            {pomodoroState === "FOCUS" && (
+              <div className="flex items-center gap-1 border-r border-slate-300 pr-2 md:pr-3 mr-1 text-xs md:text-sm">
+                <span className="animate-bounce select-none">
+                  {focusProgress < 30 ? "🌱" : focusProgress < 65 ? "🌿" : focusProgress < 90 ? "🌸" : "🌳"}
+                </span>
+                <span className="font-extrabold text-green-700 font-mono tracking-wide">
+                  {formatTime(pomodoroTimeLeft)}
+                </span>
+              </div>
+            )}
+            
             <IoStar className="text-yellow-400 text-lg md:text-2xl animate-pulse" />
             <span className="font-black text-purple-700 text-base md:text-xl">{currentXP} XP</span>
           </div>
@@ -766,17 +784,7 @@ export default function LessonCoordinator({
         ) : null}
       </AnimatePresence>
 
-      {/* Growing seed widget in FOCUS state */}
-      {pomodoroState === "FOCUS" && (
-        <div className="absolute right-4 top-0 md:right-10 flex items-center gap-2 bg-gradient-to-br from-emerald-50 to-green-50 px-3 py-1.5 rounded-2xl border border-green-200/50 shadow-sm z-10">
-          <span className="text-xl animate-bounce">
-            {focusProgress < 30 ? "🌱" : focusProgress < 65 ? "🌿" : focusProgress < 90 ? "🌸" : "🌳"}
-          </span>
-          <span className="text-[10px] font-black text-green-700">
-            Cây tập trung: {Math.round(focusProgress)}%
-          </span>
-        </div>
-      )}
+
 
       {/* Idle distraction overlay */}
       <AnimatePresence>
