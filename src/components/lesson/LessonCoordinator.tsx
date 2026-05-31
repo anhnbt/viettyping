@@ -449,6 +449,7 @@ export default function LessonCoordinator({
               return (
                 <SpinWheelGame
                   gameConfig={spinConfig}
+                  flashcards={flashcards}
                   onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
                 />
               );

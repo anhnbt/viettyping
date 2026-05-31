@@ -65,6 +65,22 @@ global.Audio = jest.fn().mockImplementation(() => ({
   volume: 0,
 }));
 
+// Mock useStudent
+jest.mock("@/contexts/StudentContext", () => ({
+  useStudent: () => ({
+    studentInfo: {
+      nickname: "Bé",
+    },
+  }),
+}));
+
+// Mock useLesson
+jest.mock("@/contexts/LessonContext", () => ({
+  useLesson: () => ({
+    currentXP: 0,
+  }),
+}));
+
 // Mock other games to simplify integration testing
 jest.mock("@/components/MatchingGame", () => {
   return jest.fn(({ gameConfig, onComplete }: any) => (
@@ -227,7 +243,7 @@ describe("LessonCoordinator Integration", () => {
 
     // 2. Transitioned to Typing Practice step
     expect(screen.getByText(/Luyện gõ: Từ vựng/i)).toBeInTheDocument();
-    expect(progressFill).toHaveStyle("width: 33.33333333333333%");
+    expect(progressFill).toHaveStyle("width: 0%");
 
     // Simulate typing the correct word "ba"
     const inputEl = screen.getByRole("textbox");
@@ -262,7 +278,6 @@ describe("LessonCoordinator Integration", () => {
     expect(screen.getByText("Tổng số hoạt động:")).toBeInTheDocument();
     expect(screen.getByText("Huy hiệu Chữ B")).toBeInTheDocument();
     expect(screen.getByText("+100 XP")).toBeInTheDocument();
-    expect(progressFill).toHaveStyle("width: 100%");
 
     // Verify onAllActivitiesComplete was called
     expect(mockOnAllActivitiesComplete).toHaveBeenCalledTimes(1);

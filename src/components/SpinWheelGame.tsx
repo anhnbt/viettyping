@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, Play, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
+import { GameAdapterProps, TelemetryPayload, Flashcard } from "@/types/lesson";
 import { useStudent } from "@/contexts/StudentContext";
 
 export interface SpinWheelGameConfig {
@@ -12,7 +12,11 @@ export interface SpinWheelGameConfig {
   items: string[];
 }
 
-export default function SpinWheelGame({ gameConfig, onComplete }: GameAdapterProps<SpinWheelGameConfig>) {
+export interface SpinWheelGameProps extends GameAdapterProps<SpinWheelGameConfig> {
+  flashcards?: Flashcard[];
+}
+
+export default function SpinWheelGame({ gameConfig, onComplete, flashcards = [] }: SpinWheelGameProps) {
   const { id: gameId, items } = gameConfig;
   const { studentInfo } = useStudent();
   const [isSpinning, setIsSpinning] = useState(false);
@@ -20,6 +24,10 @@ export default function SpinWheelGame({ gameConfig, onComplete }: GameAdapterPro
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [pendingWinnerIndex, setPendingWinnerIndex] = useState<number | null>(null);
+
+  const matchedFlashcard = selectedItem
+    ? flashcards.find((f) => f.word.toLowerCase() === selectedItem.toLowerCase())
+    : null;
 
   // Telemetry state
   const startTimeRef = useRef<number>(Date.now());
@@ -200,9 +208,24 @@ export default function SpinWheelGame({ gameConfig, onComplete }: GameAdapterPro
                 {studentInfo ? `${studentInfo.nickname} quay được chữ:` : "Bé quay được chữ:"}
               </h2>
               
-              <div className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-500 to-pink-500 mb-8 py-4">
+              <div className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-500 to-pink-500 mb-4 py-2">
                 {selectedItem}
               </div>
+
+              {matchedFlashcard?.image_url && (
+                <motion.div
+                  initial={{ scale: 0, rotate: -15 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+                  className="w-36 h-36 mx-auto mb-6 relative rounded-3xl overflow-hidden border-4 border-dashed border-purple-400 p-1 shadow-md bg-purple-50/50 flex items-center justify-center animate-bounce"
+                >
+                  <img
+                    src={matchedFlashcard.image_url}
+                    alt={selectedItem}
+                    className="w-full h-full object-cover rounded-2xl"
+                  />
+                </motion.div>
+              )}
 
               <div className="flex gap-3 justify-center w-full">
                 <motion.button

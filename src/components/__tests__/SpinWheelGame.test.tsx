@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SpinWheelGame, { SpinWheelGameConfig } from '../SpinWheelGame';
 
@@ -47,6 +47,13 @@ global.Audio = jest.fn().mockImplementation(() => ({
   pause: jest.fn(),
 }));
 
+// Mock useStudent
+jest.mock("@/contexts/StudentContext", () => ({
+  useStudent: () => ({
+    studentInfo: null,
+  }),
+}));
+
 describe('SpinWheelGame', () => {
   const mockConfig: SpinWheelGameConfig = {
     id: 'spin-test-game',
@@ -54,14 +61,17 @@ describe('SpinWheelGame', () => {
   };
 
   const mockOnComplete = jest.fn();
+  let originalRandom: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
+    originalRandom = Math.random;
   });
 
   afterEach(() => {
     jest.useRealTimers();
+    Math.random = originalRandom;
   });
 
   it('should render the wheel and spin button', () => {
@@ -93,19 +103,14 @@ describe('SpinWheelGame', () => {
     expect(spinBtn).toBeDisabled();
     expect(screen.getByText('Đang quay...')).toBeInTheDocument();
 
-    // Trigger onAnimationComplete by clicking the motion-div representing the wheel
-    // The wheel has class name "w-full h-full rounded-full border-8 border-white shadow-2xl overflow-hidden relative"
-    // and is rendered inside the container.
-    // In our mock, the div has data-testid="motion-div" (or we can query by container)
     const wheel = screen.getAllByTestId('motion-div')[0];
     fireEvent.click(wheel);
 
     // After animation complete, popup should appear
-    expect(screen.getByText('Bạn quay được chữ:')).toBeInTheDocument();
+    expect(screen.getByText('Bé quay được chữ:')).toBeInTheDocument();
     
     // One of the items should be in the popup
     const textElements = screen.getAllByText(/ba|bò|ca/);
-    // There should be the wheel text and the popup text
     expect(textElements.length).toBeGreaterThan(0);
 
     // Click "Tiếp tục" in the popup
@@ -116,5 +121,54 @@ describe('SpinWheelGame', () => {
     const telemetry = mockOnComplete.mock.calls[0][0];
     expect(telemetry.score).toBe(100);
     expect(telemetry.durationSeconds).toBeGreaterThanOrEqual(0);
+  });
+
+  it('should display flashcard image when winner matches a flashcard', async () => {
+    // Mock SpeechSynthesis
+    const mockSpeak = jest.fn();
+    global.window.speechSynthesis = {
+      speak: mockSpeak,
+      cancel: jest.fn(),
+      getVoices: () => [],
+      pause: jest.fn(),
+      resume: jest.fn(),
+    } as any;
+    global.SpeechSynthesisUtterance = jest.fn();
+
+    // Mock Math.random to return 0, which selects the first item 'ba'
+    Math.random = () => 0;
+
+    const mockFlashcards = [
+      {
+        word: 'ba',
+        word_uppercase: 'BA',
+        spelling_guide: 'bờ-a-ba',
+        example_sentence: 'Ba đưa bé đi chơi.',
+        image_prompt: 'father and kid',
+        image_url: 'https://example.com/ba.png'
+      }
+    ];
+
+    render(
+      <SpinWheelGame 
+        gameConfig={mockConfig} 
+        onComplete={mockOnComplete} 
+        flashcards={mockFlashcards}
+      />
+    );
+    
+    const spinBtn = screen.getByRole('button', { name: /Quay Ngay!/i });
+    fireEvent.click(spinBtn);
+
+    const wheel = screen.getAllByTestId('motion-div')[0];
+    fireEvent.click(wheel);
+
+    // Winner is 'ba'
+    expect(screen.getByText('Bé quay được chữ:')).toBeInTheDocument();
+    
+    // The image should be rendered
+    const img = screen.getByAltText('ba');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', 'https://example.com/ba.png');
   });
 });
