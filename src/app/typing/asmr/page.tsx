@@ -829,7 +829,7 @@ export default function AsmrPage() {
           </div>
 
           {/* Vùng văn bản hiển thị gõ theo nhịp */}
-          <div className="relative font-mono text-lg md:text-xl leading-relaxed tracking-wider py-4 px-6 bg-slate-950/80 rounded-2xl border border-slate-900 text-center select-none min-h-[120px] flex flex-col justify-center items-center">
+          <div className="relative font-mono text-lg md:text-xl leading-relaxed tracking-normal py-4 px-6 bg-slate-950/80 rounded-2xl border border-slate-900 text-center select-none min-h-[120px] flex flex-col justify-center items-center">
             {isAutoPlaying && (
               <div className="absolute top-2 left-3 text-[10px] text-emerald-400/70 font-mono flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
@@ -870,7 +870,7 @@ export default function AsmrPage() {
                     }
 
                     return (
-                      <span key={index} className={`${charClass} relative inline-block mx-[2px] transition-all`}>
+                      <span key={index} className={`${charClass} relative inline-block ${mapping.char === ' ' ? 'mx-1.5' : 'mx-[0.5px]'} transition-all`}>
                         {mapping.char}
                         
                         {/* Bong bóng Telex hiển thị khi phím đang gõ là từ tiếng Việt có dấu phức tạp */}
