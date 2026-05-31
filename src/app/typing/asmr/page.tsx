@@ -19,6 +19,11 @@ const beVietnamPro = Be_Vietnam_Pro({
 // Các bài thơ thiếu nhi cấu hình song song Có Dấu và Không Dấu
 const zenTexts = [
   {
+    title: "Tiết Kiệm Điện Năng 2026 ⚡",
+    withDiacritics: "Tắt điện khi ra ngoài\nTiết kiệm nước mỗi ngày\nĐiện mặt trời tỏa nắng\nTương lai xanh từ đây",
+    withoutDiacritics: "Tat dien khi ra ngoai\nTiet kiem nuoc moi ngay\nDien mat troi toa nang\nTuong lai xanh tu day"
+  },
+  {
     title: "Hạt Mưa Tinh Nghịch 🌧️",
     withDiacritics: "Hạt mưa tinh nghịch\nTừ trời rơi xuống\nTưới mát ruộng đồng\nCho cây xanh lá",
     withoutDiacritics: "Hat mua tinh nghich\nTu troi roi xuong\nTuoi mat ruong dong\nCho cay xanh la"
@@ -416,6 +421,36 @@ export default function AsmrPage() {
     initAudio();
   }, [initAudio]);
 
+  const handleStartViralDemo = useCallback(() => {
+    setCorrectKeysCount(0);
+    
+    let ctx = audioContextRef.current;
+    if (!ctx) {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextClass) {
+        ctx = new AudioContextClass();
+        audioContextRef.current = ctx;
+        setIsAudioInitialized(true);
+      }
+    }
+    
+    setKeyboardType('mechanical');
+    setSwitchType('blue');
+    setIs3d(true);
+    setLedMode('rgb');
+    setAtmosphere('starry');
+    
+    setAmbientSound('rain');
+    if (ctx) {
+      startAmbient('rain', ctx);
+    }
+    
+    setAutoPlayWpm(80);
+    setIsAutoPlaying(true);
+    
+    playSound('click');
+  }, [playSound, startAmbient]);
+
   // VÒNG LẶP TỰ ĐỘNG GÕ ASMR (AUTO-PLAY EFFECT) - GÕ LẦN LƯỢT TỪNG PHÍM TELEX THẬT SỰ
   useEffect(() => {
     if (!isAutoPlaying) {
@@ -733,6 +768,14 @@ export default function AsmrPage() {
               </button>
 
               <div className="w-[1px] h-4 bg-slate-850" />
+
+              {/* Nút Quay Video Viral (Auto ASMR) */}
+              <button
+                onClick={handleStartViralDemo}
+                className="px-3.5 py-1.5 text-xs font-black rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-400 hover:via-purple-400 hover:to-indigo-400 text-white flex items-center gap-1.5 transition-all cursor-pointer select-none shadow-[0_0_15px_rgba(236,72,153,0.3)] hover:scale-105 active:scale-95"
+              >
+                <span>🎥 Quay Video Viral (Auto ASMR)</span>
+              </button>
 
               {/* Nút Auto-Play (Tự động gõ ASMR) */}
               <button
