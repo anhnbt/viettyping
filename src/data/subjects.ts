@@ -808,6 +808,54 @@ export const subjects: Subject[] = [
             correctAnswer: 'Chăm chú lắng nghe cô giáo và hăng hái phát biểu'
           }
         ]
+      },
+      {
+        id: 'hdtn-tiet-kiem',
+        title: 'Tiết kiệm năng lượng, thịnh vượng tương lai',
+        description: 'Bé học cách tiết kiệm 3% điện năng, sử dụng điện mặt trời và tắt điện giờ cao điểm để bảo vệ môi trường.',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'Chung tay tiết kiệm điện năm 2026. Hãy sử dụng điện mặt trời và tắt bớt thiết bị điện giờ cao điểm nhé bé!',
+        activities: [
+          {
+            id: 'hdtn-tk-1',
+            type: 'typing',
+            title: 'Gõ từ khóa năng lượng sạch',
+            content: 'điện mặt trời tiết kiệm ba phần trăm giờ cao điểm lối sống xanh',
+            instructions: 'Bé hãy gõ các từ khóa về tiết kiệm điện thật chính xác nhé!',
+          },
+          {
+            id: 'hdtn-tk-2',
+            type: 'reading',
+            title: 'Đọc truyện: Mái nhà xanh của Nam',
+            content: 'Năm 2026, cả nước chung tay tiết kiệm điện. Nhà bé Nam đã lắp các tấm pin điện mặt trời đón nắng trên mái nhà để tạo ra nguồn điện sạch. Bố mẹ cũng luôn nhắc Nam tắt bớt đèn và quạt vào giờ cao điểm từ bốn giờ đến bảy giờ tối để tiết kiệm ba phần trăm điện năng cho cả nước.',
+            instructions: 'Bé hãy đọc to câu chuyện về ngôi nhà xanh của bạn Nam nhé!',
+          },
+          {
+            id: 'hdtn-tk-3',
+            type: 'quiz',
+            title: 'Bé học về điện mặt trời',
+            content: 'Để tạo ra nguồn điện sạch từ ánh nắng, nhà bạn Nam đã lắp thiết bị gì trên mái nhà?',
+            instructions: 'Bé hãy nhớ lại câu chuyện vừa đọc và chọn đáp án đúng nhé!',
+            options: [
+              'Bể bơi mini giải nhiệt',
+              'Tấm pin điện mặt trời đón nắng ☀️',
+              'Cột thu lôi tránh sét'
+            ],
+            correctAnswer: 'Tấm pin điện mặt trời đón nắng ☀️'
+          },
+          {
+            id: 'hdtn-tk-4',
+            type: 'drawing',
+            title: 'Tô màu Cây xanh yêu thương',
+            content: 'Bé hãy tô màu cho cây xanh thật đẹp để hưởng ứng lối sống xanh nhé!',
+            instructions: 'Chọn các màu sắc trong hộp sáp để tô kín hình cây xanh nhé bé!',
+            data: {
+              outlineSvgName: 'tree',
+              targetCoveragePercent: 70
+            }
+          }
+        ]
       }
     ],
   },
