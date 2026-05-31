@@ -88,10 +88,33 @@ Dự án VietTyping là hệ thống Web App học tiếng Việt tương tác c
 
 ---
 
+## 📅 SPRINT 5.8: Tối ưu hóa Visual & Hệ thống Vinh danh (Visual & Social Gamification)
+**Trạng thái:** ⏳ Kế hoạch (To Do)
+
+- [ ] **[Task 19]** Hình ảnh sinh động & Banner trang chủ
+  - [ ] Thiết kế và tích hợp `thumbnailUrl` cho các môn học (Subject).
+  - [ ] Sử dụng AI sinh hình ảnh hoạt họa 2D vector đẹp mắt kèm text nghệ thuật, lưu tại `public/assets/thumbnails/`.
+  - [ ] Thay thế emoji tĩnh bằng **Hero Slide Banner** chuyển động mượt mà tại Trang chủ (`/`).
+- [ ] **[Task 20]** Xây dựng Bảng xếp hạng thi đua (`/leaderboard`)
+  - [ ] Tạo trang `/leaderboard` với 2 tab: Tuần (Weekly) và Toàn thời gian (All-time).
+  - [ ] Hiển thị thông tin bằng Nickname & Avatar hoạt hình dễ thương bảo mật cho học sinh.
+  - [ ] Thiết kế hiệu ứng vinh danh Top 3 (vương miện, huy chương lấp lánh).
+  - [ ] Thêm widget động viên cá nhân hóa ở dưới cùng cho học sinh nằm ngoài Top 10 kèm nút học nhanh.
+
+---
+
 ## 📅 SPRINT 6: Quản trị Dữ liệu Động (Admin CMS - Phase 2)
 **Trạng thái:** ⏳ Kế hoạch (Backlog)
 
-- [ ] **[Task 10]** Admin CMS Dashboard ([Chi tiết](./tasks/task-10-admin-cms.md))
-  - [ ] Thiết lập cấu trúc giao diện Admin (`/admin`).
-  - [ ] Xây dựng Dynamic Forms cho phép tạo Lesson Config (JSON) trực quan.
-  - [ ] Kết nối Backend Java Spring Boot và MySQL qua Next.js SSR/ISR.
+- [ ] **[Task 10]** Admin CMS Dashboard (`/admin`)
+  - [ ] Thiết lập cấu trúc giao diện Admin tập trung với thanh điều hướng side-navigation.
+  - [ ] Tích hợp phân hệ và biểu mẫu (Form UI) cho 8 chức năng cốt lõi:
+    - [ ] **1. Quản lý khóa học (Course Management):** Trình tạo và biên tập Lesson Config (JSON) trực quan.
+    - [ ] **2. Khóa học (Course Catalog):** Quản lý lớp học học tập và phân bổ bài học cho học sinh.
+    - [ ] **3. Bài viết (Parent Blog):** Soạn thảo, viết bài cẩm nang cho phụ huynh.
+    - [ ] **4. Danh mục (Categories):** Cấu hình các danh mục bài viết và phân loại môn học.
+    - [ ] **5. Người dùng (User Directory):** Quản lý hồ sơ và phân quyền tài khoản (Admin, Giáo viên, Phụ huynh, Học sinh).
+    - [ ] **6. Tiến độ học viên (Student Progress):** Bảng theo dõi lịch sử và hoạt động hoàn thành bài học của học viên.
+    - [ ] **7. Thống kê điểm (Learning Analytics):** Báo cáo và biểu đồ WPM, độ chính xác %, XP.
+    - [ ] **8. Email Marketing (Email Notifications):** Giao diện gửi newsletter và thiết lập email thông báo tự động.
+  - [ ] Kết nối REST API của Backend Java Spring Boot và MySQL, xử lý SSR/ISR và xác thực Token JWT.

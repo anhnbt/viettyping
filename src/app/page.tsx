@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { subjects } from '@/data/subjects';
 import SubjectSelector from '@/components/SubjectSelector';
+import HeroSlideBanner from '@/components/HeroSlideBanner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSound } from '@/contexts/SoundContext';
@@ -191,6 +192,16 @@ export default function Home() {
               </div>
             )}
 
+            {/* Leaderboard CTA Button */}
+            <button
+              onClick={() => handleNavClick('/leaderboard')}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 border-2 border-yellow-400 text-yellow-850 rounded-full shadow-sm hover:bg-yellow-100 transition-all cursor-pointer"
+              title="Xem bảng xếp hạng"
+            >
+              <Trophy className="w-4.5 h-4.5 text-amber-500 fill-amber-300 animate-pulse" />
+              <span className="text-xs font-black">Xếp Hạng</span>
+            </button>
+ 
             {/* Main CTA: Luyện gõ phím */}
             <button
               onClick={() => handleNavClick('/typing')}
@@ -204,30 +215,14 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-8 text-center">
-        <div className="inline-block relative mb-4">
-          <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            className="text-7xl md:text-8xl drop-shadow-md"
-          >
-            🎓
-          </motion.div>
-          <motion.div
-            animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
-            transition={{ repeat: Infinity, duration: 4, delay: 1 }}
-            className="absolute -top-2 -right-4 text-3xl"
-          >
-            ✨
-          </motion.div>
-        </div>
-
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10 pb-4 text-center">
+        
         {/* Lời chào cá nhân hóa cho bé */}
         {studentInfo && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-6 inline-flex items-center gap-2.5 px-5 py-2.5 bg-white border-2 border-slate-800 rounded-2xl shadow-[4px_4px_0px_0px_#1e293b]"
+            className="mb-4 inline-flex items-center gap-2.5 px-5 py-2.5 bg-white border-2 border-slate-800 rounded-2xl shadow-[4px_4px_0px_0px_#1e293b]"
           >
             <span className="text-2xl animate-bounce">{studentInfo.avatar}</span>
             <span className="text-slate-800 font-black text-sm md:text-base">
@@ -237,14 +232,17 @@ export default function Home() {
         )}
 
         {/* Typing Animated Hero Title */}
-        <h1 className="text-4xl md:text-6xl font-black text-indigo-900 mb-6 min-h-[60px] md:min-h-[80px] drop-shadow-sm tracking-wide">
+        <h1 className="text-4xl md:text-6xl font-black text-indigo-900 mb-4 min-h-[60px] md:min-h-[80px] drop-shadow-sm tracking-wide">
           {typedText}
           <span className="animate-blink text-indigo-500 font-normal">|</span>
         </h1>
 
-        <p className="text-gray-700 text-base md:text-xl max-w-2xl mx-auto mb-8 font-medium leading-relaxed">
+        <p className="text-gray-700 text-sm md:text-lg max-w-2xl mx-auto mb-6 font-semibold leading-relaxed">
           Nơi bé vừa chơi vừa học các môn học thú vị: Đạo đức, Toán, Tiếng Việt, Tiếng Anh... và rèn luyện kỹ năng gõ 10 ngón thật điêu luyện!
         </p>
+
+        {/* Slide Banner giới thiệu các môn học */}
+        <HeroSlideBanner />
 
         {/* Nút hành động 3D Chunky chính */}
         <motion.button
@@ -259,7 +257,8 @@ export default function Home() {
         </motion.button>
 
         {/* Feature Badges */}
-        <div className="flex flex-wrap justify-center gap-3 md:gap-4 max-w-3xl mx-auto">
+        {/* Feature Badges - Gọn gàng trên 1 dòng */}
+        <div className="flex flex-row flex-nowrap justify-start md:justify-center items-center gap-2.5 md:gap-3 max-w-4xl mx-auto overflow-x-auto whitespace-nowrap pb-3 md:pb-0 scrollbar-none select-none">
           {[
             { icon: '📚', label: '8 Môn Học Thú Vị', color: 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-emerald-100' },
             { icon: '🎯', label: 'Bài Tập Tương Tác', color: 'bg-amber-50 border-amber-200 text-amber-700 shadow-amber-100' },
@@ -268,12 +267,12 @@ export default function Home() {
           ].map((f, i) => (
             <motion.div
               key={f.label}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className={`flex items-center gap-2 border-2 px-5 py-2.5 rounded-[20px] text-sm md:text-base font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,0.05)] ${f.color}`}
+              transition={{ delay: i * 0.08 }}
+              className={`flex items-center gap-1.5 border-2 px-4 py-2 rounded-[16px] text-xs md:text-sm font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)] shrink-0 ${f.color}`}
             >
-              <span className="text-xl">{f.icon}</span>
+              <span className="text-lg">{f.icon}</span>
               <span>{f.label}</span>
             </motion.div>
           ))}

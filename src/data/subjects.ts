@@ -37,6 +37,7 @@ export interface Subject {
   color: string;
   topics: Topic[];
   grade?: string; // lớp học
+  thumbnailUrl?: string; // ảnh bìa môn học
 }
 
 export const subjects: Subject[] = [
@@ -47,6 +48,7 @@ export const subjects: Subject[] = [
     icon: '⌨️',
     color: 'from-cyan-400 to-cyan-600',
     grade: 'Cơ bản',
+    thumbnailUrl: '/assets/thumbnails/luyen_go.png',
     topics: [
       {
         id: 'lg-1',
@@ -236,6 +238,7 @@ export const subjects: Subject[] = [
     icon: '❤️',
     color: 'from-red-400 to-red-600',
     grade: 'Lớp 1-5',
+    thumbnailUrl: '/assets/thumbnails/dao_duc.png',
     topics: [
       {
         id: 'dao-duc-1',
@@ -291,6 +294,7 @@ export const subjects: Subject[] = [
     icon: '🎵',
     color: 'from-purple-400 to-purple-600',
     grade: 'Lớp 1-5',
+    thumbnailUrl: '/assets/thumbnails/am_nhac.png',
     topics: [
       {
         id: 'am-nhac-1',
@@ -365,6 +369,7 @@ export const subjects: Subject[] = [
     icon: '🔢',
     color: 'from-blue-400 to-blue-600',
     grade: 'Lớp 1-5',
+    thumbnailUrl: '/assets/thumbnails/toan_hoc.png',
     topics: [
       {
         id: 'toan-1',
@@ -480,6 +485,7 @@ export const subjects: Subject[] = [
     icon: '📚',
     color: 'from-green-400 to-green-600',
     grade: 'Lớp 1-5',
+    thumbnailUrl: '/assets/thumbnails/tieng_viet.png',
     topics: [
       {
         id: 'tv-1',
@@ -551,6 +557,7 @@ export const subjects: Subject[] = [
     icon: '🎯',
     color: 'from-orange-400 to-orange-600',
     grade: 'Lớp 1-5',
+    thumbnailUrl: '/assets/thumbnails/trai_nghiem.png',
     topics: [
       {
         id: 'hdtn-1',
@@ -604,6 +611,7 @@ export const subjects: Subject[] = [
     icon: '🌍',
     color: 'from-indigo-400 to-indigo-600',
     grade: 'Lớp 1-5',
+    thumbnailUrl: '/assets/thumbnails/tieng_anh.png',
     topics: [
       {
         id: 'ta-1',
@@ -646,8 +654,9 @@ export const subjects: Subject[] = [
     name: 'Tự nhiên và xã hội',
     description: 'Tìm hiểu về thiên nhiên và xã hội xung quanh',
     icon: '🌱',
-    color: 'from-emerald-400 to-emerald-600',
+    color: 'from-emerald-400 to-emerald-650',
     grade: 'Lớp 1-5',
+    thumbnailUrl: '/assets/thumbnails/tu_nhien_xa_hoi.png',
     topics: [
       {
         id: 'tnxh-1',
@@ -675,6 +684,7 @@ export const subjects: Subject[] = [
     icon: '🎨',
     color: 'from-pink-400 to-pink-600',
     grade: 'Lớp 1-5',
+    thumbnailUrl: '/assets/thumbnails/my_thuat.png',
     topics: [
       {
         id: 'mt-1',
@@ -740,6 +750,7 @@ export const subjects: Subject[] = [
     icon: '🏃',
     color: 'from-amber-400 to-amber-600',
     grade: 'Lớp 1-5',
+    thumbnailUrl: '/assets/thumbnails/the_duc.png',
     topics: [
       {
         id: 'td-1',

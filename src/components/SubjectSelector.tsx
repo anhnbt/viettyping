@@ -96,51 +96,66 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
                 playSound('click');
                 onSelectSubject(subject);
               }}
-              className={`relative overflow-hidden rounded-[28px] bg-gradient-to-br ${subject.color} p-6 text-white cursor-pointer border-b-[6px] border-black/20 shadow-[6px_6px_0px_0px_#1e1b4b]/15 group transition-shadow duration-300 hover:shadow-[8px_8px_0px_0px_#1e1b4b]/20`}
+              className="relative overflow-hidden rounded-[28px] bg-white border-4 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b] cursor-pointer flex flex-col h-full group transition-all duration-300 hover:shadow-[8px_8px_0px_0px_#1e293b]"
             >
-              <div className="relative z-10 flex flex-col h-full justify-between min-h-[190px]">
-                <div>
-                  {/* Icon with white circular background */}
-                  <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-4xl mb-4 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 border border-white/30 shadow-inner">
+              {/* Thumbnail hoặc Gradient Header */}
+              {subject.thumbnailUrl ? (
+                <div className="h-48 w-full relative overflow-hidden border-b-4 border-slate-800 bg-white p-2.5 flex items-center justify-center">
+                  <img 
+                    src={subject.thumbnailUrl} 
+                    alt={subject.name}
+                    className="max-w-full max-h-full object-contain rounded-2xl transform group-hover:scale-105 transition-transform duration-300"
+                  />
+                  {/* Floating Icon */}
+                  <div className="absolute bottom-3 right-3 w-10 h-10 bg-white border-2 border-slate-800 rounded-xl flex items-center justify-center text-xl shadow-sm transform group-hover:scale-110 transition-transform z-10">
                     {subject.icon}
                   </div>
-                  
-                  {/* Subject Name */}
-                  <h3 className="text-xl md:text-2xl font-black mb-1.5 tracking-wide drop-shadow-sm">
+                </div>
+              ) : (
+                <div className={`h-36 w-full bg-gradient-to-br ${subject.color} relative overflow-hidden border-b-4 border-slate-800 flex items-center justify-center`}>
+                  <div className="text-6xl text-white transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                    {subject.icon}
+                  </div>
+                  <div className="absolute -bottom-6 -right-6 w-16 h-16 bg-white/10 rounded-full blur-md"></div>
+                </div>
+              )}
+
+              {/* Nội dung môn học */}
+              <div className="p-5 flex flex-col justify-between flex-grow min-h-[170px]">
+                <div>
+                  <h3 className="text-lg md:text-xl font-black text-slate-800 mb-1.5 tracking-wide line-clamp-1 group-hover:text-indigo-600 transition-colors">
                     {subject.name}
                   </h3>
-                  
-                  {/* Description */}
-                  <p className="text-sm opacity-90 font-medium line-clamp-2 leading-relaxed mb-4">
+                  <p className="text-xs text-slate-500 font-bold line-clamp-2 leading-relaxed mb-4">
                     {subject.description}
                   </p>
                 </div>
 
                 <div>
-                  {/* Extra info & Progress */}
+                  {/* Lớp & Số chủ đề */}
                   <div className="flex items-center justify-between gap-2 mb-3">
                     {subject.grade && (
-                      <span className="inline-flex items-center gap-1 bg-white/25 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-black tracking-wide border border-white/20">
+                      <span className="inline-flex items-center bg-indigo-50 border-2 border-indigo-200 text-indigo-750 rounded-full px-2.5 py-0.5 text-[10px] font-black tracking-wide">
                         {subject.grade}
                       </span>
                     )}
-                    <span className="text-xs font-bold opacity-90">
+                    <span className="text-[11px] font-black text-slate-600">
                       {subject.topics.length} chủ đề
                     </span>
                   </div>
 
-                  {/* Progress Bar Container */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center text-[10px] font-black tracking-wide uppercase opacity-90">
+                  {/* Thanh Tiến Độ */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-[10px] font-black tracking-wide text-slate-500">
                       <span>Tiến độ</span>
-                      <span className="flex items-center gap-0.5">
-                        {progress > 0 && <Star className="w-3 h-3 text-yellow-300 fill-yellow-300 animate-pulse" />}
+                      <span className="flex items-center gap-0.5 text-indigo-650">
+                        {progress > 0 && <Star className="w-3 h-3 text-amber-500 fill-amber-500 animate-pulse" />}
                         {progress}%
                       </span>
                     </div>
-                    <div className="w-full bg-black/25 h-3.5 rounded-full p-0.5 overflow-hidden border border-black/10">
+                    <div className="w-full bg-slate-100 h-3.5 rounded-full p-0.5 overflow-hidden border-2 border-slate-200">
                       <motion.div
-                        className="bg-gradient-to-r from-yellow-300 to-amber-400 h-full rounded-full"
+                        className="bg-gradient-to-r from-amber-400 to-orange-500 h-full rounded-full"
                         initial={{ width: 0 }}
                         animate={{ width: `${progress}%` }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -149,14 +164,6 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
                   </div>
                 </div>
               </div>
-
-              {/* Floating circular detail button */}
-              <div className="absolute top-4 right-4 bg-white/15 hover:bg-white/25 rounded-full p-2 border border-white/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm">
-                <ChevronRight className="w-5 h-5 text-white" />
-              </div>
-
-              {/* Playful background design curves */}
-              <div className="absolute -bottom-10 -right-10 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
             </motion.div>
           );
         })}

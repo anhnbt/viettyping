@@ -27,11 +27,26 @@ Xây dựng một ứng dụng web giáo dục tương tác cao, tập trung chu
 - **Lesson** / **Lesson Config**: Tập hợp các Activity có cùng mục tiêu học tập. Dữ liệu bài học được tạo qua Form UI trên Admin Dashboard, lưu trữ ở MySQL và trả về dạng JSON.
 - **Activity**: Đơn vị học tập nhỏ nhất mà học sinh tương tác trực tiếp (Atomic Unit of Learning). Gồm các dạng: Quiz, Typing, Drawing, Game (các Mini-game như Matching, True/False bản chất là một loại Activity).
 - **Web App** (Ứng dụng Web Client): Phần mềm hiển thị trò chơi và hoạt động học tập cho học sinh, tiêu thụ dữ liệu từ backend API.
-- **Admin Dashboard** (Màn hình Quản trị): Giao diện web dành riêng cho Admin (giáo viên/phụ huynh) thiết kế nội dung bài học.
+- **Admin Dashboard** (Màn hình Quản trị): Giao diện web dành riêng cho Admin (giáo viên/phụ huynh) thiết kế nội dung bài học. Bao gồm 8 phân hệ cốt lõi:
+  1. *Quản lý khóa học (Course Management)*: Thiết lập chương trình và cấu hình Lesson Config JSON.
+  2. *Khóa học (Course Catalog)*: Quản lý lớp học và đăng ký/phân bổ học sinh.
+  3. *Bài viết (Parent Blog)*: Quản lý các bài viết cẩm nang hướng dẫn cho phụ huynh.
+  4. *Danh mục (Categories)*: Quản lý danh mục phân loại bài viết và môn học.
+  5. *Người dùng (User Directory)*: Quản lý tài khoản Phụ huynh, Giáo viên, Học sinh.
+  6. *Tiến độ học viên (Student Progress)*: Theo dõi lịch sử hoàn thành hoạt động học tập.
+  7. *Thống kê điểm (Learning Analytics)*: Báo cáo hiệu suất học tập (WPM, độ chính xác %, XP).
+  8. *Email Marketing (Email Notifications)*: Gửi bản tin tự động và báo cáo tuần cho phụ huynh.
+- **Subject Thumbnail** (Hình thu nhỏ môn học): Ảnh hoạt họa 2D đại diện cho môn học, chứa chữ nghệ thuật sinh động thu hút trẻ em, lưu trữ tĩnh tại `public/assets/thumbnails/`.
+- **Hero Slide Banner** (Slide biểu ngữ trang chủ): Trình chiếu slide ảnh hoạt họa giới thiệu các môn học với hiệu ứng chuyển động mượt mà tại trang chủ.
+- **Leaderboard** (Bảng xếp hạng): Trang `/leaderboard` xếp hạng thi đua thân thiện cho học sinh dựa trên XP và Streak (chia theo Tuần và Toàn thời gian), hiển thị avatar/nickname hoạt hình dễ thương.
 - **Image Prompt**: Câu mô tả chi tiết do AI sinh ra trong Lesson Config để developer tự tạo hình ảnh.
 - **Distractor**: Các phương án sai/gây nhiễu do AI sinh sẵn trong Lesson Config.
 
 ## Decisions Log
+- **Thiết kế hình ảnh môn học:** Mỗi môn học (Subject) sẽ có một hình thumbnail hoạt họa chất lượng cao có sẵn chữ tiêu đề cách điệu thay vì chỉ dùng emoji, nhằm tăng tính thu hút thị giác cho bé 6 tuổi.
+- **Hero Section:** Thay thế icon emoji tĩnh bằng một Slide banner hoạt họa sinh động trình chiếu các môn học chính.
+- **Leaderboard động viên thân thiện:** Bảng xếp hạng được tổ chức riêng tại trang `/leaderboard` hiển thị thông tin học viên bằng Nickname và Avatar hoạt hình để bảo vệ quyền riêng tư, xếp hạng theo XP & Streak tuần/toàn thời gian, và có phần động viên cá nhân hóa ở dưới cùng cho bé nằm ngoài Top 10.
+- **Kiến trúc Admin CMS (Phase 2):** Toàn bộ 8 phân hệ quản trị sẽ được cấu trúc tập trung dưới route `/admin/*`, giao tiếp với Backend Spring Boot API và lưu trữ MySQL, sử dụng Next.js Route Handlers để bảo mật API key và Token JWT.
 - **Kiến trúc dữ liệu:** Web App chỉ đọc tệp JSON (hoặc DB sau này), hoàn toàn không kết nối API AI theo thời gian thực để đảm bảo tốc độ và an toàn nội dung.
 - **Quản lý đáp án sai:** AI sẽ sinh sẵn các Distractor thay vì thuật toán Web App tự sinh.
 - **Loại hình bài học:** Xác định đây là Lesson Data (dữ liệu cấu trúc dành cho ứng dụng chạy mini-game), hoàn toàn không phải văn bản Markdown để phụ huynh đọc chay.
