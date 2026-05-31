@@ -277,14 +277,14 @@ export default function TypingPractice({ task, onComplete }: Props) {
         </div>
 
         {/* Dynamic Animal Progress Meter */}
-        <div className="w-full bg-gradient-to-r from-slate-50/50 via-white to-slate-50/50 rounded-2xl p-1.5 border border-slate-100/60 shadow-sm mb-3 relative overflow-visible flex items-center shrink-0 h-10">
-          <div className="relative w-full h-2.5 bg-slate-100/80 rounded-full border border-slate-205/40 flex items-center px-1">
-            <span className="absolute right-1 text-base select-none">🏁</span>
+        <div className="w-full bg-amber-50/50 rounded-3xl p-2 border-2 border-slate-800 shadow-[4px_4px_0px_0px_#1e293b] mb-3 relative overflow-visible flex items-center shrink-0 h-12">
+          <div className="relative w-full h-4 bg-emerald-50 rounded-full border-2 border-slate-800 flex items-center px-1 overflow-visible">
+            <span className="absolute right-1.5 text-base select-none z-0">🏁</span>
             
             {/* Running Animal */}
             <motion.div
-              className="absolute text-3xl select-none filter drop-shadow-md z-10"
-              animate={{ left: `calc(${progressPercent}% - 22px)` }}
+              className="absolute text-3xl select-none filter drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)] z-10"
+              animate={{ left: `calc(${progressPercent}% - 24px)` }}
               transition={{ type: 'spring', stiffness: 50, damping: 14 }}
               style={{ left: 0, top: '-11px' }}
             >
