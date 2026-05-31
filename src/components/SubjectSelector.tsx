@@ -176,9 +176,9 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
         transition={{ delay: 0.5 }}
         className="mt-14 text-center"
       >
-        <div className="inline-flex items-center gap-2 bg-indigo-50 border-2 border-indigo-100 rounded-full px-6 py-3.5 shadow-sm hover:scale-102 transition-transform">
-          <div className="w-3.5 h-3.5 bg-emerald-500 rounded-full animate-ping"></div>
-          <span className="text-indigo-900 font-black text-sm md:text-base">
+        <div className="inline-flex items-center gap-2 bg-indigo-50 border-2 border-indigo-100 rounded-full px-4 md:px-6 py-3.5 shadow-sm hover:scale-102 transition-transform">
+          <div className="w-3.5 h-3.5 bg-emerald-500 rounded-full animate-ping shrink-0"></div>
+          <span className="text-indigo-900 font-black text-xs md:text-base">
             Tất cả các môn đều có phần thưởng Sao Vàng và Huy Hiệu đang chờ bé! ⭐
           </span>
         </div>

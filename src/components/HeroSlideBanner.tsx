@@ -152,7 +152,7 @@ export default function HeroSlideBanner() {
               <div className="w-full md:w-1/2 flex justify-center shrink-0">
                 <motion.div
                   whileHover={{ scale: 1.03, rotate: [0, -1, 1, 0] }}
-                  className="w-full max-w-[240px] md:max-w-[280px] aspect-square h-56 md:h-68 relative rounded-[24px] border-4 border-slate-800 overflow-hidden shadow-[4px_4px_0px_0px_#1e293b] bg-white cursor-pointer p-2 flex items-center justify-center"
+                  className="w-full max-w-[200px] md:max-w-[280px] aspect-square h-48 md:h-68 relative rounded-[24px] border-4 border-slate-800 overflow-hidden shadow-[4px_4px_0px_0px_#1e293b] bg-white cursor-pointer p-2 flex items-center justify-center"
                   onClick={() => handleSlideClick(currentSlide.path)}
                 >
                   <img
@@ -167,8 +167,8 @@ export default function HeroSlideBanner() {
               </div>
 
               {/* Thông tin bên Phải */}
-              <div className="w-full md:w-1/2 text-left flex flex-col justify-center">
-                <span className="inline-block self-start mb-2 px-3 py-1 bg-white border-2 border-slate-800 text-slate-800 text-[10px] font-black rounded-full shadow-sm uppercase tracking-wider">
+              <div className="w-full md:w-1/2 text-center md:text-left flex flex-col justify-center items-center md:items-start">
+                <span className="inline-block self-center md:self-start mb-2 px-3 py-1 bg-white border-2 border-slate-800 text-slate-800 text-[10px] font-black rounded-full shadow-sm uppercase tracking-wider">
                   Khóa Học Nổi Bật
                 </span>
                 
@@ -180,7 +180,7 @@ export default function HeroSlideBanner() {
                   {currentSlide.description}
                 </p>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                   <button
                     onClick={() => handleSlideClick(currentSlide.path)}
                     className="inline-flex items-center gap-2 bg-gradient-to-r from-rose-450 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white font-black text-sm px-5 py-3 rounded-[18px] border-b-4 border-rose-700 shadow-[3px_3px_0px_0px_#1e293b] hover:shadow-[2px_2px_0px_0px_#1e293b] active:translate-y-0.5 active:border-b-2 active:shadow-none transition-all cursor-pointer"
