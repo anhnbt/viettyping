@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoChevronBack, IoChevronForward, IoPlay, IoRibbon, IoWalkOutline, IoMusicalNotesOutline, IoTimeOutline } from "react-icons/io5";
 import { LessonConfig, LessonStep, ActivityResult, LessonSummary, TelemetryPayload, MiniGameConfig } from "@/types/lesson";
+import { useStudent } from "@/contexts/StudentContext";
 import Flashcard from "@/components/Flashcard";
 import ProgressBar from "@/components/ProgressBar";
 import TrueFalseGame from "@/components/TrueFalseGame";
@@ -29,6 +30,7 @@ export default function LessonCoordinator({
   onAllActivitiesComplete,
   initialStep = "flashcards",
 }: LessonCoordinatorProps) {
+  const { studentInfo } = useStudent();
   const [step, setStep] = useState<LessonStep>(initialStep);
   const [flashcardIndex, setFlashcardIndex] = useState(0);
   const [typingPracticeIndex, setTypingPracticeIndex] = useState(0);
@@ -562,10 +564,19 @@ export default function LessonCoordinator({
             </motion.div>
 
             <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 mb-2">
-              Bé đã hoàn thành!
+              {studentInfo ? `${studentInfo.nickname} đã hoàn thành!` : "Bé đã hoàn thành!"}
             </h2>
             <p className="text-gray-600 mb-6 font-bold text-lg">
-              {config.summary_config?.celebration_message || "Chúc mừng bé yêu gõ chữ rất giỏi!"}
+              {(() => {
+                const rawMessage = config.summary_config?.celebration_message || "Chúc mừng bé yêu gõ chữ rất giỏi!";
+                if (studentInfo) {
+                  return rawMessage
+                    .replace(/bé yêu/gi, `${studentInfo.nickname} yêu`)
+                    .replace(/bé/gi, studentInfo.nickname)
+                    .replace(/con/gi, studentInfo.nickname);
+                }
+                return rawMessage;
+              })()}
             </p>
 
             {/* Rewards Display (Badge & XP) */}
@@ -725,7 +736,9 @@ export default function LessonCoordinator({
           >
             <span className="text-4xl animate-bounce">🐶</span>
             <div className="text-left">
-              <h5 className="font-black text-purple-700 text-xs mb-0.5">Bé ơi, bé đâu rồi?</h5>
+              <h5 className="font-black text-purple-700 text-xs mb-0.5">
+                {studentInfo ? `${studentInfo.nickname} ơi, ${studentInfo.nickname} đâu rồi?` : "Bé ơi, bé đâu rồi?"}
+              </h5>
               <p className="text-[10px] text-slate-500 leading-tight">
                 Hãy gõ phím hoặc chạm màn hình tiếp tục học để nhận sao lấp lánh nhé!
               </p>

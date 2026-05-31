@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { IoStar, IoStarOutline, IoRefreshOutline, IoArrowForward, IoTrophy } from 'react-icons/io5';
 import { useSound } from '@/contexts/SoundContext';
 import confetti from 'canvas-confetti';
+import { useStudent } from '@/contexts/StudentContext';
 
 interface CompletionModalProps {
     isOpen: boolean;
@@ -34,6 +35,7 @@ export default function CompletionModal({
     continueLabel = 'Tiếp tục',
 }: CompletionModalProps) {
     const { playSound } = useSound();
+    const { studentInfo } = useStudent();
     const [displayScore, setDisplayScore] = useState(0);
     const [isCountingDone, setIsCountingDone] = useState(false);
     const [showStars, setShowStars] = useState(false);
@@ -50,6 +52,13 @@ export default function CompletionModal({
     };
 
     const stars = calculateStars(stats.accuracy);
+
+    const getMessage = () => {
+        const nickname = studentInfo?.nickname || 'Con';
+        if (stars === 3) return `Tuyệt vời! ${nickname} làm tốt lắm! 🎉`;
+        if (stars === 2) return `Rất tốt! ${nickname} cố gắng thêm chút nữa nhé! 🌟`;
+        return `Cố lên! ${nickname} làm được mà! 💪`;
+    };
 
     // Fire confetti
     const fireConfetti = useCallback(() => {
@@ -149,7 +158,7 @@ export default function CompletionModal({
                 </div>
 
                 {/* Stars - appear after counter */}
-                <div className={`flex justify-center gap-3 mb-5 transition-all duration-500 ${showStars ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className={`flex justify-center gap-3 mb-5 transition-all duration-500 ${showStars ? 'opacity-100' : 'opacity-0'}`}>
                     {[1, 2, 3].map((star) => (
                         <span
                             key={star}
@@ -171,11 +180,7 @@ export default function CompletionModal({
 
                 {/* Message */}
                 <h3 className={`text-xl font-bold text-center mb-5 text-gray-800 transition-all duration-500 ${showStars ? 'opacity-100' : 'opacity-0'}`}>
-                    {stars === 3
-                        ? 'Tuyệt vời! Con làm tốt lắm! 🎉'
-                        : stars === 2
-                            ? 'Rất tốt! Cố gắng thêm chút nữa nhé! 🌟'
-                            : 'Cố lên! Con làm được mà! 💪'}
+                    {getMessage()}
                 </h3>
 
                 {/* Stats */}

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, Play, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
+import { useStudent } from "@/contexts/StudentContext";
 
 export interface SpinWheelGameConfig {
   id: string;
@@ -13,6 +14,7 @@ export interface SpinWheelGameConfig {
 
 export default function SpinWheelGame({ gameConfig, onComplete }: GameAdapterProps<SpinWheelGameConfig>) {
   const { id: gameId, items } = gameConfig;
+  const { studentInfo } = useStudent();
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
@@ -194,7 +196,9 @@ export default function SpinWheelGame({ gameConfig, onComplete }: GameAdapterPro
               transition={{ type: "spring", bounce: 0.5 }}
               className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border-4 border-yellow-400 relative overflow-hidden"
             >
-              <h2 className="text-2xl font-bold text-gray-700 mb-4">Bạn quay được chữ:</h2>
+              <h2 className="text-2xl font-bold text-gray-700 mb-4">
+                {studentInfo ? `${studentInfo.nickname} quay được chữ:` : "Bé quay được chữ:"}
+              </h2>
               
               <div className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-500 to-pink-500 mb-8 py-4">
                 {selectedItem}
