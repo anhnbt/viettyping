@@ -268,7 +268,7 @@ export default function TypingPractice({ task, onComplete }: Props) {
           <div className="flex items-center gap-3">
             <button
               onClick={handleRestart}
-              className="flex items-center gap-1 px-4 py-1.5 text-xs bg-gray-50 border border-gray-200 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors font-bold shadow-sm"
+              className="flex items-center gap-1 px-4 py-1.5 text-xs bg-gray-50 border border-gray-200 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors font-bold shadow-sm cursor-pointer"
             >
               <IoRefreshOutline className="text-sm" />
               Làm lại
