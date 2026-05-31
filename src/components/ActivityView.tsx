@@ -13,7 +13,8 @@ import {
   ReadingActivity, 
   DrawingActivity, 
   ListeningActivity, 
-  TypingActivity 
+  TypingActivity,
+  MathActivity
 } from '@/components/activities';
 import { ActivityTelemetry } from '@/types/activity';
 
@@ -64,8 +65,9 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
       case 'typing':
         return <TypingActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
       case 'quiz':
-      case 'math':
         return <QuizActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
+      case 'math':
+        return <MathActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
       case 'reading':
         return <ReadingActivity key={activity.id} activity={activity} onComplete={handleActivityComplete} onProgressUpdate={handleProgressUpdate} />;
       case 'drawing':

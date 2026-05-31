@@ -410,6 +410,19 @@ export const subjects: Subject[] = [
             content: 'Giải các phép cộng đơn giản',
             instructions: 'Tính toán và điền kết quả',
           },
+          {
+            id: 't-2-2',
+            type: 'math',
+            title: 'Đặt tính rồi tính: 15 + 8',
+            content: '15 + 8 = ?',
+            instructions: 'Bé hãy đặt tính rồi tính phép cộng hàng dọc nhé!',
+            data: {
+              subtype: 'vertical',
+              operand1: 15,
+              operand2: 8,
+              operator: '+'
+            }
+          }
         ],
       },
       {
@@ -429,6 +442,19 @@ export const subjects: Subject[] = [
             options: ['2', '3', '4'],
             correctAnswer: '3'
           },
+          {
+            id: 't-3-2',
+            type: 'math',
+            title: 'Đặt tính rồi tính: 23 - 8',
+            content: '23 - 8 = ?',
+            instructions: 'Bé hãy đặt tính rồi tính phép trừ hàng dọc có mượn nhé!',
+            data: {
+              subtype: 'vertical',
+              operand1: 23,
+              operand2: 8,
+              operator: '-'
+            }
+          }
         ],
       },
       {

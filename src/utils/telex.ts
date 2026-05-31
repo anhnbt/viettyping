@@ -24,7 +24,7 @@ const toneMarks: Record<string, { char: string; mark: string }> = {
   'À': { char: 'A', mark: 'f' }, 'Ầ': { char: 'Â', mark: 'f' }, 'Ằ': { char: 'Ă', mark: 'f' },
   'È': { char: 'E', mark: 'f' }, 'Ề': { char: 'Ê', mark: 'f' }, 'Ì': { char: 'I', mark: 'f' },
   'Ò': { char: 'O', mark: 'f' }, 'Ồ': { char: 'Ô', mark: 'f' }, 'Ờ': { char: 'Ơ', mark: 'f' },
-  'Ù': { char: 'U', mark: 'f' }, 'Ừ': { char: 'Ư', mark: 'f' }, 'Ý': { char: 'Y', mark: 'f' },
+  'Ù': { char: 'U', mark: 'f' }, 'Ừ': { char: 'Ư', mark: 'f' }, 'Ỳ': { char: 'Y', mark: 'f' },
 
   // Hỏi
   'ả': { char: 'a', mark: 'r' }, 'ẩ': { char: 'â', mark: 'r' }, 'ẳ': { char: 'ă', mark: 'r' },
@@ -34,7 +34,7 @@ const toneMarks: Record<string, { char: string; mark: string }> = {
   'Ả': { char: 'A', mark: 'r' }, 'Ẩ': { char: 'Â', mark: 'r' }, 'Ẳ': { char: 'Ă', mark: 'r' },
   'Ẻ': { char: 'E', mark: 'r' }, 'Ể': { char: 'Ê', mark: 'r' }, 'Ỉ': { char: 'I', mark: 'r' },
   'Ỏ': { char: 'O', mark: 'r' }, 'Ở': { char: 'Ơ', mark: 'r' }, 'Ủ': { char: 'U', mark: 'r' },
-  'Ử': { char: 'Ư', mark: 'r' }, 'Ý': { char: 'Y', mark: 'r' },
+  'Ử': { char: 'Ư', mark: 'r' }, 'Ỷ': { char: 'Y', mark: 'r' },
 
   // Ngã
   'ã': { char: 'a', mark: 'x' }, 'ẫ': { char: 'â', mark: 'x' }, 'ẵ': { char: 'ă', mark: 'x' },
@@ -44,7 +44,7 @@ const toneMarks: Record<string, { char: string; mark: string }> = {
   'Ã': { char: 'A', mark: 'x' }, 'Ẫ': { char: 'Â', mark: 'x' }, 'Ẵ': { char: 'Ă', mark: 'x' },
   'Ẽ': { char: 'E', mark: 'x' }, 'Ễ': { char: 'Ê', mark: 'x' }, 'Ĩ': { char: 'I', mark: 'x' },
   'Õ': { char: 'O', mark: 'x' }, 'Ỗ': { char: 'Ô', mark: 'x' }, 'Ỡ': { char: 'Ơ', mark: 'x' },
-  'Ũ': { char: 'U', mark: 'x' }, 'Ữ': { char: 'Ư', mark: 'x' }, 'Ý': { char: 'Y', mark: 'x' },
+  'Ũ': { char: 'U', mark: 'x' }, 'Ữ': { char: 'Ư', mark: 'x' }, 'Ỹ': { char: 'Y', mark: 'x' },
 
   // Nặng
   'ạ': { char: 'a', mark: 'j' }, 'ậ': { char: 'â', mark: 'j' }, 'ặ': { char: 'ă', mark: 'j' },
@@ -54,7 +54,7 @@ const toneMarks: Record<string, { char: string; mark: string }> = {
   'Ạ': { char: 'A', mark: 'j' }, 'Ậ': { char: 'Â', mark: 'j' }, 'Ặ': { char: 'Ă', mark: 'j' },
   'Ẹ': { char: 'E', mark: 'j' }, 'Ệ': { char: 'Ê', mark: 'j' }, 'Ị': { char: 'I', mark: 'j' },
   'Ọ': { char: 'O', mark: 'j' }, 'Ộ': { char: 'Ô', mark: 'j' }, 'Ợ': { char: 'Ơ', mark: 'j' },
-  'Ụ': { char: 'U', mark: 'j' }, 'Ự': { char: 'Ư', mark: 'j' }, 'Ý': { char: 'Y', mark: 'j' }
+  'Ụ': { char: 'U', mark: 'j' }, 'Ự': { char: 'Ư', mark: 'j' }, 'Ỵ': { char: 'Y', mark: 'j' }
 };
 
 const diacriticMarks: Record<string, string[]> = {

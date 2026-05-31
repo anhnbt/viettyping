@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useSound } from '@/contexts/SoundContext';
 import { Be_Vietnam_Pro } from 'next/font/google';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCcw, Check, BookOpen, Keyboard } from 'lucide-react';
+import { RotateCcw, Check, BookOpen, Keyboard, Sparkles } from 'lucide-react';
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['latin', 'vietnamese'],
@@ -169,22 +169,30 @@ export default function TypingPage() {
       <div className="max-w-6xl mx-auto px-6 py-8 relative z-10">
         {/* Thanh Điều hướng Header */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
             <Link
               href="/"
               onClick={() => playSound('click')}
-              className="flex items-center gap-2 px-6 py-3.5 bg-white text-indigo-600 rounded-[22px] font-bold border-2 border-indigo-200 shadow-[4px_4px_0px_0px_#c7d2fe] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none"
+              className="flex items-center gap-2 px-5 py-3 bg-white text-indigo-600 rounded-[22px] font-bold border-2 border-indigo-200 shadow-[4px_4px_0px_0px_#c7d2fe] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none text-sm"
             >
-              <BookOpen className="w-5 h-5 text-indigo-500 animate-bounce" />
+              <BookOpen className="w-4 h-4 text-indigo-500 animate-bounce" />
               <span>📚 Học các môn</span>
             </Link>
             <button
               disabled
-              className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-red-400 to-pink-500 text-white rounded-[22px] font-bold border-b-4 border-red-600 shadow-[4px_4px_0px_0px_#fca5a5] cursor-default"
+              className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-red-400 to-pink-500 text-white rounded-[22px] font-bold border-b-4 border-red-600 shadow-[4px_4px_0px_0px_#fca5a5] cursor-default text-sm"
             >
-              <Keyboard className="w-5 h-5" />
+              <Keyboard className="w-4 h-4" />
               <span>⌨️ Luyện gõ phím</span>
             </button>
+            <Link
+              href="/typing/asmr"
+              onClick={() => playSound('click')}
+              className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-[22px] font-bold border-2 border-purple-300 shadow-[4px_4px_0px_0px_#c084fc] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none text-sm"
+            >
+              <Sparkles className="w-4 h-4 animate-pulse text-yellow-200" />
+              <span>✨ ASMR Thư giãn</span>
+            </Link>
           </div>
 
           <h1 className={`text-4xl md:text-5xl font-bold text-center text-indigo-800 tracking-wide drop-shadow-sm ${beVietnamPro.className}`}>

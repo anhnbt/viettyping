@@ -368,6 +368,31 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
                 className={`${colorClass} ${borderClass} relative transition-all duration-150`}
               >
                 {mapping.char === ' ' ? '\u00A0' : mapping.char}
+                {isCurrent && mapping.telexKeys.length > 1 && (
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-yellow-400 text-slate-900 text-xs px-2.5 py-1.5 rounded-xl font-bold shadow-lg animate-bounce whitespace-nowrap z-30 pointer-events-none flex items-center gap-1 border-2 border-yellow-300">
+                    {mapping.telexKeys.map((key, keyIdx) => {
+                      const isTyped = (currentProgressIndex - mapping.startIndex) > keyIdx;
+                      const isCurrentKey = (currentProgressIndex - mapping.startIndex) === keyIdx;
+                      return (
+                        <React.Fragment key={keyIdx}>
+                          {keyIdx > 0 && <span className="text-yellow-800 text-[10px] font-normal">+</span>}
+                          <span 
+                            className={`px-1.5 py-0.5 rounded font-mono text-sm leading-none ${
+                              isCurrentKey 
+                                ? 'bg-blue-600 text-white ring-2 ring-blue-300 font-extrabold' 
+                                : isTyped 
+                                  ? 'text-slate-400 line-through font-normal' 
+                                  : 'bg-yellow-300 text-slate-700 font-semibold'
+                            }`}
+                          >
+                            {key}
+                          </span>
+                        </React.Fragment>
+                      );
+                    })}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-yellow-400" />
+                  </div>
+                )}
               </span>
             );
           })}
