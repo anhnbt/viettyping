@@ -651,8 +651,65 @@ export default function LessonCoordinator({
     }
   };
 
+  // Tiêu đề động cho Header
+  const getHeaderTitle = () => {
+    switch (step) {
+      case "flashcards":
+        return "Học từ vựng";
+      case "typing_practice": {
+        const currentTask = typing_practice?.[typingPracticeIndex];
+        return `Luyện gõ: ${currentTask?.type === "word" ? "Từ vựng" : "Câu"}`;
+      }
+      case "mini_games": {
+        const currentGame = mini_games?.[gameIndex];
+        if (!currentGame) return "Trò chơi trí tuệ";
+        const formattedType = currentGame.type.replace(/_/g, " ");
+        return `Trò chơi: ${formattedType}`;
+      }
+      case "summary":
+        return "Kết quả bài học";
+      default:
+        return "Đảo Học Tập";
+    }
+  };
+
+  const headerTitle = getHeaderTitle();
+
   return (
     <div className="w-full flex flex-col items-center relative">
+      {/* Header động */}
+      {step !== "summary" && (
+        <header className="p-4 md:p-6 flex items-center justify-between relative z-20 w-full max-w-4xl mx-auto gap-2">
+          <Link
+            href="/"
+            className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl text-purple-700 font-bold hover:bg-white/90 transition-all shadow-sm border border-white/20 text-sm md:text-base cursor-pointer shrink-0"
+          >
+            <IoChevronBack size={20} />
+            <span className="hidden sm:inline">Quay lại</span>
+          </Link>
+          
+          {/* Tiêu đề trò chơi/bài học ở giữa */}
+          <div className="flex-1 text-center px-1">
+            <span className="inline-block font-black text-indigo-950 text-sm sm:text-lg md:text-xl bg-white/60 backdrop-blur-sm px-3 py-1.5 sm:px-5 sm:py-2 rounded-2xl border border-indigo-100/40 shadow-sm capitalize truncate max-w-[140px] sm:max-w-[300px] md:max-w-none">
+              {headerTitle}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-white/20 text-sm md:text-base shrink-0">
+            <IoStar className="text-yellow-400 text-lg md:text-2xl animate-pulse" />
+            <span className="font-black text-purple-700 text-base md:text-xl">{currentXP} XP</span>
+          </div>
+        </header>
+      )}
+
+      {/* ProgressBar at the top of the container */}
+      {step !== "summary" && (
+        <div className="w-full max-w-4xl mb-8 px-4">
+          <ProgressBar progress={progressPercent} />
+        </div>
+      )}
+
+      {/* Pomodoro BREAK overlay */}
       <AnimatePresence>
         {pomodoroState === "BREAK" ? (
           <motion.div
@@ -743,64 +800,7 @@ export default function LessonCoordinator({
         )}
       </AnimatePresence>
 
-  // Tiêu đề động cho Header
-  const getHeaderTitle = () => {
-    switch (step) {
-      case "flashcards":
-        return "Học từ vựng";
-      case "typing_practice": {
-        const currentTask = typing_practice?.[typingPracticeIndex];
-        return `Luyện gõ: ${currentTask?.type === "word" ? "Từ vựng" : "Câu"}`;
-      }
-      case "mini_games": {
-        const currentGame = mini_games?.[gameIndex];
-        if (!currentGame) return "Trò chơi trí tuệ";
-        const formattedType = currentGame.type.replace(/_/g, " ");
-        return `Trò chơi: ${formattedType}`;
-      }
-      case "summary":
-        return "Kết quả bài học";
-      default:
-        return "Đảo Học Tập";
-    }
-  };
-
-  const headerTitle = getHeaderTitle();
-
-  return (
-    <div className="w-full flex flex-col items-center relative">
-      {/* Header động */}
-      {step !== "summary" && (
-        <header className="p-4 md:p-6 flex items-center justify-between relative z-20 w-full max-w-4xl mx-auto gap-2">
-          <Link
-            href="/"
-            className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl text-purple-700 font-bold hover:bg-white/90 transition-all shadow-sm border border-white/20 text-sm md:text-base cursor-pointer shrink-0"
-          >
-            <IoChevronBack size={20} />
-            <span className="hidden sm:inline">Quay lại</span>
-          </Link>
-          
-          {/* Tiêu đề trò chơi/bài học ở giữa */}
-          <div className="flex-1 text-center px-1">
-            <span className="inline-block font-black text-indigo-950 text-sm sm:text-lg md:text-xl bg-white/60 backdrop-blur-sm px-3 py-1.5 sm:px-5 sm:py-2 rounded-2xl border border-indigo-100/40 shadow-sm capitalize truncate max-w-[140px] sm:max-w-[300px] md:max-w-none">
-              {headerTitle}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-white/20 text-sm md:text-base shrink-0">
-            <IoStar className="text-yellow-400 text-lg md:text-2xl animate-pulse" />
-            <span className="font-black text-purple-700 text-base md:text-xl">{currentXP} XP</span>
-          </div>
-        </header>
-      )}
-
-      {/* ProgressBar at the top of the container */}
-      {step !== "summary" && (
-        <div className="w-full max-w-4xl mb-8 px-4">
-          <ProgressBar progress={progressPercent} />
-        </div>
-      )}
-
+      {/* Main Content Area */}
       <div className="w-full flex justify-center px-4">
         <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
       </div>
