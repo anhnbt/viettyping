@@ -828,14 +828,14 @@ export const subjects: Subject[] = [
             id: 'hdtn-tk-2',
             type: 'reading',
             title: 'Đọc truyện: Dũng sĩ tiết kiệm điện tí hon',
-            content: 'Năm 2026, cả nước chung tay tiết kiệm ba phần trăm điện năng ⚡. Nhà bé Nam đã lắp các tấm pin điện mặt trời ☀️ trên mái nhà. Bố mẹ cũng dạy Nam tắt bớt thiết bị điện vào giờ cao điểm từ bốn giờ đến bảy giờ tối ⏰. Nam luôn tự giác tắt quạt và đèn khi ra khỏi phòng. Nam là một dũng sĩ tiết kiệm điện tí hon! 🦸‍♂️',
-            instructions: 'Bé hãy đọc to câu chuyện về ngôi nhà xanh của bạn Nam nhé!',
+            content: 'Năm 2026, cả nước chung tay tiết kiệm ba phần trăm điện năng ⚡. Nhà Bé Khoai Tây đã lắp các tấm pin điện mặt trời ☀️ trên mái nhà. Bố mẹ cũng dạy Khoai Tây tắt bớt thiết bị điện vào giờ cao điểm từ bốn giờ đến bảy giờ tối ⏰. Khoai Tây luôn tự giác tắt quạt và đèn khi ra khỏi phòng. Khoai Tây là một dũng sĩ tiết kiệm điện tí hon! 🦸‍♂️',
+            instructions: 'Bé hãy đọc to câu chuyện về ngôi nhà xanh của bạn Khoai Tây nhé!',
           },
           {
             id: 'hdtn-tk-3',
             type: 'quiz',
             title: 'Bé học về điện mặt trời',
-            content: 'Để tạo ra nguồn điện sạch từ ánh nắng, nhà bạn Nam đã lắp thiết bị gì trên mái nhà?',
+            content: 'Để tạo ra nguồn điện sạch từ ánh nắng, nhà bạn Khoai Tây đã lắp thiết bị gì trên mái nhà?',
             instructions: 'Bé hãy nhớ lại câu chuyện vừa đọc và chọn đáp án đúng nhé!',
             imageUrl: '/assets/solar_rooftop.png',
             options: [
@@ -863,8 +863,8 @@ export const subjects: Subject[] = [
             id: 'hdtn-tk-5',
             type: 'math',
             title: 'Làm toán dũng sĩ nhỏ',
-            content: 'Nam tắt 2 chiếc bóng đèn ở phòng khách và 2 chiếc bóng đèn ở phòng học khi đi chơi. Hỏi Nam đã giúp gia đình tắt tổng cộng bao nhiêu chiếc bóng đèn?',
-            instructions: 'Bé hãy cộng số bóng đèn Nam đã tắt giúp bố mẹ nhé!',
+            content: 'Khoai Tây tắt 2 chiếc bóng đèn ở phòng khách và 2 chiếc bóng đèn ở phòng học khi đi chơi. Hỏi Khoai Tây đã giúp gia đình tắt tổng cộng bao nhiêu chiếc bóng đèn?',
+            instructions: 'Bé hãy cộng số bóng đèn Khoai Tây đã tắt giúp bố mẹ nhé!',
             options: [
               '3 chiếc bóng đèn',
               '4 chiếc bóng đèn 💡',
