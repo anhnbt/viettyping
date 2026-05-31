@@ -81,23 +81,8 @@ export default function LessonPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 font-sans overflow-y-auto flex flex-col pb-12">
-      {/* Header */}
-      <header className="p-4 md:p-6 flex items-center justify-between relative z-10 w-full max-w-4xl mx-auto">
-        <Link
-          href="/"
-          className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl text-purple-700 font-bold hover:bg-white/90 transition-all shadow-sm border border-white/20"
-        >
-          <IoChevronBack size={24} />
-          Quay lại
-        </Link>
-        <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-white/20">
-          <IoStar className="text-yellow-400 text-2xl animate-pulse" />
-          <span className="font-black text-purple-700 text-xl">{currentXP} XP</span>
-        </div>
-      </header>
-
       {/* Main Content với LessonCoordinator */}
-      <main className="flex-1 flex flex-col items-center justify-center p-4 relative z-10 w-full max-w-4xl mx-auto">
+      <main className="flex-1 flex flex-col items-center justify-center p-2 relative z-10 w-full max-w-4xl mx-auto">
         <LessonCoordinator
           config={lessonData}
           onAllActivitiesComplete={handleAllActivitiesComplete}

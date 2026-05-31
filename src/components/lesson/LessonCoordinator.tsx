@@ -3,9 +3,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { IoChevronBack, IoChevronForward, IoPlay, IoRibbon, IoWalkOutline, IoMusicalNotesOutline, IoTimeOutline } from "react-icons/io5";
+import { IoChevronBack, IoChevronForward, IoPlay, IoRibbon, IoWalkOutline, IoMusicalNotesOutline, IoTimeOutline, IoStar } from "react-icons/io5";
 import { LessonConfig, LessonStep, ActivityResult, LessonSummary, TelemetryPayload, MiniGameConfig } from "@/types/lesson";
 import { useStudent } from "@/contexts/StudentContext";
+import { useLesson } from "@/contexts/LessonContext";
 import Flashcard from "@/components/Flashcard";
 import ProgressBar from "@/components/ProgressBar";
 import TrueFalseGame from "@/components/TrueFalseGame";
@@ -31,6 +32,7 @@ export default function LessonCoordinator({
   initialStep = "flashcards",
 }: LessonCoordinatorProps) {
   const { studentInfo } = useStudent();
+  const { currentXP } = useLesson();
   const [step, setStep] = useState<LessonStep>(initialStep);
   const [flashcardIndex, setFlashcardIndex] = useState(0);
   const [typingPracticeIndex, setTypingPracticeIndex] = useState(0);
@@ -352,9 +354,6 @@ export default function LessonCoordinator({
             transition={{ duration: 0.4 }}
             className="w-full max-w-4xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-6 md:p-8 flex flex-col items-center min-h-[500px] justify-center text-center border border-white/40"
           >
-            <h2 className="text-2xl md:text-3xl font-black text-purple-700 mb-2 capitalize tracking-wide">
-              Luyện gõ: {currentTask.type === "word" ? "Từ vựng" : "Câu"}
-            </h2>
             <p className="text-lg text-purple-600 mb-6 font-medium bg-purple-100 px-4 py-1 rounded-full">
               {currentTask.description}
             </p>
@@ -522,9 +521,6 @@ export default function LessonCoordinator({
             transition={{ duration: 0.4 }}
             className="w-full max-w-4xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-6 md:p-8 flex flex-col items-center min-h-[420px] justify-center text-center border border-white/40"
           >
-            <h2 className="text-2xl md:text-3xl font-black text-purple-700 mb-6 capitalize tracking-wide">
-              Trò chơi: {formattedType}
-            </h2>
             {renderGame()}
           </motion.div>
         );
@@ -747,12 +743,65 @@ export default function LessonCoordinator({
         )}
       </AnimatePresence>
 
-      {/* ProgressBar at the top of the container */}
-      <div className="w-full max-w-4xl mb-8">
-        <ProgressBar progress={progressPercent} />
-      </div>
+  // Tiêu đề động cho Header
+  const getHeaderTitle = () => {
+    switch (step) {
+      case "flashcards":
+        return "Học từ vựng";
+      case "typing_practice": {
+        const currentTask = typing_practice?.[typingPracticeIndex];
+        return `Luyện gõ: ${currentTask?.type === "word" ? "Từ vựng" : "Câu"}`;
+      }
+      case "mini_games": {
+        const currentGame = mini_games?.[gameIndex];
+        if (!currentGame) return "Trò chơi trí tuệ";
+        const formattedType = currentGame.type.replace(/_/g, " ");
+        return `Trò chơi: ${formattedType}`;
+      }
+      case "summary":
+        return "Kết quả bài học";
+      default:
+        return "Đảo Học Tập";
+    }
+  };
 
-      <div className="w-full flex justify-center">
+  const headerTitle = getHeaderTitle();
+
+  return (
+    <div className="w-full flex flex-col items-center relative">
+      {/* Header động */}
+      {step !== "summary" && (
+        <header className="p-4 md:p-6 flex items-center justify-between relative z-20 w-full max-w-4xl mx-auto gap-2">
+          <Link
+            href="/"
+            className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl text-purple-700 font-bold hover:bg-white/90 transition-all shadow-sm border border-white/20 text-sm md:text-base cursor-pointer shrink-0"
+          >
+            <IoChevronBack size={20} />
+            <span className="hidden sm:inline">Quay lại</span>
+          </Link>
+          
+          {/* Tiêu đề trò chơi/bài học ở giữa */}
+          <div className="flex-1 text-center px-1">
+            <span className="inline-block font-black text-indigo-950 text-sm sm:text-lg md:text-xl bg-white/60 backdrop-blur-sm px-3 py-1.5 sm:px-5 sm:py-2 rounded-2xl border border-indigo-100/40 shadow-sm capitalize truncate max-w-[140px] sm:max-w-[300px] md:max-w-none">
+              {headerTitle}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-white/20 text-sm md:text-base shrink-0">
+            <IoStar className="text-yellow-400 text-lg md:text-2xl animate-pulse" />
+            <span className="font-black text-purple-700 text-base md:text-xl">{currentXP} XP</span>
+          </div>
+        </header>
+      )}
+
+      {/* ProgressBar at the top of the container */}
+      {step !== "summary" && (
+        <div className="w-full max-w-4xl mb-8 px-4">
+          <ProgressBar progress={progressPercent} />
+        </div>
+      )}
+
+      <div className="w-full flex justify-center px-4">
         <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
       </div>
     </div>
