@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X } from "lucide-react";
 import confetti from "canvas-confetti";
-import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
+import { GameAdapterProps, TelemetryPayload, Flashcard } from "@/types/lesson";
 
 export interface MultipleChoiceItem {
   question: string;
@@ -17,6 +17,10 @@ export interface MultipleChoiceGameConfig {
   items: MultipleChoiceItem[];
 }
 
+export interface MultipleChoiceGameProps extends GameAdapterProps<MultipleChoiceGameConfig> {
+  flashcards?: Flashcard[];
+}
+
 // Utility to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -27,7 +31,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return newArray;
 };
 
-export default function MultipleChoiceGame({ gameConfig, onComplete }: GameAdapterProps<MultipleChoiceGameConfig>) {
+export default function MultipleChoiceGame({ gameConfig, flashcards, onComplete }: MultipleChoiceGameProps) {
   const { id: gameId, items } = gameConfig;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [choices, setChoices] = useState<string[]>([]);
@@ -135,6 +139,11 @@ export default function MultipleChoiceGame({ gameConfig, onComplete }: GameAdapt
 
   if (!currentItem) return null;
 
+  // Kiểm tra xem trong các lựa chọn hiện tại có lựa chọn nào có ảnh từ flashcards không
+  const hasAnyImage = choices.some(choice => 
+    !!flashcards?.find(f => f.word.toLowerCase() === choice.toLowerCase())?.image_url
+  );
+
   return (
     <div className="w-full flex flex-col items-center">
       {/* Question Area */}
@@ -153,7 +162,7 @@ export default function MultipleChoiceGame({ gameConfig, onComplete }: GameAdapt
       </AnimatePresence>
 
       {/* Choices Area */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl">
+      <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl">
         <AnimatePresence>
           {choices.map((choice, index) => {
             const isSelected = selectedChoice === choice;
@@ -173,6 +182,10 @@ export default function MultipleChoiceGame({ gameConfig, onComplete }: GameAdapt
               // Dim other buttons when an answer is selected
               buttonStateClass = "from-gray-300 to-gray-400 shadow-[0_8px_0_0_#6b7280] opacity-50";
             }
+
+            // Tìm thông tin ảnh cho lựa chọn này
+            const choiceFc = flashcards?.find(f => f.word.toLowerCase() === choice.toLowerCase());
+            const choiceImg = choiceFc?.image_url;
 
             return (
               <motion.button
@@ -195,18 +208,37 @@ export default function MultipleChoiceGame({ gameConfig, onComplete }: GameAdapt
                 onClick={() => handleChoice(choice)}
                 disabled={feedback !== "none"}
                 className={`
-                  relative flex-1 bg-gradient-to-b text-white font-black text-2xl md:text-3xl py-6 md:py-8 rounded-3xl 
-                  transition-all flex items-center justify-center gap-3 disabled:cursor-not-allowed
+                  relative flex-1 bg-gradient-to-b text-white font-black text-2xl md:text-3xl 
+                  ${hasAnyImage ? "py-4 md:py-6 px-3" : "py-6 md:py-8"} rounded-3xl 
+                  transition-all flex flex-col items-center justify-center gap-3 disabled:cursor-not-allowed
                   ${buttonStateClass}
                   ${feedback === "none" ? "hover:translate-y-1 active:shadow-none active:translate-y-2" : ""}
                 `}
               >
-                {choice}
+                {/* Khung hiển thị hình ảnh đồng bộ */}
+                {hasAnyImage && (
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white/95 rounded-2xl p-2 shadow-inner flex items-center justify-center mb-1.5 shrink-0">
+                    {choiceImg ? (
+                      <img 
+                        src={choiceImg} 
+                        alt={choice} 
+                        className="w-full h-full object-contain drop-shadow-md"
+                      />
+                    ) : (
+                      <span className="text-3xl md:text-4xl select-none" role="img" aria-label="question-mark">❓</span>
+                    )}
+                  </div>
+                )}
+
+                <span className={`${hasAnyImage ? "text-lg md:text-2xl" : "text-2xl md:text-3xl"} capitalize`}>
+                  {choice}
+                </span>
+
                 {icon && (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute right-6"
+                    className={`absolute ${hasAnyImage ? "right-4 top-4" : "right-6"}`}
                   >
                     {icon}
                   </motion.div>

@@ -461,6 +461,7 @@ export default function LessonCoordinator({
               return (
                 <MultipleChoiceGame
                   gameConfig={mcConfig}
+                  flashcards={flashcards}
                   onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
                 />
               );
