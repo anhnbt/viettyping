@@ -837,6 +837,7 @@ export const subjects: Subject[] = [
             title: 'Bé học về điện mặt trời',
             content: 'Để tạo ra nguồn điện sạch từ ánh nắng, nhà bạn Nam đã lắp thiết bị gì trên mái nhà?',
             instructions: 'Bé hãy nhớ lại câu chuyện vừa đọc và chọn đáp án đúng nhé!',
+            imageUrl: '/assets/solar_rooftop.png',
             options: [
               'Bể bơi mini giải nhiệt',
               'Tấm pin điện mặt trời đón nắng ☀️',
@@ -850,6 +851,7 @@ export const subjects: Subject[] = [
             title: 'Bé chọn hành động xanh',
             content: 'Hành động nào dưới đây giúp gia đình bé tiết kiệm điện năng hiệu quả nhất?',
             instructions: 'Bé chọn hành động thông minh nhất để bảo vệ Trái Đất nhé!',
+            imageUrl: '/assets/save_energy.png',
             options: [
               'Mở cửa tủ lạnh liên tục để làm mát phòng',
               'Bật tivi cả ngày cho chú cún xem cùng',
