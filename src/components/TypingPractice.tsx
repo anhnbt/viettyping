@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { IoTimeOutline, IoRefreshOutline, IoWarning, IoSpeedometerOutline, IoCheckmarkCircleOutline } from 'react-icons/io5';
+import { IoTimeOutline, IoRefreshOutline, IoWarning, IoSpeedometerOutline, IoCheckmarkCircleOutline, IoKeyboardOutline } from 'react-icons/io5';
 import { useTypingSound } from '@/hooks/useTypingSound';
 import VirtualKeyboard from './VirtualKeyboard';
-import { TelemetryPayload } from '@/types/lesson';
+import { TelemetryPayload, Flashcard } from '@/types/lesson';
 import { stringToTelexKeys, buildCharMappings, validateInput, getNextHighlightKey, getCharColorStates } from '@/utils/telex';
 
 export interface TypingTask {
@@ -16,19 +16,35 @@ export interface TypingTask {
 interface Props {
   task: TypingTask;
   onComplete: (telemetry: TelemetryPayload) => void;
+  onStatsChange?: (stats: { wpm: number; accuracy: number; timeLeft: number; progressPercent: number; animal: string } | null) => void;
 }
 
 
-export default function TypingPractice({ task, onComplete }: Props) {
+export default function TypingPractice({ task, onComplete, onStatsChange }: Props) {
   const [input, setInput] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
   const [isComplete, setIsComplete] = useState(false);
   const [timeLeft, setTimeLeft] = useState(task.time_limit_seconds || 60);
   const [pressedKey, setPressedKey] = useState<string | null>(null);
+  const [showKeyboard, setShowKeyboard] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const wrongSoundTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const { playCorrectSound, playWrongSound } = useTypingSound();
+
+  // Tự động ẩn bàn phím ảo trên màn hình có chiều cao thấp
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerHeight < 700) {
+        setShowKeyboard(false);
+      } else {
+        setShowKeyboard(true);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const targetTelexKeys = useMemo(() => stringToTelexKeys(task.content), [task.content]);
   const charMappings = useMemo(() => buildCharMappings(task.content), [task.content]);
@@ -217,6 +233,22 @@ export default function TypingPractice({ task, onComplete }: Props) {
 
   const progressPercent = Math.min(100, Math.round((currentProgressIndex / targetTelexKeys.length) * 100));
 
+  // Gửi thông số gõ phím lên LessonCoordinator để hiển thị trên Header và ProgressBar
+  useEffect(() => {
+    if (onStatsChange) {
+      onStatsChange({
+        wpm,
+        accuracy,
+        timeLeft,
+        progressPercent,
+        animal: getAnimal()
+      });
+    }
+    return () => {
+      if (onStatsChange) onStatsChange(null);
+    };
+  }, [wpm, accuracy, timeLeft, progressPercent, onStatsChange]);
+
   return (
     <div className="w-full h-full flex flex-col">
       <style jsx>{`
@@ -265,7 +297,20 @@ export default function TypingPractice({ task, onComplete }: Props) {
               <span>Chính xác: <span className="font-extrabold text-blue-600 text-sm">{accuracy}%</span></span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowKeyboard(prev => !prev)}
+              className={`flex items-center gap-1 px-3 py-1.5 text-xs border rounded-xl font-bold shadow-sm cursor-pointer transition-colors ${
+                showKeyboard 
+                  ? "bg-indigo-50 border-indigo-200 text-indigo-600 hover:bg-indigo-100" 
+                  : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100"
+              }`}
+              title={showKeyboard ? "Ẩn bàn phím ảo" : "Hiện bàn phím ảo"}
+            >
+              <IoKeyboardOutline className="text-sm shrink-0" />
+              <span>{showKeyboard ? "Ẩn phím" : "Hiện phím"}</span>
+            </button>
+            
             <button
               onClick={handleRestart}
               className="flex items-center gap-1 px-4 py-1.5 text-xs bg-gray-50 border border-gray-200 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors font-bold shadow-sm cursor-pointer"
@@ -276,22 +321,7 @@ export default function TypingPractice({ task, onComplete }: Props) {
           </div>
         </div>
 
-        {/* Dynamic Animal Progress Meter */}
-        <div className="w-full bg-amber-50/50 rounded-3xl p-2 border-2 border-slate-800 shadow-[4px_4px_0px_0px_#1e293b] mb-3 relative overflow-visible flex items-center shrink-0 h-12">
-          <div className="relative w-full h-4 bg-emerald-50 rounded-full border-2 border-slate-800 flex items-center px-1 overflow-visible">
-            <span className="absolute right-1.5 text-base select-none z-0">🏁</span>
-            
-            {/* Running Animal */}
-            <motion.div
-              className="absolute text-3xl select-none filter drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)] z-10"
-              animate={{ left: `calc(${progressPercent}% - 24px)` }}
-              transition={{ type: 'spring', stiffness: 50, damping: 14 }}
-              style={{ left: 0, top: '-11px' }}
-            >
-              {getAnimal()}
-            </motion.div>
-          </div>
-        </div>
+
 
         {/* Typing Display Area */}
         <div className="relative mb-3 p-6 bg-gradient-to-b from-blue-50/50 to-blue-50 rounded-3xl text-3xl font-mono leading-relaxed tracking-wide shadow-inner border-2 border-blue-100 flex flex-wrap content-center items-center justify-center text-center flex-1 min-h-0 overflow-y-auto">
@@ -355,12 +385,14 @@ export default function TypingPractice({ task, onComplete }: Props) {
         )}
 
         {/* Keyboard */}
-        <div className="shrink-0">
-          <VirtualKeyboard
-            pressedKey={pressedKey}
-            highlightKey={getNextHighlightKey(task.content, input)}
-          />
-        </div>
+        {showKeyboard && (
+          <div className="shrink-0 animate-fade-in">
+            <VirtualKeyboard
+              pressedKey={pressedKey}
+              highlightKey={getNextHighlightKey(task.content, input)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

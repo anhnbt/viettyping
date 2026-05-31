@@ -39,11 +39,26 @@ export default function LessonCoordinator({
 }: LessonCoordinatorProps) {
   const { studentInfo } = useStudent();
   const { currentXP } = useLesson();
+  
+  // State nhận các thông số thời gian thực từ TypingPractice
+  const [typingStats, setTypingStats] = useState<{
+    wpm: number;
+    accuracy: number;
+    timeLeft: number;
+    progressPercent: number;
+    animal: string;
+  } | null>(null);
+
   const [step, setStep] = useState<LessonStep>(initialStep);
   const [flashcardIndex, setFlashcardIndex] = useState(0);
   const [typingPracticeIndex, setTypingPracticeIndex] = useState(0);
   const [gameIndex, setGameIndex] = useState(0);
   const [results, setResults] = useState<ActivityResult[]>([]);
+
+  // Reset các thông số gõ phím khi chuyển bài gõ hoặc chuyển bước
+  useEffect(() => {
+    setTypingStats(null);
+  }, [step, typingPracticeIndex]);
 
   // Pomodoro & Focus Mode states
   const [pomodoroState, setPomodoroState] = useState<"FOCUS" | "BREAK">("FOCUS");
@@ -146,7 +161,8 @@ export default function LessonCoordinator({
     const fcCount = flashcards?.length || 1;
     progressPercent = (flashcardIndex / fcCount) * (1 / totalActivities) * 100;
   } else if (step === "typing_practice") {
-    progressPercent = ((1 + typingPracticeIndex) / totalActivities) * 100;
+    // ProgressBar chính sẽ tạm thời biến thành đường đua của bài gõ hiện tại
+    progressPercent = typingStats ? typingStats.progressPercent : 0;
   } else if (step === "mini_games") {
     progressPercent = ((1 + (typing_practice?.length || 0) + gameIndex) / totalActivities) * 100;
   } else if (step === "summary") {
@@ -358,7 +374,7 @@ export default function LessonCoordinator({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -30 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-7xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-6 md:p-8 flex flex-col items-center min-h-[500px] justify-center text-center border border-white/40"
+            className="w-full max-w-7xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-4 md:p-6 flex flex-col items-center justify-center text-center border border-white/40"
           >
             <p className="text-lg text-purple-600 mb-6 font-medium bg-purple-100 px-4 py-1 rounded-full">
               {currentTask.description}
@@ -367,6 +383,7 @@ export default function LessonCoordinator({
             <div className="w-full flex-1">
               <TypingPractice
                 task={currentTask}
+                onStatsChange={setTypingStats}
                 onComplete={handleTypingComplete}
               />
             </div>
@@ -525,7 +542,7 @@ export default function LessonCoordinator({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -30 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-7xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-6 md:p-8 flex flex-col items-center min-h-[420px] justify-center text-center border border-white/40"
+            className="w-full max-w-7xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-4 md:p-6 flex flex-col items-center justify-center text-center border border-white/40"
           >
             {renderGame()}
           </motion.div>
@@ -702,8 +719,25 @@ export default function LessonCoordinator({
           </div>
 
           <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-white/20 text-sm md:text-base shrink-0">
-            {/* Đồng hồ đếm ngược nuôi cây tập trung */}
-            {pomodoroState === "FOCUS" && (
+            {/* Chỉ số Luyện gõ phím thời gian thực */}
+            {step === "typing_practice" && typingStats && (
+              <div className="flex items-center gap-2 md:gap-3 border-r border-slate-300/60 pr-2 md:pr-3 mr-1 text-xs sm:text-sm">
+                <span className="font-extrabold text-blue-600 font-mono flex items-center gap-1">
+                  ⏱️ {formatTime(typingStats.timeLeft)}
+                </span>
+                <span className="h-3 w-px bg-slate-300" />
+                <span className="font-extrabold text-green-600 flex items-center gap-1">
+                  ⚡ {typingStats.wpm} <span className="text-[10px] text-green-400 font-bold hidden md:inline">WPM</span>
+                </span>
+                <span className="h-3 w-px bg-slate-300" />
+                <span className="font-extrabold text-purple-600 flex items-center gap-1">
+                  🎯 {typingStats.accuracy}%
+                </span>
+              </div>
+            )}
+
+            {/* Đồng hồ đếm ngược Pomodoro (chỉ hiển thị khi không ở typing_practice để tránh rối mắt) */}
+            {pomodoroState === "FOCUS" && step !== "typing_practice" && (
               <div className="flex items-center gap-1 border-r border-slate-300 pr-2 md:pr-3 mr-1 text-xs md:text-sm">
                 <span className="animate-bounce select-none">
                   {focusProgress < 30 ? "🌱" : focusProgress < 65 ? "🌿" : focusProgress < 90 ? "🌸" : "🌳"}
@@ -723,7 +757,7 @@ export default function LessonCoordinator({
       {/* ProgressBar at the top of the container */}
       {step !== "summary" && (
         <div className="w-full max-w-7xl mb-8 px-4">
-          <ProgressBar progress={progressPercent} />
+          <ProgressBar progress={progressPercent} animal={step === "typing_practice" ? typingStats?.animal : undefined} />
         </div>
       )}
 
