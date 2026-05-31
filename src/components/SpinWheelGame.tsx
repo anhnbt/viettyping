@@ -200,15 +200,15 @@ export default function SpinWheelGame({ gameConfig, onComplete }: GameAdapterPro
                 {selectedItem}
               </div>
 
-              <div className="flex gap-4 justify-center">
+              <div className="flex gap-3 justify-center w-full">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => playTTS(selectedItem)}
-                  className="bg-blue-500 hover:bg-blue-400 text-white font-bold text-lg px-6 py-4 rounded-2xl shadow-[0_6px_0_0_#1e3a8a] hover:shadow-[0_3px_0_0_#1e3a8a] transition-all flex items-center gap-2 hover:translate-y-1 active:shadow-none active:translate-y-2"
+                  className="flex-1 sm:flex-none bg-blue-500 hover:bg-blue-400 text-white font-bold text-sm sm:text-lg px-4 sm:px-6 py-3 sm:py-4 rounded-2xl shadow-[0_6px_0_0_#1e3a8a] hover:shadow-[0_3px_0_0_#1e3a8a] transition-all flex items-center justify-center gap-1.5 hover:translate-y-1 active:shadow-none active:translate-y-2 whitespace-nowrap"
                 >
-                  <Volume2 size={24} />
-                  Nghe lại
+                  <Volume2 size={20} className="shrink-0" />
+                  <span>Nghe lại</span>
                 </motion.button>
                 
                 <motion.button
@@ -221,10 +221,10 @@ export default function SpinWheelGame({ gameConfig, onComplete }: GameAdapterPro
                       durationSeconds,
                     });
                   }}
-                  className="bg-green-500 hover:bg-green-400 text-white font-bold text-lg px-6 py-4 rounded-2xl shadow-[0_6px_0_0_#14532d] hover:shadow-[0_3px_0_0_#14532d] transition-all flex items-center gap-2 hover:translate-y-1 active:shadow-none active:translate-y-2"
+                  className="flex-1 sm:flex-none bg-green-500 hover:bg-green-400 text-white font-bold text-sm sm:text-lg px-4 sm:px-6 py-3 sm:py-4 rounded-2xl shadow-[0_6px_0_0_#14532d] hover:shadow-[0_3px_0_0_#14532d] transition-all flex items-center justify-center gap-1.5 hover:translate-y-1 active:shadow-none active:translate-y-2 whitespace-nowrap"
                 >
-                  <Check size={24} />
-                  Tiếp tục
+                  <Check size={20} className="shrink-0" />
+                  <span>Tiếp tục</span>
                 </motion.button>
               </div>
             </motion.div>

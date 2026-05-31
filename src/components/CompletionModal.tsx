@@ -199,17 +199,17 @@ export default function CompletionModal({
                 <div className={`flex gap-3 transition-all duration-500 ${showStars ? 'opacity-100' : 'opacity-0'}`}>
                     <button
                         onClick={onRestart}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 sm:px-4 sm:py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors whitespace-nowrap text-sm sm:text-base"
                     >
-                        <IoRefreshOutline className="text-lg" />
-                        Làm lại
+                        <IoRefreshOutline className="text-lg shrink-0" />
+                        <span>Làm lại</span>
                     </button>
                     <button
                         onClick={onContinue}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg"
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 sm:px-4 sm:py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg whitespace-nowrap text-sm sm:text-base"
                     >
-                        {continueLabel}
-                        <IoArrowForward className="text-lg" />
+                        <span>{continueLabel}</span>
+                        <IoArrowForward className="text-lg shrink-0" />
                     </button>
                 </div>
             </div>
