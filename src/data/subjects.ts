@@ -813,7 +813,7 @@ export const subjects: Subject[] = [
         id: 'hdtn-tiet-kiem',
         title: 'Tiết kiệm năng lượng, thịnh vượng tương lai',
         description: 'Bé học cách tiết kiệm 3% điện năng, sử dụng điện mặt trời và tắt điện giờ cao điểm để bảo vệ môi trường.',
-        difficulty: 'easy',
+        difficulty: 'medium',
         estimatedTime: 15,
         content: 'Chung tay tiết kiệm điện năm 2026. Hãy sử dụng điện mặt trời và tắt bớt thiết bị điện giờ cao điểm nhé bé!',
         activities: [
@@ -827,8 +827,8 @@ export const subjects: Subject[] = [
           {
             id: 'hdtn-tk-2',
             type: 'reading',
-            title: 'Đọc truyện: Mái nhà xanh của Nam',
-            content: 'Năm 2026, cả nước chung tay tiết kiệm điện. Nhà bé Nam đã lắp các tấm pin điện mặt trời đón nắng trên mái nhà để tạo ra nguồn điện sạch. Bố mẹ cũng luôn nhắc Nam tắt bớt đèn và quạt vào giờ cao điểm từ bốn giờ đến bảy giờ tối để tiết kiệm ba phần trăm điện năng cho cả nước.',
+            title: 'Đọc truyện: Dũng sĩ tiết kiệm điện tí hon',
+            content: 'Năm 2026, cả nước chung tay tiết kiệm ba phần trăm điện năng ⚡. Nhà bé Nam đã lắp các tấm pin điện mặt trời ☀️ trên mái nhà. Bố mẹ cũng dạy Nam tắt bớt thiết bị điện vào giờ cao điểm từ bốn giờ đến bảy giờ tối ⏰. Nam luôn tự giác tắt quạt và đèn khi ra khỏi phòng. Nam là một dũng sĩ tiết kiệm điện tí hon! 🦸‍♂️',
             instructions: 'Bé hãy đọc to câu chuyện về ngôi nhà xanh của bạn Nam nhé!',
           },
           {
@@ -846,6 +846,32 @@ export const subjects: Subject[] = [
           },
           {
             id: 'hdtn-tk-4',
+            type: 'quiz',
+            title: 'Bé chọn hành động xanh',
+            content: 'Hành động nào dưới đây giúp gia đình bé tiết kiệm điện năng hiệu quả nhất?',
+            instructions: 'Bé chọn hành động thông minh nhất để bảo vệ Trái Đất nhé!',
+            options: [
+              'Mở cửa tủ lạnh liên tục để làm mát phòng',
+              'Bật tivi cả ngày cho chú cún xem cùng',
+              'Hẹn giờ tắt điều hòa khi ngủ và dùng quạt nhẹ ⏰'
+            ],
+            correctAnswer: 'Hẹn giờ tắt điều hòa khi ngủ và dùng quạt nhẹ ⏰'
+          },
+          {
+            id: 'hdtn-tk-5',
+            type: 'math',
+            title: 'Làm toán dũng sĩ nhỏ',
+            content: 'Nam tắt 2 chiếc bóng đèn ở phòng khách và 2 chiếc bóng đèn ở phòng học khi đi chơi. Hỏi Nam đã giúp gia đình tắt tổng cộng bao nhiêu chiếc bóng đèn?',
+            instructions: 'Bé hãy cộng số bóng đèn Nam đã tắt giúp bố mẹ nhé!',
+            options: [
+              '3 chiếc bóng đèn',
+              '4 chiếc bóng đèn 💡',
+              '5 chiếc bóng đèn'
+            ],
+            correctAnswer: '4 chiếc bóng đèn 💡'
+          },
+          {
+            id: 'hdtn-tk-6',
             type: 'drawing',
             title: 'Tô màu Cây xanh yêu thương',
             content: 'Bé hãy tô màu cho cây xanh thật đẹp để hưởng ứng lối sống xanh nhé!',
