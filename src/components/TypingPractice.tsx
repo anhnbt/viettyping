@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { IoTimeOutline, IoRefreshOutline, IoWarning, IoSpeedometerOutline, IoCheckmarkCircleOutline, IoKeyboardOutline } from 'react-icons/io5';
+import { IoTimeOutline, IoRefreshOutline, IoWarning, IoSpeedometerOutline, IoCheckmarkCircleOutline } from 'react-icons/io5';
+import { Keyboard } from 'lucide-react';
 import { useTypingSound } from '@/hooks/useTypingSound';
 import VirtualKeyboard from './VirtualKeyboard';
 import { TelemetryPayload, Flashcard } from '@/types/lesson';
@@ -307,7 +308,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
               }`}
               title={showKeyboard ? "Ẩn bàn phím ảo" : "Hiện bàn phím ảo"}
             >
-              <IoKeyboardOutline className="text-sm shrink-0" />
+              <Keyboard size={14} className="shrink-0" />
               <span>{showKeyboard ? "Ẩn phím" : "Hiện phím"}</span>
             </button>
             
