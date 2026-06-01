@@ -293,10 +293,14 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
               <TelexGuide />
             )}
 
-            {/* Context/Mascot placeholder - Makes it friendly for kids */}
-            <div className="mt-auto pt-8 flex justify-center opacity-80">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/mascot-placeholder.png" alt="Mascot" className="h-32 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
+            {/* Context/Mascot - Makes it friendly for kids */}
+            <div className="mt-auto pt-8 flex flex-col items-center gap-2 text-center opacity-90 select-none">
+              <span className="text-6xl animate-bounce" style={{ animationDuration: '3s' }}>
+                🦖
+              </span>
+              <span className="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+                Bạn Khủng Long đang cổ vũ bé!
+              </span>
             </div>
           </div>
         </div>

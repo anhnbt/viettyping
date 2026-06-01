@@ -14,6 +14,15 @@ const beVietnamPro = Be_Vietnam_Pro({
   weight: ['400', '500', '600', '700', '800', '900']
 });
 
+const BUBBLES_CONFIG = [
+  { width: 30, height: 30, left: '10%', duration: 18, delay: 1, xRange: [0, 20, -20, 0] },
+  { width: 52, height: 52, left: '26%', duration: 15, delay: 3, xRange: [0, -25, 25, 0] },
+  { width: 25, height: 25, left: '44%', duration: 22, delay: 0, xRange: [0, 15, -15, 0] },
+  { width: 44, height: 44, left: '60%', duration: 17, delay: 4, xRange: [0, -20, 20, 0] },
+  { width: 35, height: 35, left: '76%', duration: 20, delay: 2, xRange: [0, 25, -25, 0] },
+  { width: 48, height: 48, left: '88%', duration: 16, delay: 5, xRange: [0, -15, 15, 0] },
+];
+
 const levelNames: Record<string, { name: string; description: string; color: string; icon: string; bgClass: string; borderClass: string; accentColor: string }> = {
   basic: {
     name: 'Đảo Học Việc 🐢',
@@ -141,25 +150,25 @@ export default function TypingPage() {
 
       {/* Bong bóng nổi nhẹ nhàng tạo hiệu ứng hoạt hình */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        {[...Array(6)].map((_, i) => (
+        {BUBBLES_CONFIG.map((bubble, i) => (
           <motion.div
             key={i}
             className="absolute rounded-full bg-white/20 border border-white/30"
             style={{
-              width: Math.random() * 40 + 20,
-              height: Math.random() * 40 + 20,
-              left: `${Math.random() * 90 + 5}%`,
+              width: bubble.width,
+              height: bubble.height,
+              left: bubble.left,
               bottom: '-50px',
             }}
             animate={{
               y: [0, -1000],
-              x: [0, Math.random() * 40 - 20, Math.random() * 40 - 20, 0],
+              x: bubble.xRange,
               opacity: [0, 0.7, 0.7, 0]
             }}
             transition={{
-              duration: Math.random() * 10 + 15,
+              duration: bubble.duration,
               repeat: Infinity,
-              delay: Math.random() * 5,
+              delay: bubble.delay,
               ease: 'linear'
             }}
           />

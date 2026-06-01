@@ -24,6 +24,17 @@ const titles = [
   'Trở Thành Siêu Nhân Gõ Phím! ⚡'
 ];
 
+const BUBBLES_CONFIG = [
+  { width: 32, height: 32, left: '8%', duration: 22, delay: 1, xRange: [0, 25, -25, 0] },
+  { width: 50, height: 50, left: '23%', duration: 18, delay: 4, xRange: [0, -30, 30, 0] },
+  { width: 24, height: 24, left: '38%', duration: 26, delay: 0, xRange: [0, 15, -15, 0] },
+  { width: 56, height: 56, left: '52%', duration: 20, delay: 5, xRange: [0, -20, 20, 0] },
+  { width: 36, height: 36, left: '67%', duration: 24, delay: 2, xRange: [0, 25, -25, 0] },
+  { width: 48, height: 48, left: '81%', duration: 19, delay: 6, xRange: [0, -15, 15, 0] },
+  { width: 28, height: 28, left: '92%', duration: 28, delay: 3, xRange: [0, 10, -10, 0] },
+  { width: 42, height: 42, left: '16%', duration: 21, delay: 7, xRange: [0, -20, 20, 0] },
+];
+
 export default function Home() {
   const router = useRouter();
   const { playSound } = useSound();
@@ -119,25 +130,25 @@ export default function Home() {
 
       {/* Bong bóng nổi nhẹ nhàng tạo hiệu ứng hoạt hình sinh động */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        {isMounted && [...Array(8)].map((_, i) => (
+        {isMounted && BUBBLES_CONFIG.map((bubble, i) => (
           <motion.div
             key={i}
             className="absolute rounded-full bg-white/20 border border-white/30"
             style={{
-              width: Math.random() * 40 + 20,
-              height: Math.random() * 40 + 20,
-              left: `${Math.random() * 90 + 5}%`,
+              width: bubble.width,
+              height: bubble.height,
+              left: bubble.left,
               bottom: '-55px',
             }}
             animate={{
               y: [0, -1200],
-              x: [0, Math.random() * 50 - 25, Math.random() * 50 - 25, 0],
+              x: bubble.xRange,
               opacity: [0, 0.8, 0.8, 0]
             }}
             transition={{
-              duration: Math.random() * 12 + 18,
+              duration: bubble.duration,
               repeat: Infinity,
-              delay: Math.random() * 6,
+              delay: bubble.delay,
               ease: 'linear'
             }}
           />
@@ -249,7 +260,7 @@ export default function Home() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleStartSampleLesson}
-          className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-red-400 to-pink-500 text-white font-black text-lg md:text-xl w-full md:w-auto px-6 md:px-10 py-4 md:py-5 rounded-[26px] border-b-[6px] border-red-600 shadow-[0_8px_0_0_#fca5a5] hover:shadow-[0_4px_0_0_#fca5a5] transition-all mb-10 cursor-pointer"
+          className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-red-400 to-pink-500 text-white font-black text-lg md:text-xl w-full md:w-auto px-6 md:px-10 py-4 md:py-5 rounded-[26px] border-b-[6px] border-red-600 shadow-[0_8px_0_0_#fca5a5] hover:shadow-[0_4px_0_0_#fca5a5] transition-[background-color,border-color,color,box-shadow] duration-200 mb-10 cursor-pointer"
         >
           <Sparkles className="w-5 h-5 md:w-6 md:h-6 animate-pulse" />
           <span>Học Bài Mẫu Ngay!</span>

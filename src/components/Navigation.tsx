@@ -4,9 +4,12 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import SoundToggle from '@/components/SoundToggle';
+import { useSound } from '@/contexts/SoundContext';
+import { motion } from 'framer-motion';
 
 const Navigation: React.FC = () => {
   const pathname = usePathname();
+  const { playSound } = useSound();
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -15,41 +18,53 @@ const Navigation: React.FC = () => {
     return pathname.startsWith(path);
   };
 
+  const navItems = [
+    { path: '/', label: 'Học các môn', icon: '📚', activeBg: 'bg-rose-500 hover:bg-rose-600' },
+    { path: '/typing', label: 'Luyện gõ phím', icon: '⌨️', activeBg: 'bg-sky-500 hover:bg-sky-600' },
+    { path: '/parents', label: 'Góc phụ huynh', icon: '👨‍👩‍👧‍👦', activeBg: 'bg-emerald-500 hover:bg-emerald-600' },
+  ];
+
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="flex justify-center gap-4 mb-8">
-        <Link
-          href="/"
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-            isActive('/')
-              ? 'bg-blue-500 text-white'
-              : 'bg-white text-blue-500 border border-blue-500 hover:bg-blue-50'
-          }`}
-        >
-          📚 Học các môn
-        </Link>
-        <Link
-          href="/typing"
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-            isActive('/typing')
-              ? 'bg-blue-500 text-white'
-              : 'bg-white text-blue-500 border border-blue-500 hover:bg-blue-50'
-          }`}
-        >
-          ⌨️ Luyện gõ phím
-        </Link>
-        <Link
-          href="/parents"
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-            isActive('/parents')
-              ? 'bg-blue-500 text-white'
-              : 'bg-white text-blue-500 border border-blue-500 hover:bg-blue-50'
-          }`}
-        >
-          👨‍👩‍👧‍👦 Góc phụ huynh
-        </Link>
-        <div className="flex items-center">
-          <SoundToggle />
+    <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="bg-white border-4 border-slate-800 rounded-[28px] p-2.5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-[6px_6px_0px_0px_#1e293b] select-none">
+        
+        {/* Nhóm các tab điều hướng */}
+        <div className="flex flex-wrap justify-center items-center gap-2 md:gap-3 w-full md:w-auto">
+          {navItems.map((item) => {
+            const active = isActive(item.path);
+            return (
+              <motion.div
+                key={item.path}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="w-full sm:w-auto"
+              >
+                <Link
+                  href={item.path}
+                  onClick={() => playSound('click')}
+                  className={`w-full sm:w-auto px-5 py-3 rounded-2xl font-black text-sm md:text-base flex items-center justify-center gap-2 border-2 transition-[background-color,border-color,color,box-shadow] duration-150 ${
+                    active
+                      ? `${item.activeBg} text-white border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] translate-y-[-1px]`
+                      : 'bg-white text-slate-700 border-transparent hover:bg-amber-100/40 hover:text-slate-900'
+                  }`}
+                >
+                  <span className="text-lg">{item.icon}</span>
+                  <span>{item.label}</span>
+                </Link>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Nút bật/tắt âm thanh */}
+        <div className="flex items-center shrink-0">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center justify-center border-2 border-slate-800 rounded-2xl p-1 bg-amber-50/50 shadow-[3px_3px_0px_0px_#1e293b] hover:bg-amber-100/50 transition-colors"
+          >
+            <SoundToggle />
+          </motion.div>
         </div>
       </div>
     </div>
@@ -57,3 +72,4 @@ const Navigation: React.FC = () => {
 };
 
 export default Navigation;
+
