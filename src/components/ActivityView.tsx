@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { useProgress } from '@/hooks/useProgress';
 import { hasVietnameseDiacritics } from '@/utils/vietnameseUtils';
 import TelexGuide from './TelexGuide';
+import DinoMascot from './DinoMascot';
 
 // Import Adapters
 import { 
@@ -199,14 +200,14 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const isTopicComplete = progress === 100;
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-gray-50">
+    <div className="flex flex-col h-screen overflow-hidden bg-soft-cream">
       {/* Professional Header */}
-      <header className="h-14 bg-white/80 backdrop-blur-lg border-b border-gray-200/60 flex items-center justify-between px-4 shrink-0 z-20 shadow-sm relative">
+      <header className="h-14 bg-white/90 border-b-4 border-slate-800 flex items-center justify-between px-4 shrink-0 z-20 shadow-sm relative">
         <div className="flex items-center gap-3">
           {/* Back Button */}
           <Link
             href={`/subjects/${subjectId}`}
-            className="group flex items-center gap-1.5 p-2 -ml-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+            className="group flex items-center gap-1.5 p-2 -ml-1 text-gray-500 hover:text-sky-600 hover:bg-sky-blue/15 rounded-xl transition-all"
             title="Quay lại"
           >
             <IoArrowBack className="text-xl group-hover:-translate-x-0.5 transition-transform" />
@@ -245,10 +246,10 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
                   key={activity.id}
                   onClick={() => setCurrentActivityIndex(index)}
                   className={`w-2.5 h-2.5 rounded-full transition-all ${isActive
-                    ? 'bg-blue-600 scale-125 ring-2 ring-blue-200'
+                    ? 'bg-sky-blue scale-125 ring-2 ring-sky-200 border border-slate-800'
                     : isCompleted
-                      ? 'bg-green-500 hover:bg-green-600'
-                      : 'bg-gray-300 hover:bg-gray-400'
+                      ? 'bg-dino-green hover:bg-dino-green/90 border border-slate-800'
+                      : 'bg-slate-200 hover:bg-slate-300 border border-slate-400'
                     }`}
                   title={activity.title}
                 />
@@ -257,7 +258,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           </div>
 
           {/* Progress Badge */}
-          <div className={`px-3 py-1 rounded-full text-xs font-bold ${progress === 100 ? 'bg-green-100 text-green-700' : 'bg-blue-50 text-blue-600 border border-blue-100'
+          <div className={`px-3 py-1 rounded-full text-xs font-black border-2 border-slate-800 ${progress === 100 ? 'bg-dino-green/20 text-slate-800' : 'bg-sky-blue/20 text-slate-800'
             }`}>
             {Math.round(progress)}%
           </div>
@@ -265,7 +266,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
 
         {/* Intra-activity Progress Bar (Optional) */}
         {currentProgress > 0 && currentProgress < 100 && (
-          <div className="absolute bottom-0 left-0 h-1 bg-blue-500 transition-all duration-300" style={{ width: `${currentProgress}%` }} />
+          <div className="absolute bottom-0 left-0 h-1 bg-sky-blue transition-all duration-300" style={{ width: `${currentProgress}%` }} />
         )}
       </header>
 
@@ -273,10 +274,10 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
       <div className="flex flex-1 overflow-hidden relative">
 
         {/* Left Panel: Instructions & Avatar */}
-        <div className="w-80 md:w-96 bg-white border-r border-gray-200 flex flex-col shrink-0 overflow-y-auto z-10 hidden lg:flex">
+        <div className="w-80 md:w-96 bg-white border-r-4 border-slate-800 flex flex-col shrink-0 overflow-y-auto z-10 hidden lg:flex">
           <div className="p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold">
+              <div className="w-10 h-10 rounded-full bg-sky-blue/20 border border-slate-800 flex items-center justify-center text-sky-600 text-xl font-bold">
                 {currentActivityIndex + 1}
               </div>
               <h2 className="text-xl font-bold text-gray-800">
@@ -284,7 +285,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
               </h2>
             </div>
 
-            <div className="bg-blue-50 p-4 rounded-xl text-gray-700 leading-relaxed border border-blue-100 mb-6">
+            <div className="bg-sky-blue/10 p-4 rounded-2xl text-slate-800 leading-relaxed border-2 border-slate-800 mb-6">
               {currentActivity.instructions}
             </div>
 
@@ -294,11 +295,9 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
             )}
 
             {/* Context/Mascot - Makes it friendly for kids */}
-            <div className="mt-auto pt-8 flex flex-col items-center gap-2 text-center opacity-90 select-none">
-              <span className="text-6xl animate-bounce" style={{ animationDuration: '3s' }}>
-                🦖
-              </span>
-              <span className="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+            <div className="mt-auto pt-8 flex flex-col items-center gap-2.5 text-center select-none">
+              <DinoMascot className="w-24 h-24" />
+              <span className="text-xs font-black text-slate-700 bg-dino-green/10 px-3 py-1.5 rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b]">
                 Bạn Khủng Long đang cổ vũ bé!
               </span>
             </div>
@@ -306,9 +305,9 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
         </div>
 
         {/* Right Panel: Workspace / Activity Area */}
-        <div className="flex-1 bg-gray-100/50 flex flex-col relative overflow-hidden">
+        <div className="flex-1 bg-soft-cream/60 flex flex-col relative overflow-hidden">
           {/* Mobile Instruction Toggle (Visible only on small screens) */}
-          <div className="lg:hidden p-4 bg-white border-b border-gray-200 shrink-0">
+          <div className="lg:hidden p-4 bg-white border-b-4 border-slate-800 shrink-0">
             <h2 className="font-bold text-gray-800 mb-1">{currentActivity.title}</h2>
             <p className="text-sm text-gray-600 line-clamp-2 mb-2">{currentActivity.instructions}</p>
             {currentActivity.type === 'typing' && hasVietnameseDiacritics(currentActivity.content) && (
@@ -329,13 +328,13 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
         {/* Completion Overlay */}
         {isTopicComplete && (
           <div className="absolute inset-0 bg-white/90 z-50 flex items-center justify-center backdrop-blur-sm animate-fade-in">
-            <div className="text-center p-8 bg-white rounded-3xl shadow-2xl border-4 border-green-100 max-w-lg mx-4">
-              <div className="text-8xl mb-4 animate-bounce">🎉</div>
-              <h3 className="text-3xl font-bold text-green-800 mb-2">
+            <div className="text-center p-8 bg-white rounded-3xl shadow-[8px_8px_0px_0px_#1e293b] border-4 border-slate-800 max-w-lg mx-4 flex flex-col items-center">
+              <DinoMascot variant="victory" className="w-32 h-32 mb-4" />
+              <h3 className="text-3xl font-black text-slate-800 mb-2">
                 Hoàn thành xuất sắc!
               </h3>
-              <p className="text-gray-600 text-lg mb-8">
-                Con đã hoàn thành toàn bộ chủ đề <span className="font-bold text-blue-600">{topic.title}</span>.
+              <p className="text-gray-600 text-lg mb-8 font-bold">
+                Con đã hoàn thành toàn bộ chủ đề <span className="font-extrabold text-sky-600">{topic.title}</span>.
               </p>
               <div className="flex gap-4 justify-center">
                 <button
@@ -344,11 +343,14 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
                     clearTopicProgress(activityIds);
                     setCurrentActivityIndex(0);
                   }}
-                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors"
+                  className="px-6 py-3 bg-slate-100 text-slate-700 rounded-xl font-black border-2 border-slate-800 shadow-[0_4px_0_0_#CBD5E1] hover:translate-y-[-1px] hover:shadow-[0_5px_0_0_#CBD5E1] active:translate-y-[2px] active:shadow-[0_2px_0_0_#CBD5E1] transition-all cursor-pointer"
                 >
                   Làm lại
                 </button>
-                <Link href={`/subjects/${subjectId}`} className="px-8 py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition-colors shadow-lg hover:shadow-green-200">
+                <Link 
+                  href={`/subjects/${subjectId}`} 
+                  className="px-8 py-3 bg-dino-green text-slate-800 rounded-xl font-black border-2 border-slate-800 shadow-[0_4px_0_0_#16A34A] hover:translate-y-[-1px] hover:shadow-[0_5px_0_0_#16A34A] active:translate-y-[2px] active:shadow-[0_2px_0_0_#16A34A] transition-all cursor-pointer"
+                >
                   Bài học tiếp theo
                 </Link>
               </div>

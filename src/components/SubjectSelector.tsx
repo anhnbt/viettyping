@@ -57,7 +57,7 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
         <motion.h2 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-4xl md:text-5xl font-black text-indigo-950 mb-3 drop-shadow-sm tracking-wide"
+          className="text-4xl md:text-5xl font-black text-slate-800 mb-3 drop-shadow-sm tracking-wide"
         >
           🎒 Lớp Học Kỳ Diệu
         </motion.h2>
@@ -65,7 +65,7 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-lg md:text-xl text-indigo-700/80 font-bold"
+          className="text-lg md:text-xl text-sky-650 font-black"
         >
           Bé hãy chọn một môn học để bắt đầu chuyến phiêu lưu tri thức nhé! 🚀
         </motion.p>
@@ -123,7 +123,7 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
               {/* Nội dung môn học */}
               <div className="p-5 flex flex-col justify-between flex-grow min-h-[170px]">
                 <div>
-                  <h3 className="text-lg md:text-xl font-black text-slate-800 mb-1.5 tracking-wide line-clamp-1 group-hover:text-indigo-600 transition-colors">
+                  <h3 className="text-lg md:text-xl font-black text-slate-800 mb-1.5 tracking-wide line-clamp-1 group-hover:text-sky-600 transition-colors">
                     {subject.name}
                   </h3>
                   <p className="text-xs text-slate-500 font-bold line-clamp-2 leading-relaxed mb-4">
@@ -135,7 +135,7 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
                   {/* Lớp & Số chủ đề */}
                   <div className="flex items-center justify-between gap-2 mb-3">
                     {subject.grade && (
-                      <span className="inline-flex items-center bg-indigo-50 border-2 border-indigo-200 text-indigo-750 rounded-full px-2.5 py-0.5 text-[10px] font-black tracking-wide">
+                      <span className="inline-flex items-center bg-sky-blue/15 border-2 border-slate-800 text-slate-800 rounded-full px-2.5 py-0.5 text-[10px] font-black tracking-wide">
                         {subject.grade}
                       </span>
                     )}
@@ -148,14 +148,14 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-[10px] font-black tracking-wide text-slate-500">
                       <span>Tiến độ</span>
-                      <span className="flex items-center gap-0.5 text-indigo-650">
-                        {progress > 0 && <Star className="w-3 h-3 text-amber-500 fill-amber-500 animate-pulse" />}
+                      <span className="flex items-center gap-0.5 text-sky-600">
+                        {progress > 0 && <Star className="w-3 h-3 text-amber-550 fill-amber-500 animate-pulse" />}
                         {progress}%
                       </span>
                     </div>
                     <div className="w-full bg-slate-100 h-3.5 rounded-full p-0.5 overflow-hidden border-2 border-slate-200">
                       <motion.div
-                        className="bg-gradient-to-r from-amber-400 to-orange-500 h-full rounded-full"
+                        className="bg-gradient-to-r from-sunshine-yellow to-coral-orange h-full rounded-full"
                         initial={{ width: 0 }}
                         animate={{ width: `${progress}%` }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -176,9 +176,9 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
         transition={{ delay: 0.5 }}
         className="mt-14 text-center"
       >
-        <div className="inline-flex items-center gap-2 bg-indigo-50 border-2 border-indigo-100 rounded-full px-4 md:px-6 py-3.5 shadow-sm hover:scale-102 transition-transform">
-          <div className="w-3.5 h-3.5 bg-emerald-500 rounded-full animate-ping shrink-0"></div>
-          <span className="text-indigo-900 font-black text-xs md:text-base">
+        <div className="inline-flex items-center gap-2 bg-dino-green/15 border-2 border-slate-800 rounded-2xl px-4 md:px-6 py-3.5 shadow-[3px_3px_0px_0px_#1e293b] hover:scale-102 transition-transform">
+          <div className="w-3.5 h-3.5 bg-dino-green rounded-full animate-ping shrink-0 border border-slate-800"></div>
+          <span className="text-slate-850 font-black text-xs md:text-base">
             Tất cả các môn đều có phần thưởng Sao Vàng và Huy Hiệu đang chờ bé! ⭐
           </span>
         </div>

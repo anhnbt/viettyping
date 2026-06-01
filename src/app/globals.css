@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fdfbf7; /* Soft Cream */
+  --foreground: #1e293b; /* Slate-800 */
 }
 
 @theme inline {
@@ -10,13 +10,13 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-be-vietnam-pro), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  
+  /* Brand Kit Colors */
+  --color-dino-green: #4ade80;
+  --color-sky-blue: #60a5fa;
+  --color-coral-orange: #f87171;
+  --color-sunshine-yellow: #fbbf24;
+  --color-soft-cream: #fdfbf7;
 }
 
 body {

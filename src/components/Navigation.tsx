@@ -19,9 +19,9 @@ const Navigation: React.FC = () => {
   };
 
   const navItems = [
-    { path: '/', label: 'Học các môn', icon: '📚', activeBg: 'bg-rose-500 hover:bg-rose-600' },
-    { path: '/typing', label: 'Luyện gõ phím', icon: '⌨️', activeBg: 'bg-sky-500 hover:bg-sky-600' },
-    { path: '/parents', label: 'Góc phụ huynh', icon: '👨‍👩‍👧‍👦', activeBg: 'bg-emerald-500 hover:bg-emerald-600' },
+    { path: '/', label: 'Học các môn', icon: '📚', activeBg: 'bg-coral-orange hover:bg-coral-orange/90', activeShadow: 'shadow-[0_1px_0_0_#DC2626]' },
+    { path: '/typing', label: 'Luyện gõ phím', icon: '⌨️', activeBg: 'bg-sky-blue hover:bg-sky-blue/90', activeShadow: 'shadow-[0_1px_0_0_#2563EB]' },
+    { path: '/parents', label: 'Góc phụ huynh', icon: '👨‍👩‍👧‍👦', activeBg: 'bg-dino-green hover:bg-dino-green/90', activeShadow: 'shadow-[0_1px_0_0_#16A34A]' },
   ];
 
   return (
@@ -42,10 +42,10 @@ const Navigation: React.FC = () => {
                 <Link
                   href={item.path}
                   onClick={() => playSound('click')}
-                  className={`w-full sm:w-auto px-5 py-3 rounded-2xl font-black text-sm md:text-base flex items-center justify-center gap-2 border-2 transition-[background-color,border-color,color,box-shadow] duration-150 ${
+                  className={`w-full sm:w-auto px-5 py-3 rounded-2xl font-black text-sm md:text-base flex items-center justify-center gap-2 border-2 transition-all duration-150 ${
                     active
-                      ? `${item.activeBg} text-white border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] translate-y-[-1px]`
-                      : 'bg-white text-slate-700 border-transparent hover:bg-amber-100/40 hover:text-slate-900'
+                      ? `${item.activeBg} text-white border-slate-800 ${item.activeShadow} translate-y-[3px]`
+                      : 'bg-white text-slate-700 border-slate-800 shadow-[0_4px_0_0_#1e293b] hover:translate-y-[-1px] hover:shadow-[0_5px_0_0_#1e293b]'
                   }`}
                 >
                   <span className="text-lg">{item.icon}</span>
