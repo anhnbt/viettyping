@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation';
 import { useSound } from '@/contexts/SoundContext';
 import { motion } from 'framer-motion';
 import { Home, Keyboard, Search, Sparkles } from 'lucide-react';
-import { Be_Vietnam_Pro } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 
-const beVietnamPro = Be_Vietnam_Pro({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
-  weight: ['400', '500', '600', '700', '800', '900']
+  weight: ['400', '500', '600', '700', '800']
 });
 
 export default function NotFound() {
@@ -30,7 +30,7 @@ export default function NotFound() {
   };
 
   return (
-    <main className={`min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center p-6 relative overflow-hidden ${beVietnamPro.className}`}>
+    <main className={`min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center p-6 relative overflow-hidden ${plusJakartaSans.className}`}>
       
       {/* Đám mây trôi lơ lửng */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">

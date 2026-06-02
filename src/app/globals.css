@@ -20,35 +20,42 @@
 }
 
 [data-theme="turtle"] {
-  --color-background: #f8faf3;
-  --color-foreground: #191c18;
-  --color-primary: #006d30;
-  --color-primary-depth: #005322;
-  --color-primary-container: #54d075;
-  --color-on-primary-container: #00210a;
-  --color-secondary: #006d30;
-  --color-secondary-depth: #005322;
-  --color-tertiary: #695c51;
-  --color-tertiary-depth: #50453b;
-  --color-accent: #ffc233;
-  --color-accent-depth: #e0a61a;
+  --color-background: #FCF9ED;
+  --color-foreground: #3C3C3B;
+  --color-primary: #50D17B;
+  --color-primary-depth: #3C3C3B;
+  --color-primary-container: #50D17B;
+  --color-on-primary-container: #3C3C3B;
+  --color-secondary: #4DABF7;
+  --color-secondary-depth: #3C3C3B;
+  --color-secondary-container: #4DABF7;
+  --color-on-secondary-container: #3C3C3B;
+  --color-tertiary: #FF6B6B;
+  --color-tertiary-depth: #3C3C3B;
+  --color-tertiary-container: #FF6B6B;
+  --color-on-tertiary-container: #ffffff;
+  --color-accent: #FFCA3A;
+  --color-accent-depth: #3C3C3B;
   --color-surface: #ffffff;
-  --color-on-surface: #191c18;
-  --color-surface-container: #edefe8;
-  --color-outline-variant: #bdcaba;
+  --color-on-surface: #3C3C3B;
+  --color-surface-container: #FCF9ED;
+  --color-outline-variant: #CBC4D2;
 }
 
 [data-theme="bunny"] {
   --color-background: #fff8f4;
   --color-foreground: #231a11;
   --color-primary: #8f4e00;
-  --color-primary-depth: #8f4e00;
-  --color-primary-container: #ff9f43; /* carrot orange */
+  --color-primary-depth: #6d3a00;
+  --color-primary-container: #ff9f43;
   --color-on-primary-container: #6d3a00;
   --color-secondary: #6b5e31;
-  --color-secondary-depth: #6b5e31;
+  --color-secondary-depth: #52461c;
+  --color-secondary-container: #f4e2a9;
+  --color-on-secondary-container: #716436;
   --color-tertiary: #ae2f34;
-  --color-tertiary-depth: #ae2f34;
+  --color-tertiary-depth: #8c1520;
+  --color-tertiary-container: #ff9a97;
   --color-accent: #ffb77a;
   --color-accent-depth: #8f4e00;
   --color-surface: #fff8f4;
@@ -58,22 +65,25 @@
 }
 
 [data-theme="pig"] {
-  --color-background: #fff8f4;
-  --color-foreground: #231a11;
-  --color-primary: #874e58;
-  --color-primary-depth: #6b3741;
+  --color-background: #fcf9ed;
+  --color-foreground: #1d1b20;
+  --color-primary: #ffb6c1;
+  --color-primary-depth: #d496a0;
   --color-primary-container: #ffb6c1;
-  --color-on-primary-container: #7b444e;
-  --color-secondary: #6d595b;
-  --color-secondary-depth: #544244;
-  --color-tertiary: #a9362e;
-  --color-tertiary-depth: #881e1a;
-  --color-accent: #ffb8b0;
-  --color-accent-depth: #9b2c26;
-  --color-surface: #fff8f4;
-  --color-on-surface: #231a11;
-  --color-surface-container: #fdebdc;
-  --color-outline-variant: #d6c2c3;
+  --color-on-primary-container: #4a3f35;
+  --color-secondary: #63597c;
+  --color-secondary-depth: #4b4263;
+  --color-secondary-container: #e1d4fd;
+  --color-on-secondary-container: #645a7d;
+  --color-tertiary: #765b00;
+  --color-tertiary-depth: #503d00;
+  --color-tertiary-container: #c9a74d;
+  --color-accent: #ffdf93;
+  --color-accent-depth: #765b00;
+  --color-surface: #fdf7ff;
+  --color-on-surface: #1d1b20;
+  --color-surface-container: #f2ecf4;
+  --color-outline-variant: #cbc4d2;
 }
 
 [data-theme="leopard"] {
@@ -81,10 +91,15 @@
   --color-foreground: #231a11;
   --color-primary: #7a5900;
   --color-primary-depth: #5c4200;
+  --color-primary-container: #f9bd2d;
+  --color-on-primary-container: #231a11;
   --color-secondary: #75584d;
   --color-secondary-depth: #5b4137;
+  --color-secondary-container: #fdebdc;
+  --color-on-secondary-container: #4f4534;
   --color-tertiary: #725c06;
   --color-tertiary-depth: #564500;
+  --color-tertiary-container: #fcf3e8;
   --color-accent: #f9bd2d;
   --color-accent-depth: #7a5900;
   --color-surface: #ffffff;
@@ -111,7 +126,7 @@
   --color-surface-container: var(--color-surface-container);
   --color-outline-variant: var(--color-outline-variant);
 
-  --font-sans: var(--font-be-vietnam-pro), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-plus-jakarta-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
   
   /* Brand Kit Colors (giữ lại tương thích) */
@@ -125,7 +140,7 @@
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-be-vietnam-pro), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-plus-jakarta-sans), ui-sans-serif, system-ui, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 

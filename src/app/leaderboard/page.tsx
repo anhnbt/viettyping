@@ -7,11 +7,11 @@ import { ArrowLeft, Trophy, Flame, Crown, Sparkles, Medal, Play } from 'lucide-r
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
 import { weeklyLeaderboard, allTimeLeaderboard, LeaderboardUser } from '@/data/leaderboard';
-import { Be_Vietnam_Pro } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 
-const beVietnamPro = Be_Vietnam_Pro({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
-  weight: ['400', '500', '600', '700', '800', '900']
+  weight: ['400', '500', '600', '700', '800']
 });
 
 export default function LeaderboardPage() {
@@ -24,6 +24,12 @@ export default function LeaderboardPage() {
   const [userStreak, setUserStreak] = useState<number>(0);
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
+  // States tính toán Huy hiệu
+  const [completedCount, setCompletedCount] = useState<number>(0);
+  const [hasAccuracyBadge, setHasAccuracyBadge] = useState<boolean>(false);
+  const [hasSpeedBadge, setHasSpeedBadge] = useState<boolean>(false);
+  const [hasTurtleBadge, setHasTurtleBadge] = useState<boolean>(false);
+
   useEffect(() => {
     setIsMounted(true);
     try {
@@ -31,10 +37,59 @@ export default function LeaderboardPage() {
       const savedStreak = parseInt(localStorage.getItem('typing_streak') || '0', 10);
       setUserXp(savedXp);
       setUserStreak(savedStreak);
+
+      const completed = JSON.parse(localStorage.getItem('typing_completed_lessons') || '[]');
+      setCompletedCount(completed.length);
+      setHasAccuracyBadge(localStorage.getItem('viettyping_badge_accuracy_100') === 'true');
+      setHasSpeedBadge(localStorage.getItem('viettyping_badge_speed_20') === 'true');
+      setHasTurtleBadge(localStorage.getItem('viettyping_badge_turtle_rescue') === 'true');
     } catch (e) {
       console.error('Failed to load user progress:', e);
     }
   }, []);
+
+  const badges = [
+    {
+      id: 'explore',
+      name: 'Khám Phá',
+      emoji: '🦖',
+      desc: 'Hoàn thành bài luyện gõ đầu tiên',
+      unlocked: completedCount >= 1,
+      color: 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-emerald-100'
+    },
+    {
+      id: 'accuracy',
+      name: 'Chính Xác',
+      emoji: '🎯',
+      desc: 'Gõ chuẩn xác 100% trong bài tập',
+      unlocked: hasAccuracyBadge,
+      color: 'bg-rose-50 border-rose-300 text-rose-800 shadow-rose-100'
+    },
+    {
+      id: 'speed',
+      name: 'Siêu Tốc',
+      emoji: '⚡',
+      desc: 'Gõ phím tốc độ trên 20 WPM',
+      unlocked: hasSpeedBadge,
+      color: 'bg-purple-50 border-purple-300 text-purple-800 shadow-purple-100'
+    },
+    {
+      id: 'streak',
+      name: 'Chăm Chỉ',
+      emoji: '🔥',
+      desc: 'Chuỗi học tập đạt từ 3 ngày',
+      unlocked: userStreak >= 3,
+      color: 'bg-orange-50 border-orange-355 text-orange-850 shadow-orange-100'
+    },
+    {
+      id: 'rescue',
+      name: 'Hiệp Sĩ Rùa',
+      emoji: '🐢',
+      desc: 'Giải cứu thành công Rùa con',
+      unlocked: hasTurtleBadge,
+      color: 'bg-sky-50 border-sky-300 text-sky-800 shadow-sky-100'
+    }
+  ];
 
   const handleBack = () => {
     playSound('click');
@@ -86,7 +141,7 @@ export default function LeaderboardPage() {
   const diffXpToTop10 = rank10User ? Math.max(0, rank10User.xp - userXp) : 0;
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-yellow-55 via-amber-50 to-orange-100 relative pb-28 ${beVietnamPro.className}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-yellow-55 via-amber-50 to-orange-100 relative pb-28 ${plusJakartaSans.className}`}>
       
       {/* Hiệu ứng bong bóng tròn nhẹ nhàng */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -306,6 +361,53 @@ export default function LeaderboardPage() {
               </motion.div>
             );
           })}
+        </motion.div>
+
+        {/* Section Huy Hiệu của bé */}
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-8 bg-white/70 backdrop-blur-md border-4 border-slate-800 rounded-[28px] p-5 md:p-6 shadow-[6px_6px_0px_0px_#1e293b]"
+        >
+          <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
+            <span>🏅 Huy Hiệu Học Tập Của Bé</span>
+            <Sparkles className="w-5 h-5 text-yellow-500 fill-yellow-300 animate-pulse" />
+          </h2>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            {badges.map((badge) => (
+              <div 
+                key={badge.id}
+                className={`border-3 border-slate-850 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center transition-all ${
+                  badge.unlocked 
+                    ? `${badge.color} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] hover:scale-103` 
+                    : 'bg-slate-100/70 border-slate-300 text-slate-400 opacity-60'
+                }`}
+                title={badge.desc}
+              >
+                <div className="relative">
+                  <span className={`text-4.5xl inline-block mb-2 ${badge.unlocked ? 'animate-bounce' : 'grayscale'}`}>
+                    {badge.emoji}
+                  </span>
+                  {!badge.unlocked && (
+                    <div className="absolute -top-1.5 -right-1.5 bg-slate-200 border-2 border-slate-400 rounded-full w-5 h-5 flex items-center justify-center text-[10px] text-slate-500 shadow-sm">
+                      🔒
+                    </div>
+                  )}
+                </div>
+                
+                <div>
+                  <h4 className="font-black text-xs md:text-sm text-slate-850 leading-tight mb-1">
+                    {badge.name}
+                  </h4>
+                  <p className="text-[10px] font-bold text-slate-500 leading-tight leading-relaxed max-w-[110px] mx-auto">
+                    {badge.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         {/* Sticky Bottom Card động viên bé */}

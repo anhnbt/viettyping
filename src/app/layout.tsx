@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
-import { Be_Vietnam_Pro } from 'next/font/google'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { SoundProvider } from '@/contexts/SoundContext'
 import { StudentProvider } from '@/contexts/StudentContext'
 import StudentConfigModal from '@/components/StudentConfigModal'
 
-const beVietnamPro = Be_Vietnam_Pro({
-  weight: ['400', '500', '600', '700', '800', '900'],
+const plusJakartaSans = Plus_Jakarta_Sans({
+  weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin', 'vietnamese'],
-  variable: '--font-be-vietnam-pro',
+  variable: '--font-plus-jakarta-sans',
   display: 'swap',
 })
 
@@ -23,8 +23,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="vi" className={beVietnamPro.variable}>
-      <body className={beVietnamPro.className}>
+    <html lang="vi" className={plusJakartaSans.variable}>
+      <body className={plusJakartaSans.className}>
         <SoundProvider>
           <StudentProvider>
             {children}

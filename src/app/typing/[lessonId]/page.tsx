@@ -7,11 +7,11 @@ import TypingPractice, { TypingTask } from '@/components/TypingPractice';
 import CompletionModal from '@/components/CompletionModal';
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
 import { TelemetryPayload } from '@/types/lesson';
-import { Be_Vietnam_Pro } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 
-const beVietnamPro = Be_Vietnam_Pro({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
-  weight: ['400', '500', '600', '700', '800', '900']
+  weight: ['400', '500', '600', '700', '800']
 });
 
 interface Props {
@@ -65,6 +65,14 @@ export default function LessonPage({ params }: Props) {
       // 3. Cập nhật Streak
       const currentStreak = parseInt(localStorage.getItem('typing_streak') || '0', 10);
       localStorage.setItem('typing_streak', String(currentStreak + 1));
+
+      // 4. Lưu cờ Huy hiệu (Badges) dựa trên thành tích
+      if (telemetry.score === 100) {
+        localStorage.setItem('viettyping_badge_accuracy_100', 'true');
+      }
+      if ((telemetry.metadata?.wpm || 0) > 20) {
+        localStorage.setItem('viettyping_badge_speed_20', 'true');
+      }
     } catch (err) {
       console.error('Failed to save typing progress to localStorage:', err);
     }
@@ -100,7 +108,7 @@ export default function LessonPage({ params }: Props) {
   }, [getNextLesson, router]);
 
   return (
-    <main className={`min-h-screen bg-gradient-to-b from-sky-100 via-blue-50 to-white py-6 ${beVietnamPro.className}`}>
+    <main className={`min-h-screen bg-gradient-to-b from-sky-100 via-blue-50 to-white py-6 ${plusJakartaSans.className}`}>
       <div className="w-full px-6 md:px-12">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
           <div className="flex items-center gap-4">
@@ -112,7 +120,7 @@ export default function LessonPage({ params }: Props) {
               <span>Quay lại đảo</span>
             </button>
           </div>
-          <h1 className={`text-3xl md:text-4xl font-bold text-blue-800 text-center ${beVietnamPro.className}`}>
+          <h1 className={`text-3xl md:text-4xl font-bold text-blue-800 text-center ${plusJakartaSans.className}`}>
             {lesson.title}
           </h1>
           {getNextLesson() ? (

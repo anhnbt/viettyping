@@ -5,13 +5,13 @@ import { lessons, Lesson } from '@/data/lessons';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSound } from '@/contexts/SoundContext';
-import { Be_Vietnam_Pro } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCcw, Check, BookOpen, Keyboard, Sparkles } from 'lucide-react';
 
-const beVietnamPro = Be_Vietnam_Pro({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
-  weight: ['400', '500', '600', '700', '800', '900']
+  weight: ['400', '500', '600', '700', '800']
 });
 
 const BUBBLES_CONFIG = [
@@ -127,7 +127,7 @@ export default function TypingPage() {
   };
 
   return (
-    <main className={`min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 relative overflow-hidden pb-16 ${beVietnamPro.className}`}>
+    <main className={`min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 relative overflow-hidden pb-16 ${plusJakartaSans.className}`}>
       
       {/* Các đám mây trôi tự động */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -180,12 +180,12 @@ export default function TypingPage() {
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
           <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
             <Link
-              href="/"
+              href="/lesson"
               onClick={() => playSound('click')}
               className="flex items-center gap-2 px-5 py-3 bg-white text-indigo-600 rounded-[22px] font-bold border-2 border-indigo-200 shadow-[4px_4px_0px_0px_#c7d2fe] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none text-sm"
             >
               <BookOpen className="w-4 h-4 text-indigo-500 animate-bounce" />
-              <span>📚 Học các môn</span>
+              <span>📚 Bài học của bé</span>
             </Link>
             <button
               disabled
@@ -204,7 +204,7 @@ export default function TypingPage() {
             </Link>
           </div>
 
-          <h1 className={`text-4xl md:text-5xl font-bold text-center text-indigo-800 tracking-wide drop-shadow-sm ${beVietnamPro.className}`}>
+          <h1 className={`text-4xl md:text-5xl font-bold text-center text-indigo-800 tracking-wide drop-shadow-sm ${plusJakartaSans.className}`}>
             ⌨️ Đảo Gõ Phím Kỳ Thú
           </h1>
         </div>
@@ -223,7 +223,7 @@ export default function TypingPage() {
               </motion.div>
               <div>
                 <div className="text-xs text-amber-700 font-bold uppercase tracking-wider">Điểm XP</div>
-                <div className={`text-2xl font-black text-amber-500 ${beVietnamPro.className}`}>{xp} XP</div>
+                <div className={`text-2xl font-black text-amber-500 ${plusJakartaSans.className}`}>{xp} XP</div>
               </div>
             </div>
 
@@ -238,7 +238,7 @@ export default function TypingPage() {
               </motion.div>
               <div>
                 <div className="text-xs text-orange-700 font-bold uppercase tracking-wider">Chuỗi Gõ</div>
-                <div className={`text-2xl font-black text-orange-500 ${beVietnamPro.className}`}>{streak} ngày</div>
+                <div className={`text-2xl font-black text-orange-500 ${plusJakartaSans.className}`}>{streak} ngày</div>
               </div>
             </div>
 
@@ -288,7 +288,7 @@ export default function TypingPage() {
                 }`}
               >
                 <span className="text-xl md:text-2xl">{tabInfo.icon}</span>
-                <span className={beVietnamPro.className}>{tab === 'basic' ? 'Cơ bản' : tab === 'intermediate' ? 'Trung cấp' : 'Nâng cao'}</span>
+                <span className={plusJakartaSans.className}>{tab === 'basic' ? 'Cơ bản' : tab === 'intermediate' ? 'Trung cấp' : 'Nâng cao'}</span>
               </button>
             );
           })}
@@ -310,7 +310,7 @@ export default function TypingPage() {
                 {levelNames[activeTab].icon}
               </span>
               <div>
-                <h2 className={`text-2xl md:text-3xl font-black text-gray-800 ${beVietnamPro.className}`}>
+                <h2 className={`text-2xl md:text-3xl font-black text-gray-800 ${plusJakartaSans.className}`}>
                   {levelNames[activeTab].name}
                 </h2>
                 <p className="text-gray-600 text-sm md:text-base mt-1">
@@ -408,7 +408,7 @@ export default function TypingPage() {
             💡
           </div>
           <div>
-            <h3 className={`text-lg md:text-xl font-bold text-indigo-900 ${beVietnamPro.className}`}>
+            <h3 className={`text-lg md:text-xl font-bold text-indigo-900 ${plusJakartaSans.className}`}>
               Bí kíp gõ phím của Siêu Nhân Nhí!
             </h3>
             <p className="text-gray-600 text-sm md:text-base mt-1 leading-relaxed">

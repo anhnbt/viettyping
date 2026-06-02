@@ -4,11 +4,11 @@ import { useProgress } from '@/hooks/useProgress';
 import { useSound } from '@/contexts/SoundContext';
 import { motion } from 'framer-motion';
 import { ChevronRight, Star } from 'lucide-react';
-import { Be_Vietnam_Pro } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 
-const beVietnamPro = Be_Vietnam_Pro({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
-  weight: ['400', '500', '600', '700', '800', '900']
+  weight: ['400', '500', '600', '700', '800']
 });
 
 interface SubjectSelectorProps {
@@ -51,7 +51,7 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
   };
 
   return (
-    <div className={`max-w-6xl mx-auto px-6 py-10 ${beVietnamPro.className}`}>
+    <div className={`max-w-6xl mx-auto px-6 py-10 ${plusJakartaSans.className}`}>
       {/* Title section */}
       <div className="text-center mb-10">
         <motion.h2 

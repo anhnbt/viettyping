@@ -65,10 +65,10 @@ function renderBoldText(text: string): React.ReactNode[] {
 
 function renderTableJSX(headers: string[], rows: string[][], keyIndex: number) {
   return (
-    <div key={keyIndex} className="w-full overflow-x-auto border-2 border-slate-100 rounded-2xl shadow-sm my-5 bg-white max-w-full">
+    <div key={keyIndex} className="w-full overflow-x-auto border-3 border-[var(--color-foreground)] rounded-[20px] shadow-[3px_3px_0px_0px_var(--color-foreground)] my-5 bg-[var(--color-surface)] max-w-full">
       <table className="w-full text-left border-collapse text-xs md:text-sm min-w-[500px]">
         <thead>
-          <tr className="bg-indigo-500 text-white font-black">
+          <tr className="bg-[var(--color-primary)] text-[var(--color-on-primary-container)] border-b-3 border-[var(--color-foreground)] font-black">
             {headers.map((h, idx) => (
               <th key={idx} className="p-3 md:p-3.5 font-black uppercase tracking-wider text-xs">
                 {renderBoldText(h)}
@@ -76,7 +76,7 @@ function renderTableJSX(headers: string[], rows: string[][], keyIndex: number) {
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-[var(--color-foreground)]/20">
           {rows.map((row, rowIdx) => (
             <tr 
               key={rowIdx} 
@@ -142,7 +142,7 @@ function parseMarkdownToJSX(text: string) {
     if (line.startsWith('===') && line.endsWith('===')) {
       const titleText = line.replace(/===/g, '').trim();
       elements.push(
-        <div key={i} className="my-5 p-3 bg-indigo-50 border-l-4 border-indigo-500 rounded-r-xl text-indigo-900 font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm">
+        <div key={i} className="my-5 p-3 bg-[var(--color-surface-container)] border-l-4 border-[var(--color-primary)] border-y border-r border-[var(--color-foreground)] rounded-r-xl text-[var(--color-foreground)] font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-[2px_2px_0px_0px_var(--color-foreground)]">
           <span>{titleText}</span>
         </div>
       );
@@ -417,28 +417,28 @@ export default function ReportCardAnalyzer() {
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Input Section */}
-      <div className="bg-white p-6 md:p-8 rounded-3xl shadow-[6px_6px_0px_0px_#e2e8f0] border-2 border-slate-100 mb-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-4 bg-indigo-50 text-indigo-500 rounded-bl-3xl">
+      <div className="bg-[var(--color-surface)] p-6 md:p-8 rounded-[24px] border-4 border-[var(--color-foreground)] shadow-[6px_6px_0px_0px_var(--color-foreground)] mb-8 relative overflow-hidden transition-colors">
+        <div className="absolute top-0 right-0 p-4 bg-[var(--color-background)] border-b-2 border-l-2 border-[var(--color-foreground)] text-[var(--color-primary-depth)] rounded-bl-3xl">
           <BrainCircuit className="w-6 h-6 animate-pulse" />
         </div>
         
-        <h2 className="text-2xl font-black text-slate-800 mb-2 flex items-center gap-2">
+        <h2 className="text-2xl font-black text-[var(--color-foreground)] mb-2 flex items-center gap-2">
           <span>Phân Tích Nhận Xét Của Cô Giáo</span>
-          <Sparkles className="w-5 h-5 text-amber-500" />
+          <Sparkles className="w-5 h-5 text-[var(--color-accent)] animate-spin" style={{ animationDuration: '6s' }} />
         </h2>
-        <p className="text-slate-500 text-sm md:text-base mb-6 font-medium leading-relaxed">
+        <p className="text-[var(--color-foreground)] opacity-80 text-sm md:text-base mb-6 font-semibold leading-relaxed">
           Dán nhận xét học kỳ hoặc tổng kết của giáo viên vào ô bên dưới. Trí tuệ nhân tạo của VietTyping sẽ phân tích và lập kế hoạch rèn luyện các kỹ năng bé còn yếu thông qua trò chơi tương tác.
         </p>
 
         {/* Markdown Tabs Selector */}
-        <div className="flex border-b border-slate-100 mb-4 gap-2">
+        <div className="flex border-b-2 border-[var(--color-foreground)] mb-4 gap-2">
           <button
             type="button"
             onClick={() => setInputMode('edit')}
-            className={`px-4 py-2 font-black text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
+            className={`px-4 py-2 font-black text-xs md:text-sm border-b-4 transition-all cursor-pointer ${
               inputMode === 'edit'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-slate-400 hover:text-slate-500'
+                ? 'border-[var(--color-foreground)] text-[var(--color-foreground)]'
+                : 'border-transparent text-[var(--color-foreground)] opacity-50 hover:opacity-100'
             }`}
           >
             ✍️ Nhập nhận xét
@@ -450,10 +450,10 @@ export default function ReportCardAnalyzer() {
               setInputMode('preview');
               playSound('click');
             }}
-            className={`px-4 py-2 font-black text-xs md:text-sm border-b-2 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+            className={`px-4 py-2 font-black text-xs md:text-sm border-b-4 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
               inputMode === 'preview'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-slate-400 hover:text-slate-500'
+                ? 'border-[var(--color-foreground)] text-[var(--color-foreground)]'
+                : 'border-transparent text-[var(--color-foreground)] opacity-50 hover:opacity-100'
             }`}
           >
             👁️ Xem trước học bạ
@@ -466,19 +466,19 @@ export default function ReportCardAnalyzer() {
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             placeholder="Dán nhận xét học bạ của bé tại đây... Ví dụ: Tiếng Việt đọc to rõ ràng, cần viết đúng tốc độ. Toán tính toán cẩn thận..."
-            className="w-full h-52 p-4 border-2 border-slate-200 rounded-[20px] focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all font-medium text-slate-700 placeholder-slate-400 text-sm md:text-base resize-none mb-4"
+            className="w-full h-52 p-4 border-3 border-[var(--color-foreground)] bg-[var(--color-background)] rounded-[20px] focus:outline-none focus:ring-4 focus:ring-[var(--color-primary-container)] transition-all font-bold text-[var(--color-foreground)] placeholder-slate-400 text-sm md:text-base resize-none mb-4"
           />
         ) : (
-          <div className="w-full h-52 p-5 border-2 border-dashed border-slate-200 rounded-[20px] bg-slate-50/50 mb-4 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+          <div className="w-full h-52 p-5 border-3 border-dashed border-[var(--color-foreground)] rounded-[20px] bg-[var(--color-background)] mb-4 overflow-y-auto custom-scrollbar">
             {parseMarkdownToJSX(commentText)}
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-between items-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
           <button
             type="button"
             onClick={handleFillSample}
-            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-full text-sm font-bold transition-colors cursor-pointer"
+            className="keycap-btn-surface px-5 py-2.5 text-xs md:text-sm flex items-center gap-2 w-full sm:w-auto"
           >
             <ClipboardList className="w-4 h-4" />
             <span>Điền nhận xét mẫu của cô 📝</span>
@@ -488,11 +488,13 @@ export default function ReportCardAnalyzer() {
             type="button"
             onClick={handleAnalyze}
             disabled={!commentText.trim() || isAnalyzing}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-black px-8 py-3.5 rounded-[20px] border-b-4 border-indigo-800 shadow-[3px_3px_0px_0px_#c7d2fe] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none active:border-b-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className={`keycap-btn-primary w-full sm:w-auto px-8 py-3.5 flex items-center justify-center gap-2 ${
+              (!commentText.trim() || isAnalyzing) ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''
+            }`}
           >
             {isAnalyzing ? (
               <>
-                <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-3 border-current border-t-transparent rounded-full animate-spin" />
                 <span>Đang phân tích bài học...</span>
               </>
             ) : (
@@ -516,16 +518,15 @@ export default function ReportCardAnalyzer() {
             className="space-y-8"
           >
             {/* Header Result */}
-            <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-6 md:p-8 rounded-3xl text-white shadow-[6px_6px_0px_0px_#fed7aa] text-center relative overflow-hidden">
-              <div className="absolute -left-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-              <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="bg-[var(--color-accent)] border-4 border-[var(--color-foreground)] p-6 md:p-8 rounded-[24px] text-[var(--color-foreground)] shadow-[6px_6px_0px_0px_var(--color-foreground)] text-center relative overflow-hidden transition-colors">
+              <div className="absolute -left-10 -top-10 w-40 h-40 bg-white/15 rounded-full blur-xl pointer-events-none" />
               
-              <div className="inline-block p-4 bg-white/20 rounded-2xl mb-4 animate-bounce">
+              <div className="inline-block p-3 bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] rounded-2xl mb-4 animate-bounce shadow-[2px_2px_0px_0px_var(--color-foreground)]">
                 <Trophy className="w-10 h-10" />
               </div>
-              <h3 className="text-xl font-bold uppercase tracking-wider text-amber-100 mb-1">Đánh giá chung cho bé</h3>
-              <h1 className="text-3xl md:text-4xl font-black mb-3 drop-shadow-md">{analysisResult.title}</h1>
-              <p className="text-white/90 font-semibold max-w-xl mx-auto text-sm md:text-base">
+              <h3 className="text-sm font-black uppercase tracking-wider opacity-75 mb-1">Đánh giá chung cho bé</h3>
+              <h1 className="text-3xl md:text-4xl font-black mb-3 text-[var(--color-foreground)]">{analysisResult.title}</h1>
+              <p className="opacity-90 font-black max-w-xl mx-auto text-sm md:text-base leading-relaxed">
                 Cô giáo đã ghi nhận sự cố gắng lớn của bé! Hãy cùng VietTyping hoàn thành lộ trình bên dưới để giúp con phát triển hoàn hảo hơn nhé!
               </p>
             </div>
@@ -533,9 +534,9 @@ export default function ReportCardAnalyzer() {
             {/* Strengths and Weaknesses Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Điểm mạnh */}
-              <div className="bg-emerald-50/60 border-2 border-emerald-100 p-6 rounded-3xl shadow-[5px_5px_0px_0px_#d1fae5]">
-                <h4 className="text-lg font-black text-emerald-800 mb-4 flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              <div className="bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] p-6 rounded-[24px] shadow-[4px_4px_0px_0px_var(--color-foreground)] transition-colors">
+                <h4 className="text-lg font-black text-[var(--color-foreground)] mb-4 flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-[var(--color-primary-depth)]" />
                   <span>Điểm Mạnh Của Bé ({analysisResult.strengths.length})</span>
                 </h4>
                 <ul className="space-y-3">
@@ -545,9 +546,9 @@ export default function ReportCardAnalyzer() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
                       key={idx} 
-                      className="flex items-start gap-2 text-sm md:text-base font-semibold text-emerald-700"
+                      className="flex items-start gap-2 text-sm md:text-base font-black text-[var(--color-foreground)]/90"
                     >
-                      <span className="text-emerald-500 mt-1">⭐</span>
+                      <span className="text-[var(--color-primary)] mt-1">⭐</span>
                       <span>{str}</span>
                     </motion.li>
                   ))}
@@ -555,9 +556,9 @@ export default function ReportCardAnalyzer() {
               </div>
 
               {/* Điểm cần lưu ý */}
-              <div className="bg-rose-50/60 border-2 border-rose-100 p-6 rounded-3xl shadow-[5px_5px_0px_0px_#ffe4e6]">
-                <h4 className="text-lg font-black text-rose-800 mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-rose-600" />
+              <div className="bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] p-6 rounded-[24px] shadow-[4px_4px_0px_0px_var(--color-foreground)] transition-colors">
+                <h4 className="text-lg font-black text-[var(--color-foreground)] mb-4 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-[var(--color-tertiary)]" />
                   <span>Cần Cải Thiện & Lưu Ý ({analysisResult.weaknesses.length})</span>
                 </h4>
                 {analysisResult.weaknesses.length > 0 ? (
@@ -568,15 +569,15 @@ export default function ReportCardAnalyzer() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.1 }}
                         key={idx} 
-                        className="flex items-start gap-2 text-sm md:text-base font-semibold text-rose-700"
+                        className="flex items-start gap-2 text-sm md:text-base font-black text-[var(--color-foreground)]/90"
                       >
-                        <span className="text-rose-500 mt-1">📌</span>
+                        <span className="text-[var(--color-tertiary)] mt-1">📌</span>
                         <span>{weak}</span>
                       </motion.li>
                     ))}
                   </ul>
                 ) : (
-                  <div className="text-center py-6 text-rose-500 font-bold">
+                  <div className="text-center py-6 text-[var(--color-primary)] font-black">
                     🎉 Bé học đều và xuất sắc ở mọi mặt! Không có lưu ý đáng ngại nào.
                   </div>
                 )}
@@ -584,9 +585,9 @@ export default function ReportCardAnalyzer() {
             </div>
 
             {/* Personalized Roadmap (Lộ trình học tập) */}
-            <div className="bg-white p-6 md:p-8 rounded-3xl border-2 border-slate-100 shadow-[6px_6px_0px_0px_#f1f5f9]">
-              <h3 className="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2">
-                <Target className="w-6 h-6 text-indigo-500 animate-pulse" />
+            <div className="bg-[var(--color-surface)] p-6 md:p-8 rounded-[24px] border-4 border-[var(--color-foreground)] shadow-[6px_6px_0px_0px_var(--color-foreground)] transition-colors">
+              <h3 className="text-2xl font-black text-[var(--color-foreground)] mb-6 flex items-center gap-2">
+                <Target className="w-6 h-6 text-[var(--color-primary-depth)] animate-pulse" />
                 <span>Lộ Trình Học Tập Thiết Kế Riêng Cho Bé</span>
               </h3>
 
@@ -597,31 +598,31 @@ export default function ReportCardAnalyzer() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.15 }}
                     key={task.id}
-                    className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-100 hover:bg-slate-50/50 transition-all group"
+                    className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-[var(--color-background)] border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_var(--color-foreground)] transition-all group"
                   >
                     <div className="flex items-start gap-4">
-                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${task.color} text-white flex items-center justify-center text-2xl shrink-0 shadow-lg`}>
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${task.color} text-white flex items-center justify-center text-2xl shrink-0 shadow-[2px_2px_0px_0px_var(--color-foreground)] border-2 border-[var(--color-foreground)]`}>
                         {task.icon}
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-black px-2 py-0.5 rounded-full bg-slate-200 text-slate-600 uppercase">
+                          <span className="text-xs font-black px-2 py-0.5 rounded-full bg-[var(--color-surface)] border border-[var(--color-foreground)] text-[var(--color-foreground)] uppercase">
                             {task.subjectName}
                           </span>
-                          <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full uppercase ${
-                            task.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
-                            task.difficulty === 'medium' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'
+                          <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full uppercase border border-[var(--color-foreground)] ${
+                            task.difficulty === 'easy' ? 'bg-[var(--color-primary-container)] text-[var(--color-foreground)]' :
+                            task.difficulty === 'medium' ? 'bg-[var(--color-secondary-container)] text-[var(--color-foreground)]' : 'bg-red-200 text-red-950'
                           }`}>
                             {task.difficulty === 'easy' ? 'Dễ' : task.difficulty === 'medium' ? 'Vừa' : 'Thử thách'}
                           </span>
                         </div>
-                        <h4 className="text-lg font-black text-slate-800 group-hover:text-indigo-600 transition-colors">
+                        <h4 className="text-lg font-black text-[var(--color-foreground)] group-hover:text-[var(--color-primary-depth)] transition-colors">
                           {task.taskTitle}
                         </h4>
-                        <p className="text-slate-600 text-sm mt-1 font-semibold leading-relaxed">
-                          <span className="text-indigo-600 font-bold">Lý do:</span> {task.reason}
+                        <p className="text-[var(--color-foreground)] opacity-95 text-sm mt-1 font-semibold leading-relaxed">
+                          <span className="text-[var(--color-primary-depth)] font-black">Lý do:</span> {task.reason}
                         </p>
-                        <p className="text-xs text-slate-400 mt-1.5 font-medium italic">
+                        <p className="text-xs text-[var(--color-foreground)] opacity-70 mt-1.5 font-bold italic">
                           💡 Lời khuyên: {task.recommendation}
                         </p>
                       </div>
@@ -630,10 +631,12 @@ export default function ReportCardAnalyzer() {
                     <button
                       type="button"
                       onClick={() => handleStartTask(task.subjectId, task.topicId)}
-                      className="w-full md:w-auto shrink-0 flex items-center justify-center gap-2 bg-white text-indigo-600 border-2 border-indigo-500 hover:bg-indigo-50 font-black px-5 py-3 rounded-xl transition-all cursor-pointer shadow-sm"
+                      className="keycap-btn-primary px-5 py-3 text-sm shrink-0 w-full md:w-auto"
                     >
-                      <span>Luyện tập ngay</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span className="flex items-center gap-2">
+                        <span>Luyện tập ngay</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
                     </button>
                   </motion.div>
                 ))}
@@ -641,19 +644,19 @@ export default function ReportCardAnalyzer() {
             </div>
 
             {/* Parent Guide Tips */}
-            <div className="bg-indigo-50/50 p-6 md:p-8 rounded-3xl border-2 border-indigo-100/60 shadow-[5px_5px_0px_0px_#e0e7ff] relative overflow-hidden">
-              <div className="absolute -right-6 -bottom-6 opacity-10 text-indigo-900 pointer-events-none">
-                <Lightbulb className="w-32 h-32" />
+            <div className="bg-[var(--color-surface-container)] p-6 md:p-8 rounded-[24px] border-4 border-[var(--color-foreground)] shadow-[4px_4px_0px_0px_var(--color-foreground)] relative overflow-hidden transition-colors">
+              <div className="absolute -right-6 -bottom-6 opacity-15 text-[var(--color-foreground)] pointer-events-none">
+                <Lightbulb className="w-32 h-32 animate-pulse" />
               </div>
 
-              <h4 className="text-lg font-black text-indigo-900 mb-4 flex items-center gap-2">
-                <Lightbulb className="w-5 h-5 text-indigo-600" />
+              <h4 className="text-lg font-black text-[var(--color-foreground)] mb-4 flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-[var(--color-primary-depth)]" />
                 <span>Gợi Ý Cho Ba Mẹ Để Đồng Hành Cùng Bé</span>
               </h4>
               <ul className="space-y-3">
                 {analysisResult.parentTips.map((tip, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-sm md:text-base font-semibold text-indigo-800">
-                    <span className="text-indigo-500 mt-1">☀️</span>
+                  <li key={idx} className="flex items-start gap-2.5 text-sm md:text-base font-black text-[var(--color-foreground)]/90">
+                    <span className="text-[var(--color-primary)] mt-1">☀️</span>
                     <span>{tip}</span>
                   </li>
                 ))}

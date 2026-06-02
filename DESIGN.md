@@ -1,117 +1,59 @@
-# 🎨 Hệ Thống Thiết Kế VietTyping (KidLearn Design System)
+# 🎨 Hệ Thống Thiết Kế Học Tập Phân Tầng Trực Quan (Tactile Tiered Learning)
 
-Hệ thống thiết kế **VietTyping** kế thừa từ triết lý thiết kế **KidLearn**, hướng tới đối tượng người dùng là trẻ em từ 5-12 tuổi (trọng tâm là học sinh lớp 1 - 6 tuổi). 
+Hệ thống thiết kế **VietTyping** được xây dựng dựa trên triết lý **Tactile Play (Chơi mà học trực quan)**. Nó cân bằng giữa tính chất ngộ nghĩnh của một ứng dụng giáo dục cho trẻ em với cấu trúc tinh tế của một sản phẩm EdTech cao cấp. Giao diện người dùng mang lại cảm giác giống như một món đồ chơi vật lý—thân thiện, phản hồi nhanh và kích thích trẻ chạm vào.
 
-Thiết kế ưu tiên các hình khối bo tròn, to rõ, dễ tương tác, độ nổi khối cao (Neobrutalism nhẹ) để trẻ có cảm giác như đang chơi đồ chơi thực tế. Màu sắc sử dụng tông tươi sáng, rực rỡ nhưng được cân bằng để không gây mỏi mắt hay quá tải thông tin.
+Phong cách trực quan là **Tactile / Skeuomorphic Modernism (Hiện đại hóa Skeuomorphic / Trực quan nổi khối)**. Thiết kế tận dụng các khối nổi 3D nhẹ, các nút bấm lấy cảm hứng từ phím cơ (keycaps), kết hợp bảng màu ấm áp để giảm mỏi mắt cho trẻ. Mục tiêu cốt lõi là thúc đẩy cảm giác tiến bộ và thành tích thông qua các phân cấp độ khó của linh vật **"Animal Mastery" (Làm chủ động vật)**, sử dụng sự thay đổi màu sắc chủ đạo rõ rệt để báo hiệu cấp độ và trạng thái tiến bộ của bé.
 
 ---
 
-## 📐 Nguyên Tắc Thiết Kế Cho Trẻ Em (Lớp 1)
+## 📐 Nguyên Tắc Thiết Kế Cho Trẻ Em (Lớp 1 - Lớp 5)
 
-1. **Target Tương Tác Lớn:** Mọi nút bấm, thẻ lựa chọn phải có vùng chạm tối thiểu **48px x 48px** (khuyên dùng **56px** trở lên) để tránh trẻ bấm nhầm.
-2. **Thiết Kế Nổi Khối (Playful Depth):** Sử dụng các đường viền dày (border-2 hoặc border-4) kết hợp với bóng đổ phẳng (chunky flat shadow) lệch trục để tạo cảm giác nút nhấn cơ học trực quan.
-3. **Phản Hồi Trực Quan & Âm Thanh:** Mỗi thao tác đúng/sai cần có hiệu ứng nảy (bounce), đổi màu rõ rệt, kết hợp hiệu ứng âm thanh (vui tươi khi đúng, nhẹ nhàng khích lệ khi chưa đúng).
-4. **Tránh Áp Lực Thời Gian:** Không sử dụng các đồng hồ đếm ngược gấp gáp gây căng thẳng cho trẻ nhỏ, thay vào đó hãy dùng các thanh tiến độ (Progress Bar) mượt mà để khích lệ.
-5. **Hình Ảnh Song Hành Với Chữ:** Trẻ lớp 1 đang tập đọc, vì vậy hãy luôn đi kèm Icon, hình minh họa hoặc Emoji cạnh các dòng văn bản hướng dẫn.
+1. **Target Tương Tác Lớn & Nổi Khối:** Mọi nút bấm, thẻ lựa chọn phải có vùng tương tác lớn, kết hợp với bóng đổ phẳng (chunky flat shadow) lệch trục (độ dày offset từ 4px đến 8px) tạo hiệu ứng keycap 3D rõ nét để trẻ cảm nhận được độ lún khi bấm cơ học.
+2. **Phản Hồi Xúc Giác Trực Quan:** Khi phần tử được nhấn, nó sẽ dịch chuyển theo trục Y xuống từ 2px-4px, đồng thời bóng đổ dưới chân thu nhỏ lại để tạo phản hồi chân thực.
+3. **Màu Sắc Ấm Áp Giảm Mỏi Mắt:** Màu nền luôn sử dụng các tông màu ấm áp (Ivory/Cream), hạn chế màu trắng tinh nhằm bảo vệ mắt trẻ nhỏ và giảm thiểu ánh sáng xanh.
+4. **Phân Tầng Theo Màu Sắc Động Vật:** Tốc độ và cấp độ được phản ánh sinh động qua 4 linh vật cốt lõi với 4 màu sắc chủ đề riêng biệt.
 
 ---
 
 ## 🎨 Bảng Màu (Color Tokens)
 
-VietTyping sử dụng các sắc độ màu sắc vui tươi, thân thiện:
+Hệ thống thiết kế này sử dụng kiến trúc **Tiered Primary Architecture (Kiến trúc Màu chủ đạo Phân tầng)**. Trong khi màu nền (surface) và văn bản (text) được giữ cố định để bảo đảm tính nhất quán thương hiệu và bảo vệ mắt, thì mã màu `primary` sẽ thay đổi động theo từng cấp độ linh vật:
 
-* **Primary (Đỏ dâu tây / Cam ấm):** Dùng cho các hành động quan trọng nhất, các phần nổi bật.
-  * Tailwind class: `bg-rose-500 hover:bg-rose-600 text-white` hoặc `bg-orange-500 hover:bg-orange-600 text-white`
-* **Secondary (Xanh da trời):** Dùng cho các tương tác phụ, liên kết, điều hướng.
-  * Tailwind class: `bg-sky-500 hover:bg-sky-600 text-white`
-* **Tertiary (Vàng mặt trời):** Tượng trưng cho phần thưởng, sao, cúp, huy hiệu, điểm XP.
-  * Tailwind class: `bg-amber-400 text-amber-950`
-* **Success (Xanh lá cây ngọc):** Dùng khi gõ đúng từ, hoàn thành câu, đạt kết quả tốt.
-  * Tailwind class: `bg-emerald-500 text-white`
-* **Error/Warning (Đỏ/Cam nhạt):** Gợi ý thử lại một cách nhẹ nhàng.
-  * Tailwind class: `bg-amber-100 border-amber-400 text-amber-800` (Khuyên dùng trạng thái khích lệ "Thử lại nhé!" thay vì báo lỗi nghiêm trọng).
-* **Nền Trang (Surface):** Sử dụng màu nền sáng ấm, hạn chế màu trắng tinh để giảm mỏi mắt.
-  * Tailwind class: `bg-amber-50/50` hoặc `bg-slate-50`
+- **Surface (Nền):** Màu kem ngà (Ivory base) ấm áp, thân thiện như trang giấy.
+- **Text (Chữ):** Màu nâu than đậm (Deep Charcoal-Brown) tạo độ tương phản cao nhưng dịu mắt, tránh cảm giác khô khan của màu đen thuần.
+- **Bảng phân tầng Tier System:**
+  - 🐷 **PigTyper:** Màu Hồng Dễ Thương (Bắt đầu - Beginner) - Mã màu `#ffb6c1`
+  - 🐢 **TurtleTyper:** Màu Xanh Lá Cây Ngọc (Kiên trì - Steady) - Mã màu `#006d30`
+  - 🐰 **BunnyTyper:** Màu Cam Ấm Áp (Nhanh nhẹn - Fast) - Mã màu `#8f4e00` (Container màu `#ff9f43`)
+  - 🐆 **LeopardTyper:** Màu Vàng Gold (Thần tốc - Elite) - Mã màu `#7a5900`
 
 ---
 
 ## ✍️ Phông Chữ (Typography)
 
-Dự án sử dụng phông chữ **Be Vietnam Pro** làm mặc định, hiển thị tiếng Việt cực kỳ tốt, nét chữ tròn trịa phù hợp với môi trường giáo dục:
-* **Tiêu đề lớn (Hero Title):** Cực to, đậm, tạo sự hào hứng.
-  * Tailwind class: `text-4xl md:text-5xl font-black tracking-wide text-slate-800`
-* **Tiêu đề mục (Heading):**
-  * Tailwind class: `text-2xl md:text-3xl font-extrabold text-slate-800`
-* **Văn bản hướng dẫn / Câu gõ:** Nét chữ rõ ràng, khoảng cách dòng rộng rãi.
-  * Tailwind class: `text-lg md:text-xl font-bold leading-relaxed text-slate-700`
+Dự án sử dụng phông chữ **Plus Jakarta Sans** làm mặc định trên toàn bộ hệ thống để đảm bảo nét chữ tròn trịa, hiện đại, hình học rõ ràng và dễ đọc đối với trẻ nhỏ đang tập chữ:
+
+- **Tiêu đề siêu lớn (Display & Headlines):** Độ dày cực đậm (fontWeight: 700 - 800) tạo phân cấp chữ rõ ràng, bắt mắt giống như các sticker dán.
+  - Cỡ chữ: `48px` (desktop), `24px` - `32px` (mobile).
+- **Văn bản nội dung (Body):** Mặc định ở kích thước `18px` (body-lg) hoặc `16px` (body-md) để hiển thị sắc nét trên iPad/máy tính bảng và máy tính để bàn.
+- **Nhãn chức năng (Labels):** Định dạng in hoa (label-caps / label-bold), đậm nét và giãn chữ nhẹ để tạo cảm giác giống nhãn dán trên các phím cơ vật lý.
 
 ---
 
-## 🧱 Các Thành Phần Giao Diện Chuẩn (UI Components)
+## 🧱 Các Thành Phần Giao Giao Diện Cơ Bản (Tactile Components)
 
-Để đồng bộ giao diện toàn bộ ứng dụng, các lập trình viên nên sử dụng các mẫu thiết kế Tailwind CSS sau đây:
+### 1. Nút bấm Keycap 3D
+Nút bấm luôn có độ dày viền và bóng đổ lệch trục. Phản hồi nhún chân thực khi bấm chuột.
+*   **Màu sắc:** Sử dụng màu primary của chủ đề hiện tại.
+*   **Shadow:** Sử dụng mã màu đậm hơn 20% của màu primary hiện tại với độ dày 4px-8px.
+*   **Chuyển động (Active):** Khi click hoặc gõ phím tương ứng, dịch chuyển Y-axis xuống 2px-4px.
 
-### 1. Nút Bấm Chunky (Chunky Playful Button)
-Nút bấm có viền đen đậm, bo góc tròn sâu, và có bóng đổ cứng tạo cảm giác nổi 3D cơ học. Khi bấm vào sẽ có hiệu ứng nhấn xuống (active:translate-y).
+### 2. Thẻ nội dung (Cards)
+Sử dụng màu nền giấy ngà ấm áp với viền mỏng và bóng đổ nhẹ ở đáy (2px) để tạo cảm giác nổi trên mặt bàn học. Tất cả các thẻ đều được bo góc cực sâu với `rounded-xl` (16px).
 
-```tsx
-<button className="
-  px-6 py-3 
-  text-lg font-bold text-white 
-  bg-rose-500 hover:bg-rose-600 
-  border-2 border-slate-800 
-  rounded-2xl 
-  shadow-[4px_4px_0px_0px_#1e293b] 
-  active:translate-x-[2px] active:translate-y-[2px] 
-  active:shadow-[2px_2px_0px_0px_#1e293b] 
-  transition-all duration-100
-">
-  Bắt đầu ngay! 🚀
-</button>
-```
+### 3. Vùng nhập liệu & Bàn phím ảo
+*   Bàn phím ảo phải mô phỏng trực quan các phím vật lý đang gõ.
+*   Khi trẻ gõ đúng ký tự, phím ảo tương ứng sẽ chuyển màu `primary` của chủ đề hiện tại và nhún xuống.
 
-### 2. Thẻ Bài Học / Hoạt Động (Playful Card)
-Thẻ hiển thị nội dung bài học, có hover dịch chuyển nhẹ lên trên và đổ bóng sâu hơn để thu hút trẻ tương tác.
-
-```tsx
-<div className="
-  p-6 
-  bg-white 
-  border-2 border-slate-800 
-  rounded-3xl 
-  shadow-[6px_6px_0px_0px_#1e293b] 
-  hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#1e293b] 
-  transition-all duration-200
-">
-  <h3 className="text-xl font-extrabold text-slate-800">Chủ đề 1: Bảng Chữ Cái</h3>
-  <p className="mt-2 text-slate-600">Luyện gõ các chữ cái đơn giản có dấu.</p>
-</div>
-```
-
-### 3. Chip Trạng Thái / Phần Thưởng (Pill Badge)
-Nhỏ nhắn, bo tròn tuyệt đối (pill) dùng để gắn nhãn độ khó hoặc phần thưởng:
-
-```tsx
-// Chip Hoàn Thành (Success)
-<span className="inline-flex items-center gap-1 px-3 py-1 text-sm font-extrabold text-emerald-800 bg-emerald-100 border border-emerald-300 rounded-full">
-  ✨ Đã xong
-</span>
-
-// Chip Khóa (Locked)
-<span className="inline-flex items-center gap-1 px-3 py-1 text-sm font-extrabold text-slate-400 bg-slate-100 border border-slate-200 rounded-full">
-  🔒 Chưa mở
-</span>
-```
-
----
-
-## ✨ Hiệu Ứng Chuyển Động (Animations)
-
-Chúng ta sử dụng `framer-motion` cho các hiệu ứng chuyển động mượt mà của trẻ nhỏ:
-* **Lật thẻ (Card Flip):** Khi trẻ học từ vựng qua Flashcard.
-* **Thanh tiến độ (Progress Bar):** Tăng trưởng mượt mà (`layoutId` hoặc `spring` physics) để trẻ thấy thành quả rõ rệt.
-* **Bắn pháo hoa (Confetti):** Khi hoàn thành bài học, sử dụng thư viện `canvas-confetti` để ăn mừng chiến thắng hoành tráng!
-
----
-
-Hãy cùng giữ vững các tiêu chuẩn thiết kế này để mang lại một trải nghiệm vừa học vừa chơi an toàn, cuốn hút và trực quan nhất cho thế hệ tương lai! 💖
+### 4. Khung chứa Linh Vật (Animal Mascots)
+Linh vật luôn được đặt trong các khung hình tròn, có hiệu ứng "pop-out" (phần đầu hoặc tai của linh vật hơi nhô ra ngoài viền khung) để tạo chiều sâu trực quan sinh động.

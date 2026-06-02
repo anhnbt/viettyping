@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useStudent, StudentInfo } from "@/contexts/StudentContext";
 import { useSound } from "@/contexts/SoundContext";
 import { X, Sparkles, User, GraduationCap, Heart } from "lucide-react";
-import confetti from "canvas-confetti";
+import { useRouter } from "next/navigation";
+import confettiActual from "canvas-confetti";
 
 const THEME_TO_EMOJI: Record<string, string> = {
   dino: "🦖",
@@ -26,6 +27,7 @@ const MASCOTS = [
 ];
 
 export default function StudentConfigModal() {
+  const router = useRouter();
   const { studentInfo, isConfigured, isOpenConfig, setIsOpenConfig, updateStudentInfo, isLoaded } = useStudent();
   const { playSound } = useSound();
 
@@ -34,6 +36,7 @@ export default function StudentConfigModal() {
   const [grade, setGrade] = useState("Lớp 1");
   const [theme, setTheme] = useState<'dino' | 'turtle' | 'bunny' | 'pig' | 'leopard'>("dino");
   const [error, setError] = useState("");
+  const [unlockedMascots, setUnlockedMascots] = useState<string[]>(["dino", "turtle"]);
 
   // Đồng bộ thông tin từ context khi mở modal
   useEffect(() => {
@@ -51,6 +54,22 @@ export default function StudentConfigModal() {
     }
     setError("");
   }, [studentInfo, isOpenConfig]);
+
+  // Đọc danh sách mascot đã mở khóa từ localStorage khi mở modal
+  useEffect(() => {
+    if (isOpenConfig) {
+      try {
+        const savedUnlocked = localStorage.getItem("viettyping_unlocked_mascots");
+        if (savedUnlocked) {
+          setUnlockedMascots(JSON.parse(savedUnlocked));
+        } else {
+          setUnlockedMascots(["dino", "turtle"]);
+        }
+      } catch (e) {
+        console.error("Lỗi đọc danh sách linh vật đã mở khóa:", e);
+      }
+    }
+  }, [isOpenConfig]);
 
   // Tự động mở modal nếu bé chưa cấu hình và dữ liệu đã được load từ localStorage
   useEffect(() => {
@@ -80,7 +99,7 @@ export default function StudentConfigModal() {
     playSound("tada");
 
     // Hiệu ứng pháo hoa ăn mừng
-    confetti({
+    confettiActual({
       particleCount: 150,
       spread: 80,
       origin: { y: 0.6 },
@@ -164,30 +183,50 @@ export default function StudentConfigModal() {
                   <span>1. Chọn bạn linh vật và giao diện học tập (Theme):</span>
                 </label>
                 <div className="grid grid-cols-5 gap-2 p-2 bg-white border-2 border-slate-800 rounded-2xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.05)]">
-                  {MASCOTS.map((m) => (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => {
-                        playSound("click");
-                        setTheme(m.id as any);
-                      }}
-                      className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all relative cursor-pointer border-2 ${
-                        theme === m.id
-                          ? "bg-amber-100 border-slate-800 scale-105 shadow-[2px_2px_0px_0px_var(--color-foreground)]"
-                          : "bg-slate-50/50 hover:bg-slate-100 border-transparent hover:scale-105"
-                      }`}
-                      title={m.desc}
-                    >
-                      {theme === m.id && (
-                        <span className="absolute -top-1.5 -right-1.5 text-xs bg-indigo-600 text-white rounded-full w-4 h-4 flex items-center justify-center font-bold">
-                          ✓
+                  {MASCOTS.map((m) => {
+                    const isUnlocked = unlockedMascots.includes(m.id);
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => {
+                          if (!isUnlocked) {
+                            playSound("incorrect");
+                            if (confirm(`Linh vật ${m.name} đang bị khóa. Bé có muốn ghé thăm Cửa hàng để mở khóa bằng điểm XP không?`)) {
+                              setIsOpenConfig(false);
+                              router.push("/shop");
+                            }
+                          } else {
+                            playSound("click");
+                            setTheme(m.id as any);
+                          }
+                        }}
+                        className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all relative border-2 ${
+                          !isUnlocked
+                            ? "bg-slate-100 opacity-60 border-slate-350 cursor-pointer"
+                            : theme === m.id
+                              ? "bg-amber-100 border-slate-800 scale-105 shadow-[2px_2px_0px_0px_var(--color-foreground)]"
+                              : "bg-slate-50/50 hover:bg-slate-100 border-transparent hover:scale-105"
+                        }`}
+                        title={isUnlocked ? m.desc : `${m.name} - Bị khóa (Mở ở Cửa hàng)`}
+                      >
+                        {isUnlocked && theme === m.id && (
+                          <span className="absolute -top-1.5 -right-1.5 text-xs bg-indigo-600 text-white rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                            ✓
+                          </span>
+                        )}
+                        {!isUnlocked && (
+                          <span className="absolute -top-1.5 -right-1.5 text-xs bg-slate-200 border border-slate-400 text-slate-500 rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-sm">
+                            🔒
+                          </span>
+                        )}
+                        <span className={`text-3xl mb-1 transform hover:rotate-12 transition-transform ${!isUnlocked ? "grayscale" : ""}`}>
+                          {m.emoji}
                         </span>
-                      )}
-                      <span className="text-3xl mb-1 transform hover:rotate-12 transition-transform">{m.emoji}</span>
-                      <span className="text-[10px] font-black text-slate-700 text-center leading-tight truncate w-full">{m.name}</span>
-                    </button>
-                  ))}
+                        <span className="text-[10px] font-black text-slate-700 text-center leading-tight truncate w-full">{m.name}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

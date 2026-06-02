@@ -8,15 +8,15 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
-import { motion } from 'framer-motion';
-import { Sparkles, Trophy, Flame, Keyboard, ArrowRight, Smile } from 'lucide-react';
-import { Be_Vietnam_Pro } from 'next/font/google';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Trophy, Flame, Keyboard, ArrowRight, Smile, Menu, X, Gift, Award, Home as HomeIcon, CheckSquare, BookOpen } from 'lucide-react';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import Logo from '@/components/Logo';
 import DinoMascot from '@/components/DinoMascot';
 
-const beVietnamPro = Be_Vietnam_Pro({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
-  weight: ['400', '500', '600', '700', '800', '900']
+  weight: ['400', '500', '600', '700', '800']
 });
 
 const titles = [
@@ -24,17 +24,6 @@ const titles = [
   'Luyện Gõ Phím Cực Vui! ⌨️',
   'Khám Phá Tri Thức Mới 📚',
   'Trở Thành Siêu Nhân Gõ Phím! ⚡'
-];
-
-const BUBBLES_CONFIG = [
-  { width: 32, height: 32, left: '8%', duration: 22, delay: 1, xRange: [0, 25, -25, 0] },
-  { width: 50, height: 50, left: '23%', duration: 18, delay: 4, xRange: [0, -30, 30, 0] },
-  { width: 24, height: 24, left: '38%', duration: 26, delay: 0, xRange: [0, 15, -15, 0] },
-  { width: 56, height: 56, left: '52%', duration: 20, delay: 5, xRange: [0, -20, 20, 0] },
-  { width: 36, height: 36, left: '67%', duration: 24, delay: 2, xRange: [0, 25, -25, 0] },
-  { width: 48, height: 48, left: '81%', duration: 19, delay: 6, xRange: [0, -15, 15, 0] },
-  { width: 28, height: 28, left: '92%', duration: 28, delay: 3, xRange: [0, 10, -10, 0] },
-  { width: 42, height: 42, left: '16%', duration: 21, delay: 7, xRange: [0, -20, 20, 0] },
 ];
 
 export default function Home() {
@@ -49,7 +38,8 @@ export default function Home() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(100);
   const [isMounted, setIsMounted] = useState(false);
-
+  const [activeMenu, setActiveMenu] = useState<'home' | 'lesson' | 'tasks' | 'shop' | 'leaderboard'>('home');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Đọc dữ liệu gamification từ localStorage
   useEffect(() => {
@@ -70,18 +60,15 @@ export default function Home() {
     
     const handleTyping = () => {
       if (!isDeleting) {
-        // Đang gõ chữ vào
         setTypedText(currentFullText.slice(0, typedText.length + 1));
         
         if (typedText === currentFullText) {
-          // Gõ xong câu, dừng lại một lát rồi bắt đầu xóa
           setTypingSpeed(2000); // Đợi 2 giây
           setIsDeleting(true);
         } else {
           setTypingSpeed(80);
         }
       } else {
-        // Đang xóa chữ
         setTypedText(currentFullText.slice(0, typedText.length - 1));
         
         if (typedText === '') {
@@ -98,238 +85,420 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [typedText, isDeleting, titleIndex, typingSpeed]);
 
-  const handleStartSampleLesson = () => {
-    playSound('tada');
-    router.push('/lesson');
-  };
-
   const handleNavClick = (path: string) => {
     playSound('click');
+    setIsSidebarOpen(false);
     router.push(path);
   };
 
-  return (
-    <div className={`min-h-screen canvas-bg relative overflow-hidden pb-16 ${beVietnamPro.className}`}>
-      
-      {/* Các đám mây trôi tự động */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <motion.div 
-          className="absolute top-16 left-0 w-40 h-14 bg-white/60 rounded-full blur-[1px]"
-          animate={{ x: ['-200px', '100vw'] }}
-          transition={{ repeat: Infinity, duration: 45, ease: 'linear' }}
-        />
-        <motion.div 
-          className="absolute top-64 right-0 w-52 h-16 bg-white/50 rounded-full blur-[1px]"
-          animate={{ x: ['100vw', '-300px'] }}
-          transition={{ repeat: Infinity, duration: 60, ease: 'linear' }}
-        />
-        <motion.div 
-          className="absolute top-1/4 left-1/4 w-32 h-11 bg-white/40 rounded-full"
-          animate={{ x: ['-150px', '100vw'] }}
-          transition={{ repeat: Infinity, duration: 35, ease: 'linear' }}
-        />
+  const getLevelConfig = (theme: string) => {
+    switch(theme) {
+      case 'turtle':
+        return { name: 'TURTLETYPER', motto: 'Chậm mà chắc', desc: 'Hãy cùng nhau xây dựng nền tảng vững chắc cho đôi bàn tay của bạn nhé!' };
+      case 'pig':
+        return { name: 'PIGTYPER', motto: 'Đáng yêu & Kiên trì', desc: 'Luyện tập mỗi ngày giúp đôi bàn tay xinh xắn của bạn gõ thật khéo léo!' };
+      case 'bunny':
+        return { name: 'BUNNYTYPER', motto: 'Nhanh như chớp', desc: 'Bứt phá tốc độ và rèn luyện phản xạ gõ phím cực nhanh cùng bạn Thỏ!' };
+      case 'leopard':
+        return { name: 'LEOPARDTYPER', motto: 'Dũng mãnh & Điêu luyện', desc: 'Chinh phục mọi thử thách gõ phím khó nhất và đạt tốc độ của nhà vô địch!' };
+      default:
+        return { name: 'DINOTYPER', motto: 'Mạnh mẽ & Nhanh nhẹn', desc: 'Đánh thức sức mạnh gõ phím của bạn và khám phá thế giới tri thức kỳ thú!' };
+    }
+  };
+
+  const getThemeMascotName = (theme: string) => {
+    switch(theme) {
+      case 'turtle': return 'Rùa';
+      case 'pig': return 'Heo';
+      case 'bunny': return 'Thỏ';
+      case 'leopard': return 'Báo';
+      default: return 'Khủng Long';
+    }
+  };
+
+  const currentTheme = studentInfo?.theme || 'dino';
+  const levelConfig = getLevelConfig(currentTheme);
+
+  const sidebarContent = (
+    <div className="flex flex-col h-full items-center justify-between py-6">
+      {/* Student Profile Info */}
+      <div className="w-full flex flex-col items-center px-4">
+        <div 
+          onClick={() => {
+            playSound('click');
+            setIsOpenConfig(true);
+          }}
+          className="w-24 h-24 rounded-full border-4 border-[var(--color-foreground)] bg-[var(--color-surface-container)] flex items-center justify-center shadow-[4px_4px_0px_0px_var(--color-foreground)] overflow-hidden relative cursor-pointer hover:scale-105 transition-transform"
+        >
+          <DinoMascot className="w-20 h-20" />
+        </div>
+        <h4 className="font-black text-[var(--color-foreground)] text-lg mt-3 text-center">
+          Chào {studentInfo ? studentInfo.nickname : 'bạn nhỏ'}!
+        </h4>
+        <span className="text-xs font-black px-2.5 py-0.5 mt-1 rounded-full bg-[var(--color-accent)] border border-[var(--color-foreground)] text-[var(--color-foreground)] shadow-[1px_1px_0px_0px_var(--color-foreground)]">
+          Cấp độ {Math.floor(xp / 1000) + 1}
+        </span>
       </div>
 
-      {/* Bong bóng nổi nhẹ nhàng tạo hiệu ứng hoạt hình sinh động */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        {isMounted && BUBBLES_CONFIG.map((bubble, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-white/20 border border-white/30"
-            style={{
-              width: bubble.width,
-              height: bubble.height,
-              left: bubble.left,
-              bottom: '-55px',
+      {/* Navigation Menu Vertical */}
+      <nav className="w-full px-4 space-y-3 mt-8 flex-1">
+        {[
+          { id: 'home', label: 'Trang chủ', icon: <HomeIcon className="w-5 h-5" />, path: '/' },
+          { id: 'lesson', label: 'Bài học của bé', icon: <BookOpen className="w-5 h-5" />, path: '/lesson' },
+          { id: 'tasks', label: 'Đảo Gõ Phím', icon: <Keyboard className="w-5 h-5" />, path: '/typing' },
+          { id: 'shop', label: 'Cửa hàng', icon: <Gift className="w-5 h-5" />, path: '/shop' },
+          { id: 'leaderboard', label: 'Bảng xếp hạng', icon: <Trophy className="w-5 h-5" />, path: '/leaderboard' },
+        ].map((item) => (
+          <button
+            key={item.id}
+            onClick={() => {
+              setActiveMenu(item.id as any);
+              handleNavClick(item.path);
             }}
-            animate={{
-              y: [0, -1200],
-              x: bubble.xRange,
-              opacity: [0, 0.8, 0.8, 0]
-            }}
-            transition={{
-              duration: bubble.duration,
-              repeat: Infinity,
-              delay: bubble.delay,
-              ease: 'linear'
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Sticky Header Glassmorphism */}
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b-4 border-slate-800 shadow-sm px-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link
-            href="/"
-            onClick={() => playSound('click')}
-            className="flex items-center gap-2.5 group font-black text-slate-800 tracking-wide"
+            className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 font-black transition-all cursor-pointer ${
+              activeMenu === item.id
+                ? 'bg-[var(--color-primary)] text-white border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)] translate-y-[-2px]'
+                : 'bg-transparent text-[var(--color-foreground)] border-transparent opacity-75 hover:opacity-100'
+            }`}
           >
-            <Logo className="w-10 h-10 md:w-11 md:h-11" />
-            <span className="text-xl md:text-2xl hidden sm:block">VietTyping</span>
-          </Link>
+            {item.icon}
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </nav>
 
-          {/* Gamification Stats & Navigation */}
-          <div className="flex items-center gap-2 md:gap-5">
-            {/* Student Profile Bubble */}
+      {/* Bottom Action Keycap Button */}
+      <div className="w-full px-4 mt-auto">
+        <button
+          onClick={() => handleNavClick('/typing')}
+          className="keycap-btn-primary w-full py-4 text-base rounded-2xl gap-2 cursor-pointer"
+        >
+          <span>Bắt đầu gõ</span>
+          <span>🚀</span>
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className={`min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)] flex flex-col md:flex-row ${plusJakartaSans.className} transition-colors`}>
+      
+      {/* Sidebar - Desktop */}
+      <aside className="hidden md:flex w-64 bg-[var(--color-surface)] border-r-4 border-[var(--color-foreground)] flex-col shrink-0 h-screen sticky top-0 transition-colors">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Sidebar (Drawer) */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black z-40 md:hidden"
+            />
+            <motion.aside 
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 bottom-0 left-0 w-64 bg-[var(--color-surface)] border-r-4 border-[var(--color-foreground)] z-50 md:hidden"
+            >
+              <button 
+                onClick={() => setIsSidebarOpen(false)}
+                className="absolute top-4 right-4 p-1.5 border-2 border-[var(--color-foreground)] rounded-lg bg-[var(--color-background)]"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              {sidebarContent}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content Pane */}
+      <div className="flex-1 flex flex-col min-w-0">
+        
+        {/* Top Header */}
+        <header className="sticky top-0 z-30 bg-[var(--color-surface)] border-b-4 border-[var(--color-foreground)] px-4 md:px-6 py-4 flex items-center justify-between transition-colors">
+          <div className="flex items-center gap-3">
+            {/* Hamburger button on Mobile */}
+            <button 
+              onClick={() => {
+                playSound('click');
+                setIsSidebarOpen(true);
+              }}
+              className="p-2 border-3 border-[var(--color-foreground)] rounded-xl bg-[var(--color-background)] md:hidden shadow-[2px_2px_0px_0px_var(--color-foreground)] active:translate-y-[1px] active:shadow-none cursor-pointer"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
+            {/* Logo */}
+            <Link
+              href="/"
+              onClick={() => playSound('click')}
+              className="flex items-center gap-2 group font-black text-[var(--color-foreground)] tracking-wide"
+            >
+              <Logo className="w-10 h-10" />
+              <span className="text-lg md:text-xl hidden sm:inline-block">VietTyping</span>
+            </Link>
+          </div>
+
+          {/* Navigation Links (Horizontal) */}
+          <nav className="hidden lg:flex items-center gap-6 font-black text-sm text-[var(--color-foreground)]">
+            <Link href="/lesson" onClick={() => playSound('click')} className="hover:text-[var(--color-primary)] border-b-2 border-transparent hover:border-[var(--color-primary)] py-1">Bài học</Link>
+            <Link href="/typing/turtle-rescue" onClick={() => playSound('click')} className="hover:text-[var(--color-primary)] border-b-2 border-transparent hover:border-[var(--color-primary)] py-1">Trò chơi</Link>
+            <Link href="/typing" onClick={() => playSound('click')} className="hover:text-[var(--color-primary)] border-b-2 border-transparent hover:border-[var(--color-primary)] py-1">Luyện tập</Link>
+          </nav>
+
+          {/* Gamification Indicator Panel */}
+          <div className="flex items-center gap-2 md:gap-4">
+            {/* Streak */}
+            <div className="flex items-center gap-1 bg-red-100 text-red-750 border-2 border-[var(--color-foreground)] px-2.5 py-1 md:px-3.5 md:py-1.5 rounded-full text-xs font-black shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)]">
+              <Flame className="w-4 h-4 text-orange-500 fill-orange-500 animate-pulse" />
+              <span>{streak || 0}</span>
+            </div>
+
+            {/* Stars/Coins */}
+            <div className="flex items-center gap-1 bg-amber-100 text-amber-800 border-2 border-[var(--color-foreground)] px-2.5 py-1 md:px-3.5 md:py-1.5 rounded-full text-xs font-black shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)]">
+              <span className="text-amber-500 text-sm">⭐</span>
+              <span>{xp >= 1000 ? `${(xp / 1000).toFixed(1)}k` : xp}</span>
+            </div>
+
+            {/* Profile Avatar Button */}
             <button
               onClick={() => {
                 playSound('click');
                 setIsOpenConfig(true);
               }}
-              className="flex items-center gap-2 px-2.5 py-1.5 md:px-3.5 md:py-1.5 bg-white border-2 border-slate-800 rounded-full shadow-[2px_2px_0px_0px_#1e293b] hover:bg-amber-105/40 transition-all active:translate-y-[1px] active:shadow-none cursor-pointer"
+              className="w-10 h-10 rounded-full border-2 border-[var(--color-foreground)] bg-[var(--color-surface)] flex items-center justify-center text-xl shadow-[2px_2px_0px_0px_var(--color-foreground)] hover:scale-105 active:translate-y-[1px] active:shadow-none transition-all cursor-pointer"
               title="Cấu hình hồ sơ của bé"
             >
-              <span className="text-xl animate-pulse">{studentInfo ? studentInfo.avatar : '👤'}</span>
-              <span className="hidden sm:block text-xs font-black text-slate-750 max-w-[120px] truncate">
-                {studentInfo ? studentInfo.nickname : 'Bé là ai thế?'}
+              {studentInfo ? studentInfo.avatar : '👤'}
+            </button>
+          </div>
+        </header>
+
+        {/* main content area */}
+        <main className="flex-1 canvas-bg p-4 md:p-6 space-y-8 overflow-y-auto">
+          
+          {/* Running Title Banner */}
+          <div className="text-center pt-2 pb-1">
+            <h1 className="text-xl md:text-3xl font-black text-[var(--color-foreground)] min-h-[40px] drop-shadow-sm tracking-wide">
+              {typedText}
+              <span className="animate-blink text-[var(--color-primary-depth)] font-normal">|</span>
+            </h1>
+          </div>
+
+          {/* Block 1: Banner Chào Mừng Cấp Độ Học Sinh */}
+          <div className="bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[24px] shadow-[6px_6px_0px_0px_var(--color-foreground)] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden transition-colors">
+            <div className="flex-1 text-center md:text-left">
+              <span className="bg-[var(--color-primary)] text-white border-2 border-[var(--color-foreground)] px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+                CẤP ĐỘ: {levelConfig.name}
               </span>
-            </button>
-
-            {/* XP Display */}
-            {xp > 0 && (
-              <div className="hidden sm:flex items-center gap-1.5 bg-accent/15 border-2 border-slate-800 px-3 py-1.5 rounded-full">
-                <Trophy className="w-4 h-4 text-amber-600 animate-bounce" />
-                <span className="text-xs font-black text-slate-700">{xp} XP</span>
+              <h2 className="text-3xl md:text-4xl font-black text-[var(--color-foreground)] mt-4 mb-2">
+                Hi, Little Typer!
+              </h2>
+              <p className="text-[var(--color-foreground)] opacity-90 text-sm md:text-base font-semibold max-w-xl leading-relaxed mb-6">
+                Chúc mừng bạn đã đạt cấp độ {levelConfig.name}. Phương châm của chúng ta là <strong className="text-[var(--color-primary-depth)] font-black">"{levelConfig.motto}"</strong>. {levelConfig.desc}
+              </p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                <button
+                  onClick={() => handleNavClick('/lesson')}
+                  className="keycap-btn-secondary px-6 py-3.5 text-sm cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>BÀI HỌC CỦA BÉ 🚀</span>
+                </button>
+                <button
+                  onClick={() => handleNavClick('/typing')}
+                  className="keycap-btn-tertiary px-6 py-3.5 text-sm cursor-pointer"
+                >
+                  ĐẢO GÕ PHÍM ⌨️
+                </button>
+                <button
+                  onClick={() => handleNavClick('/parents')}
+                  className="keycap-btn-surface px-6 py-3.5 text-sm cursor-pointer"
+                >
+                  GÓC PHỤ HUYNH 👨‍👩‍👧‍👦
+                </button>
               </div>
-            )}
-
-            {/* Streak Display */}
-            {streak > 0 && (
-              <div className="hidden sm:flex items-center gap-1.5 bg-secondary/15 border-2 border-slate-800 px-3 py-1.5 rounded-full">
-                <Flame className="w-4 h-4 text-orange-650 animate-pulse" />
-                <span className="text-xs font-black text-slate-700">{streak} ngày</span>
-              </div>
-            )}
-
-            {/* Leaderboard CTA Button */}
-            <button
-              onClick={() => handleNavClick('/leaderboard')}
-              className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 bg-accent/15 border-2 border-slate-800 text-slate-700 rounded-full shadow-[2px_2px_0px_0px_#1e293b] hover:bg-accent/30 transition-all cursor-pointer"
-              title="Xem bảng xếp hạng"
-            >
-              <Trophy className="w-4 h-4 text-amber-600 fill-amber-300 animate-pulse" />
-              <span className="hidden md:inline text-xs font-black">Xếp Hạng</span>
-            </button>
- 
-            {/* Main CTA: Luyện gõ phím */}
-            <button
-              onClick={() => handleNavClick('/typing')}
-              className="keycap-btn-primary gap-1.5 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-[20px] text-xs md:text-sm cursor-pointer"
-            >
-              <Keyboard className="w-4 h-4 text-sky-100 hidden sm:block" />
-              <span>Luyện gõ phím</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10 pb-4 text-center">
-        
-        {/* Lời chào cá nhân hóa cho bé và Linh vật Dino */}
-        <div className="flex flex-col items-center gap-4 mb-6">
-          <DinoMascot className="w-24 h-24 sm:w-28 sm:h-28" />
-          {studentInfo && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-white border-4 border-slate-800 rounded-[22px] shadow-[4px_4px_0px_0px_#1e293b]"
-            >
-              <span className="text-2xl animate-bounce">{studentInfo.avatar}</span>
-              <span className="text-slate-800 font-black text-sm md:text-base">
-                Chào mừng <span className="text-sky-700 font-black">{studentInfo.nickname}</span> ({studentInfo.grade}) đã đến với đảo học tập! 🌟
+            </div>
+            
+            {/* Mascot Container */}
+            <div className="w-44 h-44 shrink-0 flex flex-col items-center justify-center relative bg-[var(--color-surface-container)] border-3 border-[var(--color-foreground)] rounded-3xl p-4 shadow-[4px_4px_0px_0px_var(--color-foreground)]">
+              <DinoMascot className="w-32 h-32" />
+              <span className="text-[10px] font-black text-[var(--color-foreground)] mt-2 uppercase tracking-wide opacity-80">
+                {levelConfig.name}
               </span>
-            </motion.div>
-          )}
-        </div>
-
-        {/* Typing Animated Hero Title */}
-        <h1 className="text-3xl md:text-6xl font-black text-slate-800 mb-4 min-h-[60px] md:min-h-[80px] drop-shadow-sm tracking-wide">
-          {typedText}
-          <span className="animate-blink text-sky-600 font-normal">|</span>
-        </h1>
-
-        <p className="text-gray-700 text-sm md:text-lg max-w-2xl mx-auto mb-6 font-bold leading-relaxed">
-          Nơi bé vừa chơi vừa học các môn học thú vị: Đạo đức, Toán, Tiếng Việt, Tiếng Anh... và rèn luyện kỹ năng gõ 10 ngón thật điêu luyện!
-        </p>
-
-        {/* Slide Banner giới thiệu các môn học */}
-        <HeroSlideBanner />
-
-        {/* Nút hành động 3D Chunky chính dạng cơ học Keycap */}
-        <button
-          onClick={handleStartSampleLesson}
-          className="keycap-btn-secondary w-full md:w-auto px-6 md:px-10 py-4 md:py-5 rounded-[26px] mb-10 cursor-pointer animate-pulse text-lg md:text-xl gap-3 text-white"
-        >
-          <Sparkles className="w-5 h-5 md:w-6 md:h-6" />
-          <span>Học Bài Mẫu Ngay!</span>
-          <ArrowRight className="w-5 h-5" />
-        </button>
-
-        {/* Feature Badges */}
-        {/* Feature Badges - Gọn gàng trên 1 dòng */}
-        <div className="flex flex-row flex-nowrap justify-start md:justify-center items-center gap-2.5 md:gap-3 max-w-4xl mx-auto overflow-x-auto whitespace-nowrap pb-3 md:pb-0 scrollbar-none select-none">
-          {[
-            { icon: '📚', label: '8 Môn Học Thú Vị', color: 'bg-primary/15 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
-            { icon: '🎯', label: 'Bài Tập Tương Tác', color: 'bg-accent/15 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
-            { icon: '⌨️', label: 'Gõ Phím 10 Ngón', color: 'bg-primary-container/30 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
-            { icon: '🎮', label: 'Trò Chơi Trí Tuệ', color: 'bg-secondary/15 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
-          ].map((f, i) => (
-            <motion.div
-              key={f.label}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className={`flex items-center gap-1.5 border-2 px-4 py-2 rounded-[16px] text-xs md:text-sm font-black shrink-0 ${f.color}`}
-            >
-              <span className="text-lg">{f.icon}</span>
-              <span>{f.label}</span>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Grid Danh sách môn học */}
-      <div className="relative z-10 mt-8">
-        <SubjectSelector
-          subjects={subjects}
-          onSelectSubject={(subject) => {
-            playSound('click');
-            router.push(`/subjects/${subject.id}`);
-          }}
-        />
-      </div>
-
-      {/* Góc Phụ Huynh / Thông tin phụ */}
-      <div className="max-w-4xl mx-auto px-6 mt-12 text-center relative z-10">
-        <div className="inline-flex flex-col md:flex-row items-center gap-4 bg-white/90 border-4 border-slate-800 p-6 rounded-3xl shadow-[5px_5px_0px_0px_#1e293b]">
-          <div className="p-3.5 bg-primary/20 border-2 border-slate-800 rounded-2xl text-3xl shrink-0">
-            👨‍👩‍👧‍👦
+            </div>
           </div>
-          <div className="text-center md:text-left flex flex-col items-center md:items-start">
-            <h4 className="text-slate-800 font-black text-lg flex items-center justify-center md:justify-start gap-1.5">
-              <span>Bố mẹ ơi!</span>
-              <Smile className="w-5 h-5 text-sky-600" />
-            </h4>
-            <p className="text-gray-600 text-sm md:text-base mt-1 font-bold leading-relaxed">
-              Hãy ghé thăm <Link href="/parents" onClick={() => playSound('click')} className="text-sky-600 font-extrabold underline hover:text-sky-700">Góc phụ huynh</Link> để theo dõi tiến trình học tập của bé, xem bảng điểm, thống kê WPM và chuỗi ngày học để động viên bé kịp thời nhé!
-            </p>
-          </div>
-        </div>
-      </div>
 
-      {/* Footer */}
-      <footer className="text-center mt-16 text-sm font-bold text-gray-500 relative z-10">
-        <div className="flex justify-center gap-6 mb-3">
-          <Link href="/parents" onClick={() => playSound('click')} className="hover:text-indigo-600 transition-colors">Góc phụ huynh</Link>
-          <span>•</span>
-          <Link href="/typing" onClick={() => playSound('click')} className="hover:text-indigo-600 transition-colors">Đảo Gõ Phím</Link>
-        </div>
-        <div>Thiết kế đặc biệt dành cho học sinh Lớp 1 - Lớp 5 ❤️ VietTyping</div>
-      </footer>
+          {/* Block 2: Tiến Trình Tuần & Giới Thiệu Thế Giới Linh Vật */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* Cột Trái: Tiến trình tuần */}
+            <div className="bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[24px] shadow-[6px_6px_0px_0px_var(--color-foreground)] p-6 transition-colors">
+              <h3 className="text-xl font-black text-[var(--color-foreground)] flex items-center justify-between mb-4">
+                <span>Tiến trình tuần</span>
+                <span className="text-emerald-500">📈</span>
+              </h3>
+              <div className="flex justify-between items-center text-xs font-black text-[var(--color-foreground)] opacity-85 mb-1.5">
+                <span>KINH NGHIỆM</span>
+                <span>{xp % 1000}/1000 XP</span>
+              </div>
+              
+              {/* Progress Bar */}
+              <div className="w-full bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-full h-5 p-0.5 overflow-hidden mb-6">
+                <div
+                  className="bg-[var(--color-primary)] h-full rounded-full transition-all duration-500"
+                  style={{ width: `${(xp % 1000) / 10}%` }}
+                ></div>
+              </div>
+              
+              {/* Sub-info blocks */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="border-2 border-[var(--color-foreground)] rounded-xl p-3 bg-[var(--color-background)] text-center shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+                  <div className="text-[10px] font-black opacity-60 uppercase">Tốc độ</div>
+                  <div className="text-lg font-black text-[var(--color-foreground)]">15 WPM</div>
+                </div>
+                <div className="border-2 border-[var(--color-foreground)] rounded-xl p-3 bg-[var(--color-background)] text-center shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+                  <div className="text-[10px] font-black opacity-60 uppercase">Chính xác</div>
+                  <div className="text-lg font-black text-[var(--color-foreground)]">98%</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Cột Phải: Thế giới Linh vật */}
+            <div className="bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[24px] shadow-[6px_6px_0px_0px_var(--color-foreground)] p-6 flex flex-col sm:flex-row items-center justify-between gap-6 transition-colors">
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-xl font-black text-[var(--color-foreground)] mb-2">
+                  Thế giới {getThemeMascotName(currentTheme)}
+                </h3>
+                <p className="text-sm font-semibold text-[var(--color-foreground)] opacity-85 leading-relaxed mb-6">
+                  Hãy bắt đầu hành trình gõ phím tiếng Việt qua những hòn đảo kiến thức. Càng chậm, bạn càng gõ chuẩn!
+                </p>
+                <button
+                  onClick={() => handleNavClick('/typing')}
+                  className="text-sm font-black text-[var(--color-primary-depth)] hover:underline flex items-center justify-center sm:justify-start gap-1 cursor-pointer"
+                >
+                  <span>BẮT ĐẦU NGAY</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="w-24 h-24 shrink-0 flex items-center justify-center bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] p-2">
+                <DinoMascot className="w-20 h-20" />
+              </div>
+            </div>
+          </div>
+
+          {/* Block 3: Nhiệm Vụ Hàng Ngày */}
+          <div className="space-y-4">
+            <h3 className="text-2xl font-black text-[var(--color-foreground)] flex items-center gap-2">
+              <span className="p-2 bg-[var(--color-accent)] border-2 border-[var(--color-foreground)] rounded-xl shadow-[2px_2px_0px_0px_var(--color-foreground)]">📋</span>
+              <span>Nhiệm vụ hàng ngày</span>
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  id: 'task-1',
+                  title: 'Luyện chữ cái A-Ă-Â',
+                  desc: 'Làm quen với các dấu thanh đặc biệt.',
+                  xp: '200 XP',
+                  icon: '🅰️',
+                  path: '/subjects/tieng-viet/topics/tv-1'
+                },
+                {
+                  id: 'task-2',
+                  title: 'Tốc độ bền bỉ',
+                  desc: 'Gõ 5 phút không sai lỗi nào.',
+                  xp: '150 XP',
+                  icon: '⌨️',
+                  path: '/typing'
+                },
+                {
+                  id: 'task-3',
+                  title: 'Giải cứu Rùa con',
+                  desc: 'Trò chơi gõ phím vượt chướng ngại vật.',
+                  xp: '300 XP',
+                  icon: '🎮',
+                  path: '/typing/turtle-rescue'
+                }
+              ].map((t) => (
+                <div 
+                  key={t.id}
+                  onClick={() => handleNavClick(t.path)}
+                  className="bg-[var(--color-surface)] border-3 border-[var(--color-foreground)] rounded-[20px] p-5 shadow-[4px_4px_0px_0px_var(--color-foreground)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_var(--color-foreground)] transition-all cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="flex justify-between items-start gap-2 mb-4">
+                    <span className="text-2xl p-2 bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-xl shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)]">{t.icon}</span>
+                    <span className="bg-[var(--color-accent)] text-[var(--color-foreground)] border border-[var(--color-foreground)] text-[9px] font-black px-2 py-0.5 rounded-full shadow-[1px_1px_0px_0px_var(--color-foreground)]">
+                      +{t.xp}
+                    </span>
+                  </div>
+                  <div>
+                    <h4 className="font-black text-sm md:text-base text-[var(--color-foreground)] mb-1">{t.title}</h4>
+                    <p className="text-xs font-semibold text-[var(--color-foreground)] opacity-70 leading-relaxed">{t.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* SubjectSelector Grid */}
+          <div className="pt-4">
+            <div className="flex items-center gap-2 mb-6">
+              <span className="text-2xl">🎒</span>
+              <h3 className="text-2xl font-black text-[var(--color-foreground)]">Chọn Môn Học Tự Do</h3>
+            </div>
+            <SubjectSelector
+              subjects={subjects}
+              onSelectSubject={(subject) => {
+                playSound('click');
+                router.push(`/subjects/${subject.id}`);
+              }}
+            />
+          </div>
+
+          {/* Parents Corner Entry Card */}
+          <div className="max-w-4xl mx-auto pt-6 text-center">
+            <div className="inline-flex flex-col md:flex-row items-center gap-4 bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] p-6 rounded-3xl shadow-[5px_5px_0px_0px_var(--color-foreground)]">
+              <div className="p-3.5 bg-[var(--color-primary-container)] border-2 border-[var(--color-foreground)] rounded-2xl text-3xl shrink-0">
+                👨‍👩‍👧‍👦
+              </div>
+              <div className="text-center md:text-left flex flex-col items-center md:items-start">
+                <h4 className="text-[var(--color-foreground)] font-black text-lg flex items-center justify-center md:justify-start gap-1.5">
+                  <span>Bố mẹ ơi!</span>
+                  <Smile className="w-5 h-5 text-[var(--color-primary-depth)] animate-bounce" />
+                </h4>
+                <p className="text-[var(--color-foreground)] opacity-90 text-sm md:text-base mt-1 font-bold leading-relaxed">
+                  Hãy ghé thăm <Link href="/parents" onClick={() => playSound('click')} className="text-[var(--color-primary-depth)] font-extrabold underline hover:opacity-80">Góc phụ huynh</Link> để theo dõi tiến trình học tập của bé, xem bảng điểm, thống kê WPM và chuỗi ngày học để động viên bé kịp thời nhé!
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </main>
+
+        {/* Brutalist Footer */}
+        <footer className="border-t-4 border-[var(--color-foreground)] bg-[var(--color-surface)] py-8 px-6 transition-colors">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs md:text-sm font-black text-[var(--color-foreground)] opacity-90">
+            <div>
+              <span>VietTyping © {new Date().getFullYear()} • Kiến tạo kỹ năng gõ tiếng Việt cho bé.</span>
+            </div>
+            <div className="flex gap-4">
+              <Link href="/parents" onClick={() => playSound('click')} className="hover:underline">Chính sách bảo mật</Link>
+              <span>•</span>
+              <Link href="/typing" onClick={() => playSound('click')} className="hover:underline">Điều khoản sử dụng</Link>
+              <span>•</span>
+              <Link href="/parents" onClick={() => playSound('click')} className="hover:underline">Hỗ trợ</Link>
+            </div>
+          </div>
+        </footer>
+
+      </div>
     </div>
   );
 }
-

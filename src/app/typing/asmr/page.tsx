@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Be_Vietnam_Pro } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import { BookOpen, Keyboard, Volume2, VolumeX, Moon, Sun, Sparkles, RefreshCw, Eye, EyeOff, Play, Pause } from 'lucide-react';
 import AsmrKeyboard from '@/components/AsmrKeyboard';
 import AsmrVisualizer from '@/components/AsmrVisualizer';
@@ -11,9 +11,9 @@ import FingersVisualizer from '@/components/FingersVisualizer';
 import { useSound } from '@/contexts/SoundContext';
 import { stringToTelexKeys, buildCharMappings, CharMapping } from '@/utils/telex';
 
-const beVietnamPro = Be_Vietnam_Pro({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
-  weight: ['400', '500', '600', '700', '800', '900']
+  weight: ['400', '500', '600', '700', '800']
 });
 
 // Các bài thơ thiếu nhi cấu hình song song Có Dấu và Không Dấu
@@ -630,7 +630,7 @@ export default function AsmrPage() {
   return (
     <main
       onClick={initAudio}
-      className={`min-h-screen relative overflow-hidden transition-all duration-1000 pb-16 flex flex-col justify-between ${beVietnamPro.className}
+      className={`min-h-screen relative overflow-hidden transition-all duration-1000 pb-16 flex flex-col justify-between ${plusJakartaSans.className}
         ${atmosphere === 'starry' ? 'bg-gradient-to-b from-slate-950 via-slate-900 to-indigo-950 text-slate-100' : ''}
         ${atmosphere === 'cozy' ? 'bg-gradient-to-b from-amber-950/20 via-zinc-900 to-zinc-950 text-amber-100/90' : ''}
         ${atmosphere === 'dark' ? 'bg-slate-950 text-slate-300' : ''}`}
