@@ -243,7 +243,7 @@ export default function Home() {
               onClick={() => playSound('click')}
               className="flex items-center gap-2 group font-black text-[var(--color-foreground)] tracking-wide"
             >
-              <Logo className="w-10 h-10" />
+              <Logo className="w-12 h-12" />
               <span className="text-lg md:text-xl hidden sm:inline-block">VietTyping</span>
             </Link>
           </div>

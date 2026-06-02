@@ -27,8 +27,14 @@ export default function LeaderboardPage() {
   // States tính toán Huy hiệu
   const [completedCount, setCompletedCount] = useState<number>(0);
   const [hasAccuracyBadge, setHasAccuracyBadge] = useState<boolean>(false);
-  const [hasSpeedBadge, setHasSpeedBadge] = useState<boolean>(false);
   const [hasTurtleBadge, setHasTurtleBadge] = useState<boolean>(false);
+  
+  // 5 mốc tốc độ gõ phím
+  const [hasSpeed10, setHasSpeed10] = useState<boolean>(false);
+  const [hasSpeed20, setHasSpeed20] = useState<boolean>(false);
+  const [hasSpeed30, setHasSpeed30] = useState<boolean>(false);
+  const [hasSpeed40, setHasSpeed40] = useState<boolean>(false);
+  const [hasSpeed50, setHasSpeed50] = useState<boolean>(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -41,53 +47,99 @@ export default function LeaderboardPage() {
       const completed = JSON.parse(localStorage.getItem('typing_completed_lessons') || '[]');
       setCompletedCount(completed.length);
       setHasAccuracyBadge(localStorage.getItem('viettyping_badge_accuracy_100') === 'true');
-      setHasSpeedBadge(localStorage.getItem('viettyping_badge_speed_20') === 'true');
       setHasTurtleBadge(localStorage.getItem('viettyping_badge_turtle_rescue') === 'true');
+      
+      // Load các cờ mốc tốc độ gõ
+      setHasSpeed10(localStorage.getItem('viettyping_badge_speed_10') === 'true');
+      setHasSpeed20(localStorage.getItem('viettyping_badge_speed_20') === 'true');
+      setHasSpeed30(localStorage.getItem('viettyping_badge_speed_30') === 'true');
+      setHasSpeed40(localStorage.getItem('viettyping_badge_speed_40') === 'true');
+      setHasSpeed50(localStorage.getItem('viettyping_badge_speed_50') === 'true');
     } catch (e) {
       console.error('Failed to load user progress:', e);
     }
   }, []);
 
-  const badges = [
+  const speedBadges = [
+    {
+      id: 'speed_10',
+      wpm: 10,
+      name: 'Ốc Sên Nhỏ Nhẹ',
+      emoji: '🐌',
+      desc: 'Đạt tốc độ gõ trên 10 WPM',
+      unlocked: hasSpeed10,
+      color: 'bg-orange-50 border-orange-300 text-orange-850 shadow-orange-100'
+    },
+    {
+      id: 'speed_20',
+      wpm: 20,
+      name: 'Thỏ Con Nhanh Nhảu',
+      emoji: '🐰',
+      desc: 'Đạt tốc độ gõ trên 20 WPM',
+      unlocked: hasSpeed20,
+      color: 'bg-green-50 border-green-300 text-green-850 shadow-green-100'
+    },
+    {
+      id: 'speed_30',
+      wpm: 30,
+      name: 'Sóc Nhỏ Siêu Tốc',
+      emoji: '🐿️',
+      desc: 'Đạt tốc độ gõ trên 30 WPM',
+      unlocked: hasSpeed30,
+      color: 'bg-purple-50 border-purple-300 text-purple-850 shadow-purple-100'
+    },
+    {
+      id: 'speed_40',
+      wpm: 40,
+      name: 'Báo Gấm Bay Lượn',
+      emoji: '🐆',
+      desc: 'Đạt tốc độ gõ trên 40 WPM',
+      unlocked: hasSpeed40,
+      color: 'bg-rose-50 border-rose-300 text-rose-850 shadow-rose-100'
+    },
+    {
+      id: 'speed_50',
+      wpm: 50,
+      name: 'Tên Lửa Vũ Trụ',
+      emoji: '🚀',
+      desc: 'Đạt tốc độ gõ trên 50 WPM',
+      unlocked: hasSpeed50,
+      color: 'bg-sky-50 border-sky-300 text-sky-850 shadow-sky-100'
+    }
+  ];
+
+  const achievementBadges = [
     {
       id: 'explore',
-      name: 'Khám Phá',
+      name: '🦖 Khám Phá',
       emoji: '🦖',
       desc: 'Hoàn thành bài luyện gõ đầu tiên',
       unlocked: completedCount >= 1,
-      color: 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-emerald-100'
+      color: 'bg-emerald-50 border-emerald-300 text-emerald-850 shadow-emerald-100'
     },
     {
       id: 'accuracy',
-      name: 'Chính Xác',
+      name: '🎯 Chính Xác',
       emoji: '🎯',
       desc: 'Gõ chuẩn xác 100% trong bài tập',
       unlocked: hasAccuracyBadge,
-      color: 'bg-rose-50 border-rose-300 text-rose-800 shadow-rose-100'
-    },
-    {
-      id: 'speed',
-      name: 'Siêu Tốc',
-      emoji: '⚡',
-      desc: 'Gõ phím tốc độ trên 20 WPM',
-      unlocked: hasSpeedBadge,
-      color: 'bg-purple-50 border-purple-300 text-purple-800 shadow-purple-100'
+      color: 'bg-pink-50 border-pink-300 text-pink-850 shadow-pink-100'
     },
     {
       id: 'streak',
-      name: 'Chăm Chỉ',
+      name: '🔥 Chăm Chỉ',
       emoji: '🔥',
       desc: 'Chuỗi học tập đạt từ 3 ngày',
       unlocked: userStreak >= 3,
-      color: 'bg-orange-50 border-orange-355 text-orange-850 shadow-orange-100'
+      color: 'bg-amber-50 border-amber-300 text-amber-850 shadow-amber-100'
     },
     {
       id: 'rescue',
-      name: 'Hiệp Sĩ Rùa',
+      name: '🐢 Hiệp Sĩ Rùa',
       emoji: '🐢',
       desc: 'Giải cứu thành công Rùa con',
       unlocked: hasTurtleBadge,
-      color: 'bg-sky-50 border-sky-300 text-sky-800 shadow-sky-100'
+      color: 'bg-sky-50 border-sky-300 text-sky-850 shadow-sky-100'
     }
   ];
 
@@ -368,45 +420,100 @@ export default function LeaderboardPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-8 bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[28px] p-5 md:p-6 shadow-[6px_6px_0px_0px_var(--color-foreground)] transition-colors"
+          className="mt-8 bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[28px] p-5 md:p-6 shadow-[6px_6px_0px_0px_var(--color-foreground)] transition-colors space-y-8"
         >
-          <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
-            <span>🏅 Huy Hiệu Học Tập Của Bé</span>
-            <Sparkles className="w-5 h-5 text-yellow-500 fill-yellow-300 animate-pulse" />
-          </h2>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-            {badges.map((badge) => (
-              <div 
-                key={badge.id}
-                className={`border-3 border-slate-850 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center transition-all ${
-                  badge.unlocked 
-                    ? `${badge.color} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] hover:scale-103` 
-                    : 'bg-slate-100/70 border-slate-300 text-slate-400 opacity-60'
-                }`}
-                title={badge.desc}
-              >
-                <div className="relative">
-                  <span className={`text-4.5xl inline-block mb-2 ${badge.unlocked ? 'animate-bounce' : 'grayscale'}`}>
-                    {badge.emoji}
-                  </span>
-                  {!badge.unlocked && (
-                    <div className="absolute -top-1.5 -right-1.5 bg-slate-200 border-2 border-slate-400 rounded-full w-5 h-5 flex items-center justify-center text-[10px] text-slate-500 shadow-sm">
-                      🔒
-                    </div>
-                  )}
+          {/* Nhóm 1: Hành Trình Tốc Độ WPM */}
+          <div>
+            <h2 className="text-lg md:text-xl font-black text-slate-900 mb-5 flex items-center gap-2">
+              <span>⚡ Hành Trình Tốc Độ (WPM)</span>
+              <span className="text-[10px] md:text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full border border-indigo-200 font-extrabold uppercase tracking-wider">Bé gõ càng nhanh, huy hiệu càng xịn!</span>
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+              {speedBadges.map((badge) => (
+                <div 
+                  key={badge.id}
+                  className={`border-3 border-slate-850 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center transition-all min-h-[160px] ${
+                    badge.unlocked 
+                      ? `${badge.color} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] hover:scale-103` 
+                      : 'bg-slate-100/70 border-slate-300 text-slate-400 opacity-60'
+                  }`}
+                  title={badge.desc}
+                >
+                  {/* Thumbnail Huy hiệu tròn chứa số WPM to ở chính giữa */}
+                  <div className="relative w-16 h-16 md:w-20 md:h-20 flex flex-col items-center justify-center rounded-full border-4 border-slate-850 bg-white shadow-inner mb-3">
+                    {/* Số WPM to chính giữa */}
+                    <span className={`text-2xl md:text-3xl font-black leading-none ${badge.unlocked ? 'text-slate-900' : 'text-slate-400 grayscale'}`}>
+                      {badge.wpm}
+                    </span>
+                    <span className={`text-[8px] font-black tracking-wider uppercase leading-none mt-0.5 ${badge.unlocked ? 'text-indigo-600' : 'text-slate-400'}`}>
+                      WPM
+                    </span>
+                    
+                    {/* Con vật nhỏ đính kèm góc dưới bên phải */}
+                    <span className={`absolute -bottom-1 -right-1 text-xl md:text-2xl select-none transition-transform ${badge.unlocked ? 'animate-pulse' : 'grayscale opacity-60'}`}>
+                      {badge.emoji}
+                    </span>
+                    
+                    {/* Khoá 🔒 nếu chưa mở */}
+                    {!badge.unlocked && (
+                      <div className="absolute -top-1 -right-1 bg-slate-200 border-2 border-slate-400 rounded-full w-5 h-5 flex items-center justify-center text-[10px] text-slate-500 shadow-sm select-none">
+                        🔒
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-black text-xs text-slate-850 leading-tight mb-1">
+                      {badge.name}
+                    </h4>
+                    <p className="text-[10px] font-bold text-slate-500 leading-tight leading-relaxed max-w-[110px] mx-auto">
+                      {badge.desc}
+                    </p>
+                  </div>
                 </div>
-                
-                <div>
-                  <h4 className="font-black text-xs md:text-sm text-slate-850 leading-tight mb-1">
-                    {badge.name}
-                  </h4>
-                  <p className="text-[10px] font-bold text-slate-500 leading-tight leading-relaxed max-w-[110px] mx-auto">
-                    {badge.desc}
-                  </p>
+              ))}
+            </div>
+          </div>
+
+          {/* Nhóm 2: Kỷ Niệm Đáng Yêu */}
+          <div>
+            <h2 className="text-lg md:text-xl font-black text-slate-900 mb-5 flex items-center gap-2">
+              <span>💖 Kỷ Niệm Đáng Yêu (Học tập & Trò chơi)</span>
+              <span className="text-[10px] md:text-xs bg-pink-100 text-pink-700 px-2.5 py-0.5 rounded-full border border-pink-200 font-extrabold uppercase tracking-wider">Hoàn thành thử thách để nhận quà!</span>
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {achievementBadges.map((badge) => (
+                <div 
+                  key={badge.id}
+                  className={`border-3 border-slate-850 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center transition-all min-h-[140px] ${
+                    badge.unlocked 
+                      ? `${badge.color} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] hover:scale-103` 
+                      : 'bg-slate-100/70 border-slate-300 text-slate-400 opacity-60'
+                  }`}
+                  title={badge.desc}
+                >
+                  <div className="relative">
+                    <span className={`text-4.5xl inline-block mb-2 ${badge.unlocked ? 'animate-bounce' : 'grayscale'}`}>
+                      {badge.emoji}
+                    </span>
+                    {!badge.unlocked && (
+                      <div className="absolute -top-1.5 -right-1.5 bg-slate-200 border-2 border-slate-400 rounded-full w-5 h-5 flex items-center justify-center text-[10px] text-slate-500 shadow-sm">
+                        🔒
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-black text-xs text-slate-850 leading-tight mb-1">
+                      {badge.name}
+                    </h4>
+                    <p className="text-[10px] font-bold text-slate-500 leading-tight leading-relaxed max-w-[110px] mx-auto">
+                      {badge.desc}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </motion.div>
 

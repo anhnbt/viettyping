@@ -70,8 +70,21 @@ export default function LessonPage({ params }: Props) {
       if (telemetry.score === 100) {
         localStorage.setItem('viettyping_badge_accuracy_100', 'true');
       }
-      if ((telemetry.metadata?.wpm || 0) > 20) {
+      const wpmValue = telemetry.metadata?.wpm || 0;
+      if (wpmValue >= 10) {
+        localStorage.setItem('viettyping_badge_speed_10', 'true');
+      }
+      if (wpmValue >= 20) {
         localStorage.setItem('viettyping_badge_speed_20', 'true');
+      }
+      if (wpmValue >= 30) {
+        localStorage.setItem('viettyping_badge_speed_30', 'true');
+      }
+      if (wpmValue >= 40) {
+        localStorage.setItem('viettyping_badge_speed_40', 'true');
+      }
+      if (wpmValue >= 50) {
+        localStorage.setItem('viettyping_badge_speed_50', 'true');
       }
     } catch (err) {
       console.error('Failed to save typing progress to localStorage:', err);
