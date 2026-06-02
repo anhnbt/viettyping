@@ -65,6 +65,15 @@ global.Audio = jest.fn().mockImplementation(() => ({
   volume: 0,
 }));
 
+// Mock useSound
+jest.mock("@/contexts/SoundContext", () => ({
+  useSound: () => ({
+    isMuted: false,
+    toggleMute: jest.fn(),
+    playSound: jest.fn(),
+  }),
+}));
+
 // Mock useStudent
 jest.mock("@/contexts/StudentContext", () => ({
   useStudent: () => ({

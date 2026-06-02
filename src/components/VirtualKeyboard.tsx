@@ -131,14 +131,19 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
                           key === 'Shift' ? 'w-24' :
                             'w-10';
 
+              const keyBgColor = isPressed 
+                ? 'bg-blue-500 text-white border-blue-600 font-black' 
+                : shouldHighlight 
+                  ? 'bg-amber-400 text-amber-950 border-amber-500 font-black animate-pulse shadow-[0_0_15px_#fbbf24] scale-110 z-20 transition-transform' 
+                  : `${baseColor} hover:brightness-95 font-medium`;
+
               return (
                 <div
                   key={keyIndex}
-                  className={`${width} h-10 rounded-md flex items-center justify-center
+                  className={`${width} h-10 rounded-[10px] flex items-center justify-center
                     border-b-2 active:border-b-0 active:translate-y-0.5
-                    ${isPressed ? 'bg-blue-500 text-white border-blue-600' : `${baseColor} hover:brightness-95`}
-                    ${shouldHighlight ? 'ring-2 ring-blue-400 z-10 scale-105 transition-transform' : ''}
-                    font-medium text-gray-700 shadow-sm transition-all duration-75 select-none text-sm`}
+                    ${keyBgColor}
+                    text-gray-700 shadow-sm transition-all duration-100 select-none text-sm`}
                 >
                   {displayKey}
                 </div>

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { IoTimeOutline, IoRefreshOutline, IoWarning, IoSpeedometerOutline, IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { Keyboard } from 'lucide-react';
 import { useTypingSound } from '@/hooks/useTypingSound';
 import VirtualKeyboard from './VirtualKeyboard';
-import { TelemetryPayload, Flashcard } from '@/types/lesson';
+import { TelemetryPayload } from '@/types/lesson';
 import { stringToTelexKeys, buildCharMappings, validateInput, getNextHighlightKey, getCharColorStates } from '@/utils/telex';
+import confetti from 'canvas-confetti';
 
 export interface TypingTask {
   content: string;
@@ -20,6 +21,61 @@ interface Props {
   onStatsChange?: (stats: { wpm: number; accuracy: number; timeLeft: number; progressPercent: number; animal: string } | null) => void;
 }
 
+// Emoji Map cho các từ vựng xuất hiện trong bài học
+const wordStickers: Record<string, string> = {
+  'f': '🐢',
+  'j': '🦁',
+  'space': '✨',
+  ' ': '✨',
+  'ba': '👨',
+  'da': '🧴',
+  'la': '🍃',
+  'ca': '🐟',
+  'cá': '🐟',
+  'má': '👩',
+  'lá': '🍃',
+  'đá': '⚽',
+  'cà': '🍆',
+  'bà': '👵',
+  'nhà': '🏠',
+  'đà': '⛰️',
+  'cả': '🍀',
+  'lả': '🌸',
+  'thả': '🎈',
+  'vẽ': '🎨',
+  'mã': '🐴',
+  'kẽ': '🪵',
+  'lạ': '👽',
+  'mạ': '🌾',
+  'tạ': '🏋️',
+  'dạ': '🙇',
+  'đi': '🚶',
+  'học': '🎒',
+  'mẹ': '👩‍🦰',
+  'bé': '👶',
+  'ngoan': '⭐',
+  'cờ': '🚩',
+  'yêu': '❤️',
+  'bơi': '🏊',
+  'gà': '🐔',
+  'xe': '🚗',
+  'học sinh': '🎒',
+  'giáo viên': '👩‍🏫',
+  'trường': '🏫',
+  'lớp': '🏫',
+  'thành phố': '🏙️',
+  'hà nội': '🏛️',
+  'biển': '🌊',
+  'mây': '☁️',
+  'trời': '☀️',
+  'đẹp': '🌈',
+  'công viên': '🎡',
+  'chơi': '🛝',
+  'buổi sáng': '🌅',
+  'thức dậy': '⏰',
+  'mát mẻ': '🍃',
+  'trong lành': '🌬️',
+};
 
 export default function TypingPractice({ task, onComplete, onStatsChange }: Props) {
   const [input, setInput] = useState('');
@@ -28,6 +84,11 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
   const [timeLeft, setTimeLeft] = useState(task.time_limit_seconds || 60);
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const [showKeyboard, setShowKeyboard] = useState(true);
+  
+  // States cho Popup thành tích EdTech
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [finalStats, setFinalStats] = useState<{ wpm: number; accuracy: number; incorrectCount: number; durationSeconds: number } | null>(null);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const wrongSoundTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -54,6 +115,29 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
   const firstErrorIndex = validationResult.firstErrorTelexIndex;
   const currentProgressIndex = validationResult.currentProgressIndex;
   const charStates = useMemo(() => getCharColorStates(task.content, input), [task.content, input]);
+
+  // Xác định từ hiện tại đang gõ
+  const currentWord = useMemo(() => {
+    const cleanContent = task.content.toLowerCase();
+    const words = cleanContent.split(' ');
+    let charCount = 0;
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      const start = charCount;
+      const end = charCount + word.length;
+      if (input.length >= start && input.length <= end) {
+        return word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+      }
+      charCount += word.length + 1;
+    }
+    return '';
+  }, [task.content, input]);
+
+  // Trích xuất sticker emoji từ từ hiện tại
+  const currentSticker = useMemo(() => {
+    if (!currentWord) return null;
+    return wordStickers[currentWord] || null;
+  }, [currentWord]);
 
   const calculateStats = (currentInput = input, currentStartTime = startTime) => {
     if (!currentStartTime) return { wpm: 0, accuracy: 0, incorrectCount: 0 };
@@ -111,9 +195,8 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
       if (isNewCorrect && ((!isOldCorrect && newInputTelexKeysLength >= oldInputTelexKeysLength) || newInputTelexKeysLength > oldInputTelexKeysLength)) {
         playCorrectSound();
       } else if (!isNewCorrect && newInputTelexKeysLength >= oldInputTelexKeysLength) {
-        wrongSoundTimeoutRef.current = setTimeout(() => {
-          playWrongSound();
-        }, 500);
+        // Phản hồi âm thanh sai phím ngay lập tức cho trẻ
+        playWrongSound();
       }
     }
 
@@ -138,21 +221,61 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
     }, 1000);
   };
 
+  // Kích hoạt pháo hoa canvas-confetti
+  const triggerConfetti = () => {
+    try {
+      const duration = 3 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+      const randomInRange = (min: number, max: number) => {
+        return Math.random() * (max - min) + min;
+      };
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+        confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+      }, 250);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const completeLesson = (stats: { wpm: number; accuracy: number; incorrectCount: number }) => {
     setIsComplete(true);
     clearInterval(timerRef.current);
     
     const durationSeconds = startTime ? Math.round((Date.now() - startTime) / 1000) : 0;
     
-    onComplete({
-      score: stats.accuracy,
-      durationSeconds,
-      metadata: {
-        wpm: stats.wpm,
-        accuracy: stats.accuracy,
-        incorrectCount: stats.incorrectCount,
-      },
+    setFinalStats({
+      ...stats,
+      durationSeconds
     });
+    
+    // Hiển thị modal ăn mừng và bắn confetti
+    setShowSuccessModal(true);
+    triggerConfetti();
+  };
+
+  const handleNextClick = () => {
+    if (finalStats) {
+      onComplete({
+        score: finalStats.accuracy,
+        durationSeconds: finalStats.durationSeconds,
+        metadata: {
+          wpm: finalStats.wpm,
+          accuracy: finalStats.accuracy,
+          incorrectCount: finalStats.incorrectCount,
+        },
+      });
+    }
   };
 
   const handleRestart = useCallback(() => {
@@ -161,7 +284,11 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
     setIsComplete(false);
     setTimeLeft(task.time_limit_seconds || 60);
     clearInterval(timerRef.current);
-    inputRef.current?.focus();
+    setShowSuccessModal(false);
+    setFinalStats(null);
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 50);
   }, [task.time_limit_seconds]);
 
   useEffect(() => {
@@ -178,6 +305,8 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
     setInput('');
     setStartTime(null);
     setIsComplete(false);
+    setShowSuccessModal(false);
+    setFinalStats(null);
     if (inputRef.current) {
       inputRef.current.value = '';
     }
@@ -234,7 +363,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
 
   const progressPercent = Math.min(100, Math.round((currentProgressIndex / targetTelexKeys.length) * 100));
 
-  // Gửi thông số gõ phím lên LessonCoordinator để hiển thị trên Header và ProgressBar
+  // Gửi thông số gõ phím lên LessonCoordinator
   useEffect(() => {
     if (onStatsChange) {
       onStatsChange({
@@ -251,7 +380,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
   }, [wpm, accuracy, timeLeft, progressPercent, onStatsChange]);
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col relative">
       <style jsx>{`
         @keyframes blink {
           0%, 100% { background-color: rgb(96 165 250); }
@@ -322,10 +451,38 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
           </div>
         </div>
 
+        {/* Sticker minh họa sinh động cho từ đang gõ */}
+        <div className="h-32 mb-3 flex items-center justify-center shrink-0">
+          <AnimatePresence mode="wait">
+            {currentSticker ? (
+              <motion.div
+                key={currentWord}
+                initial={{ scale: 0, rotate: -15, opacity: 0 }}
+                animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0], opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ 
+                  scale: { duration: 0.3 },
+                  rotate: { repeat: Infinity, duration: 4, ease: "easeInOut" }
+                }}
+                className="flex flex-col items-center justify-center bg-gradient-to-br from-amber-50 to-amber-100/90 border-2 border-amber-200 rounded-3xl p-4 shadow-[4px_4px_0px_0px_#fde68a] min-w-[120px] h-28 relative"
+              >
+                <span className="text-6xl filter drop-shadow-sm select-none animate-bounce">{currentSticker}</span>
+                <span className="text-xs font-black text-amber-700 uppercase mt-1.5 tracking-wider">{currentWord}</span>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.6 }}
+                className="text-slate-400 text-sm font-bold italic"
+              >
+                Nhìn tranh và luyện gõ phím nhé bé yêu! 🎯
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-
-        {/* Typing Display Area */}
-        <div className="relative mb-3 p-6 bg-gradient-to-b from-blue-50/50 to-blue-50 rounded-3xl text-3xl font-mono leading-relaxed tracking-wide shadow-inner border-2 border-blue-100 flex flex-wrap content-center items-center justify-center text-center flex-1 min-h-0 overflow-y-auto">
+        {/* Typing Display Area: Cỡ chữ siêu khổng lồ cho bé 6 tuổi */}
+        <div className="relative mb-3 p-6 bg-gradient-to-b from-blue-50/50 to-blue-50 rounded-3xl text-5xl md:text-6xl font-black leading-relaxed tracking-wide shadow-inner border-2 border-blue-100 flex flex-wrap content-center items-center justify-center text-center flex-1 min-h-0 overflow-y-auto py-10 font-sans">
           {/* Hidden input for focus */}
           <input
             ref={inputRef}
@@ -346,38 +503,38 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
             let borderClass = '';
             
             if (isCorrect) {
-              colorClass = 'text-green-600 font-extrabold drop-shadow-sm';
+              colorClass = 'text-green-600 font-black drop-shadow-sm';
             } else if (isIncorrect) {
               return (
                 <motion.span
                   key={i}
                   animate={{ x: [0, -3, 3, -3, 3, 0] }}
                   transition={{ repeat: Infinity, duration: 0.6, repeatDelay: 1 }}
-                  className="text-red-500 font-extrabold bg-red-100 rounded-md px-1.5 shadow-sm relative inline-block mx-0.5"
+                  className="text-red-500 font-black bg-red-100 rounded-2xl px-2 shadow-sm relative inline-block mx-0.5"
                 >
                   {mapping.char === ' ' ? '\u00A0' : mapping.char}
                 </motion.span>
               );
             } else if (isCurrent) {
-              borderClass = 'cursor-blink border-b-4 border-blue-500 font-bold';
+              borderClass = 'cursor-blink border-b-4 border-blue-500 font-black';
             }
             
             return (
               <span
                 key={i}
-                className={`${colorClass} ${borderClass} relative transition-all duration-150`}
+                className={`${colorClass} ${borderClass} relative transition-all duration-150 mx-0.5`}
               >
                 {mapping.char === ' ' ? '\u00A0' : mapping.char}
                 {isCurrent && mapping.telexKeys.length > 1 && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-yellow-400 text-slate-900 text-xs px-2.5 py-1.5 rounded-xl font-bold shadow-lg animate-bounce whitespace-nowrap z-30 pointer-events-none flex items-center gap-1 border-2 border-yellow-300">
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-yellow-400 text-slate-900 text-xs px-3 py-2 rounded-2xl shadow-xl animate-bounce whitespace-nowrap z-30 pointer-events-none flex items-center gap-1 border-2 border-yellow-300">
                     {mapping.telexKeys.map((key, keyIdx) => {
                       const isTyped = (currentProgressIndex - mapping.startIndex) > keyIdx;
                       const isCurrentKey = (currentProgressIndex - mapping.startIndex) === keyIdx;
                       return (
                         <React.Fragment key={keyIdx}>
-                          {keyIdx > 0 && <span className="text-yellow-800 text-[10px] font-normal">+</span>}
+                          {keyIdx > 0 && <span className="text-yellow-800 text-[10px] font-bold">+</span>}
                           <span 
-                            className={`px-1.5 py-0.5 rounded font-mono text-sm leading-none ${
+                            className={`px-2 py-0.5 rounded-lg font-mono text-sm leading-none ${
                               isCurrentKey 
                                 ? 'bg-blue-600 text-white ring-2 ring-blue-300 font-extrabold' 
                                 : isTyped 
@@ -420,6 +577,68 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
           </div>
         )}
       </div>
+
+      {/* Success Modal chúc mừng ăn mừng hoành tráng */}
+      <AnimatePresence>
+        {showSuccessModal && finalStats && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.85, y: 50 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.85, y: 50 }}
+              transition={{ type: 'spring', damping: 15 }}
+              className="bg-white rounded-[32px] border-4 border-yellow-400 p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden"
+            >
+              {/* Sticker động vật to đùng chúc mừng */}
+              <div className="text-8xl mb-4 animate-bounce select-none">
+                {finalStats.wpm < 10 ? '🐢' : finalStats.wpm < 25 ? '🐰' : '🐆'}
+              </div>
+
+              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 mb-2">
+                Quá Xuất Sắc Bé Ơi! 🎉
+              </h2>
+
+              <p className="text-gray-600 font-bold mb-6 text-sm">
+                {finalStats.wpm < 10 
+                  ? 'Bé gõ chậm rãi và rất cẩn thận như chú Rùa đáng yêu! 🐢' 
+                  : finalStats.wpm < 25 
+                    ? 'Bé gõ nhịp nhàng và nhanh nhẹn như chú Thỏ tinh nghịch! 🐰' 
+                    : 'Bé gõ siêu tốc độ như chú Báo dũng mãnh! 🐆'}
+              </p>
+
+              {/* Các chỉ số thành tích chunky */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-3 text-center">
+                  <div className="text-xs text-emerald-700 font-bold uppercase tracking-wider">Tốc độ</div>
+                  <div className="text-2xl font-black text-emerald-600">{finalStats.wpm} WPM</div>
+                </div>
+                <div className="bg-sky-50 border-2 border-sky-200 rounded-2xl p-3 text-center">
+                  <div className="text-xs text-sky-700 font-bold uppercase tracking-wider">Chính xác</div>
+                  <div className="text-2xl font-black text-sky-600">{finalStats.accuracy}%</div>
+                </div>
+              </div>
+
+              {/* Lời khen khích lệ */}
+              <div className="bg-yellow-50 border border-yellow-100 rounded-2xl p-4 mb-6 text-xs text-yellow-800 font-bold">
+                ⭐ Bé đã vượt qua thử thách gõ phím này rồi! Cố lên nhé, bé đang học rất giỏi!
+              </div>
+
+              {/* Nút Tiếp tục khổng lồ 3D Chunky */}
+              <button
+                onClick={handleNextClick}
+                className="w-full bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white font-black text-lg py-4 rounded-2xl shadow-[0_6px_0_0_#059669] hover:shadow-[0_3px_0_0_#059669] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all cursor-pointer"
+              >
+                Tiếp tục học ➔
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

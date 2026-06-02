@@ -47,43 +47,43 @@ const zenTexts = [
 
 export default function AsmrPage() {
   const { playSound } = useSound();
-  
+
   // Trạng thái cấu hình thiết bị
   const [keyboardType, setKeyboardType] = useState<'mechanical' | 'membrane'>('mechanical');
   const [switchType, setSwitchType] = useState<'blue' | 'red' | 'brown'>('blue');
   const [is3d, setIs3d] = useState<boolean>(true);
   const [ledMode, setLedMode] = useState<'rgb' | 'warm' | 'cool' | 'off'>('rgb');
   const [atmosphere, setAtmosphere] = useState<'starry' | 'cozy' | 'dark'>('starry');
-  
+
   // Âm thanh nền & âm lượng
   const [ambientSound, setAmbientSound] = useState<'rain' | 'campfire' | 'none'>('none');
   const [typingVolume, setTypingVolume] = useState<number>(0.7);
   const [ambientVolume, setAmbientVolume] = useState<number>(0.3);
   const [isAudioInitialized, setIsAudioInitialized] = useState<boolean>(false);
-  
+
   // Trạng thái gõ phím tương tác
   const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set());
   const [triggerSignal, setTriggerSignal] = useState<number>(0);
   const [highlightKey, setHighlightKey] = useState<string | null>(null);
-  
+
   // Trạng thái bài gõ Zen
   const [currentTextIndex, setCurrentTextIndex] = useState<number>(0);
   const [showFingers, setShowFingers] = useState<boolean>(true);
-  
+
   // Trạng thái Bật/Tắt Có Dấu
   const [isAccented, setIsAccented] = useState<boolean>(true);
-  
+
   // Trạng thái tự động gõ (Auto-Play Mode)
   const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(false);
   const [autoPlayWpm, setAutoPlayWpm] = useState<number>(60);
-  
+
   // Số phím đã gõ đúng theo kiểu Telex
   const [correctKeysCount, setCorrectKeysCount] = useState<number>(0);
-  
+
   // Refs để lưu trữ trạng thái thay đổi liên tục giúp chạy mượt vòng lặp Auto-Play
   const correctKeysCountRef = useRef<number>(0);
   const autoPlayWpmRef = useRef<number>(60);
-  
+
   // Web Audio & Timers Refs
   const audioContextRef = useRef<AudioContext | null>(null);
   const rainNodeRef = useRef<AudioBufferSourceNode | null>(null);
@@ -130,16 +130,16 @@ export default function AsmrPage() {
   // Bộ tổng hợp tiếng mưa rơi (Rain Synthesizer) dùng Pink/White Noise
   const startAmbient = useCallback((type: 'rain' | 'campfire', ctx: AudioContext) => {
     if (!ctx) return;
-    
+
     // Dọn dẹp ambient cũ
-    if (rainNodeRef.current) { try { rainNodeRef.current.stop(); } catch(e){} rainNodeRef.current = null; }
-    if (campfireNodeRef.current) { try { campfireNodeRef.current.stop(); } catch(e){} campfireNodeRef.current = null; }
+    if (rainNodeRef.current) { try { rainNodeRef.current.stop(); } catch (e) { } rainNodeRef.current = null; }
+    if (campfireNodeRef.current) { try { campfireNodeRef.current.stop(); } catch (e) { } campfireNodeRef.current = null; }
     if (campfireIntervalRef.current) { clearTimeout(campfireIntervalRef.current); campfireIntervalRef.current = null; }
-    
+
     const bufferSize = ctx.sampleRate * 2;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
-    
+
     let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
     for (let i = 0; i < bufferSize; i++) {
       const white = Math.random() * 2 - 1;
@@ -153,65 +153,65 @@ export default function AsmrPage() {
       data[i] *= 0.11;
       b6 = white * 0.115926;
     }
-    
+
     const source = ctx.createBufferSource();
     source.buffer = buffer;
     source.loop = true;
-    
+
     const gainNode = ctx.createGain();
     gainNode.gain.setValueAtTime(ambientVolume, ctx.currentTime);
-    
+
     const filter = ctx.createBiquadFilter();
     filter.type = type === 'rain' ? 'lowpass' : 'bandpass';
     filter.frequency.setValueAtTime(type === 'rain' ? 800 : 400, ctx.currentTime);
     if (type === 'campfire') filter.Q.setValueAtTime(1.5, ctx.currentTime);
-    
+
     source.connect(filter);
     filter.connect(gainNode);
     gainNode.connect(ctx.destination);
-    
+
     source.start(0);
-    
+
     if (type === 'rain') {
       rainNodeRef.current = source;
       rainGainRef.current = gainNode;
     } else {
       campfireNodeRef.current = source;
       campfireGainRef.current = gainNode;
-      
+
       const playCrackle = () => {
         if (!audioContextRef.current) return;
         const cCtx = audioContextRef.current;
         const now = cCtx.currentTime;
-        
+
         const osc = cCtx.createOscillator();
         const cGain = cCtx.createGain();
         osc.connect(cGain);
         cGain.connect(cCtx.destination);
-        
+
         osc.type = 'sine';
         osc.frequency.setValueAtTime(1500 + Math.random() * 1200, now);
-        
+
         cGain.gain.setValueAtTime(0.01 + Math.random() * 0.04, now);
         cGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.005 + Math.random() * 0.01);
-        
+
         osc.start(now);
         osc.stop(now + 0.02);
-        
+
         campfireIntervalRef.current = window.setTimeout(playCrackle, 100 + Math.random() * 800);
       };
-      
+
       playCrackle();
     }
   }, [ambientVolume]);
 
   const stopAmbient = useCallback(() => {
     if (rainNodeRef.current) {
-      try { rainNodeRef.current.stop(); } catch(e){}
+      try { rainNodeRef.current.stop(); } catch (e) { }
       rainNodeRef.current = null;
     }
     if (campfireNodeRef.current) {
-      try { campfireNodeRef.current.stop(); } catch(e){}
+      try { campfireNodeRef.current.stop(); } catch (e) { }
       campfireNodeRef.current = null;
     }
     if (campfireIntervalRef.current) {
@@ -223,13 +223,13 @@ export default function AsmrPage() {
   // Khởi tạo Audio Context khi người dùng tương tác lần đầu
   const initAudio = useCallback(() => {
     if (isAudioInitialized) return;
-    
+
     const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (AudioContextClass) {
       const ctx = new AudioContextClass();
       audioContextRef.current = ctx;
       setIsAudioInitialized(true);
-      
+
       if (ambientSound !== 'none') {
         startAmbient(ambientSound, ctx);
       }
@@ -273,14 +273,14 @@ export default function AsmrPage() {
   const synthesizeKeystroke = useCallback((key: string, isDownstroke: boolean) => {
     const ctx = audioContextRef.current;
     if (!ctx) return;
-    
+
     if (ctx.state === 'suspended') {
       ctx.resume();
     }
 
     const now = ctx.currentTime;
     const lowerKey = key.toLowerCase();
-    
+
     const pitchSkew = 0.95 + Math.random() * 0.1;
     const volSkew = 0.9 + Math.random() * 0.2;
     const finalVolume = typingVolume * volSkew;
@@ -289,15 +289,15 @@ export default function AsmrPage() {
       // 1. Âm thanh đập đáy phím nhựa (Bottom-out Sound)
       const osc = ctx.createOscillator();
       const gainNode = ctx.createGain();
-      
+
       osc.connect(gainNode);
       gainNode.connect(ctx.destination);
-      
+
       osc.type = 'triangle';
-      
+
       let baseFreq = 180;
       let decay = 0.06;
-      
+
       if (keyboardType === 'membrane') {
         baseFreq = 120;
         decay = 0.09;
@@ -313,7 +313,7 @@ export default function AsmrPage() {
           decay = 0.055;
         }
       }
-      
+
       if (lowerKey === ' ' || lowerKey === 'space') {
         baseFreq *= 0.65;
         decay *= 1.5;
@@ -321,15 +321,15 @@ export default function AsmrPage() {
         baseFreq *= 0.8;
         decay *= 1.2;
       }
-      
+
       baseFreq *= pitchSkew;
 
       osc.frequency.setValueAtTime(baseFreq, now);
       osc.frequency.exponentialRampToValueAtTime(10, now + decay);
-      
+
       gainNode.gain.setValueAtTime(finalVolume * 0.35, now);
       gainNode.gain.exponentialRampToValueAtTime(0.0001, now + decay);
-      
+
       osc.start(now);
       osc.stop(now + decay + 0.05);
 
@@ -337,26 +337,26 @@ export default function AsmrPage() {
       const noise = ctx.createBufferSource();
       const noiseGain = ctx.createGain();
       const noiseFilter = ctx.createBiquadFilter();
-      
+
       const nBufferSize = ctx.sampleRate * 0.1;
       const nBuffer = ctx.createBuffer(1, nBufferSize, ctx.sampleRate);
       const nData = nBuffer.getChannelData(0);
       for (let i = 0; i < nBufferSize; i++) {
         nData[i] = Math.random() * 2 - 1;
       }
-      
+
       noise.buffer = nBuffer;
       noise.connect(noiseFilter);
       noiseFilter.connect(noiseGain);
       noiseGain.connect(ctx.destination);
-      
+
       noiseFilter.type = 'lowpass';
       const filterCutoff = keyboardType === 'membrane' ? 280 : (switchType === 'red' ? 550 : 650);
       noiseFilter.frequency.setValueAtTime(filterCutoff * pitchSkew, now);
-      
+
       noiseGain.gain.setValueAtTime(finalVolume * (keyboardType === 'membrane' ? 0.15 : 0.22), now);
       noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + decay * 0.8);
-      
+
       noise.start(now);
       noise.stop(now + decay + 0.05);
 
@@ -365,21 +365,21 @@ export default function AsmrPage() {
         const clickOsc = ctx.createOscillator();
         const clickGain = ctx.createGain();
         const clickFilter = ctx.createBiquadFilter();
-        
+
         clickOsc.connect(clickFilter);
         clickFilter.connect(clickGain);
         clickGain.connect(ctx.destination);
-        
+
         clickOsc.type = 'sawtooth';
         clickOsc.frequency.setValueAtTime(3200 * pitchSkew, now);
-        
+
         clickFilter.type = 'bandpass';
         clickFilter.frequency.setValueAtTime(3800 * pitchSkew, now);
         clickFilter.Q.setValueAtTime(6, now);
-        
+
         clickGain.gain.setValueAtTime(finalVolume * 0.42, now);
         clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.008);
-        
+
         clickOsc.start(now);
         clickOsc.stop(now + 0.03);
       }
@@ -387,24 +387,24 @@ export default function AsmrPage() {
       // UPSTROKE (Tiếng nảy phím lên)
       const upOsc = ctx.createOscillator();
       const upGain = ctx.createGain();
-      
+
       upOsc.connect(upGain);
       upGain.connect(ctx.destination);
-      
+
       upOsc.type = 'sine';
       let upFreq = keyboardType === 'membrane' ? 180 : 300;
       let upDecay = keyboardType === 'membrane' ? 0.03 : 0.02;
-      
+
       if (lowerKey === ' ' || lowerKey === 'space') {
         upFreq *= 0.6;
         upDecay *= 1.5;
       }
-      
+
       upOsc.frequency.setValueAtTime(upFreq * pitchSkew, now);
-      
+
       upGain.gain.setValueAtTime(finalVolume * (keyboardType === 'membrane' ? 0.06 : 0.12), now);
       upGain.gain.exponentialRampToValueAtTime(0.0001, now + upDecay);
-      
+
       upOsc.start(now);
       upOsc.stop(now + upDecay + 0.02);
     }
@@ -423,7 +423,7 @@ export default function AsmrPage() {
 
   const handleStartViralDemo = useCallback(() => {
     setCorrectKeysCount(0);
-    
+
     let ctx = audioContextRef.current;
     if (!ctx) {
       const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
@@ -433,21 +433,21 @@ export default function AsmrPage() {
         setIsAudioInitialized(true);
       }
     }
-    
+
     setKeyboardType('mechanical');
     setSwitchType('blue');
     setIs3d(true);
     setLedMode('rgb');
     setAtmosphere('starry');
-    
+
     setAmbientSound('rain');
     if (ctx) {
       startAmbient('rain', ctx);
     }
-    
+
     setAutoPlayWpm(80);
     setIsAutoPlaying(true);
-    
+
     playSound('click');
   }, [playSound, startAmbient]);
 
@@ -475,7 +475,7 @@ export default function AsmrPage() {
 
       const keyToType = currentKeys[currentIndex];
       let keyToRegister = keyToType.toLowerCase();
-      
+
       if (keyToType === '\n') keyToRegister = 'enter';
       else if (keyToType === ' ') keyToRegister = ' ';
 
@@ -516,7 +516,7 @@ export default function AsmrPage() {
       // Tính khoảng delay dựa trên WPM
       const currentWpm = autoPlayWpmRef.current;
       const msPerChar = 60000 / (currentWpm * 5);
-      
+
       const randomVariance = (Math.random() * 0.4 - 0.2) * msPerChar;
       const nextDelay = Math.max(85, msPerChar + randomVariance);
 
@@ -536,12 +536,12 @@ export default function AsmrPage() {
   const handleZenTyping = useCallback((key: string) => {
     const currentKeys = targetTelexKeys;
     const currentIndex = correctKeysCountRef.current;
-    
+
     if (currentIndex >= currentKeys.length) return;
-    
+
     const targetKey = currentKeys[currentIndex];
     let isCorrect = false;
-    
+
     if (key === 'Backspace') {
       setCorrectKeysCount((prev) => Math.max(0, prev - 1));
       return;
@@ -558,7 +558,7 @@ export default function AsmrPage() {
 
     if (isCorrect) {
       setCorrectKeysCount((prev) => prev + 1);
-      
+
       if (currentIndex + 1 === currentKeys.length) {
         setTimeout(() => {
           playSound('complete');
@@ -571,9 +571,9 @@ export default function AsmrPage() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isAutoPlaying) return;
-      
+
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      
+
       if (e.key === ' ' || e.key === 'Backspace' || e.key === 'Tab') {
         e.preventDefault();
       }
@@ -602,12 +602,12 @@ export default function AsmrPage() {
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (isAutoPlaying) return;
-      
+
       const keyLower = e.key.toLowerCase();
       let keyToRegister = keyLower;
       if (e.key === ' ') keyToRegister = ' ';
       else if (e.key === 'Enter') keyToRegister = 'enter';
-      
+
       if (activeKeys.has(keyToRegister)) {
         synthesizeKeystroke(e.key, false);
       }
@@ -637,7 +637,7 @@ export default function AsmrPage() {
       style={atmosphere === 'cozy' ? { backgroundColor: '#18181b' } : undefined}
     >
       {/* ----------------- HIỆU ỨNG HÌNH NỀN BẦU KHÔNG KHÍ (ATMOSPHERES) ----------------- */}
-      
+
       {/* 1. Bầu trời đêm trăng sao (Starry Night Theme) */}
       {atmosphere === 'starry' && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -665,7 +665,7 @@ export default function AsmrPage() {
               }}
             />
           ))}
-          
+
           <motion.div
             className="absolute top-32 left-0 w-64 h-16 bg-indigo-950/20 rounded-full blur-xl"
             animate={{ x: ['-200px', '100vw'] }}
@@ -678,7 +678,7 @@ export default function AsmrPage() {
       {atmosphere === 'cozy' && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/5 via-transparent to-transparent">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-amber-500/10 rounded-full blur-[80px]" />
-          
+
           <div className="absolute inset-0 opacity-20 bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_0%,rgba(255,255,255,0.05)_50%,rgba(255,255,255,0)_100%)]" />
           {[...Array(8)].map((_, i) => (
             <motion.div
@@ -742,7 +742,7 @@ export default function AsmrPage() {
 
       {/* ----------------- MAIN LAYOUT CONTENT ----------------- */}
       <section className="w-full max-w-5xl mx-auto px-4 py-4 relative z-10 flex flex-col gap-6 flex-grow justify-center">
-        
+
         {/* KHU VỰC 1: TRÌNH GÕ CHỮ ZEN (ZEN WRITING SPACE) */}
         <div className="bg-slate-950/50 border border-slate-900/80 rounded-[28px] p-6 backdrop-blur-md shadow-lg flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-900 pb-3">
@@ -750,7 +750,7 @@ export default function AsmrPage() {
               <span className="text-sm font-bold text-indigo-400">📖 Đang gõ:</span>
               <span className="text-sm font-black text-slate-200">{currentText.title}</span>
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
               {/* Nút Toggle Có Dấu/Không Dấu */}
               <button
@@ -760,8 +760,8 @@ export default function AsmrPage() {
                   playSound('click');
                 }}
                 className={`px-3 py-1.5 text-xs font-extrabold rounded-xl border flex items-center gap-1.5 transition-all cursor-pointer select-none
-                  ${isAccented 
-                    ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300 shadow-[0_0_10px_rgba(99,102,241,0.25)]' 
+                  ${isAccented
+                    ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300 shadow-[0_0_10px_rgba(99,102,241,0.25)]'
                     : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-250'}`}
               >
                 <span>{isAccented ? '✍️ Có dấu' : '⌨️ Không dấu'}</span>
@@ -774,7 +774,7 @@ export default function AsmrPage() {
                 onClick={handleStartViralDemo}
                 className="px-3.5 py-1.5 text-xs font-black rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-400 hover:via-purple-400 hover:to-indigo-400 text-white flex items-center gap-1.5 transition-all cursor-pointer select-none shadow-[0_0_15px_rgba(236,72,153,0.3)] hover:scale-105 active:scale-95"
               >
-                <span>🎥 Quay Video Viral (Auto ASMR)</span>
+                <span>🎥</span>
               </button>
 
               {/* Nút Auto-Play (Tự động gõ ASMR) */}
@@ -785,8 +785,8 @@ export default function AsmrPage() {
                   playSound('click');
                 }}
                 className={`px-3 py-1.5 text-xs font-extrabold rounded-xl border flex items-center gap-1.5 transition-all cursor-pointer select-none
-                  ${isAutoPlaying 
-                    ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.25)]' 
+                  ${isAutoPlaying
+                    ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.25)]'
                     : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'}`}
               >
                 {isAutoPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -836,7 +836,7 @@ export default function AsmrPage() {
                 <span>Đang tự phát ASMR...</span>
               </div>
             )}
-            
+
             <div className="flex flex-col items-center gap-3 w-full">
               {lines.map((line, lineIdx) => (
                 <div key={lineIdx} className="flex flex-wrap justify-center items-center leading-relaxed">
@@ -844,7 +844,7 @@ export default function AsmrPage() {
                     if (mapping.char === '\n') {
                       const isCorrect = correctKeysCount >= mapping.endIndex;
                       const isCurrent = correctKeysCount >= mapping.startIndex && correctKeysCount < mapping.endIndex;
-                      
+
                       let charClass = "text-slate-700/30";
                       if (isCorrect) {
                         charClass = "text-indigo-500/20";
@@ -861,7 +861,7 @@ export default function AsmrPage() {
 
                     const isCorrect = correctKeysCount >= mapping.endIndex;
                     const isCurrent = correctKeysCount >= mapping.startIndex && correctKeysCount < mapping.endIndex;
-                    
+
                     let charClass = "text-slate-400";
                     if (isCorrect) {
                       charClass = "text-indigo-400 font-bold drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]";
@@ -872,7 +872,7 @@ export default function AsmrPage() {
                     return (
                       <span key={index} className={`${charClass} relative inline-block ${mapping.char === ' ' ? 'mx-1.5' : 'mx-[0.5px]'} transition-all`}>
                         {mapping.char}
-                        
+
                         {/* Bong bóng Telex hiển thị khi phím đang gõ là từ tiếng Việt có dấu phức tạp */}
                         {isCurrent && mapping.telexKeys.length > 1 && (
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-yellow-400 text-slate-900 text-[10px] px-2.5 py-1.5 rounded-xl font-bold shadow-lg animate-bounce-subtle whitespace-nowrap z-30 pointer-events-none flex items-center gap-1 border-2 border-yellow-300">
@@ -883,14 +883,13 @@ export default function AsmrPage() {
                               return (
                                 <React.Fragment key={keyIdx}>
                                   {keyIdx > 0 && <span className="text-yellow-800 text-[9px] font-normal">+</span>}
-                                  <span 
-                                    className={`px-1.5 py-0.5 rounded font-mono text-[11px] leading-none ${
-                                      isCurrentSubKey 
-                                        ? 'bg-blue-600 text-white ring-2 ring-blue-300 font-extrabold scale-110' 
-                                      : isKeyTyped 
-                                        ? 'text-slate-400 line-through font-normal' 
-                                        : 'bg-yellow-300 text-slate-700 font-semibold'
-                                    }`}
+                                  <span
+                                    className={`px-1.5 py-0.5 rounded font-mono text-[11px] leading-none ${isCurrentSubKey
+                                        ? 'bg-blue-600 text-white ring-2 ring-blue-300 font-extrabold scale-110'
+                                        : isKeyTyped
+                                          ? 'text-slate-400 line-through font-normal'
+                                          : 'bg-yellow-300 text-slate-700 font-semibold'
+                                      }`}
                                   >
                                     {telexKey}
                                   </span>
@@ -940,16 +939,16 @@ export default function AsmrPage() {
             ledMode={ledMode}
             highlightKey={highlightKey}
           />
-          
+
           {/* BẢNG ĐIỀU KHIỂN TÙY CHỌN (ASMR CONTROLS) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-950/60 border border-slate-900 rounded-[28px] p-6 backdrop-blur-md">
-            
+
             {/* Cột 1: Cấu hình Bàn Phím */}
             <div className="flex flex-col gap-3">
               <span className="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
                 <span>⚙️</span> Loại Bàn Phím
               </span>
-              
+
               <div className="grid grid-cols-2 gap-2 bg-slate-900/60 p-1.5 rounded-xl border border-slate-800">
                 <button
                   onClick={() => { setKeyboardType('mechanical'); playSound('click'); }}
@@ -1013,7 +1012,7 @@ export default function AsmrPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
                 <span>🎵</span> Âm Thanh Nền & Âm Lượng
               </span>
-              
+
               <div className="grid grid-cols-3 gap-1.5 bg-slate-900/60 p-1.5 rounded-xl border border-slate-800 text-xs">
                 <button
                   onClick={() => { setAmbientSound('rain'); initAudio(); }}
@@ -1073,7 +1072,7 @@ export default function AsmrPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
                 <span>🎨</span> Giao Diện & Bối Cảnh
               </span>
-              
+
               <div className="grid grid-cols-3 gap-1.5 bg-slate-900/60 p-1.5 rounded-xl border border-slate-800 text-xs">
                 <button
                   onClick={() => setAtmosphere('starry')}
@@ -1129,7 +1128,7 @@ export default function AsmrPage() {
                 </select>
               </div>
             </div>
-            
+
           </div>
         </div>
 
