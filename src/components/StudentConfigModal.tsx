@@ -7,20 +7,23 @@ import { useSound } from "@/contexts/SoundContext";
 import { X, Sparkles, User, GraduationCap, Heart } from "lucide-react";
 import confetti from "canvas-confetti";
 
-const AVATARS = [
-  { emoji: "🦊", name: "Cáo Nhỏ" },
-  { emoji: "🦁", name: "Sư Tử" },
-  { emoji: "🐰", name: "Thỏ Ngọc" },
-  { emoji: "🦖", name: "Khủng Long" },
-  { emoji: "🐼", name: "Gấu Trúc" },
-  { emoji: "🦄", name: "Kỳ Lân" },
-  { emoji: "🐸", name: "Ếch Xanh" },
-  { emoji: "🐱", name: "Mèo Ú" },
-  { emoji: "🐯", name: "Hổ Con" },
-  { emoji: "🐻", name: "Gấu Nâu" }
-];
+const THEME_TO_EMOJI: Record<string, string> = {
+  dino: "🦖",
+  turtle: "🐢",
+  bunny: "🐰",
+  pig: "🐷",
+  leopard: "🐆"
+};
 
 const GRADES = ["Lớp 1", "Lớp 2", "Lớp 3", "Lớp 4", "Lớp 5"];
+
+const MASCOTS = [
+  { id: "dino", name: "Dino", emoji: "🦖", desc: "Khủng long xanh lá" },
+  { id: "turtle", name: "Rùa Con", emoji: "🐢", desc: "Rùa con đại dương" },
+  { id: "bunny", name: "Thỏ Ngọc", emoji: "🐰", desc: "Thỏ con cà rốt" },
+  { id: "pig", name: "Heo Hồng", emoji: "🐷", desc: "Heo con vui nhộn" },
+  { id: "leopard", name: "Báo Đốm", emoji: "🐆", desc: "Báo đốm thần tốc" }
+];
 
 export default function StudentConfigModal() {
   const { studentInfo, isConfigured, isOpenConfig, setIsOpenConfig, updateStudentInfo, isLoaded } = useStudent();
@@ -29,7 +32,7 @@ export default function StudentConfigModal() {
   const [nickname, setNickname] = useState("");
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("Lớp 1");
-  const [avatar, setAvatar] = useState("🦊");
+  const [theme, setTheme] = useState<'dino' | 'turtle' | 'bunny' | 'pig' | 'leopard'>("dino");
   const [error, setError] = useState("");
 
   // Đồng bộ thông tin từ context khi mở modal
@@ -38,13 +41,13 @@ export default function StudentConfigModal() {
       setNickname(studentInfo.nickname || "");
       setName(studentInfo.name || "");
       setGrade(studentInfo.grade || "Lớp 1");
-      setAvatar(studentInfo.avatar || "🦊");
+      setTheme(studentInfo.theme || "dino");
     } else {
       // Mặc định cho bé mới
       setNickname("");
       setName("");
       setGrade("Lớp 1");
-      setAvatar("🦊");
+      setTheme("dino");
     }
     setError("");
   }, [studentInfo, isOpenConfig]);
@@ -69,7 +72,8 @@ export default function StudentConfigModal() {
       name: name.trim(),
       nickname: nickname.trim(),
       grade,
-      avatar
+      avatar: THEME_TO_EMOJI[theme] || "🦖",
+      theme
     };
 
     updateStudentInfo(updatedInfo);
@@ -84,11 +88,6 @@ export default function StudentConfigModal() {
     });
 
     setIsOpenConfig(false);
-  };
-
-  const handleSelectAvatar = (emoji: string) => {
-    playSound("tick");
-    setAvatar(emoji);
   };
 
   const handleSelectGrade = (selectedGrade: string) => {
@@ -158,30 +157,35 @@ export default function StudentConfigModal() {
             </div>
 
             <form onSubmit={handleSave} className="space-y-5">
-              {/* Lựa chọn Avatar Emoji */}
+              {/* Lựa chọn Bạn đồng hành & Theme */}
               <div>
                 <label className="block text-slate-800 font-extrabold text-base mb-2.5 flex items-center gap-1.5">
-                  <Heart className="w-4 h-4 text-rose-500 fill-rose-350" />
-                  <span>1. Chọn người bạn đồng hành của bé:</span>
+                  <Sparkles className="w-4 h-4 text-amber-500 fill-amber-300 animate-pulse" />
+                  <span>1. Chọn bạn linh vật và giao diện học tập (Theme):</span>
                 </label>
-                <div className="grid grid-cols-5 gap-2.5 p-3 bg-white border-2 border-slate-800 rounded-2xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.05)]">
-                  {AVATARS.map((item) => (
+                <div className="grid grid-cols-5 gap-2 p-2 bg-white border-2 border-slate-800 rounded-2xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.05)]">
+                  {MASCOTS.map((m) => (
                     <button
-                      key={item.emoji}
+                      key={m.id}
                       type="button"
-                      onClick={() => handleSelectAvatar(item.emoji)}
-                      className={`text-3xl p-2 rounded-xl transition-all relative border-2 cursor-pointer ${
-                        avatar === item.emoji
-                          ? "bg-amber-200 border-indigo-600 scale-110 shadow-sm"
+                      onClick={() => {
+                        playSound("click");
+                        setTheme(m.id as any);
+                      }}
+                      className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all relative cursor-pointer border-2 ${
+                        theme === m.id
+                          ? "bg-amber-100 border-slate-800 scale-105 shadow-[2px_2px_0px_0px_var(--color-foreground)]"
                           : "bg-slate-50/50 hover:bg-slate-100 border-transparent hover:scale-105"
                       }`}
+                      title={m.desc}
                     >
-                      {avatar === item.emoji && (
+                      {theme === m.id && (
                         <span className="absolute -top-1.5 -right-1.5 text-xs bg-indigo-600 text-white rounded-full w-4 h-4 flex items-center justify-center font-bold">
                           ✓
                         </span>
                       )}
-                      <span className="block transform hover:rotate-12 transition-transform">{item.emoji}</span>
+                      <span className="text-3xl mb-1 transform hover:rotate-12 transition-transform">{m.emoji}</span>
+                      <span className="text-[10px] font-black text-slate-700 text-center leading-tight truncate w-full">{m.name}</span>
                     </button>
                   ))}
                 </div>
@@ -231,10 +235,10 @@ export default function StudentConfigModal() {
                       key={g}
                       type="button"
                       onClick={() => handleSelectGrade(g)}
-                      className={`flex-1 min-w-[70px] py-2.5 rounded-xl text-sm font-black border-2 transition-all cursor-pointer ${
+                      className={`flex-1 min-w-[70px] py-2.5 rounded-xl text-sm font-black transition-all cursor-pointer ${
                         grade === g
-                          ? "bg-indigo-600 text-white border-slate-850 shadow-[2px_2px_0px_0px_#1e293b]"
-                          : "bg-white hover:bg-slate-100 text-slate-700 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b] active:translate-y-[1px] active:shadow-none"
+                          ? "keycap-btn-primary py-2.5 rounded-xl shadow-[0_3px_0_0_var(--color-primary-depth)] text-sm"
+                          : "keycap-btn-surface py-2.5 rounded-xl shadow-[0_3px_0_0_var(--color-outline-variant)] text-sm active:translate-y-0.5"
                       }`}
                     >
                       {g}
@@ -258,7 +262,7 @@ export default function StudentConfigModal() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-650 text-white font-black text-xl rounded-2xl border-2 border-slate-850 shadow-[4px_4px_0px_0px_#1e293b] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_#1e293b] transition-all cursor-pointer flex items-center justify-center gap-2"
+                  className="keycap-btn-secondary w-full py-4 text-xl rounded-2xl cursor-pointer flex items-center justify-center gap-2 text-white"
                 >
                   <span>Bắt Đầu Học Thôi! 🚀</span>
                 </button>

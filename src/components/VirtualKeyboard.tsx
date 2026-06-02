@@ -109,7 +109,7 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
 
   return (
     <div className="mt-2">
-      <div className="bg-white p-2 rounded-xl border border-gray-100">
+      <div className="p-1">
         {keyboardLayout.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center mb-1 last:mb-0 gap-1">
             {row.map((key, keyIndex) => {
@@ -131,19 +131,16 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
                           key === 'Shift' ? 'w-24' :
                             'w-10';
 
-              const keyBgColor = isPressed 
-                ? 'bg-blue-500 text-white border-blue-600 font-black' 
+              const keyClass = isPressed 
+                ? 'virtual-keycap virtual-keycap-pressed' 
                 : shouldHighlight 
-                  ? 'bg-amber-400 text-amber-950 border-amber-500 font-black animate-pulse shadow-[0_0_15px_#fbbf24] scale-110 z-20 transition-transform' 
-                  : `${baseColor} hover:brightness-95 font-medium`;
+                  ? 'virtual-keycap virtual-keycap-highlight' 
+                  : `virtual-keycap ${baseColor} hover:brightness-95`;
 
               return (
                 <div
                   key={keyIndex}
-                  className={`${width} h-10 rounded-[10px] flex items-center justify-center
-                    border-b-2 active:border-b-0 active:translate-y-0.5
-                    ${keyBgColor}
-                    text-gray-700 shadow-sm transition-all duration-100 select-none text-sm`}
+                  className={`${width} h-11 flex items-center justify-center select-none text-sm ${keyClass}`}
                 >
                   {displayKey}
                 </div>
@@ -156,7 +153,7 @@ export default function VirtualKeyboard({ pressedKey, highlightKey }: Props) {
       <FingersVisualizer highlightKey={highlightKeyStr} pressedKey={pressedKeyStr} />
 
       {/* Legend for Fingers */}
-      <div className="mt-6 flex flex-wrap justify-center gap-4 text-xs text-gray-600">
+      <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-xs text-gray-600">
         <div className="flex items-center gap-2"><div className="w-4 h-4 rounded bg-red-100 border border-red-200"></div> Ngón út trái</div>
         <div className="flex items-center gap-2"><div className="w-4 h-4 rounded bg-orange-100 border border-orange-200"></div> Ngón áp út trái</div>
         <div className="flex items-center gap-2"><div className="w-4 h-4 rounded bg-yellow-100 border border-yellow-200"></div> Ngón giữa trái</div>

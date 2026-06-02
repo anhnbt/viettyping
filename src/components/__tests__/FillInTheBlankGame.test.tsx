@@ -25,6 +25,15 @@ jest.mock('framer-motion', () => {
 // Mock canvas-confetti
 jest.mock('canvas-confetti', () => jest.fn());
 
+// Mock useSound
+jest.mock('@/contexts/SoundContext', () => ({
+  useSound: () => ({
+    isMuted: false,
+    toggleMute: jest.fn(),
+    playSound: jest.fn(),
+  }),
+}));
+
 // Mock Audio
 const mockPlay = jest.fn().mockResolvedValue(undefined);
 global.Audio = jest.fn().mockImplementation(() => ({

@@ -7,6 +7,7 @@ export interface StudentInfo {
   nickname: string;  // Biệt danh / Tên gọi yêu thích
   grade: string;     // Lớp học (ví dụ: Lớp 1, Lớp 2...)
   avatar: string;    // Emoji avatar (ví dụ: 🦁)
+  theme?: 'dino' | 'turtle' | 'bunny' | 'pig' | 'leopard'; // Theme giao diện của bé
 }
 
 interface StudentContextType {
@@ -33,7 +34,15 @@ export function StudentProvider({ children }: { children: ReactNode }) {
     try {
       const savedProfile = localStorage.getItem(STORAGE_KEY);
       if (savedProfile) {
-        setStudentInfo(JSON.parse(savedProfile));
+        const parsed = JSON.parse(savedProfile) as StudentInfo;
+        setStudentInfo(parsed);
+        if (parsed.theme) {
+          document.documentElement.setAttribute('data-theme', parsed.theme);
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dino');
+        }
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dino');
       }
     } catch (error) {
       console.error("Lỗi khi đọc thông tin học sinh từ localStorage:", error);
@@ -43,9 +52,16 @@ export function StudentProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateStudentInfo = useCallback((info: StudentInfo) => {
-    setStudentInfo(info);
+    const infoWithTheme: StudentInfo = {
+      ...info,
+      theme: info.theme || 'dino'
+    };
+    setStudentInfo(infoWithTheme);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(info));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(infoWithTheme));
+      if (infoWithTheme.theme) {
+        document.documentElement.setAttribute('data-theme', infoWithTheme.theme);
+      }
     } catch (error) {
       console.error("Lỗi khi lưu thông tin học sinh vào localStorage:", error);
     }
@@ -55,6 +71,7 @@ export function StudentProvider({ children }: { children: ReactNode }) {
     setStudentInfo(null);
     try {
       localStorage.removeItem(STORAGE_KEY);
+      document.documentElement.setAttribute('data-theme', 'dino');
     } catch (error) {
       console.error("Lỗi khi xóa thông tin học sinh:", error);
     }

@@ -109,7 +109,7 @@ export default function Home() {
   };
 
   return (
-    <div className={`min-h-screen bg-soft-cream relative overflow-hidden pb-16 ${beVietnamPro.className}`}>
+    <div className={`min-h-screen canvas-bg relative overflow-hidden pb-16 ${beVietnamPro.className}`}>
       
       {/* Các đám mây trôi tự động */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -189,7 +189,7 @@ export default function Home() {
 
             {/* XP Display */}
             {xp > 0 && (
-              <div className="hidden sm:flex items-center gap-1.5 bg-sunshine-yellow/15 border-2 border-slate-800 px-3 py-1.5 rounded-full">
+              <div className="hidden sm:flex items-center gap-1.5 bg-accent/15 border-2 border-slate-800 px-3 py-1.5 rounded-full">
                 <Trophy className="w-4 h-4 text-amber-600 animate-bounce" />
                 <span className="text-xs font-black text-slate-700">{xp} XP</span>
               </div>
@@ -197,7 +197,7 @@ export default function Home() {
 
             {/* Streak Display */}
             {streak > 0 && (
-              <div className="hidden sm:flex items-center gap-1.5 bg-coral-orange/15 border-2 border-slate-800 px-3 py-1.5 rounded-full">
+              <div className="hidden sm:flex items-center gap-1.5 bg-secondary/15 border-2 border-slate-800 px-3 py-1.5 rounded-full">
                 <Flame className="w-4 h-4 text-orange-650 animate-pulse" />
                 <span className="text-xs font-black text-slate-700">{streak} ngày</span>
               </div>
@@ -206,7 +206,7 @@ export default function Home() {
             {/* Leaderboard CTA Button */}
             <button
               onClick={() => handleNavClick('/leaderboard')}
-              className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 bg-sunshine-yellow/15 border-2 border-slate-800 text-slate-700 rounded-full shadow-[2px_2px_0px_0px_#1e293b] hover:bg-sunshine-yellow/30 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 bg-accent/15 border-2 border-slate-800 text-slate-700 rounded-full shadow-[2px_2px_0px_0px_#1e293b] hover:bg-accent/30 transition-all cursor-pointer"
               title="Xem bảng xếp hạng"
             >
               <Trophy className="w-4 h-4 text-amber-600 fill-amber-300 animate-pulse" />
@@ -216,7 +216,7 @@ export default function Home() {
             {/* Main CTA: Luyện gõ phím */}
             <button
               onClick={() => handleNavClick('/typing')}
-              className="flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 bg-sky-blue text-white rounded-[20px] text-xs md:text-sm font-black border-2 border-slate-800 shadow-[0_4px_0_0_#2563EB] transition-all hover:translate-y-[-1px] hover:shadow-[0_5px_0_0_#2563EB] active:translate-y-[2px] active:shadow-[0_2px_0_0_#2563EB] cursor-pointer"
+              className="keycap-btn-primary gap-1.5 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-[20px] text-xs md:text-sm cursor-pointer"
             >
               <Keyboard className="w-4 h-4 text-sky-100 hidden sm:block" />
               <span>Luyện gõ phím</span>
@@ -259,25 +259,23 @@ export default function Home() {
         <HeroSlideBanner />
 
         {/* Nút hành động 3D Chunky chính dạng cơ học Keycap */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.95 }}
+        <button
           onClick={handleStartSampleLesson}
-          className="inline-flex items-center justify-center gap-3 bg-coral-orange text-white font-black text-lg md:text-xl w-full md:w-auto px-6 md:px-10 py-4 md:py-5 rounded-[26px] border-4 border-slate-800 shadow-[0_8px_0_0_#DC2626] hover:shadow-[0_10px_0_0_#DC2626] hover:translate-y-[-2px] active:translate-y-[4px] active:shadow-[0_4px_0_0_#DC2626] transition-all duration-150 mb-10 cursor-pointer animate-pulse"
+          className="keycap-btn-secondary w-full md:w-auto px-6 md:px-10 py-4 md:py-5 rounded-[26px] mb-10 cursor-pointer animate-pulse text-lg md:text-xl gap-3 text-white"
         >
           <Sparkles className="w-5 h-5 md:w-6 md:h-6" />
           <span>Học Bài Mẫu Ngay!</span>
           <ArrowRight className="w-5 h-5" />
-        </motion.button>
+        </button>
 
         {/* Feature Badges */}
         {/* Feature Badges - Gọn gàng trên 1 dòng */}
         <div className="flex flex-row flex-nowrap justify-start md:justify-center items-center gap-2.5 md:gap-3 max-w-4xl mx-auto overflow-x-auto whitespace-nowrap pb-3 md:pb-0 scrollbar-none select-none">
           {[
-            { icon: '📚', label: '8 Môn Học Thú Vị', color: 'bg-dino-green/15 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
-            { icon: '🎯', label: 'Bài Tập Tương Tác', color: 'bg-sunshine-yellow/15 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
-            { icon: '⌨️', label: 'Gõ Phím 10 Ngón', color: 'bg-sky-blue/15 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
-            { icon: '🎮', label: 'Trò Chơi Trí Tuệ', color: 'bg-coral-orange/15 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
+            { icon: '📚', label: '8 Môn Học Thú Vị', color: 'bg-primary/15 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
+            { icon: '🎯', label: 'Bài Tập Tương Tác', color: 'bg-accent/15 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
+            { icon: '⌨️', label: 'Gõ Phím 10 Ngón', color: 'bg-primary-container/30 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
+            { icon: '🎮', label: 'Trò Chơi Trí Tuệ', color: 'bg-secondary/15 border-slate-800 text-slate-800 shadow-[2px_2px_0px_0px_#1e293b]' },
           ].map((f, i) => (
             <motion.div
               key={f.label}
@@ -307,7 +305,7 @@ export default function Home() {
       {/* Góc Phụ Huynh / Thông tin phụ */}
       <div className="max-w-4xl mx-auto px-6 mt-12 text-center relative z-10">
         <div className="inline-flex flex-col md:flex-row items-center gap-4 bg-white/90 border-4 border-slate-800 p-6 rounded-3xl shadow-[5px_5px_0px_0px_#1e293b]">
-          <div className="p-3.5 bg-dino-green/20 border-2 border-slate-800 rounded-2xl text-3xl shrink-0">
+          <div className="p-3.5 bg-primary/20 border-2 border-slate-800 rounded-2xl text-3xl shrink-0">
             👨‍👩‍👧‍👦
           </div>
           <div className="text-center md:text-left flex flex-col items-center md:items-start">

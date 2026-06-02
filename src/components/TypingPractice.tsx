@@ -410,7 +410,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
       <div className="hidden md:flex flex-col w-full h-full min-h-0">
         
         {/* Compact Stats Bar */}
-        <div className="flex items-center justify-between gap-4 px-4 py-2.5 bg-white/80 rounded-2xl border border-gray-100 mb-3 shadow-sm shrink-0">
+        <div className="flex items-center justify-between gap-4 px-2 py-1.5 mb-2 shrink-0 w-full">
           <div className="flex items-center gap-4">
             <div className={`flex items-center gap-1.5 font-mono font-black text-sm px-3 py-1.5 rounded-xl border ${getTimerColor()}`}>
               <IoTimeOutline className="text-base" />
@@ -430,11 +430,11 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowKeyboard(prev => !prev)}
-              className={`flex items-center gap-1 px-3 py-1.5 text-xs border rounded-xl font-bold shadow-sm cursor-pointer transition-colors ${
+              className={`flex items-center gap-1 px-3 py-1.5 text-xs border-2 border-slate-800 rounded-xl font-bold cursor-pointer transition-all shadow-[0_3px_0_0_var(--color-outline-variant)] ${
                 showKeyboard 
-                  ? "bg-indigo-50 border-indigo-200 text-indigo-600 hover:bg-indigo-100" 
-                  : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100"
-              }`}
+                  ? "bg-indigo-100 text-indigo-850" 
+                  : "bg-white text-gray-655"
+              } active:translate-y-0.5 active:shadow-none`}
               title={showKeyboard ? "Ẩn bàn phím ảo" : "Hiện bàn phím ảo"}
             >
               <Keyboard size={14} className="shrink-0" />
@@ -443,7 +443,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
             
             <button
               onClick={handleRestart}
-              className="flex items-center gap-1 px-4 py-1.5 text-xs bg-gray-50 border border-gray-200 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors font-bold shadow-sm cursor-pointer"
+              className="flex items-center gap-1 px-4 py-1.5 text-xs bg-white border-2 border-slate-800 text-gray-750 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all font-bold cursor-pointer shadow-[0_3px_0_0_var(--color-outline-variant)] active:translate-y-0.5 active:shadow-none"
             >
               <IoRefreshOutline className="text-sm" />
               Làm lại
@@ -452,7 +452,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
         </div>
 
         {/* Sticker minh họa sinh động cho từ đang gõ */}
-        <div className="h-32 mb-3 flex items-center justify-center shrink-0">
+        <div className="h-24 mb-2 flex items-center justify-center shrink-0 relative z-10">
           <AnimatePresence mode="wait">
             {currentSticker ? (
               <motion.div
@@ -464,10 +464,10 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
                   scale: { duration: 0.3 },
                   rotate: { repeat: Infinity, duration: 4, ease: "easeInOut" }
                 }}
-                className="flex flex-col items-center justify-center bg-gradient-to-br from-amber-50 to-amber-100/90 border-2 border-amber-200 rounded-3xl p-4 shadow-[4px_4px_0px_0px_#fde68a] min-w-[120px] h-28 relative"
+                className="flex flex-col items-center justify-center min-w-[100px] h-20 relative"
               >
-                <span className="text-6xl filter drop-shadow-sm select-none animate-bounce">{currentSticker}</span>
-                <span className="text-xs font-black text-amber-700 uppercase mt-1.5 tracking-wider">{currentWord}</span>
+                <span className="text-5xl filter drop-shadow-sm select-none">{currentSticker}</span>
+                <span className="text-[10px] font-black text-amber-700 uppercase mt-1 tracking-wider">{currentWord}</span>
               </motion.div>
             ) : (
               <motion.div
@@ -482,7 +482,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
         </div>
 
         {/* Typing Display Area: Cỡ chữ siêu khổng lồ cho bé 6 tuổi */}
-        <div className="relative mb-3 p-6 bg-gradient-to-b from-blue-50/50 to-blue-50 rounded-3xl text-5xl md:text-6xl font-black leading-relaxed tracking-wide shadow-inner border-2 border-blue-100 flex flex-wrap content-center items-center justify-center text-center flex-1 min-h-0 overflow-y-auto py-10 font-sans">
+        <div className="relative mb-2 p-4 bg-blue-50/40 rounded-2xl text-4xl md:text-5xl font-black leading-relaxed tracking-wide flex flex-wrap content-center items-center justify-center text-center flex-1 min-h-[120px] overflow-visible py-5 font-sans">
           {/* Hidden input for focus */}
           <input
             ref={inputRef}
@@ -526,20 +526,20 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
               >
                 {mapping.char === ' ' ? '\u00A0' : mapping.char}
                 {isCurrent && mapping.telexKeys.length > 1 && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-yellow-400 text-slate-900 text-xs px-3 py-2 rounded-2xl shadow-xl animate-bounce whitespace-nowrap z-30 pointer-events-none flex items-center gap-1 border-2 border-yellow-300">
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-accent text-slate-900 text-xs px-3 py-2 rounded-2xl shadow-xl animate-bounce whitespace-nowrap z-30 pointer-events-none flex items-center gap-1 border-2 border-accent-depth/35">
                     {mapping.telexKeys.map((key, keyIdx) => {
                       const isTyped = (currentProgressIndex - mapping.startIndex) > keyIdx;
                       const isCurrentKey = (currentProgressIndex - mapping.startIndex) === keyIdx;
                       return (
                         <React.Fragment key={keyIdx}>
-                          {keyIdx > 0 && <span className="text-yellow-800 text-[10px] font-bold">+</span>}
+                          {keyIdx > 0 && <span className="text-yellow-900 text-[10px] font-bold">+</span>}
                           <span 
                             className={`px-2 py-0.5 rounded-lg font-mono text-sm leading-none ${
                               isCurrentKey 
-                                ? 'bg-blue-600 text-white ring-2 ring-blue-300 font-extrabold' 
+                                ? 'bg-primary text-white ring-2 ring-primary/30 font-extrabold' 
                                 : isTyped 
                                   ? 'text-slate-400 line-through font-normal' 
-                                  : 'bg-yellow-300 text-slate-700 font-semibold'
+                                  : 'bg-accent/40 text-slate-700 font-semibold'
                             }`}
                           >
                             {key}
@@ -547,7 +547,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
                         </React.Fragment>
                       );
                     })}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-yellow-400" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-accent" />
                   </div>
                 )}
               </span>
@@ -560,7 +560,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="mb-3 p-3.5 bg-red-50 border-2 border-dashed border-red-200 rounded-2xl text-center text-sm font-bold text-red-500 flex items-center justify-center gap-2 shadow-sm relative z-20"
+            className="mb-3 p-3 bg-secondary/5 rounded-xl text-center text-sm font-bold text-secondary flex items-center justify-center gap-2 relative z-20"
           >
             <span className="text-lg animate-bounce">⚠️</span>
             <span>Bé gõ chưa đúng rồi! Hãy nhấn phím <b>Xóa (⌫)</b> màu tím để sửa lại nhé!</span>
@@ -613,25 +613,25 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
 
               {/* Các chỉ số thành tích chunky */}
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-3 text-center">
-                  <div className="text-xs text-emerald-700 font-bold uppercase tracking-wider">Tốc độ</div>
-                  <div className="text-2xl font-black text-emerald-600">{finalStats.wpm} WPM</div>
+                <div className="bg-primary/10 border-2 border-primary/20 rounded-2xl p-3 text-center">
+                  <div className="text-xs text-primary font-bold uppercase tracking-wider">Tốc độ</div>
+                  <div className="text-2xl font-black text-primary">{finalStats.wpm} WPM</div>
                 </div>
-                <div className="bg-sky-50 border-2 border-sky-200 rounded-2xl p-3 text-center">
-                  <div className="text-xs text-sky-700 font-bold uppercase tracking-wider">Chính xác</div>
-                  <div className="text-2xl font-black text-sky-600">{finalStats.accuracy}%</div>
+                <div className="bg-tertiary/10 border-2 border-tertiary/20 rounded-2xl p-3 text-center">
+                  <div className="text-xs text-tertiary font-bold uppercase tracking-wider">Chính xác</div>
+                  <div className="text-2xl font-black text-tertiary">{finalStats.accuracy}%</div>
                 </div>
               </div>
 
               {/* Lời khen khích lệ */}
-              <div className="bg-yellow-50 border border-yellow-100 rounded-2xl p-4 mb-6 text-xs text-yellow-800 font-bold">
+              <div className="bg-accent/10 border border-accent/20 rounded-2xl p-4 mb-6 text-xs text-slate-700 font-bold">
                 ⭐ Bé đã vượt qua thử thách gõ phím này rồi! Cố lên nhé, bé đang học rất giỏi!
               </div>
 
               {/* Nút Tiếp tục khổng lồ 3D Chunky */}
               <button
                 onClick={handleNextClick}
-                className="w-full bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white font-black text-lg py-4 rounded-2xl shadow-[0_6px_0_0_#059669] hover:shadow-[0_3px_0_0_#059669] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all cursor-pointer"
+                className="keycap-btn-primary w-full py-4 text-lg rounded-2xl cursor-pointer text-white"
               >
                 Tiếp tục học ➔
               </button>

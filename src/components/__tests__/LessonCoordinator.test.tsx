@@ -258,6 +258,10 @@ describe("LessonCoordinator Integration", () => {
     const inputEl = screen.getByRole("textbox");
     fireEvent.change(inputEl, { target: { value: "ba" } });
 
+    // Click "Tiếp tục học ➔" in the success modal to complete typing practice
+    const continueBtn = screen.getByRole("button", { name: /Tiếp tục học/i });
+    fireEvent.click(continueBtn);
+
     // Should call onActivityComplete for 'typing_0'
     expect(mockOnActivityComplete).toHaveBeenCalledWith("typing_0", expect.objectContaining({
       score: 100,
@@ -347,6 +351,10 @@ describe("LessonCoordinator Integration", () => {
     // 2. Typing practice
     const inputEl = screen.getByRole("textbox");
     fireEvent.change(inputEl, { target: { value: "ba" } });
+
+    // Click "Tiếp tục học ➔" in the success modal to complete typing practice
+    const continueBtn = screen.getByRole("button", { name: /Tiếp tục học/i });
+    fireEvent.click(continueBtn);
 
     // 3. True/False Game
     expect(screen.getByText(/Trò chơi: true false game/i)).toBeInTheDocument();

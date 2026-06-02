@@ -1,14 +1,61 @@
 import React from 'react';
+import { useStudent } from '@/contexts/StudentContext';
 
 interface DinoMascotProps {
   className?: string;
   variant?: 'cheer' | 'victory';
 }
 
+const MASCOT_IMAGES = {
+  turtle: "https://lh3.googleusercontent.com/aida/ADBb0ujKzOv1Gfnk7V0Hg2Xw-oGB35KqunPyykSPt02wU5_NQT29AZTYRZCIF5nNJSModwaKW_Y8-2rLRnSE9sfL0jN6TGSCEgF46KEgcBSYLBkwJQgOWvgcCwvup3wIJbNPu8LWQX0vyOT_5SqRXJiZ9BrAJ5Ze8wLAXtv-s8EwfjLlyQ5x6D4pOUHLzmMBR0POACvACLBjThdbGM5VRwEZ3ZprFLg43Y0Ys__vdRoHSWXORzHKRdnXrmuP2cA",
+  bunny: "https://lh3.googleusercontent.com/aida/ADBb0uiccFaLr883SRghZuRfNoBoqOH659tF15YYtMeTb0kVjlVoRgvsV2QX90JKuFisj42VE23v7dpEIceDGKdreK12VNZi1Fi1SWUmcfgWr-93nxn6dJcICrv_mYUyari8BDXpdIBQVOE1MkvAlULAtYyF4EGIis7k8nsn3FoIqCepslojd-d8U6O8SiPYyOx6KYUWtBeiGDff7oqAQ9aElyDV1_znfHFhbSJ_lBTEyF2nIX7QjutpcpjxAaE0",
+  pig: "https://lh3.googleusercontent.com/aida/ADBb0ug0TuuXRulCzGueSZIjS6G90yWDUXxNedTwx2pz4aO_4i13vhO_JoUk6t0sIJKDemzFX-aKYe2efkg-pZI6wHFbRSVDWCNXN7qe74nrplxW4nDHThwE9KPUmU2nJo_jahgx4ErMp9afwTLyFzphVFvwyugKt2_1b8b7jntTHp6SHX3pYwSqr4zsEztrMUzdaQ6h9cvEhtWChvIPT4dYV0KgCnue-tKAx1N4a9dpTORjjHMLxNCNhoV4yJoy",
+  leopard: "https://lh3.googleusercontent.com/aida/ADBb0uiNbpkX0J0Sz5jD3UUlwL6rwBenYBtjB6c8rEMXE0VCjQHbVpwYSgq-D-vnxTW6F0oyUwsf2NtJKV1gx5FnY1rBt8-HQnz8B5Rw29PDlUii1ibAPd8wCEz8JBNPHPUdQqeIjbuCd2lrAel-7qlXdcot49gy8_WPz6nwgiiCM_Z4YBX6H39Kw20oa35Kro9vLUr51NgXmjVvfox8BHcdNKnTfbnWIbMoCa9JU9DarmjWqQ0KqQ17brWlfpPs"
+};
+
 export const DinoMascot: React.FC<DinoMascotProps> = ({ 
   className = 'w-32 h-32', 
   variant = 'cheer' 
 }) => {
+  const { studentInfo } = useStudent();
+  const theme = studentInfo?.theme || 'dino';
+
+  if (theme !== 'dino') {
+    const imgUrl = MASCOT_IMAGES[theme as keyof typeof MASCOT_IMAGES];
+    if (imgUrl) {
+      return (
+        <div className={`relative select-none flex items-center justify-center ${className}`}>
+          <style jsx global>{`
+            @keyframes dino-breathing {
+              0%, 100% { transform: translateY(0px) scaleY(1); }
+              50% { transform: translateY(-4px) scaleY(1.02); }
+            }
+            @keyframes victory-jump {
+              0%, 100% { transform: translateY(0px) rotate(0deg); }
+              25% { transform: translateY(-12px) rotate(5deg); }
+              75% { transform: translateY(-12px) rotate(-5deg); }
+            }
+            .animate-dino-body {
+              animation: dino-breathing 3s ease-in-out infinite;
+              transform-origin: bottom center;
+            }
+            .animate-dino-victory {
+              animation: victory-jump 0.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+              transform-origin: bottom center;
+            }
+          `}</style>
+          <img
+            src={imgUrl}
+            alt={`${theme} mascot`}
+            className={`w-full h-full object-contain ${
+              variant === 'victory' ? 'animate-dino-victory' : 'animate-dino-body'
+            }`}
+          />
+        </div>
+      );
+    }
+  }
+
   return (
     <div className={`relative select-none flex items-center justify-center ${className}`}>
       {/* CSS Animations */}

@@ -54,6 +54,15 @@ jest.mock("@/contexts/StudentContext", () => ({
   }),
 }));
 
+// Mock useSound
+jest.mock('@/contexts/SoundContext', () => ({
+  useSound: () => ({
+    isMuted: false,
+    toggleMute: jest.fn(),
+    playSound: jest.fn(),
+  }),
+}));
+
 describe('SpinWheelGame', () => {
   const mockConfig: SpinWheelGameConfig = {
     id: 'spin-test-game',

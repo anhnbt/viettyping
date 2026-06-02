@@ -374,9 +374,9 @@ export default function LessonCoordinator({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -30 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-7xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-4 md:p-6 flex flex-col items-center justify-center text-center border border-white/40"
+            className="w-full max-w-7xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-3 md:p-4 flex flex-col items-center justify-center text-center border border-white/40"
           >
-            <p className="text-lg text-purple-600 mb-6 font-medium bg-purple-100 px-4 py-1 rounded-full">
+            <p className="text-lg text-purple-600 mb-3 font-medium bg-purple-100 px-4 py-1 rounded-full">
               {currentTask.description}
             </p>
             
@@ -703,7 +703,7 @@ export default function LessonCoordinator({
     <div className="w-full flex flex-col items-center relative">
       {/* Header động */}
       {step !== "summary" && (
-        <header className="p-4 md:p-6 flex items-center justify-between relative z-20 w-full max-w-7xl mx-auto gap-2">
+        <header className="py-2 md:py-3 px-4 flex items-center justify-between relative z-20 w-full max-w-7xl mx-auto gap-2">
           <Link
             href="/"
             className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl text-purple-700 font-bold hover:bg-white/90 transition-all shadow-sm border border-white/20 text-sm md:text-base cursor-pointer shrink-0"
@@ -757,7 +757,7 @@ export default function LessonCoordinator({
 
       {/* ProgressBar at the top of the container */}
       {step !== "summary" && (
-        <div className="w-full max-w-7xl mb-8 px-4">
+        <div className="w-full max-w-7xl mb-3 px-4">
           <ProgressBar progress={progressPercent} animal={step === "typing_practice" ? typingStats?.animal : undefined} />
         </div>
       )}
