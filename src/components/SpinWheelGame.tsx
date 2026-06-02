@@ -169,7 +169,9 @@ export default function SpinWheelGame({ gameConfig, flashcards = [], onComplete 
         whileTap={!isSpinning ? { scale: 0.95 } : {}}
         onClick={() => { playSound('pop'); spinWheel(); }}
         disabled={isSpinning}
-        className={`bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 text-white font-black text-2xl px-12 py-4 rounded-full shadow-[0_6px_0_0_#be185d] hover:shadow-[0_3px_0_0_#be185d] transition-all flex items-center gap-3 ${isSpinning ? 'opacity-50 cursor-not-allowed' : ''} ${!isSpinning ? 'hover:translate-y-1 active:shadow-none active:translate-y-2' : ''}`}
+        className={`bg-orange-400 hover:bg-orange-300 text-white font-black text-2xl px-12 py-4 rounded-3xl border-4 border-slate-800 shadow-[4px_4px_0px_0px_#1e293b] transition-all flex items-center gap-3 ${
+          isSpinning ? "opacity-50 cursor-not-allowed" : "active:translate-y-[4px] active:shadow-none"
+        }`}
       >
         <Play fill="currentColor" size={28} />
         {isSpinning ? 'Đang quay...' : 'Quay Ngay!'}
@@ -184,7 +186,7 @@ export default function SpinWheelGame({ gameConfig, flashcards = [], onComplete 
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.5, y: 50 }}
               transition={{ type: "spring", bounce: 0.5 }}
-              className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border-4 border-yellow-400 relative overflow-hidden"
+              className="bg-[#fffdfa] rounded-3xl p-8 max-w-sm w-full text-center border-4 border-slate-800 shadow-[8px_8px_0px_0px_#1e293b] relative overflow-hidden"
             >
               <h2 className="text-2xl font-bold text-gray-700 mb-4">
                 {studentInfo ? `${studentInfo.nickname} quay được chữ:` : "Bé quay được chữ:"}
@@ -199,7 +201,7 @@ export default function SpinWheelGame({ gameConfig, flashcards = [], onComplete 
                   initial={{ scale: 0, rotate: -15 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
-                  className="w-36 h-36 mx-auto mb-6 relative rounded-3xl overflow-hidden border-4 border-dashed border-purple-400 p-1 shadow-md bg-purple-50/50 flex items-center justify-center animate-bounce"
+                  className="w-36 h-36 mx-auto mb-6 relative rounded-3xl overflow-hidden border-4 border-slate-800 p-1 shadow-[4px_4px_0px_0px_#1e293b] bg-white flex items-center justify-center animate-bounce"
                 >
                   {isEmoji(matchedFlashcard.image_url) ? (
                     <span className="text-6xl md:text-7xl select-none">{matchedFlashcard.image_url}</span>
@@ -218,7 +220,7 @@ export default function SpinWheelGame({ gameConfig, flashcards = [], onComplete 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => { playSound('pop'); playTTS(selectedItem); }}
-                  className="flex-1 sm:flex-none bg-blue-500 hover:bg-blue-400 text-white font-bold text-sm sm:text-lg px-4 sm:px-6 py-3 sm:py-4 rounded-2xl shadow-[0_6px_0_0_#1e3a8a] hover:shadow-[0_3px_0_0_#1e3a8a] transition-all flex items-center justify-center gap-1.5 hover:translate-y-1 active:shadow-none active:translate-y-2 whitespace-nowrap"
+                  className="flex-1 sm:flex-none bg-blue-400 hover:bg-blue-300 text-white border-3 border-slate-800 font-bold text-sm sm:text-lg px-4 sm:px-6 py-3 sm:py-4 rounded-2xl shadow-[3px_3px_0px_0px_#1e293b] transition-all flex items-center justify-center gap-1.5 active:translate-y-[3px] active:shadow-none whitespace-nowrap"
                 >
                   <Volume2 size={20} className="shrink-0" />
                   <span>Nghe lại</span>
@@ -235,7 +237,7 @@ export default function SpinWheelGame({ gameConfig, flashcards = [], onComplete 
                       durationSeconds,
                     });
                   }}
-                  className="flex-1 sm:flex-none bg-green-500 hover:bg-green-400 text-white font-bold text-sm sm:text-lg px-4 sm:px-6 py-3 sm:py-4 rounded-2xl shadow-[0_6px_0_0_#14532d] hover:shadow-[0_3px_0_0_#14532d] transition-all flex items-center justify-center gap-1.5 hover:translate-y-1 active:shadow-none active:translate-y-2 whitespace-nowrap"
+                  className="flex-1 sm:flex-none bg-green-400 hover:bg-green-300 text-white border-3 border-slate-800 font-bold text-sm sm:text-lg px-4 sm:px-6 py-3 sm:py-4 rounded-2xl shadow-[3px_3px_0px_0px_#1e293b] transition-all flex items-center justify-center gap-1.5 active:translate-y-[3px] active:shadow-none whitespace-nowrap"
                 >
                   <Check size={20} className="shrink-0" />
                   <span>Tiếp tục</span>

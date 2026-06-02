@@ -132,7 +132,7 @@ export default function MultipleChoiceGame({ gameConfig, flashcards = [], onComp
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 20, opacity: 0 }}
-          className="bg-white/90 backdrop-blur-sm px-8 py-6 rounded-3xl shadow-lg border-b-8 border-blue-200 mb-10 w-full max-w-2xl text-center"
+          className="bg-white/90 px-8 py-6 rounded-3xl border-4 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b] mb-10 w-full max-w-2xl text-center"
         >
           <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
             {currentItem.question}
@@ -146,20 +146,20 @@ export default function MultipleChoiceGame({ gameConfig, flashcards = [], onComp
           {choices.map((choice, index) => {
             const isSelected = selectedChoice === choice;
             
-            let buttonStateClass = "from-purple-400 to-pink-500 hover:from-purple-300 hover:to-pink-400 shadow-[0_8px_0_0_#9d174d] hover:shadow-[0_4px_0_0_#9d174d]";
+            let buttonStateClass = "bg-purple-500 hover:bg-purple-400 text-white border-4 border-slate-800 shadow-[4px_4px_0px_0px_#1e293b]";
             let icon = null;
 
             if (feedback !== "none" && isSelected) {
               if (feedback === "correct") {
-                buttonStateClass = "from-green-400 to-green-500 shadow-[0_8px_0_0_#166534] scale-105 z-10";
+                buttonStateClass = "bg-green-500 text-white border-4 border-slate-800 shadow-none translate-y-[4px] z-10";
                 icon = <Check className="text-white drop-shadow-md w-8 h-8 md:w-10 md:h-10" strokeWidth={4} />;
               } else if (feedback === "incorrect") {
-                buttonStateClass = "from-red-400 to-red-500 shadow-[0_8px_0_0_#991b1b]";
+                buttonStateClass = "bg-red-500 text-white border-4 border-slate-800 shadow-none translate-y-[4px]";
                 icon = <X className="text-white drop-shadow-md w-8 h-8 md:w-10 md:h-10" strokeWidth={4} />;
               }
             } else if (feedback !== "none" && !isSelected) {
               // Dim other buttons when an answer is selected
-              buttonStateClass = "from-gray-300 to-gray-400 shadow-[0_8px_0_0_#6b7280] opacity-50";
+              buttonStateClass = "bg-gray-200 text-gray-400 border-4 border-gray-300 shadow-none opacity-40";
             }
 
             // Tìm thông tin ảnh cho lựa chọn này
@@ -187,16 +187,16 @@ export default function MultipleChoiceGame({ gameConfig, flashcards = [], onComp
                 onClick={() => { playSound('pop'); handleChoice(choice); }}
                 disabled={feedback !== "none"}
                 className={`
-                  relative flex-1 bg-gradient-to-b text-white font-black text-2xl md:text-3xl 
+                  relative flex-1 text-white font-black text-2xl md:text-3xl 
                   ${hasAnyImage ? "py-4 md:py-6 px-3" : "py-6 md:py-8"} rounded-3xl 
                   transition-all flex flex-col items-center justify-center gap-3 disabled:cursor-not-allowed
                   ${buttonStateClass}
-                  ${feedback === "none" ? "hover:translate-y-1 active:shadow-none active:translate-y-2" : ""}
+                  ${feedback === "none" ? "active:translate-y-[4px] active:shadow-none" : ""}
                 `}
               >
                 {/* Khung hiển thị hình ảnh đồng bộ */}
                 {hasAnyImage && (
-                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white/95 rounded-2xl p-2 shadow-inner flex items-center justify-center mb-1.5 shrink-0">
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-2xl p-2 border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b] flex items-center justify-center mb-1.5 shrink-0">
                     {choiceImg ? (
                       isEmoji(choiceImg) ? (
                         <span className="text-4xl md:text-5xl select-none animate-bounce" role="img" aria-label={choice}>

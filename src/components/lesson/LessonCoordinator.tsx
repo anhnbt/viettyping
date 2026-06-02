@@ -745,9 +745,9 @@ export default function LessonCoordinator({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-purple-900/90 backdrop-blur-lg text-white p-6 text-center select-none"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-purple-900/90 backdrop-blur-lg p-6 text-center select-none"
           >
-            <div className="max-w-md bg-white/10 backdrop-blur-md rounded-[40px] p-8 border border-white/20 shadow-2xl flex flex-col items-center">
+            <div className="max-w-md bg-[#fffdfa] border-4 border-slate-800 rounded-[40px] p-8 shadow-[8px_8px_0px_0px_#1e293b] flex flex-col items-center text-slate-800">
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 2 }}
@@ -756,11 +756,11 @@ export default function LessonCoordinator({
                 {breakType === "stretch" ? "🧘‍♀️" : "🎵"}
               </motion.div>
               
-              <h2 className="text-3xl font-black mb-3 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">
+              <h2 className="text-3xl font-black mb-3 text-amber-600">
                 {breakType === "stretch" ? "Bé ơi, giải lao giãn cơ nhé!" : "Bé ơi, hát cùng nhạc nhé!"}
               </h2>
               
-              <p className="text-sm text-slate-100 font-bold mb-6">
+              <p className="text-sm text-slate-650 font-bold mb-6">
                 {breakType === "stretch" 
                   ? "Hãy đứng dậy vươn vai thật cao, quay cổ nhẹ nhàng và chớp mắt 5 lần để đôi mắt bé được nghỉ ngơi nhé!"
                   : "Lắng nghe giai điệu vui tai dưới đây, lẩm nhẩm hát theo để rèn luyện giọng hát đúng giai điệu của bé!"
@@ -768,25 +768,25 @@ export default function LessonCoordinator({
               </p>
 
               {breakType === "music" && (
-                <div className="w-full bg-white/10 rounded-2xl p-4 mb-6 border border-white/10 flex items-center justify-center gap-3">
+                <div className="w-full bg-slate-50 border-2 border-slate-800 rounded-2xl p-4 mb-6 shadow-[3px_3px_0px_0px_#1e293b] flex items-center justify-center gap-3">
                   <span className="text-2xl animate-bounce">🎵</span>
                   <div className="text-left flex-1 text-xs">
-                    <div className="font-bold text-yellow-300">Đồ - Rê - Mi - Pha - Son - La - Si</div>
-                    <div className="text-slate-300 italic">Bé tập đọc nốt nhạc theo nhịp nhé!</div>
+                    <div className="font-bold text-indigo-700">Đồ - Rê - Mi - Pha - Son - La - Si</div>
+                    <div className="text-slate-500 italic">Bé tập đọc nốt nhạc theo nhịp nhé!</div>
                   </div>
-                  <IoMusicalNotesOutline className="text-2xl text-yellow-300 animate-pulse" />
+                  <IoMusicalNotesOutline className="text-2xl text-indigo-600 animate-pulse" />
                 </div>
               )}
 
               {breakType === "stretch" && (
-                <div className="w-full bg-white/10 rounded-2xl p-4 mb-6 border border-white/10 flex flex-wrap justify-center gap-4 text-xs font-bold">
-                  <span className="bg-white/15 px-3 py-1.5 rounded-full flex items-center gap-1">🙆‍♂️ Vươn vai</span>
-                  <span className="bg-white/15 px-3 py-1.5 rounded-full flex items-center gap-1">👀 Nhắm mắt</span>
-                  <span className="bg-white/15 px-3 py-1.5 rounded-full flex items-center gap-1">🚶‍♂️ Đứng dậy</span>
+                <div className="w-full bg-slate-50 border-2 border-slate-800 rounded-2xl p-4 mb-6 shadow-[3px_3px_0px_0px_#1e293b] flex flex-wrap justify-center gap-4 text-xs font-bold text-slate-700">
+                  <span className="bg-white border-2 border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-[2px_2px_0px_0px_#1e293b]">🙆‍♂️ Vươn vai</span>
+                  <span className="bg-white border-2 border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-[2px_2px_0px_0px_#1e293b]">👀 Nhắm mắt</span>
+                  <span className="bg-white border-2 border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-[2px_2px_0px_0px_#1e293b]">🚶‍♂️ Đứng dậy</span>
                 </div>
               )}
 
-              <div className="flex items-center gap-2 text-base font-black text-yellow-300 bg-white/5 px-6 py-2.5 rounded-full border border-white/10">
+              <div className="flex items-center gap-2 text-base font-black text-slate-800 bg-white border-2 border-slate-800 px-6 py-2.5 rounded-full shadow-[3px_3px_0px_0px_#1e293b]">
                 <IoTimeOutline className="text-xl animate-spin" />
                 <span>Học tiếp sau: {pomodoroTimeLeft} giây</span>
               </div>
@@ -804,7 +804,7 @@ export default function LessonCoordinator({
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
-            className="fixed bottom-4 right-4 z-45 bg-white/95 backdrop-blur-md border-2 border-purple-200 rounded-3xl p-4 shadow-xl max-w-[280px] flex items-center gap-3"
+            className="fixed bottom-4 right-4 z-45 bg-[#fffdfa] border-3 border-slate-800 rounded-3xl p-4 shadow-[4px_4px_0px_0px_#1e293b] max-w-[280px] flex items-center gap-3"
           >
             <span className="text-4xl animate-bounce">🐶</span>
             <div className="text-left">

@@ -610,7 +610,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.85, y: 50 }}
               transition={{ type: 'spring', damping: 15 }}
-              className="bg-white rounded-[32px] border-4 border-yellow-400 p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden"
+              className="bg-[#fffdfa] rounded-[32px] border-4 border-slate-800 p-8 max-w-md w-full text-center shadow-[8px_8px_0px_0px_#1e293b] relative overflow-hidden"
             >
               {/* Sticker động vật to đùng chúc mừng */}
               <div className="text-8xl mb-4 animate-bounce select-none">
@@ -631,18 +631,18 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
 
               {/* Các chỉ số thành tích chunky */}
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-primary/10 border-2 border-primary/20 rounded-2xl p-3 text-center">
+                <div className="bg-white border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] rounded-2xl p-3 text-center">
                   <div className="text-xs text-primary font-bold uppercase tracking-wider">Tốc độ</div>
                   <div className="text-2xl font-black text-primary">{finalStats.wpm} WPM</div>
                 </div>
-                <div className="bg-tertiary/10 border-2 border-tertiary/20 rounded-2xl p-3 text-center">
+                <div className="bg-white border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] rounded-2xl p-3 text-center">
                   <div className="text-xs text-tertiary font-bold uppercase tracking-wider">Chính xác</div>
                   <div className="text-2xl font-black text-tertiary">{finalStats.accuracy}%</div>
                 </div>
               </div>
 
               {/* Lời khen khích lệ */}
-              <div className="bg-accent/10 border border-accent/20 rounded-2xl p-4 mb-6 text-xs text-slate-700 font-bold">
+              <div className="bg-amber-50 border-2 border-slate-800 rounded-2xl p-4 mb-6 text-xs text-slate-700 font-bold shadow-[2px_2px_0px_0px_#1e293b]">
                 ⭐ Bé đã vượt qua thử thách gõ phím này rồi! Cố lên nhé, bé đang học rất giỏi!
               </div>
 

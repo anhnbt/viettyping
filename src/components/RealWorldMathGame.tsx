@@ -39,8 +39,8 @@ function DraggableItem({ id, itemType }: { id: string; itemType: string }) {
       <motion.div
         whileHover={!isDragging ? { scale: 1.15, rotate: 5 } : {}}
         whileTap={!isDragging ? { scale: 0.9 } : {}}
-        className={`cursor-grab text-5xl flex items-center justify-center w-14 h-14 bg-white rounded-2xl shadow-md border border-slate-100 ${
-          isDragging ? "shadow-xl opacity-80 scale-110 cursor-grabbing" : ""
+        className={`cursor-grab text-5xl flex items-center justify-center w-14 h-14 bg-white rounded-2xl border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b] transition-all active:translate-y-[2px] active:shadow-none ${
+          isDragging ? "shadow-[4px_4px_0px_0px_#1e293b] opacity-80 scale-110 cursor-grabbing" : ""
         }`}
       >
         {getEmoji()}
@@ -56,7 +56,7 @@ function SourcePool({ id, items, itemType }: { id: string; items: string[]; item
   return (
     <div
       ref={setNodeRef}
-      className="flex flex-wrap justify-center items-center gap-3 p-4 bg-slate-100/60 rounded-3xl border-2 border-dashed border-slate-300 w-full max-w-xl min-h-[100px]"
+      className="flex flex-wrap justify-center items-center gap-3 p-4 bg-slate-50 rounded-3xl border-3 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b] w-full max-w-xl min-h-[100px]"
     >
       {items.map((itemId) => (
         <DraggableItem key={itemId} id={itemId} itemType={itemType} />
@@ -83,9 +83,9 @@ function TargetContainer({
   const { isOver, setNodeRef } = useDroppable({ id });
 
   const getTargetBg = () => {
-    if (isOver) return "bg-purple-100/70 border-purple-400 scale-105";
-    if (isError) return "bg-red-50 border-red-400 animate-shake";
-    return "bg-amber-50/40 border-amber-300";
+    if (isOver) return "bg-purple-100 shadow-[8px_8px_0px_0px_#1e293b] -translate-y-[2px] scale-105";
+    if (isError) return "bg-red-100 border-red-500 shadow-[2px_2px_0px_0px_#1e293b] translate-y-[4px]";
+    return "bg-amber-50/50 shadow-[6px_6px_0px_0px_#1e293b]";
   };
 
   const getTargetIcon = () => {
@@ -109,7 +109,7 @@ function TargetContainer({
         ref={setNodeRef}
         animate={isError ? { x: [-10, 10, -10, 10, 0] } : {}}
         transition={{ duration: 0.4 }}
-        className={`relative w-64 h-64 md:w-80 md:h-72 rounded-[40px] border-4 border-dashed flex flex-wrap content-start items-center justify-center p-6 gap-3 transition-all ${getTargetBg()}`}
+        className={`relative w-64 h-64 md:w-80 md:h-72 rounded-[40px] border-4 border-slate-800 flex flex-wrap content-start items-center justify-center p-6 gap-3 transition-all ${getTargetBg()}`}
       >
         <AnimatePresence>
           {items.map((itemId) => (
@@ -278,7 +278,7 @@ export default function RealWorldMathGame({ gameConfig, onComplete }: GameAdapte
     <div className="w-full flex flex-col items-center gap-6">
       
       {/* Question / Instruction Section */}
-      <div className="w-full max-w-xl bg-purple-50 border border-purple-100 rounded-3xl p-5 shadow-sm">
+      <div className="w-full max-w-xl bg-white/90 border-4 border-slate-800 rounded-3xl p-5 shadow-[6px_6px_0px_0px_#1e293b]">
         <h4 className="text-xl md:text-2xl font-black text-purple-700 mb-2 leading-snug">
           {currentQuestion.sentence}
         </h4>
@@ -327,13 +327,13 @@ export default function RealWorldMathGame({ gameConfig, onComplete }: GameAdapte
       </AnimatePresence>
 
       {/* Action Bar */}
-      <div className="flex items-center justify-between w-full max-w-xl bg-slate-50 p-4 rounded-2xl border border-slate-100 shrink-0">
+      <div className="flex items-center justify-between w-full max-w-xl bg-slate-50 p-4 rounded-2xl border-3 border-slate-800 shadow-[4px_4px_0px_0px_#1e293b] shrink-0">
         <span className="text-xs font-bold text-slate-400">
           Câu hỏi {currentQuestionIndex + 1} / {items.length}
         </span>
         <button
           onClick={handleCheckAnswer}
-          className="flex items-center gap-1.5 px-8 py-3 bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white font-black text-lg rounded-2xl shadow-[0_4px_0_0_#059669] hover:shadow-[0_2px_0_0_#059669] transition-all hover:translate-y-[2px] active:shadow-none active:translate-y-[4px]"
+          className="flex items-center gap-1.5 px-8 py-3 bg-green-400 hover:bg-green-300 text-white font-black text-lg rounded-2xl border-3 border-slate-800 shadow-[4px_4px_0px_0px_#1e293b] transition-all active:translate-y-[4px] active:shadow-none"
         >
           <IoCheckmarkCircle size={20} />
           Kiểm tra

@@ -159,7 +159,7 @@ export default function CompletionModal({
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 transform animate-bounce-in">
+            <div className="bg-[#fffdfa] rounded-3xl border-4 border-slate-800 shadow-[8px_8px_0px_0px_#1e293b] p-8 max-w-md w-full mx-4 transform animate-bounce-in">
 
                 {/* Score Counter */}
                 <div className="text-center mb-6">
@@ -200,16 +200,16 @@ export default function CompletionModal({
 
                 {/* Stats */}
                 <div className={`grid grid-cols-3 gap-3 mb-6 transition-all duration-500 ${showStars ? 'opacity-100' : 'opacity-0'}`}>
-                    <div className="bg-green-50 border border-green-100 p-3 rounded-xl text-center">
+                    <div className="bg-green-50 border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] p-3 rounded-xl text-center">
                         <p className="text-xs text-gray-500 mb-1">Tốc độ</p>
                         <p className="text-lg font-bold text-green-600">{stats.wpm}</p>
                         <p className="text-xs text-gray-400">WPM</p>
                     </div>
-                    <div className="bg-blue-50 border border-blue-100 p-3 rounded-xl text-center">
+                    <div className="bg-blue-50 border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] p-3 rounded-xl text-center">
                         <p className="text-xs text-gray-500 mb-1">Chính xác</p>
                         <p className="text-lg font-bold text-blue-600">{stats.accuracy}%</p>
                     </div>
-                    <div className="bg-red-50 border border-red-100 p-3 rounded-xl text-center">
+                    <div className="bg-red-50 border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] p-3 rounded-xl text-center">
                         <p className="text-xs text-gray-500 mb-1">Số lỗi</p>
                         <p className="text-lg font-bold text-red-500">{stats.incorrectCount}</p>
                     </div>

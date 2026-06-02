@@ -45,8 +45,8 @@ function DraggableWord({ id, word }: { id: string; word: string }) {
       <motion.div
         whileHover={!isDragging ? { scale: 1.05 } : {}}
         whileTap={!isDragging ? { scale: 0.95 } : {}}
-        className={`cursor-grab px-6 py-4 bg-white rounded-2xl shadow-lg border-b-4 border-purple-200 text-3xl font-black text-purple-700 select-none ${
-          isDragging ? "shadow-2xl border-purple-400 opacity-90 scale-105 rotate-3" : ""
+        className={`cursor-grab px-6 py-4 bg-white rounded-2xl border-3 border-slate-800 shadow-[4px_4px_0px_0px_#1e293b] text-3xl font-black text-purple-700 select-none transition-all active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_#1e293b] ${
+          isDragging ? "shadow-[8px_8px_0px_0px_#1e293b] opacity-90 scale-105 rotate-3" : ""
         }`}
       >
         {word}
@@ -79,14 +79,14 @@ function DroppableSlot({
       ref={setNodeRef}
       animate={isError ? { x: [-10, 10, -10, 10, 0] } : {}}
       transition={{ duration: 0.4 }}
-      className={`relative w-40 h-40 md:w-48 md:h-48 rounded-3xl border-4 flex flex-col items-center justify-center overflow-hidden transition-all ${
+      className={`relative w-40 h-40 md:w-48 md:h-48 rounded-3xl border-4 border-slate-800 flex flex-col items-center justify-center overflow-hidden transition-all ${
         isMatched
-          ? "border-green-400 bg-green-50 shadow-[0_0_20px_rgba(74,222,128,0.4)]"
+          ? "bg-green-100 shadow-[4px_4px_0px_0px_#1e293b] translate-y-[2px]"
           : isOver
-          ? "border-purple-400 bg-purple-50 scale-105"
+          ? "bg-purple-100 shadow-[8px_8px_0px_0px_#1e293b] -translate-y-[2px] scale-105"
           : isError
-          ? "border-red-400 bg-red-50"
-          : "border-dashed border-gray-300 bg-white/50"
+          ? "bg-red-100 border-red-500 shadow-[2px_2px_0px_0px_#1e293b] translate-y-[4px]"
+          : "bg-white/80 shadow-[6px_6px_0px_0px_#1e293b]"
       }`}
     >
       {imageUrl && (
@@ -247,7 +247,7 @@ export default function MatchingGame({ gameConfig, flashcards = [], onComplete }
         </div>
 
         {/* Vùng Các Từ (Draggable Items) */}
-        <div className="flex flex-wrap justify-center gap-4 min-h-[100px] p-6 bg-white/40 rounded-3xl backdrop-blur-sm border-2 border-white/50 w-full max-w-2xl">
+        <div className="flex flex-wrap justify-center gap-4 min-h-[100px] p-6 bg-slate-50 rounded-3xl border-3 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b] w-full max-w-2xl">
           <AnimatePresence>
             {unmatchedWords.length === 0 && (
               <motion.div

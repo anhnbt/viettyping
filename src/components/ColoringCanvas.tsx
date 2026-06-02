@@ -280,7 +280,7 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     <div className="w-full flex flex-col items-center gap-5 max-w-3xl mx-auto px-4">
       
       {/* Title Block */}
-      <div className="w-full bg-pink-50 border-2 border-pink-100 rounded-3xl p-4 shadow-sm text-center">
+      <div className="w-full bg-pink-50/90 border-4 border-slate-800 rounded-3xl p-4 shadow-[6px_6px_0px_0px_#1e293b] text-center">
         <h4 className="text-xl md:text-2xl font-black text-pink-700 mb-1 leading-snug flex items-center justify-center gap-2">
           <IoSparkles className="text-pink-500 animate-pulse" />
           <span>{currentItem.title}</span>
@@ -292,12 +292,12 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
       </div>
 
       {/* Canvas painting area (750x500 for Premium Desktop size) */}
-      <div className="bg-gradient-to-tr from-pink-100/30 via-purple-50/20 to-indigo-100/30 border-2 border-slate-200/60 rounded-[32px] p-4 shadow-sm relative w-full">
+      <div className="bg-gradient-to-tr from-pink-100/30 via-purple-50/20 to-indigo-100/30 border-4 border-slate-800 rounded-[32px] p-4 shadow-[6px_6px_0px_0px_#1e293b] relative w-full">
         <canvas
           ref={canvasRef}
           width={750}
           height={500}
-          className="bg-white border-4 border-dashed border-slate-200 rounded-[24px] cursor-crosshair touch-none w-full shadow-inner aspect-[1.5/1]"
+          className="bg-white border-3 border-slate-800 rounded-[24px] cursor-crosshair touch-none w-full shadow-inner aspect-[1.5/1]"
           onMouseDown={startDrawing}
           onMouseUp={stopDrawing}
           onMouseLeave={stopDrawing}
@@ -309,7 +309,7 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
       </div>
 
       {/* Colors Palette: Beautiful 3D Crayons Box */}
-      <div className="flex flex-col items-center p-4 bg-amber-50 rounded-3xl border-2 border-amber-200/60 shadow-[4px_4px_0px_0px_#fde68a] w-full">
+      <div className="flex flex-col items-center p-4 bg-amber-50 rounded-3xl border-3 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b] w-full">
         <div className="text-xs font-black text-amber-800 uppercase tracking-wider mb-3 text-center">
           🖍️ Hộp Bút Màu Sáp
         </div>
@@ -369,7 +369,7 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
       </AnimatePresence>
 
       {/* Bottom Control Station: Brush sizes, Stats, and Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full items-center bg-white p-4 rounded-3xl border-2 border-slate-100 shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full items-center bg-white p-4 rounded-3xl border-3 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b]">
         
         {/* Brush Size Selector */}
         <div className="flex items-center justify-center gap-3">
@@ -378,8 +378,8 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
             <button
               type="button"
               onClick={() => setBrushSize(12)}
-              className={`w-10 h-10 rounded-2xl flex flex-col items-center justify-center transition-all border-2 font-black cursor-pointer shadow-sm ${
-                brushSize === 12 ? "bg-amber-500 text-white border-amber-600 scale-105" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+              className={`w-10 h-10 rounded-2xl flex flex-col items-center justify-center transition-all border-2 font-black cursor-pointer ${
+                brushSize === 12 ? "bg-amber-500 text-white border-2 border-slate-800 shadow-none translate-y-[3px]" : "bg-white text-slate-800 border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] hover:bg-slate-50 active:translate-y-[3px] active:shadow-none"
               }`}
             >
               <div className="w-2.5 h-2.5 bg-current rounded-full" />
@@ -388,8 +388,8 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
             <button
               type="button"
               onClick={() => setBrushSize(22)}
-              className={`w-10 h-10 rounded-2xl flex flex-col items-center justify-center transition-all border-2 font-black cursor-pointer shadow-sm ${
-                brushSize === 22 ? "bg-amber-500 text-white border-amber-600 scale-105" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+              className={`w-10 h-10 rounded-2xl flex flex-col items-center justify-center transition-all border-2 font-black cursor-pointer ${
+                brushSize === 22 ? "bg-amber-500 text-white border-2 border-slate-800 shadow-none translate-y-[3px]" : "bg-white text-slate-800 border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] hover:bg-slate-50 active:translate-y-[3px] active:shadow-none"
               }`}
             >
               <div className="w-5 h-5 bg-current rounded-full" />
@@ -437,7 +437,7 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
           <button
             type="button"
             onClick={handleClear}
-            className="flex items-center gap-1 px-4 py-2.5 bg-white border-2 border-slate-200 hover:bg-slate-50 text-slate-600 font-black rounded-xl transition-colors shadow-sm text-xs cursor-pointer"
+            className="flex items-center gap-1 px-4 py-2.5 bg-white border-2 border-slate-800 hover:bg-slate-50 text-slate-800 font-black rounded-xl transition-all shadow-[3px_3px_0px_0px_#1e293b] active:translate-y-[3px] active:shadow-none text-xs cursor-pointer"
           >
             <IoTrashOutline className="text-sm" />
             <span>Tô lại</span>
@@ -445,7 +445,7 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
           <button
             type="button"
             onClick={handleFinish}
-            className="flex items-center gap-1.5 px-6 py-3 bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white font-black text-sm rounded-xl border-b-2 border-pink-700 shadow-sm cursor-pointer active:translate-y-0.5 active:border-b-0"
+            className="flex items-center gap-1.5 px-6 py-3 bg-pink-400 hover:bg-pink-300 text-white border-2 border-slate-800 font-black text-sm rounded-xl shadow-[3px_3px_0px_0px_#1e293b] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer"
           >
             <IoCheckmarkCircle size={16} />
             <span>Hoàn thành</span>

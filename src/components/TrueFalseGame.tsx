@@ -46,7 +46,7 @@ export default function TrueFalseGame({ gameConfig, flashcards = [], onComplete 
     const flashcard = flashcards.find(
       (f) => f.word.toLowerCase() === currentItem.correct_word.toLowerCase()
     );
-    return flashcard?.image_url || currentItem.image_url || "/assets/placeholder.png";
+    return flashcard?.image_url || (currentItem as any).image_url || (currentItem as any).image_prompt || "/assets/placeholder.png";
   }, [currentItem, flashcards]);
 
   useEffect(() => {
@@ -131,7 +131,7 @@ export default function TrueFalseGame({ gameConfig, flashcards = [], onComplete 
 
   return (
     <div className="w-full flex flex-col items-center">
-      <div className="relative w-48 h-48 md:w-64 md:h-64 mb-8 bg-white/50 rounded-3xl p-4 shadow-inner border-2 border-dashed border-purple-200">
+      <div className="relative w-48 h-48 md:w-64 md:h-64 mb-8 bg-white/80 rounded-3xl p-4 border-4 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b]">
         {isEmoji(currentImageUrl) ? (
           <motion.div
             key={currentImageUrl}
@@ -198,7 +198,7 @@ export default function TrueFalseGame({ gameConfig, flashcards = [], onComplete 
               : { y: 0, opacity: 1, x: 0 }
           }
           exit={{ y: -20, opacity: 0 }}
-          className="bg-white px-12 py-5 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-b-8 border-purple-200 mb-12 relative overflow-hidden"
+          className="bg-white/90 px-12 py-5 rounded-3xl border-4 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b] mb-12 relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-purple-50" />
           <h3 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500 relative z-10 tracking-wide leading-normal pb-2">
@@ -220,8 +220,8 @@ export default function TrueFalseGame({ gameConfig, flashcards = [], onComplete 
           }
           onClick={() => { playSound('pop'); handleChoice(true); }}
           disabled={feedback !== "none"}
-          className={`flex-1 bg-gradient-to-b from-green-400 to-green-500 hover:from-green-300 hover:to-green-400 text-white font-black text-3xl py-6 rounded-3xl shadow-[0_8px_0_0_#166534] hover:shadow-[0_4px_0_0_#166534] hover:translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed ${
-            feedback === "none" ? "active:shadow-none active:translate-y-2" : ""
+          className={`flex-1 bg-green-400 hover:bg-green-300 text-white font-black text-3xl py-6 rounded-3xl border-4 border-slate-800 shadow-[4px_4px_0px_0px_#1e293b] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed ${
+            feedback === "none" ? "active:translate-y-[4px] active:shadow-none" : ""
           } ${feedback !== "none" && selectedChoice === true ? "opacity-100 z-10" : feedback !== "none" ? "opacity-50" : ""}`}
         >
           <Check size={40} strokeWidth={4} />
@@ -240,8 +240,8 @@ export default function TrueFalseGame({ gameConfig, flashcards = [], onComplete 
           }
           onClick={() => { playSound('pop'); handleChoice(false); }}
           disabled={feedback !== "none"}
-          className={`flex-1 bg-gradient-to-b from-red-400 to-red-500 hover:from-red-300 hover:to-red-400 text-white font-black text-3xl py-6 rounded-3xl shadow-[0_8px_0_0_#991b1b] hover:shadow-[0_4px_0_0_#991b1b] hover:translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed ${
-            feedback === "none" ? "active:shadow-none active:translate-y-2" : ""
+          className={`flex-1 bg-red-400 hover:bg-red-300 text-white font-black text-3xl py-6 rounded-3xl border-4 border-slate-800 shadow-[4px_4px_0px_0px_#1e293b] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed ${
+            feedback === "none" ? "active:translate-y-[4px] active:shadow-none" : ""
           } ${feedback !== "none" && selectedChoice === false ? "opacity-100 z-10" : feedback !== "none" ? "opacity-50" : ""}`}
         >
           <X size={40} strokeWidth={4} />

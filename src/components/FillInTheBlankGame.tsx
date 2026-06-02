@@ -141,7 +141,7 @@ export default function FillInTheBlankGame({ gameConfig, flashcards = [], onComp
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: -20 }}
-          className="bg-white px-8 py-10 md:px-12 md:py-16 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-b-8 border-purple-200 mb-12 w-full max-w-2xl text-center"
+          className="bg-white/90 px-8 py-10 md:px-12 md:py-16 rounded-3xl border-4 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b] mb-12 w-full max-w-2xl text-center"
         >
           <div className="text-4xl md:text-5xl lg:text-6xl font-black text-purple-700 leading-relaxed flex flex-wrap justify-center items-center gap-2">
             {sentenceParts.map((part, index) => (
@@ -154,12 +154,12 @@ export default function FillInTheBlankGame({ gameConfig, flashcards = [], onComp
                         ? { x: [-5, 5, -5, 5, 0], transition: { duration: 0.4 } }
                         : {}
                     }
-                    className={`inline-flex items-center justify-center min-w-[60px] md:min-w-[80px] h-[60px] md:h-[80px] border-b-4 mx-2 rounded-2xl ${
+                    className={`inline-flex items-center justify-center min-w-[60px] md:min-w-[80px] h-[60px] md:h-[80px] border-3 border-slate-800 mx-2 rounded-2xl transition-all ${
                       feedback === "correct"
-                        ? "border-green-500 bg-green-100 text-green-600"
+                        ? "bg-green-200 text-green-800 shadow-[2px_2px_0px_0px_#1e293b]"
                         : feedback === "incorrect"
-                        ? "border-red-500 bg-red-100 text-red-600"
-                        : "border-purple-400 bg-purple-50 text-purple-500"
+                        ? "bg-red-200 text-red-800 shadow-[2px_2px_0px_0px_#1e293b]"
+                        : "bg-purple-100 text-purple-700 shadow-[3px_3px_0px_0px_#1e293b]"
                     }`}
                   >
                     {feedback === "correct" ? currentItem.missing_char : selectedChar || ""}
@@ -197,12 +197,12 @@ export default function FillInTheBlankGame({ gameConfig, flashcards = [], onComp
               }
               onClick={() => { playSound('pop'); handleKeyPress(char); }}
               disabled={feedback !== "none"}
-              className={`w-20 h-20 md:w-24 md:h-24 rounded-2xl font-black text-4xl shadow-[0_6px_0_0_rgba(0,0,0,0.1)] flex items-center justify-center transition-all disabled:cursor-not-allowed ${
+              className={`w-20 h-20 md:w-24 md:h-24 rounded-2xl font-black text-4xl border-3 border-slate-800 flex items-center justify-center transition-all disabled:cursor-not-allowed ${
                 isCorrect
-                  ? "bg-green-500 text-white shadow-[0_0px_0_0_#166534] translate-y-1.5"
+                  ? "bg-green-400 text-slate-800 shadow-none translate-y-[4px]"
                   : isWrong
-                  ? "bg-red-500 text-white shadow-[0_0px_0_0_#991b1b] translate-y-1.5"
-                  : "bg-white text-purple-600 hover:bg-purple-50 hover:text-purple-700 active:shadow-none active:translate-y-1.5 border-2 border-purple-100"
+                  ? "bg-red-400 text-white shadow-none translate-y-[4px]"
+                  : "bg-white text-purple-700 hover:bg-purple-50 shadow-[4px_4px_0px_0px_#1e293b] active:translate-y-[4px] active:shadow-none"
               }`}
             >
               {char}

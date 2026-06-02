@@ -182,7 +182,7 @@ export default function StudentConfigModal() {
                   <Sparkles className="w-4 h-4 text-amber-500 fill-amber-300 animate-pulse" />
                   <span>1. Chọn bạn linh vật và giao diện học tập (Theme):</span>
                 </label>
-                <div className="grid grid-cols-5 gap-2 p-2 bg-white border-2 border-slate-800 rounded-2xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.05)]">
+                <div className="grid grid-cols-5 gap-2 p-2 bg-white border-2 border-slate-800 rounded-2xl shadow-[3px_3px_0px_0px_#1e293b]">
                   {MASCOTS.map((m) => {
                     const isUnlocked = unlockedMascots.includes(m.id);
                     return (
@@ -242,7 +242,7 @@ export default function StudentConfigModal() {
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   maxLength={15}
-                  className="w-full px-5 py-3.5 bg-white border-2 border-slate-800 rounded-2xl text-lg font-black text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/50 focus:border-indigo-600 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)]"
+                  className="w-full px-5 py-3.5 bg-white border-2 border-slate-800 rounded-2xl text-lg font-black text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/50 focus:border-indigo-600 transition-all shadow-[3px_3px_0px_0px_#1e293b]"
                 />
               </div>
 
@@ -258,7 +258,7 @@ export default function StudentConfigModal() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   maxLength={30}
-                  className="w-full px-5 py-3.5 bg-white border-2 border-slate-800 rounded-2xl text-lg font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/50 focus:border-indigo-600 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)]"
+                  className="w-full px-5 py-3.5 bg-white border-2 border-slate-800 rounded-2xl text-lg font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/50 focus:border-indigo-600 transition-all shadow-[3px_3px_0px_0px_#1e293b]"
                 />
               </div>
 
