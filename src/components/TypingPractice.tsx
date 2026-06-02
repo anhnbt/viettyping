@@ -19,6 +19,7 @@ interface Props {
   task: TypingTask;
   onComplete: (telemetry: TelemetryPayload) => void;
   onStatsChange?: (stats: { wpm: number; accuracy: number; timeLeft: number; progressPercent: number; animal: string } | null) => void;
+  hideStatsBar?: boolean;
 }
 
 // Emoji Map cho các từ vựng xuất hiện trong bài học
@@ -77,7 +78,7 @@ const wordStickers: Record<string, string> = {
   'trong lành': '🌬️',
 };
 
-export default function TypingPractice({ task, onComplete, onStatsChange }: Props) {
+export default function TypingPractice({ task, onComplete, onStatsChange, hideStatsBar = false }: Props) {
   const [input, setInput] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
   const [isComplete, setIsComplete] = useState(false);
@@ -425,23 +426,25 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
       <div className="hidden md:flex flex-col w-full h-full min-h-0">
         
         {/* Compact Stats Bar */}
-        <div className="flex items-center justify-between gap-4 px-2 py-1.5 mb-2 shrink-0 w-full">
-          <div className="flex items-center gap-4">
-            <div className={`flex items-center gap-1.5 font-mono font-black text-sm px-3 py-1.5 rounded-xl border ${getTimerColor()}`}>
-              <IoTimeOutline className="text-base" />
-              {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
+        <div className={`flex items-center justify-between gap-4 px-2 py-1.5 mb-2 shrink-0 w-full ${hideStatsBar ? 'justify-end' : ''}`}>
+          {!hideStatsBar && (
+            <div className="flex items-center gap-4 animate-fade-in">
+              <div className={`flex items-center gap-1.5 font-mono font-black text-sm px-3 py-1.5 rounded-xl border ${getTimerColor()}`}>
+                <IoTimeOutline className="text-base" />
+                {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
+              </div>
+              <div className="h-4 w-px bg-gray-200" />
+              <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <IoSpeedometerOutline className="text-base text-green-500" />
+                <span>Tốc độ: <span className="font-extrabold text-green-600 text-sm">{wpm}</span> WPM <span className={`ml-1 font-bold ${getSpeedColor()}`}>{wpm > 0 ? `(${getSpeedLabel()})` : ''}</span></span>
+              </div>
+              <div className="h-4 w-px bg-gray-200" />
+              <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <IoCheckmarkCircleOutline className="text-base text-blue-500" />
+                <span>Chính xác: <span className="font-extrabold text-blue-600 text-sm">{accuracy}%</span></span>
+              </div>
             </div>
-            <div className="h-4 w-px bg-gray-200" />
-            <div className="flex items-center gap-1.5 text-xs text-gray-500">
-              <IoSpeedometerOutline className="text-base text-green-500" />
-              <span>Tốc độ: <span className="font-extrabold text-green-600 text-sm">{wpm}</span> WPM <span className={`ml-1 font-bold ${getSpeedColor()}`}>{wpm > 0 ? `(${getSpeedLabel()})` : ''}</span></span>
-            </div>
-            <div className="h-4 w-px bg-gray-200" />
-            <div className="flex items-center gap-1.5 text-xs text-gray-500">
-              <IoCheckmarkCircleOutline className="text-base text-blue-500" />
-              <span>Chính xác: <span className="font-extrabold text-blue-600 text-sm">{accuracy}%</span></span>
-            </div>
-          </div>
+          )}
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowKeyboard(prev => !prev)}

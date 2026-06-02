@@ -402,6 +402,7 @@ export default function LessonCoordinator({
                 task={currentTask}
                 onStatsChange={setTypingStats}
                 onComplete={handleTypingComplete}
+                hideStatsBar={true}
               />
             </div>
           </motion.div>
