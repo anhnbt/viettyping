@@ -145,7 +145,7 @@ export default function Home() {
           }}
           className="w-24 h-24 rounded-full border-4 border-[var(--color-foreground)] bg-[var(--color-surface-container)] flex items-center justify-center shadow-[4px_4px_0px_0px_var(--color-foreground)] overflow-hidden relative cursor-pointer hover:scale-105 transition-transform"
         >
-          <DinoMascot className="w-20 h-20" />
+          <DinoMascot theme={currentTheme} className="w-20 h-20" />
         </div>
         <h4 className="font-black text-[var(--color-foreground)] text-lg mt-3 text-center">
           Chào {studentInfo ? studentInfo.nickname : 'bạn nhỏ'}!
@@ -347,7 +347,7 @@ export default function Home() {
             
             {/* Mascot Container */}
             <div className="w-48 h-48 shrink-0 flex flex-col items-center justify-center relative bg-[var(--color-surface-container)] border-2 border-[var(--color-foreground)] rounded-3xl p-4 shadow-[3px_3px_0px_0px_var(--color-foreground)]">
-              <DinoMascot className="w-36 h-36" />
+              <DinoMascot theme={currentTheme} className="w-36 h-36" />
               <span className="text-[10px] font-black text-[var(--color-foreground)] mt-2 uppercase tracking-wide opacity-80">
                 {levelConfig.name}
               </span>
@@ -390,24 +390,23 @@ export default function Home() {
             </div>
 
             {/* Cột Phải: Thế giới Linh vật */}
-            <div className="bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] rounded-[24px] shadow-[4px_4px_0px_0px_var(--color-foreground)] p-6 flex flex-col sm:flex-row items-center justify-between gap-6 transition-colors">
-              <div className="flex-1 text-center sm:text-left">
+            <div className="bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] rounded-[24px] shadow-[4px_4px_0px_0px_var(--color-foreground)] p-6 flex flex-col justify-between gap-6 transition-colors">
+              <div className="text-center sm:text-left">
                 <h3 className="text-xl font-black text-[var(--color-foreground)] mb-2">
                   Thế giới {getThemeMascotName(currentTheme)}
                 </h3>
                 <p className="text-sm font-semibold text-[var(--color-foreground)] opacity-85 leading-relaxed mb-6">
                   Hãy bắt đầu hành trình gõ phím tiếng Việt qua những hòn đảo kiến thức. Càng chậm, bạn càng gõ chuẩn!
                 </p>
+              </div>
+              <div className="flex justify-center sm:justify-start">
                 <button
                   onClick={() => handleNavClick('/typing')}
-                  className="text-sm font-black text-[var(--color-primary-depth)] hover:underline flex items-center justify-center sm:justify-start gap-1 cursor-pointer"
+                  className="tactile-btn tactile-btn-primary px-6 py-3.5 text-sm cursor-pointer flex items-center gap-1.5"
                 >
                   <span>BẮT ĐẦU NGAY</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
-              </div>
-              <div className="w-32 h-32 shrink-0 flex items-center justify-center bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] p-2">
-                <DinoMascot className="w-28 h-28" />
               </div>
             </div>
           </div>
