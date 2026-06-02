@@ -84,7 +84,7 @@ export default function LessonPage() {
   return (
     <div className="canvas-bg bg-background text-foreground transition-colors min-h-screen font-sans overflow-y-auto flex flex-col pb-12">
       {/* Main Content với LessonCoordinator */}
-      <main className="flex-1 flex flex-col items-center justify-center p-2 relative z-10 w-full max-w-7xl mx-auto">
+      <main className="flex-1 flex flex-col items-center justify-center p-2 relative z-10 w-full max-w-none mx-auto px-4 md:px-8">
         <LessonCoordinator
           config={lessonData}
           studentNickname={studentInfo?.nickname}

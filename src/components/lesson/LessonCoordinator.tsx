@@ -391,7 +391,7 @@ export default function LessonCoordinator({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -30 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-7xl keycap-card p-4 md:p-6 flex flex-col items-center justify-center text-center transition-colors"
+            className="w-full max-w-none keycap-card p-4 md:p-6 flex flex-col items-center justify-center text-center transition-colors"
           >
             <p className="text-lg text-purple-600 mb-3 font-medium bg-purple-100 px-4 py-1 rounded-full">
               {currentTask.description}
@@ -674,7 +674,9 @@ export default function LessonCoordinator({
     <div className="w-full flex flex-col items-center relative">
       {/* Header động */}
       {step !== "summary" && (
-        <header className="py-2 md:py-3 px-4 flex items-center justify-between relative z-20 w-full max-w-7xl mx-auto gap-3">
+        <header className={`py-2 md:py-3 px-4 flex items-center justify-between relative z-20 w-full mx-auto gap-3 transition-all duration-300 ${
+          step === "typing_practice" ? "max-w-none" : "max-w-7xl"
+        }`}>
           <Link
             href="/"
             className="flex items-center gap-2 bg-[var(--color-surface)] px-4 py-2.5 rounded-xl text-[var(--color-foreground)] font-black hover:translate-y-[-1px] active:translate-y-[1px] transition-all shadow-[2px_2px_0px_0px_var(--color-foreground)] border-2 border-[var(--color-foreground)] text-sm md:text-base cursor-pointer shrink-0"
@@ -728,7 +730,9 @@ export default function LessonCoordinator({
 
       {/* ProgressBar at the top of the container */}
       {step !== "summary" && (
-        <div className="w-full max-w-7xl mb-3 px-4">
+        <div className={`w-full mb-3 px-4 transition-all duration-300 ${
+          step === "typing_practice" ? "max-w-none" : "max-w-7xl"
+        }`}>
           <ProgressBar progress={progressPercent} animal={step === "typing_practice" ? typingStats?.animal : undefined} />
         </div>
       )}
