@@ -3,23 +3,12 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
+import { GameAdapterProps, TelemetryPayload, FillInTheBlankItem } from "@/types/lesson";
 import { useSound } from "@/contexts/SoundContext";
-
-export interface FillInTheBlankItem {
-  full_word: string;
-  missing_char: string;
-  sentence: string;
-}
-
-export interface FillInTheBlankGameConfig {
-  id: string;
-  items: FillInTheBlankItem[];
-}
 
 const VIETNAMESE_CHARS = "aăâeêioôơuưyáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵbcdđghklmnpqrstvx".split("");
 
-export default function FillInTheBlankGame({ gameConfig, onComplete }: GameAdapterProps<FillInTheBlankGameConfig>) {
+export default function FillInTheBlankGame({ gameConfig, flashcards = [], onComplete }: GameAdapterProps<FillInTheBlankItem>) {
   const { id: gameId, items } = gameConfig;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedChar, setSelectedChar] = useState<string | null>(null);

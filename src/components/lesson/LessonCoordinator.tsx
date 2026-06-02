@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoChevronBack, IoChevronForward, IoPlay, IoRibbon, IoWalkOutline, IoMusicalNotesOutline, IoTimeOutline, IoStar } from "react-icons/io5";
 import { LessonConfig, LessonStep, ActivityResult, LessonSummary, TelemetryPayload, MiniGameConfig } from "@/types/lesson";
-import { useStudent } from "@/contexts/StudentContext";
-import { useLesson } from "@/contexts/LessonContext";
 import Flashcard from "@/components/Flashcard";
 import ProgressBar from "@/components/ProgressBar";
 import TrueFalseGame from "@/components/TrueFalseGame";
@@ -27,6 +25,8 @@ const formatTime = (seconds: number) => {
 
 export interface LessonCoordinatorProps {
   config: LessonConfig;
+  studentNickname?: string;
+  currentXP?: number;
   onActivityComplete?: (activityId: string, telemetry: TelemetryPayload) => void;
   onAllActivitiesComplete: (summary: LessonSummary) => void;
   initialStep?: LessonStep;
@@ -34,12 +34,12 @@ export interface LessonCoordinatorProps {
 
 export default function LessonCoordinator({
   config,
+  studentNickname,
+  currentXP = 0,
   onActivityComplete,
   onAllActivitiesComplete,
   initialStep = "flashcards",
 }: LessonCoordinatorProps) {
-  const { studentInfo } = useStudent();
-  const { currentXP } = useLesson();
   const router = useRouter();
   
   // State nhận các thông số thời gian thực từ TypingPractice
@@ -415,117 +415,73 @@ export default function LessonCoordinator({
         // Render appropriate game
         const renderGame = () => {
           switch (currentGame.type) {
-            case "true_false_game": {
-              const tfItems = currentGame.items.map((item) => {
-                const flashcard = flashcards.find((f) => f.word === item.correct_word);
-                return {
-                  correct_word: item.correct_word,
-                  distractor_word: item.distractor_word,
-                  image_url: flashcard?.image_url || "/assets/placeholder.png",
-                };
-              });
-
-              const tfConfig = {
-                id: currentGame.id,
-                items: tfItems,
-              };
-
+            case "true_false_game":
               return (
                 <TrueFalseGame
-                  gameConfig={tfConfig}
+                  key={currentGame.id}
+                  gameConfig={currentGame}
+                  flashcards={flashcards}
                   onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
                 />
               );
-            }
 
-            case "matching_game": {
-              const matchingGameItems = currentGame.items.map((item) => {
-                const flashcard = flashcards.find((f) => f.word === item.word);
-                return {
-                  word: item.word,
-                  image_url: flashcard?.image_url || "/assets/placeholder.png",
-                };
-              });
-              const matchingConfig = {
-                id: currentGame.id,
-                items: matchingGameItems,
-              };
+            case "matching_game":
               return (
                 <MatchingGame
-                  gameConfig={matchingConfig}
+                  key={currentGame.id}
+                  gameConfig={currentGame}
+                  flashcards={flashcards}
                   onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
                 />
               );
-            }
 
-            case "spin_wheel_items": {
-              const spinConfig = {
-                id: currentGame.id,
-                items: currentGame.items,
-              };
+            case "spin_wheel_items":
               return (
                 <SpinWheelGame
-                  gameConfig={spinConfig}
+                  key={currentGame.id}
+                  gameConfig={currentGame}
                   flashcards={flashcards}
                   onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
                 />
               );
-            }
 
-            case "fill_in_the_blank": {
-              const fillBlankItems = currentGame.items.map((item) => ({
-                full_word: item.full_word,
-                missing_char: item.missing_char,
-                sentence: item.sentence,
-              }));
-              const fillConfig = {
-                id: currentGame.id,
-                items: fillBlankItems,
-              };
+            case "fill_in_the_blank":
               return (
                 <FillInTheBlankGame
-                  gameConfig={fillConfig}
-                  onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
-                />
-              );
-            }
-
-            case "multiple_choice": {
-              const mcItems = currentGame.items.map((item) => ({
-                question: item.question,
-                correct_answer: item.correct_answer,
-                distractors: item.distractors,
-              }));
-              const mcConfig = {
-                id: currentGame.id,
-                items: mcItems,
-              };
-              return (
-                <MultipleChoiceGame
-                  gameConfig={mcConfig}
+                  key={currentGame.id}
+                  gameConfig={currentGame}
                   flashcards={flashcards}
                   onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
                 />
               );
-            }
 
-            case "math_realworld_dragdrop": {
+            case "multiple_choice":
+              return (
+                <MultipleChoiceGame
+                  key={currentGame.id}
+                  gameConfig={currentGame}
+                  flashcards={flashcards}
+                  onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
+                />
+              );
+
+            case "math_realworld_dragdrop":
               return (
                 <RealWorldMathGame
+                  key={currentGame.id}
                   gameConfig={currentGame}
                   onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
                 />
               );
-            }
 
-            case "drawing_coloring_canvas": {
+            case "drawing_coloring_canvas":
               return (
                 <ColoringCanvas
+                  key={currentGame.id}
                   gameConfig={currentGame}
                   onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
                 />
               );
-            }
 
             default:
               return (
@@ -550,8 +506,6 @@ export default function LessonCoordinator({
               );
           }
         };
-
-        const formattedType = currentGame.type.replace(/_/g, " ");
 
         return (
           <motion.div
@@ -601,16 +555,16 @@ export default function LessonCoordinator({
             </motion.div>
 
             <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 mb-2">
-              {studentInfo ? `${studentInfo.nickname} đã hoàn thành!` : "Bé đã hoàn thành!"}
+              {studentNickname ? `${studentNickname} đã hoàn thành!` : "Bé đã hoàn thành!"}
             </h2>
             <p className="text-gray-600 mb-6 font-bold text-lg">
               {(() => {
                 const rawMessage = config.summary_config?.celebration_message || "Chúc mừng bé yêu gõ chữ rất giỏi!";
-                if (studentInfo) {
+                if (studentNickname) {
                   return rawMessage
-                    .replace(/bé yêu/gi, `${studentInfo.nickname} yêu`)
-                    .replace(/bé/gi, studentInfo.nickname)
-                    .replace(/con/gi, studentInfo.nickname);
+                    .replace(/bé yêu/gi, `${studentNickname} yêu`)
+                    .replace(/bé/gi, studentNickname)
+                    .replace(/con/gi, studentNickname);
                 }
                 return rawMessage;
               })()}
@@ -850,7 +804,7 @@ export default function LessonCoordinator({
             <span className="text-4xl animate-bounce">🐶</span>
             <div className="text-left">
               <h5 className="font-black text-purple-700 text-xs mb-0.5">
-                {studentInfo ? `${studentInfo.nickname} ơi, ${studentInfo.nickname} đâu rồi?` : "Bé ơi, bé đâu rồi?"}
+                {studentNickname ? `${studentNickname} ơi, ${studentNickname} đâu rồi?` : "Bé ơi, bé đâu rồi?"}
               </h5>
               <p className="text-[10px] text-slate-500 leading-tight">
                 Hãy gõ phím hoặc chạm màn hình tiếp tục học để nhận sao lấp lánh nhé!

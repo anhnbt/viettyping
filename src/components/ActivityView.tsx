@@ -89,6 +89,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           case 'spinwheel': {
             const spinConfig = {
               id: activity.id,
+              type: 'spin_wheel_items' as const,
               items: activity.data.items || [],
             };
             return (
@@ -107,12 +108,14 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           case 'matching': {
             const matchingConfig = {
               id: activity.id,
+              type: 'matching_game' as const,
               items: activity.data.items || [],
             };
             return (
               <MatchingGame
                 key={activity.id}
                 gameConfig={matchingConfig}
+                flashcards={activity.data.flashcards}
                 onComplete={(telemetry) => handleActivityComplete({
                   score: telemetry.score,
                   duration: telemetry.durationSeconds,
@@ -124,12 +127,14 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           case 'true_false': {
             const tfConfig = {
               id: activity.id,
+              type: 'true_false_game' as const,
               items: activity.data.items || [],
             };
             return (
               <TrueFalseGame
                 key={activity.id}
                 gameConfig={tfConfig}
+                flashcards={activity.data.flashcards}
                 onComplete={(telemetry) => handleActivityComplete({
                   score: telemetry.score,
                   duration: telemetry.durationSeconds,
@@ -141,12 +146,14 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           case 'fill_in_the_blank': {
             const fillConfig = {
               id: activity.id,
+              type: 'fill_in_the_blank' as const,
               items: activity.data.items || [],
             };
             return (
               <FillInTheBlankGame
                 key={activity.id}
                 gameConfig={fillConfig}
+                flashcards={activity.data.flashcards}
                 onComplete={(telemetry) => handleActivityComplete({
                   score: telemetry.score,
                   duration: telemetry.durationSeconds,
@@ -158,8 +165,10 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           case 'multiple_choice': {
             const mcConfig = {
               id: activity.id,
+              type: 'multiple_choice' as const,
               items: activity.data.items || [],
             };
+
             return (
               <MultipleChoiceGame
                 key={activity.id}

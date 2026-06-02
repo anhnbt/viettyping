@@ -50,6 +50,15 @@ jest.mock("framer-motion", () => {
 // Mock canvas-confetti
 jest.mock("canvas-confetti", () => jest.fn());
 
+// Mock next/navigation useRouter
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+}));
+
 // Mock useTypingSound hook to avoid missing SoundProvider context
 jest.mock("@/hooks/useTypingSound", () => ({
   useTypingSound: () => ({

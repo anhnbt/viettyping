@@ -8,6 +8,7 @@ import lessonDataJson from "@/data/sample_lesson.json";
 import { LessonConfig } from "@/types/lesson";
 import { useLesson } from "@/contexts/LessonContext";
 import { useSound } from "@/contexts/SoundContext";
+import { useStudent } from "@/contexts/StudentContext";
 import LessonCoordinator from "@/components/lesson/LessonCoordinator";
 
 // Cast JSON to our validated type
@@ -15,6 +16,7 @@ const lessonData = lessonDataJson as LessonConfig;
 
 export default function LessonPage() {
   const { currentXP, addXP, markActivityCompleted, unlockBadge } = useLesson();
+  const { studentInfo } = useStudent();
   const { playSound } = useSound();
 
   const handleAllActivitiesComplete = () => {
@@ -85,6 +87,8 @@ export default function LessonPage() {
       <main className="flex-1 flex flex-col items-center justify-center p-2 relative z-10 w-full max-w-7xl mx-auto">
         <LessonCoordinator
           config={lessonData}
+          studentNickname={studentInfo?.nickname}
+          currentXP={currentXP}
           onAllActivitiesComplete={handleAllActivitiesComplete}
         />
       </main>

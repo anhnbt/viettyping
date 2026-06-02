@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X } from "lucide-react";
 import confetti from "canvas-confetti";
-import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
+import { GameAdapterProps, TelemetryPayload, TrueFalseItem } from "@/types/lesson";
 import { useSound } from "@/contexts/SoundContext";
 
 export interface MappedTrueFalseItem {
@@ -23,7 +23,7 @@ export interface TrueFalseGameConfig {
   items: MappedTrueFalseItem[];
 }
 
-export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterProps<TrueFalseGameConfig>) {
+export default function TrueFalseGame({ gameConfig, flashcards = [], onComplete }: GameAdapterProps<TrueFalseItem>) {
   const { id: gameId, items } = gameConfig;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayedWord, setDisplayedWord] = useState("");
@@ -39,6 +39,15 @@ export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterPro
   const errorsRef = useRef<Array<{ questionId: string; userAnswer: string; correctAnswer: string }>>([]);
 
   const currentItem = items[currentIndex];
+
+  // Map image_url from flashcards or fallback
+  const currentImageUrl = React.useMemo(() => {
+    if (!currentItem) return "/assets/placeholder.png";
+    const flashcard = flashcards.find(
+      (f) => f.word.toLowerCase() === currentItem.correct_word.toLowerCase()
+    );
+    return flashcard?.image_url || currentItem.image_url || "/assets/placeholder.png";
+  }, [currentItem, flashcards]);
 
   useEffect(() => {
     // Reset timer when game starts (mount)
@@ -123,22 +132,22 @@ export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterPro
   return (
     <div className="w-full flex flex-col items-center">
       <div className="relative w-48 h-48 md:w-64 md:h-64 mb-8 bg-white/50 rounded-3xl p-4 shadow-inner border-2 border-dashed border-purple-200">
-        {isEmoji(currentItem.image_url) ? (
+        {isEmoji(currentImageUrl) ? (
           <motion.div
-            key={currentItem.image_url}
+            key={currentImageUrl}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full h-full flex items-center justify-center text-7xl md:text-8xl select-none"
           >
-            {currentItem.image_url}
+            {currentImageUrl}
           </motion.div>
         ) : (
           <motion.img
-            key={currentItem.image_url}
+            key={currentImageUrl}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full h-full object-contain drop-shadow-xl"
-            src={currentItem.image_url}
+            src={currentImageUrl}
             alt="Game image"
           />
         )}

@@ -65,98 +65,49 @@ export default function LessonRunner({
     if (!currentGame) return null;
 
     switch (currentGame.type) {
-      case "matching_game": {
-        const matchingGameItems = currentGame.items.map((item) => {
-          const flashcard = flashcards.find((f) => f.word === item.word);
-          return {
-            word: item.word,
-            image_url: flashcard?.image_url || "/assets/placeholder.png",
-          };
-        });
-        const matchingConfig = {
-          id: currentGame.id,
-          items: matchingGameItems,
-        };
+      case "matching_game":
         return (
           <MatchingGame
-            gameConfig={matchingConfig}
+            gameConfig={currentGame}
+            flashcards={flashcards}
             onComplete={(telemetry) => handleCurrentGameComplete()}
           />
         );
-      }
-      case "true_false_game": {
-        const tfItems = currentGame.items.map((item) => {
-          const flashcard = flashcards.find((f) => f.word === item.correct_word);
-          return {
-            correct_word: item.correct_word,
-            distractor_word: item.distractor_word,
-            image_url: flashcard?.image_url || "/assets/placeholder.png",
-          };
-        });
-
-        const tfConfig = {
-          id: currentGame.id,
-          items: tfItems
-        };
-
+      case "true_false_game":
         return (
           <TrueFalseGame
-            gameConfig={tfConfig}
+            gameConfig={currentGame}
+            flashcards={flashcards}
             onComplete={(telemetry) => {
               console.log("[TrueFalseGame Telemetry]:", telemetry);
               handleCurrentGameComplete();
             }}
           />
         );
-      }
-      case "spin_wheel_items": {
-        const spinConfig = {
-          id: currentGame.id,
-          items: currentGame.items,
-        };
+      case "spin_wheel_items":
         return (
           <SpinWheelGame
-            gameConfig={spinConfig}
+            gameConfig={currentGame}
             flashcards={flashcards}
             onComplete={(telemetry) => handleCurrentGameComplete()}
           />
         );
-      }
-      case "fill_in_the_blank": {
-        const fillBlankItems = currentGame.items.map((item) => ({
-          full_word: item.full_word,
-          missing_char: item.missing_char,
-          sentence: item.sentence
-        }));
-        const fillConfig = {
-          id: currentGame.id,
-          items: fillBlankItems,
-        };
+      case "fill_in_the_blank":
         return (
           <FillInTheBlankGame
-            gameConfig={fillConfig}
-            onComplete={(telemetry) => handleCurrentGameComplete()}
-          />
-        );
-      }
-      case "multiple_choice": {
-        const mcItems = currentGame.items.map((item) => ({
-          question: item.question,
-          correct_answer: item.correct_answer,
-          distractors: item.distractors
-        }));
-        const mcConfig = {
-          id: currentGame.id,
-          items: mcItems,
-        };
-        return (
-          <MultipleChoiceGame
-            gameConfig={mcConfig}
+            gameConfig={currentGame}
             flashcards={flashcards}
             onComplete={(telemetry) => handleCurrentGameComplete()}
           />
         );
-      }
+      case "multiple_choice":
+        return (
+          <MultipleChoiceGame
+            gameConfig={currentGame}
+            flashcards={flashcards}
+            onComplete={(telemetry) => handleCurrentGameComplete()}
+          />
+        );
       default:
         return (
           <>

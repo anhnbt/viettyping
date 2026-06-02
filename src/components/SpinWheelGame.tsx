@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, Play, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { GameAdapterProps, TelemetryPayload, Flashcard } from "@/types/lesson";
+import { GameAdapterProps, TelemetryPayload, Flashcard, SpinWheelItem } from "@/types/lesson";
 import { useStudent } from "@/contexts/StudentContext";
 import { useSound } from "@/contexts/SoundContext";
 
@@ -13,16 +13,7 @@ const isEmoji = (url: string) => {
   return !url.includes('/') && !url.includes('.') && url.length < 10;
 };
 
-export interface SpinWheelGameConfig {
-  id: string;
-  items: string[];
-}
-
-export interface SpinWheelGameProps extends GameAdapterProps<SpinWheelGameConfig> {
-  flashcards?: Flashcard[];
-}
-
-export default function SpinWheelGame({ gameConfig, onComplete, flashcards = [] }: SpinWheelGameProps) {
+export default function SpinWheelGame({ gameConfig, flashcards = [], onComplete }: GameAdapterProps<SpinWheelItem>) {
   const { id: gameId, items } = gameConfig;
   const { studentInfo } = useStudent();
   const [isSpinning, setIsSpinning] = useState(false);

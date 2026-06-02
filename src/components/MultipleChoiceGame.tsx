@@ -4,23 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X } from "lucide-react";
 import confetti from "canvas-confetti";
-import { GameAdapterProps, TelemetryPayload, Flashcard } from "@/types/lesson";
+import { GameAdapterProps, TelemetryPayload, Flashcard, MultipleChoiceItem } from "@/types/lesson";
 import { useSound } from "@/contexts/SoundContext";
-
-export interface MultipleChoiceItem {
-  question: string;
-  correct_answer: string;
-  distractors: string[];
-}
-
-export interface MultipleChoiceGameConfig {
-  id: string;
-  items: MultipleChoiceItem[];
-}
-
-export interface MultipleChoiceGameProps extends GameAdapterProps<MultipleChoiceGameConfig> {
-  flashcards?: Flashcard[];
-}
 
 // Utility to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -38,7 +23,7 @@ const isEmoji = (url: string) => {
 };
 
 
-export default function MultipleChoiceGame({ gameConfig, flashcards, onComplete }: MultipleChoiceGameProps) {
+export default function MultipleChoiceGame({ gameConfig, flashcards = [], onComplete }: GameAdapterProps<MultipleChoiceItem>) {
   const { id: gameId, items } = gameConfig;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [choices, setChoices] = useState<string[]>([]);

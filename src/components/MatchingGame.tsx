@@ -14,7 +14,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { GameAdapterProps, TelemetryPayload } from "@/types/lesson";
+import { GameAdapterProps, TelemetryPayload, MatchingGameItem } from "@/types/lesson";
 import { useSound } from "@/contexts/SoundContext";
 
 export interface MappedMatchingItem {
@@ -123,13 +123,24 @@ function DroppableSlot({
   );
 }
 
-export default function MatchingGame({ gameConfig, onComplete }: GameAdapterProps<MatchingGameConfig>) {
-  const { id: gameId, items } = gameConfig;
-  const [matches, setMatches] = useState<Record<string, string>>({}); // Slot ID -> Word ID
+export default function MatchingGame({ gameConfig, flashcards = [], onComplete }: GameAdapterProps<MatchingGameItem>) {
+  const { id: gameId, items: rawItems } = gameConfig;
   const { playSound } = useSound();
+  const [matches, setMatches] = useState<Record<string, string>>({}); // Slot ID -> Word ID
   const [unmatchedWords, setUnmatchedWords] = useState<string[]>([]);
   const [errorSlot, setErrorSlot] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+
+  // Map rawItems to include image_url from flashcards
+  const items = React.useMemo(() => {
+    return rawItems.map((item) => {
+      const flashcard = flashcards.find((f) => f.word.toLowerCase() === item.word.toLowerCase());
+      return {
+        word: item.word,
+        image_url: flashcard?.image_url || "/assets/placeholder.png",
+      };
+    });
+  }, [rawItems, flashcards]);
 
   // Telemetry state
   const startTimeRef = React.useRef<number>(Date.now());

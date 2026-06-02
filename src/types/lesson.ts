@@ -107,6 +107,7 @@ export interface TelemetryPayload {
 
 export interface GameAdapterProps<T> {
   gameConfig: T;
+  flashcards?: Flashcard[];
   onComplete: (telemetry: TelemetryPayload) => void;
   onProgressUpdate?: (percent: number) => void;
 }
