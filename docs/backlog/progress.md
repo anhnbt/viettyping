@@ -118,3 +118,15 @@ Dự án VietTyping là hệ thống Web App học tiếng Việt tương tác c
     - [ ] **7. Thống kê điểm (Learning Analytics):** Báo cáo và biểu đồ WPM, độ chính xác %, XP.
     - [ ] **8. Email Marketing (Email Notifications):** Giao diện gửi newsletter và thiết lập email thông báo tự động.
   - [ ] Kết nối REST API của Backend Java Spring Boot và MySQL, xử lý SSR/ISR và xác thực Token JWT.
+
+---
+
+## 📅 SPRINT 7: Đồng bộ hóa Server-Side & Daily Streak Engine (Phase 3)
+**Trạng thái:** ⏳ Kế hoạch (Backlog)
+
+- [ ] **[Task 21]** Đồng bộ Server-Side & Daily Streak Engine ([Chi tiết](./tasks/task-21-server-side-sync.md))
+  - [ ] Thiết kế cơ chế offline-first syncQueue lưu trữ hàng đợi đồng bộ.
+  - [ ] Đồng bộ hóa hồ sơ, XP, Level và danh sách bài học hoàn thành với Java Spring Boot API.
+  - [ ] Cải tiến logic tính Streak chuẩn xác theo ngày học thực tế trên Server.
+  - [ ] Tích hợp trạng thái đồng bộ đám mây trực quan lên UI Header của học sinh.
+

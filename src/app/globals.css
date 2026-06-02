@@ -394,6 +394,24 @@ body {
   filter: brightness(0.95);
 }
 
+.tactile-btn-purple {
+  background-color: #a855f7;
+  color: #ffffff;
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-purple:hover {
+  background-color: #c084fc;
+}
+
+.tactile-btn-cyan {
+  background-color: #06b6d4;
+  color: #ffffff;
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-cyan:hover {
+  background-color: #22d3ee;
+}
+
 /* Theme-based Dynamic Tactile Buttons */
 .tactile-btn-primary {
   background-color: var(--color-primary);

@@ -8,6 +8,7 @@ import { hasVietnameseDiacritics } from '@/utils/vietnameseUtils';
 import TelexGuide from './TelexGuide';
 import DinoMascot from './DinoMascot';
 import { useStudent } from '@/contexts/StudentContext';
+import { useSubjectTheme } from '@/hooks/useSubjectTheme';
 
 const MASCOT_NAMES: Record<string, string> = {
   dino: 'Khủng Long',
@@ -46,6 +47,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const { studentInfo } = useStudent();
   const subjectId = params.subjectId as string;
   const subject = subjects.find(s => s.id === subjectId);
+  const theme = useSubjectTheme();
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
   const [currentProgress, setCurrentProgress] = useState(0); // For intra-activity progress bar
   const { isActivityCompleted, saveProgress, isLoaded, getTopicProgress, clearTopicProgress } = useProgress();
@@ -245,7 +247,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           {/* Back Button */}
           <Link
             href={`/subjects/${subjectId}`}
-            className="group flex items-center gap-1.5 p-2 -ml-1 text-gray-500 hover:text-sky-600 hover:bg-sky-blue/15 rounded-xl transition-all"
+            className={`group flex items-center gap-1.5 p-2 -ml-1 text-gray-500 hover:${theme.text} hover:${theme.bgLight15} rounded-xl transition-all`}
             title="Quay lại"
           >
             <IoArrowBack className="text-xl group-hover:-translate-x-0.5 transition-transform" />
@@ -284,7 +286,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
                   key={activity.id}
                   onClick={() => setCurrentActivityIndex(index)}
                   className={`w-2.5 h-2.5 rounded-full transition-all ${isActive
-                    ? 'bg-sky-blue scale-125 ring-2 ring-sky-200 border border-slate-800'
+                    ? `${theme.bg} scale-125 ring-2 ${theme.ring} border border-slate-800`
                     : isCompleted
                       ? 'bg-dino-green hover:bg-dino-green/90 border border-slate-800'
                       : 'bg-slate-200 hover:bg-slate-300 border border-slate-400'
@@ -296,7 +298,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           </div>
 
           {/* Progress Badge */}
-          <div className={`px-3 py-1 rounded-full text-xs font-black border-2 border-slate-800 ${progress === 100 ? 'bg-dino-green/20 text-slate-800' : 'bg-sky-blue/20 text-slate-800'
+          <div className={`px-3 py-1 rounded-full text-xs font-black border-2 border-slate-800 ${progress === 100 ? 'bg-dino-green/20 text-slate-800' : `${theme.bgLight20} text-slate-800`
             }`}>
             {Math.round(progress)}%
           </div>
@@ -304,7 +306,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
 
         {/* Intra-activity Progress Bar (Optional) */}
         {currentProgress > 0 && currentProgress < 100 && (
-          <div className="absolute bottom-0 left-0 h-1 bg-sky-blue transition-all duration-300" style={{ width: `${currentProgress}%` }} />
+          <div className={`absolute bottom-0 left-0 h-1 ${theme.bg} transition-all duration-300`} style={{ width: `${currentProgress}%` }} />
         )}
       </header>
 
@@ -315,7 +317,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
         <div className="w-80 md:w-96 bg-white border-r-4 border-slate-800 flex flex-col shrink-0 overflow-y-auto z-10 hidden lg:flex">
           <div className="p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-sky-blue/20 border border-slate-800 flex items-center justify-center text-sky-600 text-xl font-bold">
+              <div className={`w-10 h-10 rounded-full ${theme.bgLight20} border border-slate-800 flex items-center justify-center ${theme.text} text-xl font-bold`}>
                 {currentActivityIndex + 1}
               </div>
               <h2 className="text-xl font-bold text-gray-800">
@@ -323,7 +325,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
               </h2>
             </div>
 
-            <div className="bg-sky-blue/10 p-4 rounded-2xl text-slate-800 leading-relaxed border-2 border-slate-800 mb-6">
+            <div className={`p-4 rounded-2xl text-slate-800 leading-relaxed border-2 border-slate-800 mb-6 ${theme.bgLight10}`}>
               {currentActivity.instructions}
             </div>
 
@@ -372,7 +374,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
                 Hoàn thành xuất sắc!
               </h3>
               <p className="text-gray-600 text-lg mb-8 font-bold">
-                Con đã hoàn thành toàn bộ chủ đề <span className="font-extrabold text-sky-600">{topic.title}</span>.
+                Con đã hoàn thành toàn bộ chủ đề <span className={`font-extrabold ${theme.text}`}>{topic.title}</span>.
               </p>
               <div className="flex gap-4 justify-center">
                 <button

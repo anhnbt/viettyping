@@ -4,12 +4,14 @@ import { IoPlay, IoClose } from 'react-icons/io5';
 import TypingPractice from '@/components/TypingPractice';
 import CompletionModal from '@/components/CompletionModal';
 import { TelemetryPayload } from '@/types/lesson';
+import { useSubjectTheme } from '@/hooks/useSubjectTheme';
 
 export const TypingActivity: React.FC<ActivityAdapterProps> = ({ activity, onComplete, onProgressUpdate }) => {
   const [showTypingModal, setShowTypingModal] = useState(false);
   const [typingStats, setTypingStats] = useState<{ wpm: number; accuracy: number; incorrectCount: number } | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
+  const theme = useSubjectTheme();
 
   useEffect(() => {
     setStartTime(Date.now());
@@ -56,17 +58,19 @@ export const TypingActivity: React.FC<ActivityAdapterProps> = ({ activity, onCom
   }, [typingStats, startTime, onComplete]);
 
   return (
-    <div className="text-center w-full">
+    <div className="text-center w-full max-w-2xl mx-auto flex flex-col items-center">
       <div className="mb-6">
-        <h3 className="text-2xl font-bold mb-2">{activity.title}</h3>
-        <p className="text-gray-600">{activity.instructions}</p>
+        <h3 className="text-3xl font-black text-slate-800 mb-2">{activity.title}</h3>
+        <p className="text-slate-500 font-bold text-sm">{activity.instructions}</p>
       </div>
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-        <p className="text-2xl font-mono text-gray-800 tracking-wider">{activity.content}</p>
+      
+      <div className={`w-full border-4 border-slate-800 rounded-3xl p-8 shadow-[6px_6px_0px_0px_#1e293b] mb-6 bg-white/70 ${theme.bgLight10}`}>
+        <p className="text-3xl font-mono font-black text-slate-850 tracking-wider leading-snug">{activity.content}</p>
       </div>
+
       <button
         onClick={() => setShowTypingModal(true)}
-        className="tactile-btn tactile-btn-primary text-xl px-8 py-4"
+        className={`tactile-btn ${theme.tactileBtn} text-xl px-8 py-4`}
       >
         <IoPlay className="text-2xl" />
         Bắt đầu gõ

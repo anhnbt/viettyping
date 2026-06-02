@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ActivityAdapterProps } from '@/types/activity';
+import { useSubjectTheme } from '@/hooks/useSubjectTheme';
 
 export const ReadingActivity: React.FC<ActivityAdapterProps> = ({ activity, onComplete, onProgressUpdate }) => {
   const [startTime, setStartTime] = useState<number>(0);
+  const theme = useSubjectTheme();
 
   useEffect(() => {
     setStartTime(Date.now());
@@ -22,17 +24,19 @@ export const ReadingActivity: React.FC<ActivityAdapterProps> = ({ activity, onCo
   };
 
   return (
-    <div>
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold mb-2">{activity.title}</h3>
-        <p className="text-gray-600">{activity.instructions}</p>
+    <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
+      <div className="mb-6 text-center">
+        <h3 className="text-3xl font-black text-slate-800 mb-2">{activity.title}</h3>
+        <p className="text-slate-500 font-bold text-sm">{activity.instructions}</p>
       </div>
-      <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
-        <p className="text-lg leading-relaxed">{activity.content}</p>
+
+      <div className={`w-full border-4 border-slate-800 rounded-3xl p-8 shadow-[6px_6px_0px_0px_#1e293b] mb-6 bg-white/70 ${theme.bgLight10}`}>
+        <p className="text-xl leading-relaxed font-bold text-slate-800">{activity.content}</p>
       </div>
+
       <button
         onClick={handleFinish}
-        className="w-full py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-bold text-xl shadow-md"
+        className={`tactile-btn ${theme.tactileBtn} text-lg px-8 py-3.5 w-full`}
       >
         Hoàn thành đọc
       </button>
