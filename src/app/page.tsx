@@ -298,20 +298,20 @@ export default function Home() {
 
         {/* main content area */}
         <VisualWorldBackground>
-          <main className="flex-1 p-4 md:p-6 space-y-8 overflow-y-auto pb-24 relative z-10">
+          <main className="flex-1 p-4 md:p-6 space-y-12 overflow-y-auto pb-24 relative z-10">
           
           {/* Running Title Banner */}
           <div className="text-center pt-2 pb-1">
-            <h1 className="text-xl md:text-3xl font-black text-[var(--color-foreground)] min-h-[40px] drop-shadow-sm tracking-wide">
+            <h1 className="text-xl md:text-3xl font-black text-[var(--color-foreground)] min-h-[40px] drop-shadow-sm tracking-normal">
               {typedText}
               <span className="animate-blink text-[var(--color-primary-depth)] font-normal">|</span>
             </h1>
           </div>
 
           {/* Block 1: Banner Chào Mừng Cấp Độ Học Sinh */}
-          <div className="bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[24px] shadow-[6px_6px_0px_0px_var(--color-foreground)] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden transition-colors">
+          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] rounded-[24px] shadow-[4px_4px_0px_0px_var(--color-foreground)] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden transition-colors">
             <div className="flex-1 text-center md:text-left">
-              <span className="bg-[var(--color-primary)] text-white border-2 border-[var(--color-foreground)] px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+              <span className="bg-emerald-50 text-emerald-700 border-2 border-[var(--color-foreground)] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_var(--color-foreground)]">
                 CẤP ĐỘ: {levelConfig.name}
               </span>
               <h2 className="text-3xl md:text-4xl font-black text-[var(--color-foreground)] mt-4 mb-2">
@@ -346,7 +346,7 @@ export default function Home() {
             </div>
             
             {/* Mascot Container */}
-            <div className="w-48 h-48 shrink-0 flex flex-col items-center justify-center relative bg-[var(--color-surface-container)] border-3 border-[var(--color-foreground)] rounded-3xl p-4 shadow-[4px_4px_0px_0px_var(--color-foreground)]">
+            <div className="w-48 h-48 shrink-0 flex flex-col items-center justify-center relative bg-[var(--color-surface-container)] border-2 border-[var(--color-foreground)] rounded-3xl p-4 shadow-[3px_3px_0px_0px_var(--color-foreground)]">
               <DinoMascot className="w-36 h-36" />
               <span className="text-[10px] font-black text-[var(--color-foreground)] mt-2 uppercase tracking-wide opacity-80">
                 {levelConfig.name}
@@ -357,8 +357,8 @@ export default function Home() {
           {/* Block 2: Tiến Trình Tuần & Giới Thiệu Thế Giới Linh Vật */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
-            {/* Cột Trái: Tiến trình tuần */}
-            <div className="bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[24px] shadow-[6px_6px_0px_0px_var(--color-foreground)] p-6 transition-colors">
+             {/* Cột Trái: Tiến trình tuần */}
+            <div className="bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] rounded-[24px] shadow-[4px_4px_0px_0px_var(--color-foreground)] p-6 transition-colors">
               <h3 className="text-xl font-black text-[var(--color-foreground)] flex items-center justify-between mb-4">
                 <span>Tiến trình tuần</span>
                 <TrendingUp className="w-5 h-5 text-emerald-500" />
@@ -390,7 +390,7 @@ export default function Home() {
             </div>
 
             {/* Cột Phải: Thế giới Linh vật */}
-            <div className="bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[24px] shadow-[6px_6px_0px_0px_var(--color-foreground)] p-6 flex flex-col sm:flex-row items-center justify-between gap-6 transition-colors">
+            <div className="bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] rounded-[24px] shadow-[4px_4px_0px_0px_var(--color-foreground)] p-6 flex flex-col sm:flex-row items-center justify-between gap-6 transition-colors">
               <div className="flex-1 text-center sm:text-left">
                 <h3 className="text-xl font-black text-[var(--color-foreground)] mb-2">
                   Thế giới {getThemeMascotName(currentTheme)}
@@ -457,7 +457,7 @@ export default function Home() {
                     <span className="p-2 bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-xl shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)] flex items-center justify-center">
                       {renderTaskIcon(t.icon)}
                     </span>
-                    <span className="bg-[var(--color-accent)] text-[var(--color-foreground)] border border-[var(--color-foreground)] text-[9px] font-black px-2 py-0.5 rounded-full shadow-[1px_1px_0px_0px_var(--color-foreground)]">
+                    <span className="bg-yellow-50 text-yellow-800 border border-[var(--color-foreground)] text-[9px] font-black px-2 py-0.5 rounded-full shadow-[1px_1px_0px_0px_var(--color-foreground)]">
                       +{t.xp}
                     </span>
                   </div>
@@ -487,7 +487,7 @@ export default function Home() {
 
           {/* Parents Corner Entry Card */}
           <div className="max-w-4xl mx-auto pt-6 text-center">
-            <div className="inline-flex flex-col md:flex-row items-center gap-4 bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] p-6 rounded-3xl shadow-[5px_5px_0px_0px_var(--color-foreground)]">
+            <div className="inline-flex flex-col md:flex-row items-center gap-4 bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] p-6 rounded-3xl shadow-[4px_4px_0px_0px_var(--color-foreground)]">
               <div className="p-3 bg-[var(--color-primary-container)] border-2 border-[var(--color-foreground)] rounded-2xl shrink-0 flex items-center justify-center">
                 <Users className="w-8 h-8 text-[var(--color-primary-depth)]" />
               </div>

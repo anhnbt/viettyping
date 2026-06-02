@@ -208,32 +208,43 @@ export const VisualWorldBackground: React.FC<VisualWorldBackgroundProps> = ({
           {/* Thân cây uốn lượn có nhánh */}
           <path d="M50 190 C45 165 44 135 50 105 C44 95 33 90 28 95 C33 85 43 87 52 97 C57 85 67 80 74 85 C69 90 61 93 57 101 C61 125 61 165 69 190 Z" fill="url(#trunkGradLeft)" stroke="#0f172a" strokeWidth="3" strokeLinejoin="round" />
           
-          {/* Tán lá lượn sóng hình mây tròn */}
-          <path d="M55 35 
-                   C38 25, 18 35, 23 55 
-                   C8 60, 8 85, 23 95 
-                   C28 110, 58 115, 68 100 
-                   C83 105, 103 90, 93 70 
-                   C103 50, 83 30, 68 40 
-                   C63 30, 58 30, 55 35 Z" 
-                fill="url(#foliageGradLeft)" stroke="#0f172a" strokeWidth="3.5" strokeLinejoin="round" />
-          
-          {/* Các quả táo đỏ lấp lánh */}
-          <g transform="translate(35, 70)">
-            <circle cx="0" cy="0" r="5" fill="url(#appleGrad)" stroke="#0f172a" strokeWidth="1.5" />
-            <path d="M0 -5 C1 -8, 3 -8, 3 -6" stroke="#5c2e16" strokeWidth="1" fill="none" />
-            <circle cx="-1.5" cy="-1.5" r="1.2" fill="white" opacity="0.7" />
-          </g>
-          <g transform="translate(73, 60)">
-            <circle cx="0" cy="0" r="5.5" fill="url(#appleGrad)" stroke="#0f172a" strokeWidth="1.5" />
-            <path d="M0 -5.5 C1 -8.5, 3 -8.5, 3 -6.5" stroke="#5c2e16" strokeWidth="1" fill="none" />
-            <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.7" />
-          </g>
-          <g transform="translate(52, 90)">
-            <circle cx="0" cy="0" r="5" fill="url(#appleGrad)" stroke="#0f172a" strokeWidth="1.5" />
-            <path d="M0 -5 C1 -8, 3 -8, 3 -6" stroke="#5c2e16" strokeWidth="1" fill="none" />
-            <circle cx="-1.5" cy="-1.5" r="1.2" fill="white" opacity="0.7" />
-          </g>
+          {/* Tán lá và quả đung đưa nhẹ nhàng trước gió */}
+          <motion.g
+            animate={{ rotate: [-0.6, 0.6, -0.6] }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            style={{ transformOrigin: "50px 105px" }}
+          >
+            {/* Tán lá lượn sóng hình mây tròn */}
+            <path d="M55 35 
+                     C38 25, 18 35, 23 55 
+                     C8 60, 8 85, 23 95 
+                     C28 110, 58 115, 68 100 
+                     C83 105, 103 90, 93 70 
+                     C103 50, 83 30, 68 40 
+                     C63 30, 58 30, 55 35 Z" 
+                  fill="url(#foliageGradLeft)" stroke="#0f172a" strokeWidth="3.5" strokeLinejoin="round" />
+            
+            {/* Các quả táo đỏ lấp lánh */}
+            <g transform="translate(35, 70)">
+              <circle cx="0" cy="0" r="5" fill="url(#appleGrad)" stroke="#0f172a" strokeWidth="1.5" />
+              <path d="M0 -5 C1 -8, 3 -8, 3 -6" stroke="#5c2e16" strokeWidth="1" fill="none" />
+              <circle cx="-1.5" cy="-1.5" r="1.2" fill="white" opacity="0.7" />
+            </g>
+            <g transform="translate(73, 60)">
+              <circle cx="0" cy="0" r="5.5" fill="url(#appleGrad)" stroke="#0f172a" strokeWidth="1.5" />
+              <path d="M0 -5.5 C1 -8.5, 3 -8.5, 3 -6.5" stroke="#5c2e16" strokeWidth="1" fill="none" />
+              <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.7" />
+            </g>
+            <g transform="translate(52, 90)">
+              <circle cx="0" cy="0" r="5" fill="url(#appleGrad)" stroke="#0f172a" strokeWidth="1.5" />
+              <path d="M0 -5 C1 -8, 3 -8, 3 -6" stroke="#5c2e16" strokeWidth="1" fill="none" />
+              <circle cx="-1.5" cy="-1.5" r="1.2" fill="white" opacity="0.7" />
+            </g>
+          </motion.g>
         </svg>
 
         {/* Cây bên phải: Cây Cam xum xuê thực thụ với quả cam chín mọng */}
@@ -260,61 +271,72 @@ export const VisualWorldBackground: React.FC<VisualWorldBackgroundProps> = ({
           {/* Thân cây thẳng gốc to */}
           <path d="M54 210 C50 170 52 130 56 100 C58 98 62 98 64 100 C68 130 70 170 66 210 Z" fill="url(#trunkGradRight)" stroke="#0f172a" strokeWidth="3" />
           
-          {/* Tán lá cây cam lớp phía sau (lớn hơn, đậm màu hơn) */}
-          <path d="M60 25
-                   C35 15, 10 30, 15 62
-                   C0 70, 0 100, 15 118
-                   C20 135, 55 140, 72 122
-                   C88 135, 115 118, 110 90
-                   C120 62, 98 30, 78 42
-                   C72 27, 65 25, 60 25 Z" 
-                fill="url(#foliageGradRight1)" stroke="#0f172a" strokeWidth="3.5" strokeLinejoin="round" />
+          {/* Tán lá và quả cây cam đung đưa nhẹ nhàng trước gió */}
+          <motion.g
+            animate={{ rotate: [0.6, -0.6, 0.6] }}
+            transition={{
+              duration: 7,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            style={{ transformOrigin: "56px 100px" }}
+          >
+            {/* Tán lá cây cam lớp phía sau (lớn hơn, đậm màu hơn) */}
+            <path d="M60 25
+                     C35 15, 10 30, 15 62
+                     C0 70, 0 100, 15 118
+                     C20 135, 55 140, 72 122
+                     C88 135, 115 118, 110 90
+                     C120 62, 98 30, 78 42
+                     C72 27, 65 25, 60 25 Z" 
+                  fill="url(#foliageGradRight1)" stroke="#0f172a" strokeWidth="3.5" strokeLinejoin="round" />
 
-          {/* Tán lá cây cam lớp phía trước (nhỏ hơn, sáng màu hơn để tạo độ nổi 3D) */}
-          <path d="M60 35
-                   C42 27, 22 38, 26 62
-                   C13 68, 13 92, 26 106
-                   C30 118, 58 122, 70 108
-                   C82 118, 104 106, 100 84
-                   C108 62, 90 38, 76 46
-                   C71 36, 66 35, 60 35 Z" 
-                fill="url(#foliageGradRight2)" stroke="#0f172a" strokeWidth="2.5" strokeLinejoin="round" />
+            {/* Tán lá cây cam lớp phía trước (nhỏ hơn, sáng màu hơn để tạo độ nổi 3D) */}
+            <path d="M60 35
+                     C42 27, 22 38, 26 62
+                     C13 68, 13 92, 26 106
+                     C30 118, 58 122, 70 108
+                     C82 118, 104 106, 100 84
+                     C108 62, 90 38, 76 46
+                     C71 36, 66 35, 60 35 Z" 
+                  fill="url(#foliageGradRight2)" stroke="#0f172a" strokeWidth="2.5" strokeLinejoin="round" />
 
-          {/* Các quả cam chín mọng lấp lánh có cuống và lá */}
-          <g transform="translate(38, 75)">
-            <circle cx="0" cy="0" r="5.5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
-            <path d="M0 -5.5 C1 -8, 2.5 -8, 2.5 -6" stroke="#4a2206" strokeWidth="0.8" fill="none" />
-            <path d="M2.5 -8 C4 -8.5, 5 -7, 4 -6 C3 -5, 2 -7.5, 2.5 -8" fill="#2ecc71" />
-            <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.75" />
-          </g>
+            {/* Các quả cam chín mọng lấp lánh có cuống và lá */}
+            <g transform="translate(38, 75)">
+              <circle cx="0" cy="0" r="5.5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
+              <path d="M0 -5.5 C1 -8, 2.5 -8, 2.5 -6" stroke="#4a2206" strokeWidth="0.8" fill="none" />
+              <path d="M2.5 -8 C4 -8.5, 5 -7, 4 -6 C3 -5, 2 -7.5, 2.5 -8" fill="#2ecc71" />
+              <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.75" />
+            </g>
 
-          <g transform="translate(78, 65)">
-            <circle cx="0" cy="0" r="6" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
-            <path d="M0 -6 C1 -8.5, 2.5 -8.5, 2.5 -6.5" stroke="#4a2206" strokeWidth="0.8" fill="none" />
-            <path d="M2.5 -8.5 C4 -9, 5 -7.5, 4 -6.5 C3 -5.5, 2 -8, 2.5 -8.5" fill="#2ecc71" />
-            <circle cx="-1.8" cy="-1.8" r="1.5" fill="white" opacity="0.75" />
-          </g>
+            <g transform="translate(78, 65)">
+              <circle cx="0" cy="0" r="6" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
+              <path d="M0 -6 C1 -8.5, 2.5 -8.5, 2.5 -6.5" stroke="#4a2206" strokeWidth="0.8" fill="none" />
+              <path d="M2.5 -8.5 C4 -9, 5 -7.5, 4 -6.5 C3 -5.5, 2 -8, 2.5 -8.5" fill="#2ecc71" />
+              <circle cx="-1.8" cy="-1.8" r="1.5" fill="white" opacity="0.75" />
+            </g>
 
-          <g transform="translate(54, 98)">
-            <circle cx="0" cy="0" r="5.5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
-            <path d="M0 -5.5 C1 -8, 2.5 -8, 2.5 -6" stroke="#4a2206" strokeWidth="0.8" fill="none" />
-            <path d="M2.5 -8 C4 -8.5, 5 -7, 4 -6 C3 -5, 2 -7.5, 2.5 -8" fill="#2ecc71" />
-            <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.75" />
-          </g>
+            <g transform="translate(54, 98)">
+              <circle cx="0" cy="0" r="5.5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
+              <path d="M0 -5.5 C1 -8, 2.5 -8, 2.5 -6" stroke="#4a2206" strokeWidth="0.8" fill="none" />
+              <path d="M2.5 -8 C4 -8.5, 5 -7, 4 -6 C3 -5, 2 -7.5, 2.5 -8" fill="#2ecc71" />
+              <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.75" />
+            </g>
 
-          <g transform="translate(88, 92)">
-            <circle cx="0" cy="0" r="5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
-            <path d="M0 -5 C1 -7.5, 2 -7.5, 2 -5.5" stroke="#4a2206" strokeWidth="0.8" fill="none" />
-            <path d="M2 -7.5 C3.2 -8, 4 -6.8, 3.2 -5.8 C2.4 -4.8, 1.6 -7, 2 -7.5" fill="#2ecc71" />
-            <circle cx="-1.2" cy="-1.2" r="1.2" fill="white" opacity="0.75" />
-          </g>
+            <g transform="translate(88, 92)">
+              <circle cx="0" cy="0" r="5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
+              <path d="M0 -5 C1 -7.5, 2 -7.5, 2 -5.5" stroke="#4a2206" strokeWidth="0.8" fill="none" />
+              <path d="M2 -7.5 C3.2 -8, 4 -6.8, 3.2 -5.8 C2.4 -4.8, 1.6 -7, 2 -7.5" fill="#2ecc71" />
+              <circle cx="-1.2" cy="-1.2" r="1.2" fill="white" opacity="0.75" />
+            </g>
 
-          <g transform="translate(58, 50)">
-            <circle cx="0" cy="0" r="5.5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
-            <path d="M0 -5.5 C1 -8, 2.5 -8, 2.5 -6" stroke="#4a2206" strokeWidth="0.8" fill="none" />
-            <path d="M2.5 -8 C4 -8.5, 5 -7, 4 -6 C3 -5, 2 -7.5, 2.5 -8" fill="#2ecc71" />
-            <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.75" />
-          </g>
+            <g transform="translate(58, 50)">
+              <circle cx="0" cy="0" r="5.5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
+              <path d="M0 -5.5 C1 -8, 2.5 -8, 2.5 -6" stroke="#4a2206" strokeWidth="0.8" fill="none" />
+              <path d="M2.5 -8 C4 -8.5, 5 -7, 4 -6 C3 -5, 2 -7.5, 2.5 -8" fill="#2ecc71" />
+              <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.75" />
+            </g>
+          </motion.g>
         </svg>
 
       </div>
