@@ -210,8 +210,8 @@ export default function LeaderboardPage() {
               onClick={() => handleTabChange('weekly')}
               className={`px-6 py-2.5 rounded-[18px] text-sm font-black transition-all cursor-pointer ${
                 activeTab === 'weekly'
-                  ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-900 border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b]'
-                  : 'text-slate-600 hover:text-slate-800 bg-transparent border-2 border-transparent'
+                  ? 'bg-[var(--color-primary)] text-white border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b]'
+                  : 'text-slate-650 hover:text-slate-800 bg-transparent border-2 border-transparent'
               }`}
             >
               📅 Tuần Này
@@ -220,8 +220,8 @@ export default function LeaderboardPage() {
               onClick={() => handleTabChange('alltime')}
               className={`px-6 py-2.5 rounded-[18px] text-sm font-black transition-all cursor-pointer ${
                 activeTab === 'alltime'
-                  ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-900 border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b]'
-                  : 'text-slate-600 hover:text-slate-800 bg-transparent border-2 border-transparent'
+                  ? 'bg-[var(--color-primary)] text-white border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b]'
+                  : 'text-slate-650 hover:text-slate-800 bg-transparent border-2 border-transparent'
               }`}
             >
               👑 Cao Thủ All-Time
@@ -325,14 +325,14 @@ export default function LeaderboardPage() {
                 whileHover={{ scale: 1.01, x: 2 }}
                 className={`flex items-center justify-between p-3.5 rounded-2xl border-2 transition-all ${
                   isMe
-                    ? 'bg-indigo-50 border-indigo-500 shadow-[3px_3px_0px_0px_#4f46e5]'
-                    : 'bg-white border-slate-200 hover:border-slate-400'
+                    ? 'bg-[var(--color-primary-container)] border-[var(--color-primary)] shadow-[3px_3px_0px_0px_var(--color-primary-depth)] text-[var(--color-on-primary-container)]'
+                    : 'bg-[var(--color-surface)] border-[var(--color-outline-variant)] hover:border-slate-400 text-[var(--color-foreground)]'
                 }`}
               >
                 <div className="flex items-center gap-3.5">
                   {/* Số thứ hạng */}
                   <span className={`w-8 h-8 rounded-full border-2 border-slate-800 flex items-center justify-center font-black text-xs shadow-[1.5px_1.5px_0px_0px_#1e293b] ${
-                    isMe ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-slate-700'
+                    isMe ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-surface-container)] text-[var(--color-foreground)]'
                   }`}>
                     {user.rank}
                   </span>
@@ -353,9 +353,9 @@ export default function LeaderboardPage() {
                     </div>
                   )}
                   {/* Điểm XP */}
-                  <div className="flex items-center gap-1 bg-indigo-50/50 px-3 py-1 rounded-full border border-indigo-150">
+                  <div className="flex items-center gap-1 bg-[var(--color-surface-container)] px-3 py-1 rounded-full border border-[var(--color-outline-variant)]">
                     <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-                    <span className="text-[11px] font-black text-indigo-950">{user.xp} XP</span>
+                    <span className="text-[11px] font-black text-[var(--color-foreground)]">{user.xp} XP</span>
                   </div>
                 </div>
               </motion.div>
@@ -434,9 +434,9 @@ export default function LeaderboardPage() {
 
             <button
               onClick={() => handleBack()}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-650 text-white font-black text-sm px-6 py-3.5 rounded-[18px] border-b-4 border-red-700 shadow-[3px_3px_0px_0px_#1e293b] active:translate-y-0.5 active:border-b-2 active:shadow-none transition-all cursor-pointer"
+              className="keycap-btn-secondary w-full sm:w-auto px-6 py-3.5 text-sm"
             >
-              <Play className="w-4 h-4 text-white fill-white" />
+              <Play className="w-4 h-4 text-white fill-white mr-1" />
               <span>{userRank <= 10 ? 'Học Để Giữ Hạng!' : 'Gõ Phím Đua Top Ngay!'}</span>
             </button>
           </div>

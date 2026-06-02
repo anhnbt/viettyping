@@ -108,35 +108,35 @@ export default function LessonPage({ params }: Props) {
   }, [getNextLesson, router]);
 
   return (
-    <main className={`min-h-screen bg-gradient-to-b from-sky-100 via-blue-50 to-white py-6 ${plusJakartaSans.className}`}>
+    <main className={`min-h-screen bg-gradient-to-b from-[var(--color-background)] to-[var(--color-surface)] py-6 ${plusJakartaSans.className}`}>
       <div className="w-full px-6 md:px-12">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/typing')}
-              className="flex items-center gap-2 px-5 py-3 bg-white text-blue-500 rounded-2xl font-bold border-2 border-blue-200 shadow-[4px_4px_0px_0px_#bfdbfe] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer"
+              className="keycap-btn-surface px-5 py-3 text-sm"
             >
-              <IoArrowBack className="text-xl" />
+              <IoArrowBack className="text-xl mr-1" />
               <span>Quay lại đảo</span>
             </button>
           </div>
-          <h1 className={`text-3xl md:text-4xl font-bold text-blue-800 text-center ${plusJakartaSans.className}`}>
+          <h1 className={`text-3xl md:text-4xl font-black text-[var(--color-foreground)] text-center ${plusJakartaSans.className}`}>
             {lesson.title}
           </h1>
           {getNextLesson() ? (
             <button
               onClick={handleNextLesson}
-              className="flex items-center gap-2 px-5 py-3 bg-emerald-500 text-white rounded-2xl font-bold shadow-[4px_4px_0px_0px_#047857] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer"
+              className="keycap-btn-primary px-5 py-3 text-sm"
             >
               <span>Tiếp theo</span>
-              <IoArrowForward className="text-xl" />
+              <IoArrowForward className="text-xl ml-1" />
             </button>
           ) : (
             <div className="w-[120px] hidden md:block"></div>
           )}
         </div>
 
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-[6px_6px_0px_0px_#cbd5e1] border-2 border-gray-100 mb-8">
+        <div className="bg-[var(--color-surface)]/80 backdrop-blur-md rounded-3xl p-6 shadow-[6px_6px_0px_0px_var(--color-foreground)] border-3 border-[var(--color-foreground)] mb-8">
           <TypingPractice
             key={`${lesson.id}-${resetKey}`}
             task={lesson as unknown as TypingTask}

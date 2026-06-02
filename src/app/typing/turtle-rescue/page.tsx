@@ -273,9 +273,9 @@ export default function TurtleRescuePage() {
       <header className="bg-white/80 backdrop-blur-sm border-b-4 border-slate-800 px-6 py-4 flex items-center justify-between z-10 shrink-0">
         <button
           onClick={handleBack}
-          className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-slate-800 rounded-xl shadow-[2px_2px_0px_0px_#1e293b] active:translate-y-[1px] active:shadow-none transition-all cursor-pointer font-black text-xs text-slate-850"
+          className="keycap-btn-surface px-4 py-2 text-xs"
         >
-          <ArrowLeft className="w-4 h-4 stroke-[3px]" />
+          <ArrowLeft className="w-4 h-4 stroke-[3px] mr-1" />
           <span>{gameState === 'playing' ? 'Dừng chơi' : 'Quay lại'}</span>
         </button>
 
@@ -331,9 +331,9 @@ export default function TurtleRescuePage() {
                       </div>
                       
                       <button
-                        className="mt-5 w-full py-2.5 bg-slate-900 text-white font-black text-xs rounded-xl border-b-4 border-slate-950 active:translate-y-0.5 active:border-b-0 cursor-pointer flex items-center justify-center gap-1.5"
+                        className="keycap-btn-primary mt-5 w-full py-2.5 text-xs"
                       >
-                        <Play className="w-3.5 h-3.5 fill-white" />
+                        <Play className="w-3.5 h-3.5 fill-white mr-1.5" />
                         <span>Chơi ngay</span>
                       </button>
                     </motion.div>
@@ -562,13 +562,13 @@ export default function TurtleRescuePage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-sm mx-auto pt-2">
                 <button
                   onClick={() => handleStartGame(selectedTopic)}
-                  className="flex-1 py-3.5 bg-indigo-650 hover:bg-indigo-700 text-white font-black text-sm rounded-2xl border-b-4 border-indigo-900 active:translate-y-0.5 active:border-b-0 cursor-pointer transition-all"
+                  className="keycap-btn-primary flex-1 py-3.5 text-sm"
                 >
                   Chơi Lại Vòng Này
                 </button>
                 <button
                   onClick={() => setGameState('setup')}
-                  className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-sm rounded-2xl border-b-4 border-slate-350 active:translate-y-0.5 active:border-b-0 cursor-pointer transition-all"
+                  className="keycap-btn-surface flex-1 py-3.5 text-sm"
                 >
                   Đổi Chủ Đề Khác
                 </button>

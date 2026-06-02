@@ -8,6 +8,8 @@ import { useSound } from '@/contexts/SoundContext';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCcw, Check, BookOpen, Keyboard, Sparkles } from 'lucide-react';
+import VisualWorldBackground from '@/components/VisualWorldBackground';
+import { TactileStarBadge } from '@/components/BadgeElements';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
@@ -127,53 +129,8 @@ export default function TypingPage() {
   };
 
   return (
-    <main className={`min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 relative overflow-hidden pb-16 ${plusJakartaSans.className}`}>
-      
-      {/* Các đám mây trôi tự động */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <motion.div 
-          className="absolute top-12 left-0 w-36 h-12 bg-white/60 rounded-full blur-[1px]"
-          animate={{ x: ['-200px', '100vw'] }}
-          transition={{ repeat: Infinity, duration: 40, ease: 'linear' }}
-        />
-        <motion.div 
-          className="absolute top-48 right-0 w-48 h-16 bg-white/50 rounded-full blur-[1px]"
-          animate={{ x: ['100vw', '-300px'] }}
-          transition={{ repeat: Infinity, duration: 55, ease: 'linear' }}
-        />
-        <motion.div 
-          className="absolute top-1/3 left-10 w-28 h-10 bg-white/40 rounded-full"
-          animate={{ x: ['-150px', '100vw'] }}
-          transition={{ repeat: Infinity, duration: 32, ease: 'linear' }}
-        />
-      </div>
-
-      {/* Bong bóng nổi nhẹ nhàng tạo hiệu ứng hoạt hình */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        {BUBBLES_CONFIG.map((bubble, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-white/20 border border-white/30"
-            style={{
-              width: bubble.width,
-              height: bubble.height,
-              left: bubble.left,
-              bottom: '-50px',
-            }}
-            animate={{
-              y: [0, -1000],
-              x: bubble.xRange,
-              opacity: [0, 0.7, 0.7, 0]
-            }}
-            transition={{
-              duration: bubble.duration,
-              repeat: Infinity,
-              delay: bubble.delay,
-              ease: 'linear'
-            }}
-          />
-        ))}
-      </div>
+    <VisualWorldBackground>
+    <main className={`min-h-screen relative overflow-hidden pb-16 z-10 ${plusJakartaSans.className}`}>
 
       <div className="max-w-6xl mx-auto px-6 py-8 relative z-10">
         {/* Thanh Điều hướng Header */}
@@ -182,14 +139,14 @@ export default function TypingPage() {
             <Link
               href="/lesson"
               onClick={() => playSound('click')}
-              className="flex items-center gap-2 px-5 py-3 bg-white text-indigo-600 rounded-[22px] font-bold border-2 border-indigo-200 shadow-[4px_4px_0px_0px_#c7d2fe] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none text-sm"
+              className="tactile-btn bg-white hover:bg-slate-100 text-indigo-650 text-sm"
             >
               <BookOpen className="w-4 h-4 text-indigo-500 animate-bounce" />
               <span>📚 Bài học của bé</span>
             </Link>
             <button
               disabled
-              className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-red-400 to-pink-500 text-white rounded-[22px] font-bold border-b-4 border-red-600 shadow-[4px_4px_0px_0px_#fca5a5] cursor-default text-sm"
+              className="tactile-btn bg-[var(--color-secondary)] text-white text-sm cursor-default"
             >
               <Keyboard className="w-4 h-4" />
               <span>⌨️ Luyện gõ phím</span>
@@ -197,50 +154,26 @@ export default function TypingPage() {
             <Link
               href="/typing/asmr"
               onClick={() => playSound('click')}
-              className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-[22px] font-bold border-2 border-purple-300 shadow-[4px_4px_0px_0px_#c084fc] transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none text-sm"
+              className="tactile-btn bg-[var(--color-tertiary)] text-white text-sm"
             >
               <Sparkles className="w-4 h-4 animate-pulse text-yellow-200" />
               <span>✨ ASMR Thư giãn</span>
             </Link>
           </div>
 
-          <h1 className={`text-4xl md:text-5xl font-bold text-center text-indigo-800 tracking-wide drop-shadow-sm ${plusJakartaSans.className}`}>
+          <h1 className={`text-4xl md:text-5xl font-black text-center text-slate-800 tracking-wide drop-shadow-sm ${plusJakartaSans.className}`}>
             ⌨️ Đảo Gõ Phím Kỳ Thú
           </h1>
         </div>
-
+ 
         {/* Dashboard Thành Tích Sinh Động */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 mb-8 border-2 border-white/40 shadow-[6px_6px_0px_0px_#cbd5e1] flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="bg-white/90 rounded-[24px] p-6 mb-8 border-3 border-slate-900 shadow-[6px_6px_0px_0px_#0f172a] flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 w-full md:w-auto">
             {/* Card XP */}
-            <div className="flex items-center gap-3 bg-amber-50 border-2 border-amber-200 px-5 py-3 rounded-2xl shadow-[3px_3px_0px_0px_#fde68a]">
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
-                className="text-3xl"
-              >
-                🏆
-              </motion.div>
-              <div>
-                <div className="text-xs text-amber-700 font-bold uppercase tracking-wider">Điểm XP</div>
-                <div className={`text-2xl font-black text-amber-500 ${plusJakartaSans.className}`}>{xp} XP</div>
-              </div>
-            </div>
-
+            <TactileStarBadge color="yellow" value={`${xp} XP`} className="scale-110" />
+ 
             {/* Card Streak */}
-            <div className="flex items-center gap-3 bg-orange-50 border-2 border-orange-200 px-5 py-3 rounded-2xl shadow-[3px_3px_0px_0px_#fed7aa]">
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-                className="text-3xl"
-              >
-                🔥
-              </motion.div>
-              <div>
-                <div className="text-xs text-orange-700 font-bold uppercase tracking-wider">Chuỗi Gõ</div>
-                <div className={`text-2xl font-black text-orange-500 ${plusJakartaSans.className}`}>{streak} ngày</div>
-              </div>
-            </div>
+            <TactileStarBadge color="orange" value={`${streak} ngày`} className="scale-110" />
 
             {/* Card Progress */}
             <div className="flex flex-col bg-sky-50 border-2 border-sky-200 px-5 py-3 rounded-2xl shadow-[3px_3px_0px_0px_#bae6fd] min-w-[200px]">
@@ -261,7 +194,7 @@ export default function TypingPage() {
 
           <button
             onClick={handleResetProgress}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-gray-500 bg-gray-100/80 hover:bg-gray-200 hover:text-red-500 rounded-xl transition-all border border-gray-200 cursor-pointer"
+            className="tactile-btn tactile-btn-gray py-2.5 px-4 text-xs cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Làm lại từ đầu
@@ -326,14 +259,14 @@ export default function TypingPage() {
                 const isNext = lesson.id === nextLessonId;
                 const isLocked = !isCompleted && !isNext && completedLessons.length < lessons.findIndex(l => l.id === lesson.id);
 
-                let btnBgClass = 'bg-gray-100 text-gray-400 border-gray-300 shadow-[0_5px_0_0_#d1d5db]';
+                let btnBgClass = 'bg-[var(--color-surface-container)] text-slate-450 border-3 border-[var(--color-outline-variant)] shadow-[0_5px_0_0_var(--color-outline-variant)]';
                 
                 if (isCompleted) {
-                  btnBgClass = 'bg-emerald-400 text-white border-emerald-500 shadow-[0_5px_0_0_#10b981] hover:brightness-105 active:shadow-none active:translate-y-[5px]';
+                  btnBgClass = 'bg-[var(--color-primary)] text-white border-3 border-slate-900 shadow-[0_5px_0_0_#0f172a] hover:brightness-105 active:shadow-none active:translate-y-[5px]';
                 } else if (isNext) {
-                  btnBgClass = 'bg-amber-400 text-amber-950 border-amber-500 shadow-[0_5px_0_0_#d97706] hover:brightness-105 active:shadow-none active:translate-y-[5px] ring-4 ring-amber-300/60 ring-offset-2 animate-pulse';
+                  btnBgClass = 'bg-[var(--color-accent)] text-slate-900 border-3 border-slate-900 shadow-[0_5px_0_0_#0f172a] hover:brightness-105 active:shadow-none active:translate-y-[5px] ring-4 ring-[var(--color-accent)]/60 ring-offset-2 animate-pulse';
                 } else if (!isLocked) {
-                  btnBgClass = 'bg-sky-400 text-white border-sky-500 shadow-[0_5px_0_0_#0284c7] hover:brightness-105 active:shadow-none active:translate-y-[5px]';
+                  btnBgClass = 'bg-[var(--color-tertiary)] text-white border-3 border-slate-900 shadow-[0_5px_0_0_#0f172a] hover:brightness-105 active:shadow-none active:translate-y-[5px]';
                 }
 
                 return (
@@ -418,5 +351,6 @@ export default function TypingPage() {
         </div>
       </div>
     </main>
+    </VisualWorldBackground>
   );
 }

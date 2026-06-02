@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useStudent } from '@/contexts/StudentContext';
 
@@ -62,28 +64,28 @@ export const DinoMascot: React.FC<DinoMascotProps> = ({
       <style jsx global>{`
         @keyframes dino-breathing {
           0%, 100% { transform: translateY(0px) scaleY(1); }
-          50% { transform: translateY(-4px) scaleY(1.02); }
+          50% { transform: translateY(-3px) scaleY(1.02); }
         }
         @keyframes tail-wagging {
           0%, 100% { transform: rotate(0deg); }
-          50% { transform: rotate(10deg); }
+          50% { transform: rotate(8deg); }
         }
-        @keyframes arm-waving {
+        @keyframes arm-waving-left {
           0%, 100% { transform: rotate(0deg); }
-          50% { transform: rotate(-15deg); }
+          50% { transform: rotate(-12deg); }
         }
-        @keyframes eye-blinking {
-          0%, 90%, 100% { transform: scaleY(1); }
-          95% { transform: scaleY(0.1); }
+        @keyframes arm-waving-right {
+          0%, 100% { transform: rotate(0deg); }
+          50% { transform: rotate(10deg); }
         }
         @keyframes victory-jump {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
-          25% { transform: translateY(-12px) rotate(5deg); }
-          75% { transform: translateY(-12px) rotate(-5deg); }
+          25% { transform: translateY(-12px) rotate(3deg); }
+          75% { transform: translateY(-12px) rotate(-3deg); }
         }
         @keyframes sparkle-glow {
-          0%, 100% { opacity: 0.3; transform: scale(0.8); }
-          50% { opacity: 1; transform: scale(1.2); }
+          0%, 100% { opacity: 0.4; transform: scale(0.9); }
+          50% { opacity: 1; transform: scale(1.15); }
         }
         .animate-dino-body {
           animation: dino-breathing 3s ease-in-out infinite;
@@ -94,20 +96,16 @@ export const DinoMascot: React.FC<DinoMascotProps> = ({
           transform-origin: bottom center;
         }
         .animate-tail {
-          animation: tail-wagging 1.5s ease-in-out infinite;
-          transform-origin: 28px 75px;
+          animation: tail-wagging 1.6s ease-in-out infinite;
+          transform-origin: 80px 91px;
         }
         .animate-arm-left {
-          animation: arm-waving 1.8s ease-in-out infinite;
-          transform-origin: 40px 60px;
+          animation: arm-waving-left 1.4s ease-in-out infinite;
+          transform-origin: 53px 72px;
         }
         .animate-arm-right {
-          animation: arm-waving 1.2s ease-in-out infinite;
-          transform-origin: 65px 60px;
-        }
-        .animate-eye {
-          animation: eye-blinking 4s infinite;
-          transform-origin: center;
+          animation: arm-waving-right 1.2s ease-in-out infinite;
+          transform-origin: 65px 74px;
         }
         .animate-sparkle {
           animation: sparkle-glow 1.5s infinite;
@@ -121,121 +119,158 @@ export const DinoMascot: React.FC<DinoMascotProps> = ({
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full drop-shadow-md"
       >
+        <defs>
+          {/* Gradients và Filters tạo màu sắc hoạt hình dễ thương */}
+          <linearGradient id="dinoSkinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#4ece7e" /> {/* Green-400 sáng vẽ hoạt hình */}
+            <stop offset="100%" stopColor="#30b361" /> {/* Shadow nhẹ màu xanh lá cây */}
+          </linearGradient>
+
+          <linearGradient id="dinoSkinDark" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#30b361" />
+            <stop offset="100%" stopColor="#22964e" /> {/* Xanh đậm hơn cho chân sau */}
+          </linearGradient>
+
+          <linearGradient id="dinoBellyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffebb3" /> {/* Màu kem sữa sáng */}
+            <stop offset="100%" stopColor="#ffe082" /> {/* Màu vàng kem hơi đậm dưới bụng */}
+          </linearGradient>
+
+          <linearGradient id="dinoSpikeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ff8787" /> {/* Màu đỏ hồng nhạt */}
+            <stop offset="100%" stopColor="#f87171" /> {/* Màu đỏ coral ngọt ngào */}
+          </linearGradient>
+
+          <linearGradient id="hatGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#ff7675" />
+            <stop offset="100%" stopColor="#fd79a8" />
+          </linearGradient>
+
+          {/* Filter tạo má hồng mờ ảo dễ thương */}
+          <filter id="rosyCheekFilter" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="1.2" />
+          </filter>
+
+          {/* Bóng đổ nhẹ dưới chân */}
+          <radialGradient id="footShadow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="rgba(15, 23, 42, 0.25)" />
+            <stop offset="100%" stopColor="rgba(15, 23, 42, 0)" />
+          </radialGradient>
+        </defs>
+
+        {/* Foot Shadow */}
+        <ellipse cx="68" cy="108" rx="26" ry="5" fill="url(#footShadow)" />
+
         {/* Victory Sparkles */}
         {variant === 'victory' && (
           <g className="animate-sparkle">
-            {/* Sparkle 1 */}
-            <path d="M 15 35 L 20 20 L 25 35 L 40 40 L 25 45 L 20 60 L 15 45 L 0 40 Z" fill="#FBBF24" opacity="0.8"/>
-            {/* Sparkle 2 */}
-            <path d="M 95 25 L 98 15 L 102 25 L 112 28 L 102 31 L 98 41 L 95 31 L 85 28 Z" fill="#FBBF24" opacity="0.8"/>
-            {/* Tiny stars */}
-            <circle cx="30" cy="15" r="2" fill="#F87171" />
+            <path d="M 15 35 L 20 20 L 25 35 L 40 40 L 25 45 L 20 60 L 15 45 L 0 40 Z" fill="#FBBF24" opacity="0.9"/>
+            <path d="M 95 25 L 98 15 L 102 25 L 112 28 L 102 31 L 98 41 L 95 31 L 85 28 Z" fill="#FBBF24" opacity="0.9"/>
+            <circle cx="30" cy="15" r="2" fill="#FF8787" />
             <circle cx="85" cy="55" r="3" fill="#60A5FA" />
           </g>
         )}
 
-        {/* Dino Mascot Group wrapper */}
+        {/* Dino Mascot Group */}
         <g className={variant === 'victory' ? 'animate-dino-victory' : 'animate-dino-body'}>
           
-          {/* Dino Tail */}
-          <path
-            d="M 32 72 Q 12 75, 16 55 Q 18 45, 8 48 Q 4 58, 12 78 Q 22 84, 34 82 Z"
-            fill="#4ADE80"
-            stroke="#1E293B"
-            strokeWidth="4"
-            className="animate-tail"
-          />
-          {/* Spikes on Tail */}
-          <path d="M 14 53 L 8 46 L 16 43 Z" fill="#F87171" stroke="#1E293B" strokeWidth="2.5" />
-          <path d="M 8 62 L 0 58 L 6 52 Z" fill="#F87171" stroke="#1E293B" strokeWidth="2.5" />
+          {/* 1. Các gai lưng (Spikes) chạy dọc lưng và cổ (nằm dưới thân) */}
+          <circle cx="81" cy="46" r="6" fill="url(#dinoSpikeGrad)" stroke="#1e293b" strokeWidth="2.5" />
+          <circle cx="88" cy="56" r="6.5" fill="url(#dinoSpikeGrad)" stroke="#1e293b" strokeWidth="2.5" />
+          <circle cx="91" cy="68" r="7" fill="url(#dinoSpikeGrad)" stroke="#1e293b" strokeWidth="2.5" />
+          <circle cx="90" cy="80" r="7" fill="url(#dinoSpikeGrad)" stroke="#1e293b" strokeWidth="2.5" />
 
-          {/* Dino Legs */}
-          {/* Left Foot */}
-          <rect x="42" y="86" width="12" height="14" rx="6" fill="#22C55E" stroke="#1E293B" strokeWidth="4" />
-          <path d="M 44 96 H 52" stroke="#1E293B" strokeWidth="2.5" strokeLinecap="round" />
-          {/* Right Foot */}
-          <rect x="62" y="86" width="12" height="14" rx="6" fill="#22C55E" stroke="#1E293B" strokeWidth="4" />
-          <path d="M 64 96 H 72" stroke="#1E293B" strokeWidth="2.5" strokeLinecap="round" />
+          {/* 2. Chân sau (chân phải) - nằm dưới thân */}
+          <rect x="74" y="90" width="12" height="17" rx="6" fill="url(#dinoSkinDark)" stroke="#1e293b" strokeWidth="3" />
 
-          {/* Dino Body */}
-          <path
-            d="M 32 78 C 32 50, 42 40, 58 40 C 74 40, 84 50, 84 78 C 84 94, 76 96, 58 96 C 40 96, 32 94, 32 78 Z"
-            fill="#4ADE80"
-            stroke="#1E293B"
-            strokeWidth="4.5"
-          />
-
-          {/* Dino Belly (Pale Green) */}
-          <path
-            d="M 42 74 C 42 56, 48 50, 58 50 C 68 50, 74 56, 74 74 C 74 88, 68 90, 58 90 C 48 90, 42 88, 42 74 Z"
-            fill="#86EFAC"
-          />
-
-          {/* Dino Spikes on Back */}
-          <path d="M 40 44 L 35 34 L 46 38 Z" fill="#F87171" stroke="#1E293B" strokeWidth="2.5" />
-          <path d="M 50 40 L 50 28 L 58 38 Z" fill="#F87171" stroke="#1E293B" strokeWidth="2.5" />
-          <path d="M 62 40 L 67 28 L 70 38 Z" fill="#F87171" stroke="#1E293B" strokeWidth="2.5" />
-          <path d="M 74 44 L 81 35 L 78 45 Z" fill="#F87171" stroke="#1E293B" strokeWidth="2.5" />
-
-          {/* Dino Left Hand / Arm */}
-          <path
-            d="M 40 64 C 32 64, 28 55, 34 52 C 40 49, 42 58, 42 64 Z"
-            fill="#22C55E"
-            stroke="#1E293B"
-            strokeWidth="4"
-            className="animate-arm-left"
-          />
-
-          {/* Dino Right Hand / Arm */}
-          <path
-            d="M 76 64 C 84 64, 88 55, 82 52 C 76 49, 74 58, 74 64 Z"
-            fill="#22C55E"
-            stroke="#1E293B"
-            strokeWidth="4"
-            className="animate-arm-right"
-          />
-
-          {/* Eyes (Animated Blinking) */}
-          {/* Left Eye */}
-          <g className="animate-eye">
-            <circle cx="48" cy="56" r="8" fill="white" stroke="#1E293B" strokeWidth="3" />
-            <circle cx="49" cy="55" r="4.5" fill="#1E293B" />
-            <circle cx="47" cy="53" r="1.5" fill="white" />
-          </g>
-          {/* Right Eye */}
-          <g className="animate-eye">
-            <circle cx="68" cy="56" r="8" fill="white" stroke="#1E293B" strokeWidth="3" />
-            <circle cx="67" cy="55" r="4.5" fill="#1E293B" />
-            <circle cx="65" cy="53" r="1.5" fill="white" />
+          {/* 3. Đuôi (Tail) & các gai đuôi - nhóm lại để vẫy cùng nhau sinh động */}
+          <g className="animate-tail">
+            <circle cx="94" cy="91" r="6" fill="url(#dinoSpikeGrad)" stroke="#1e293b" strokeWidth="2.5" />
+            <circle cx="102" cy="95" r="5" fill="url(#dinoSpikeGrad)" stroke="#1e293b" strokeWidth="2.5" />
+            <path
+              d="M 80 82 C 95 80, 105 85, 105 95 C 105 101, 94 102, 78 91 Z"
+              fill="url(#dinoSkinGrad)"
+              stroke="#1e293b"
+              strokeWidth="3.2"
+              strokeLinejoin="round"
+            />
           </g>
 
-          {/* Dino Rosy Cheeks */}
-          <circle cx="39" cy="64" r="4" fill="#F87171" opacity="0.6" />
-          <circle cx="77" cy="64" r="4" fill="#F87171" opacity="0.6" />
+          {/* 4. Chân trước (chân trái) - nằm trên chân sau */}
+          <rect x="58" y="92" width="13" height="17" rx="6.5" fill="url(#dinoSkinGrad)" stroke="#1e293b" strokeWidth="3.2" />
 
-          {/* Cute Mouth / Smile */}
+          {/* 5. Thân & Đầu (Body & Head) */}
+          {/* Khối chính màu xanh lá */}
           <path
-            d="M 52 66 Q 58 72, 64 66"
-            stroke="#1E293B"
-            strokeWidth="3.5"
-            strokeLinecap="round"
+            d="M 80 55 C 85 70, 86 85, 83 95 C 80 100, 65 102, 58 100 C 48 95, 48 80, 50 70 C 46 62, 40 58, 42 50 C 44 42, 55 38, 70 40 C 78 41, 80 48, 80 55 Z"
+            fill="url(#dinoSkinGrad)"
+          />
+
+          {/* Bụng màu kem tròn trịa đè lên thân */}
+          <path
+            d="M 50 72 C 48 80, 48 92, 58 99 C 64 99, 70 92, 69 72 C 63 68, 54 68, 50 72 Z"
+            fill="url(#dinoBellyGrad)"
+          />
+
+          {/* Nét viền đen (stroke) cho thân đầu để bao bọc sạch sẽ rìa bụng kem */}
+          <path
+            d="M 80 55 C 85 70, 86 85, 83 95 C 80 100, 65 102, 58 100 C 48 95, 48 80, 50 70 C 46 62, 40 58, 42 50 C 44 42, 55 38, 70 40 C 78 41, 80 48, 80 55 Z"
             fill="none"
+            stroke="#1e293b"
+            strokeWidth="3.5"
+            strokeLinejoin="round"
           />
 
-          {/* Cute Teeth */}
-          <path d="M 54 66 L 56 69 L 58 66 Z" fill="white" stroke="#1E293B" strokeWidth="1.5" />
-          <path d="M 58 66 L 60 69 L 62 66 Z" fill="white" stroke="#1E293B" strokeWidth="1.5" />
+          {/* 6. Chi tiết Mặt (Face details) */}
+          {/* Mắt tròn đen nhỏ dễ thương kiểu hạt đậu */}
+          <circle cx="49" cy="48" r="2.5" fill="#1e293b" />
+          <circle cx="48.2" cy="47.2" r="0.7" fill="white" /> {/* Điểm sáng nhỏ phản chiếu */}
 
-          {/* Party Hat (Only in Victory variant) */}
+          {/* Miệng cười mở to đáng yêu */}
+          <path
+            d="M 42 54 C 44 54, 51 52, 52 57 C 52 62, 46 64, 42 59 C 41 58, 42 55, 42 54 Z"
+            fill="#be123c" /* Đỏ sậm bên trong miệng */
+            stroke="#1e293b"
+            strokeWidth="2.5"
+            strokeLinejoin="round"
+          />
+          {/* Chiếc lưỡi hồng hào xinh xắn */}
+          <path
+            d="M 44 59 C 47 57, 50 58, 50 61 C 49 63, 46 63, 44 59 Z"
+            fill="#ff8b94"
+          />
+
+          {/* Má hồng tròn xoe mờ ảo */}
+          <circle cx="53" cy="59" r="3.5" fill="#ffa8a8" filter="url(#rosyCheekFilter)" />
+
+          {/* 7. Hai cánh tay (Arms) - Đặt lên trên thân để đè viền */}
+          {/* Cánh tay trái */}
+          <g className="animate-arm-left">
+            <path
+              d="M 52 74 C 47 74, 43 71, 46 68 C 49 65, 53 70, 53 74 Z"
+              fill="url(#dinoSkinGrad)"
+              stroke="#1e293b"
+              strokeWidth="2.8"
+            />
+          </g>
+
+          {/* Cánh tay phải */}
+          <g className="animate-arm-right">
+            <path
+              d="M 64 76 C 59 76, 55 73, 58 70 C 61 67, 65 72, 65 76 Z"
+              fill="url(#dinoSkinGrad)"
+              stroke="#1e293b"
+              strokeWidth="2.8"
+            />
+          </g>
+
+          {/* 8. Mũ sinh nhật chiến thắng (Party Hat) */}
           {variant === 'victory' && (
             <g>
-              {/* Cone Hat */}
-              <path d="M 50 38 L 58 10 L 66 38 Z" fill="#F87171" stroke="#1E293B" strokeWidth="3" />
-              {/* Stripes on Hat */}
-              <path d="M 53 28 L 63 28" stroke="#FBBF24" strokeWidth="3" />
-              <path d="M 55 20 L 61 20" stroke="#60A5FA" strokeWidth="3" />
-              {/* Pom pom at top */}
-              <circle cx="58" cy="9" r="4.5" fill="#FBBF24" stroke="#1E293B" strokeWidth="2.5" />
+              <path d="M 62 38 L 68 14 L 76 38 Z" fill="url(#hatGrad)" stroke="#1e293b" strokeWidth="2.8" />
+              <path d="M 64 30 L 74 30" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
+              <path d="M 66 22 L 72 22" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
+              <circle cx="68" cy="13" r="3" fill="#ffd43b" stroke="#1e293b" strokeWidth="2" />
             </g>
           )}
         </g>

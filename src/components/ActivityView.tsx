@@ -296,7 +296,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
 
             {/* Context/Mascot - Makes it friendly for kids */}
             <div className="mt-auto pt-8 flex flex-col items-center gap-2.5 text-center select-none">
-              <DinoMascot className="w-24 h-24" />
+              <DinoMascot className="w-32 h-32" />
               <span className="text-xs font-black text-slate-700 bg-dino-green/10 px-3 py-1.5 rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b]">
                 Bạn Khủng Long đang cổ vũ bé!
               </span>
@@ -329,7 +329,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
         {isTopicComplete && (
           <div className="absolute inset-0 bg-white/90 z-50 flex items-center justify-center backdrop-blur-sm animate-fade-in">
             <div className="text-center p-8 bg-white rounded-3xl shadow-[8px_8px_0px_0px_#1e293b] border-4 border-slate-800 max-w-lg mx-4 flex flex-col items-center">
-              <DinoMascot variant="victory" className="w-32 h-32 mb-4" />
+              <DinoMascot variant="victory" className="w-44 h-44 mb-4" />
               <h3 className="text-3xl font-black text-slate-800 mb-2">
                 Hoàn thành xuất sắc!
               </h3>

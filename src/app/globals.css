@@ -311,4 +311,152 @@ body {
   }
 }
 
+/* Tactile UI Elements System */
+.tactile-card {
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  border: 3px solid #0f172a;
+  box-shadow: 5px 5px 0 0 #0f172a;
+  border-radius: 1.5rem;
+}
+
+.tactile-btn {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  border: 3px solid #0f172a;
+  border-radius: 1.25rem;
+  padding: 0.75rem 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.tactile-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 0 #0f172a !important;
+}
+
+.tactile-btn-green {
+  background-color: #2ecc71;
+  color: #ffffff;
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-green:hover {
+  background-color: #2ed573;
+}
+
+.tactile-btn-blue {
+  background-color: #3498db;
+  color: #ffffff;
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-blue:hover {
+  background-color: #54a0ff;
+}
+
+.tactile-btn-orange {
+  background-color: #e67e22;
+  color: #ffffff;
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-orange:hover {
+  background-color: #ff9f43;
+}
+
+.tactile-btn-red {
+  background-color: #e74c3c;
+  color: #ffffff;
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-red:hover {
+  background-color: #ff6b6b;
+}
+
+.tactile-btn-yellow {
+  background-color: #f1c40f;
+  color: #0f172a;
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-yellow:hover {
+  background-color: #feca57;
+}
+
+.tactile-btn-gray {
+  background-color: var(--color-surface-container, #f1f2f6);
+  color: var(--color-foreground, #0f172a);
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-gray:hover {
+  filter: brightness(0.95);
+}
+
+/* Theme-based Dynamic Tactile Buttons */
+.tactile-btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-background, #ffffff);
+  /* Tránh tương phản kém, nếu là pig (hồng nhạt) hoặc dino (xanh lá) */
+  color: #ffffff;
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.tactile-btn-secondary {
+  background-color: var(--color-secondary);
+  color: #ffffff;
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-secondary:hover {
+  filter: brightness(1.08);
+}
+
+.tactile-btn-tertiary {
+  background-color: var(--color-tertiary);
+  color: #ffffff;
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-tertiary:hover {
+  filter: brightness(1.08);
+}
+
+.tactile-btn-accent {
+  background-color: var(--color-accent);
+  color: var(--color-foreground, #0f172a);
+  box-shadow: 4px 4px 0 0 #0f172a;
+}
+.tactile-btn-accent:hover {
+  filter: brightness(1.08);
+}
+
+/* Star Badge */
+.tactile-star-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1c40f;
+  border: 2.5px solid #0f172a;
+  border-radius: 9999px;
+  box-shadow: 2.5px 2.5px 0 0 #0f172a;
+}
+
+/* Badge Base */
+.tactile-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 2.5px solid #0f172a;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-weight: 800;
+  font-size: 0.75rem;
+  box-shadow: 2.5px 2.5px 0 0 #0f172a;
+}
+
+
 

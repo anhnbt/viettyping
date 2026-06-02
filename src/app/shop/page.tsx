@@ -307,15 +307,15 @@ export default function ShopPage() {
                     isSelected ? (
                       <button
                         disabled
-                        className="w-full py-3 rounded-xl border-2 border-slate-800 bg-indigo-50 text-indigo-700 font-black text-xs cursor-default flex items-center justify-center gap-1 shadow-[2px_2px_0px_0px_#1e293b]"
+                        className="keycap-btn-surface w-full py-3 text-xs cursor-default flex items-center justify-center gap-1 opacity-80"
                       >
-                        <Sparkles className="w-3.5 h-3.5 fill-indigo-200 animate-spin" />
+                        <Sparkles className="w-3.5 h-3.5 text-[var(--color-primary-depth)] animate-spin" />
                         <span>Đang Đồng Hành</span>
                       </button>
                     ) : (
                       <button
                         onClick={() => handleSelectMascot(mascot)}
-                        className="w-full py-3 rounded-xl border-2 border-slate-800 bg-gradient-to-r from-sky-400 to-blue-400 hover:brightness-105 text-white font-black text-xs cursor-pointer shadow-[3px_3px_0px_0px_#1e293b] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-1"
+                        className="keycap-btn-primary w-full py-3 text-xs flex items-center justify-center gap-1"
                       >
                         🚀 Chọn Bạn Đồng Hành
                       </button>
@@ -323,11 +323,10 @@ export default function ShopPage() {
                   ) : (
                     <button
                       onClick={() => handleUnlock(mascot)}
-                      className={`w-full py-3 rounded-xl border-2 border-slate-800 font-black text-xs cursor-pointer shadow-[3px_3px_0px_0px_#1e293b] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-1.5 ${
-                        canAfford
-                          ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900 hover:brightness-105'
-                          : 'bg-slate-100 text-slate-400 border-slate-300 shadow-[2px_2px_0px_0px_#cbd5e1] opacity-75'
+                      className={`keycap-btn-accent w-full py-3 text-xs flex items-center justify-center gap-1.5 ${
+                        !canAfford ? 'opacity-50 cursor-not-allowed filter grayscale' : ''
                       }`}
+                      disabled={!canAfford}
                     >
                       <Lock className="w-3.5 h-3.5" />
                       <span>Mở khóa bằng {mascot.price} XP</span>

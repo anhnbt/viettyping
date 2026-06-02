@@ -13,6 +13,8 @@ import { Sparkles, Trophy, Flame, Keyboard, ArrowRight, Smile, Menu, X, Gift, Aw
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import Logo from '@/components/Logo';
 import DinoMascot from '@/components/DinoMascot';
+import VisualWorldBackground from '@/components/VisualWorldBackground';
+import { TactileStarBadge } from '@/components/BadgeElements';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
@@ -171,7 +173,7 @@ export default function Home() {
       <div className="w-full px-4 mt-auto">
         <button
           onClick={() => handleNavClick('/typing')}
-          className="keycap-btn-primary w-full py-4 text-base rounded-2xl gap-2 cursor-pointer"
+          className="tactile-btn tactile-btn-primary w-full py-4 text-base rounded-2xl gap-2 cursor-pointer"
         >
           <span>Bắt đầu gõ</span>
           <span>🚀</span>
@@ -256,16 +258,10 @@ export default function Home() {
           {/* Gamification Indicator Panel */}
           <div className="flex items-center gap-2 md:gap-4">
             {/* Streak */}
-            <div className="flex items-center gap-1 bg-red-100 text-red-750 border-2 border-[var(--color-foreground)] px-2.5 py-1 md:px-3.5 md:py-1.5 rounded-full text-xs font-black shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)]">
-              <Flame className="w-4 h-4 text-orange-500 fill-orange-500 animate-pulse" />
-              <span>{streak || 0}</span>
-            </div>
+            <TactileStarBadge color="orange" value={`${streak || 0} ngày`} className="scale-105" />
 
             {/* Stars/Coins */}
-            <div className="flex items-center gap-1 bg-amber-100 text-amber-800 border-2 border-[var(--color-foreground)] px-2.5 py-1 md:px-3.5 md:py-1.5 rounded-full text-xs font-black shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)]">
-              <span className="text-amber-500 text-sm">⭐</span>
-              <span>{xp >= 1000 ? `${(xp / 1000).toFixed(1)}k` : xp}</span>
-            </div>
+            <TactileStarBadge color="yellow" value={xp >= 1000 ? `${(xp / 1000).toFixed(1)} XP` : `${xp} XP`} className="scale-105" />
 
             {/* Profile Avatar Button */}
             <button
@@ -282,7 +278,8 @@ export default function Home() {
         </header>
 
         {/* main content area */}
-        <main className="flex-1 canvas-bg p-4 md:p-6 space-y-8 overflow-y-auto">
+        <VisualWorldBackground>
+          <main className="flex-1 p-4 md:p-6 space-y-8 overflow-y-auto pb-24 relative z-10">
           
           {/* Running Title Banner */}
           <div className="text-center pt-2 pb-1">
@@ -307,19 +304,19 @@ export default function Home() {
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <button
                   onClick={() => handleNavClick('/lesson')}
-                  className="keycap-btn-secondary px-6 py-3.5 text-sm cursor-pointer flex items-center gap-1.5"
+                  className="tactile-btn tactile-btn-secondary px-6 py-3.5 text-sm cursor-pointer flex items-center gap-1.5"
                 >
                   <span>BÀI HỌC CỦA BÉ 🚀</span>
                 </button>
                 <button
                   onClick={() => handleNavClick('/typing')}
-                  className="keycap-btn-tertiary px-6 py-3.5 text-sm cursor-pointer"
+                  className="tactile-btn tactile-btn-tertiary px-6 py-3.5 text-sm cursor-pointer"
                 >
                   ĐẢO GÕ PHÍM ⌨️
                 </button>
                 <button
                   onClick={() => handleNavClick('/parents')}
-                  className="keycap-btn-surface px-6 py-3.5 text-sm cursor-pointer"
+                  className="tactile-btn tactile-btn-gray px-6 py-3.5 text-sm cursor-pointer"
                 >
                   GÓC PHỤ HUYNH 👨‍👩‍👧‍👦
                 </button>
@@ -327,8 +324,8 @@ export default function Home() {
             </div>
             
             {/* Mascot Container */}
-            <div className="w-44 h-44 shrink-0 flex flex-col items-center justify-center relative bg-[var(--color-surface-container)] border-3 border-[var(--color-foreground)] rounded-3xl p-4 shadow-[4px_4px_0px_0px_var(--color-foreground)]">
-              <DinoMascot className="w-32 h-32" />
+            <div className="w-48 h-48 shrink-0 flex flex-col items-center justify-center relative bg-[var(--color-surface-container)] border-3 border-[var(--color-foreground)] rounded-3xl p-4 shadow-[4px_4px_0px_0px_var(--color-foreground)]">
+              <DinoMascot className="w-36 h-36" />
               <span className="text-[10px] font-black text-[var(--color-foreground)] mt-2 uppercase tracking-wide opacity-80">
                 {levelConfig.name}
               </span>
@@ -387,8 +384,8 @@ export default function Home() {
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
-              <div className="w-24 h-24 shrink-0 flex items-center justify-center bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] p-2">
-                <DinoMascot className="w-20 h-20" />
+              <div className="w-32 h-32 shrink-0 flex items-center justify-center bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] p-2">
+                <DinoMascot className="w-28 h-28" />
               </div>
             </div>
           </div>
@@ -481,6 +478,7 @@ export default function Home() {
           </div>
 
         </main>
+        </VisualWorldBackground>
 
         {/* Brutalist Footer */}
         <footer className="border-t-4 border-[var(--color-foreground)] bg-[var(--color-surface)] py-8 px-6 transition-colors">
