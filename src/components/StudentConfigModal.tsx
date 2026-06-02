@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudent, StudentInfo } from "@/contexts/StudentContext";
 import { useSound } from "@/contexts/SoundContext";
-import { X, Sparkles, User, GraduationCap, Heart } from "lucide-react";
+import { X, Sparkles, User, GraduationCap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import confettiActual from "canvas-confetti";
 
@@ -19,7 +19,7 @@ const THEME_TO_EMOJI: Record<string, string> = {
 const GRADES = ["Lớp 1", "Lớp 2", "Lớp 3", "Lớp 4", "Lớp 5"];
 
 const MASCOTS = [
-  { id: "dino", name: "Dino", emoji: "🦖", desc: "Khủng long xanh lá" },
+  { id: "dino", name: "Khủng Long", emoji: "🦖", desc: "Khủng long xanh lá" },
   { id: "turtle", name: "Rùa Con", emoji: "🐢", desc: "Rùa con đại dương" },
   { id: "bunny", name: "Thỏ Ngọc", emoji: "🐰", desc: "Thỏ con cà rốt" },
   { id: "pig", name: "Heo Hồng", emoji: "🐷", desc: "Heo con vui nhộn" },

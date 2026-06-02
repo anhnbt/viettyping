@@ -96,15 +96,15 @@ export default function Home() {
   const getLevelConfig = (theme: string) => {
     switch(theme) {
       case 'turtle':
-        return { name: 'TURTLETYPER', motto: 'Chậm mà chắc', desc: 'Hãy cùng nhau xây dựng nền tảng vững chắc cho đôi bàn tay của bạn nhé!' };
+        return { name: 'RÙA CON CHĂM CHỈ', motto: 'Chậm mà chắc', desc: 'Hãy cùng nhau xây dựng nền tảng vững chắc cho đôi bàn tay của bạn nhé!' };
       case 'pig':
-        return { name: 'PIGTYPER', motto: 'Đáng yêu & Kiên trì', desc: 'Luyện tập mỗi ngày giúp đôi bàn tay xinh xắn của bạn gõ thật khéo léo!' };
+        return { name: 'HEO HỒNG ĐÁNG YÊU', motto: 'Đáng yêu & Kiên trì', desc: 'Luyện tập mỗi ngày giúp đôi bàn tay xinh xắn của bạn gõ thật khéo léo!' };
       case 'bunny':
-        return { name: 'BUNNYTYPER', motto: 'Nhanh như chớp', desc: 'Bứt phá tốc độ và rèn luyện phản xạ gõ phím cực nhanh cùng bạn Thỏ!' };
+        return { name: 'THỎ NGỌC NHANH NHẸN', motto: 'Nhanh như chớp', desc: 'Bứt phá tốc độ và rèn luyện phản xạ gõ phím cực nhanh cùng bạn Thỏ!' };
       case 'leopard':
-        return { name: 'LEOPARDTYPER', motto: 'Dũng mãnh & Điêu luyện', desc: 'Chinh phục mọi thử thách gõ phím khó nhất và đạt tốc độ của nhà vô địch!' };
+        return { name: 'BÁO ĐỐM THẦN TỐC', motto: 'Dũng mãnh & Điêu luyện', desc: 'Chinh phục mọi thử thách gõ phím khó nhất và đạt tốc độ của nhà vô địch!' };
       default:
-        return { name: 'DINOTYPER', motto: 'Mạnh mẽ & Nhanh nhẹn', desc: 'Đánh thức sức mạnh gõ phím của bạn và khám phá thế giới tri thức kỳ thú!' };
+        return { name: 'KHỦNG LONG SIÊU PHÀM', motto: 'Mạnh mẽ & Nhanh nhẹn', desc: 'Đánh thức sức mạnh gõ phím của bạn và khám phá thế giới tri thức kỳ thú!' };
     }
   };
 
@@ -296,7 +296,7 @@ export default function Home() {
                 CẤP ĐỘ: {levelConfig.name}
               </span>
               <h2 className="text-3xl md:text-4xl font-black text-[var(--color-foreground)] mt-4 mb-2">
-                Hi, Little Typer!
+                Chào {studentInfo?.nickname || 'Dũng Sĩ Gõ Phím'}!
               </h2>
               <p className="text-[var(--color-foreground)] opacity-90 text-sm md:text-base font-semibold max-w-xl leading-relaxed mb-6">
                 Chúc mừng bạn đã đạt cấp độ {levelConfig.name}. Phương châm của chúng ta là <strong className="text-[var(--color-primary-depth)] font-black">"{levelConfig.motto}"</strong>. {levelConfig.desc}

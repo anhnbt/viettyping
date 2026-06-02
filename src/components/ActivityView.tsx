@@ -7,6 +7,15 @@ import { useProgress } from '@/hooks/useProgress';
 import { hasVietnameseDiacritics } from '@/utils/vietnameseUtils';
 import TelexGuide from './TelexGuide';
 import DinoMascot from './DinoMascot';
+import { useStudent } from '@/contexts/StudentContext';
+
+const MASCOT_NAMES: Record<string, string> = {
+  dino: 'Khủng Long',
+  turtle: 'Rùa Con',
+  bunny: 'Thỏ Ngọc',
+  pig: 'Heo Hồng',
+  leopard: 'Báo Đốm'
+};
 
 // Import Adapters
 import { 
@@ -34,11 +43,15 @@ interface ActivityViewProps {
 const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const params = useParams();
   const router = useRouter();
+  const { studentInfo } = useStudent();
   const subjectId = params.subjectId as string;
   const subject = subjects.find(s => s.id === subjectId);
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
   const [currentProgress, setCurrentProgress] = useState(0); // For intra-activity progress bar
   const { isActivityCompleted, saveProgress, isLoaded, getTopicProgress, clearTopicProgress } = useProgress();
+
+  const currentTheme = studentInfo?.theme || 'dino';
+  const currentMascotName = MASCOT_NAMES[currentTheme] || 'Khủng Long';
 
   const currentActivity = topic.activities[currentActivityIndex];
 
@@ -323,7 +336,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
             <div className="mt-auto pt-8 flex flex-col items-center gap-2.5 text-center select-none">
               <DinoMascot className="w-32 h-32" />
               <span className="text-xs font-black text-slate-700 bg-dino-green/10 px-3 py-1.5 rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b]">
-                Bạn Khủng Long đang cổ vũ bé!
+                Bạn {currentMascotName} đang cổ vũ bé!
               </span>
             </div>
           </div>

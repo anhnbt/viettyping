@@ -27,7 +27,7 @@ interface MascotItem {
 const SHOP_MASCOTS: MascotItem[] = [
   {
     id: 'dino',
-    name: 'Khủng Long Dino',
+    name: 'Khủng Long',
     emoji: '🦖',
     desc: 'Mạnh mẽ & nhanh nhẹn, luôn đồng hành cùng bé!',
     price: 0,
