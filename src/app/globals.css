@@ -64,26 +64,26 @@
   --color-outline-variant: #dac2b1;
 }
 
-[data-theme="pig"] {
-  --color-background: #fcf9ed;
-  --color-foreground: #231a11;
-  --color-primary: #ffb6c1;
-  --color-primary-depth: #d496a0;
-  --color-primary-container: #ffb6c1;
-  --color-on-primary-container: #4a3f35;
-  --color-secondary: #63597c;
-  --color-secondary-depth: #4b4263;
-  --color-secondary-container: #e1d4fd;
-  --color-on-secondary-container: #645a7d;
-  --color-tertiary: #765b00;
-  --color-tertiary-depth: #503d00;
-  --color-tertiary-container: #c9a74d;
-  --color-accent: #ffdf93;
-  --color-accent-depth: #765b00;
-  --color-surface: #fdf7ff;
-  --color-on-surface: #231a11;
-  --color-surface-container: #f2ecf4;
-  --color-outline-variant: #cbc4d2;
+[data-theme="panda"] {
+  --color-background: #fffaf5; /* Kem sữa ấm áp */
+  --color-foreground: #2b1f1d; /* Nâu đỏ đậm */
+  --color-primary: #e03131; /* Đỏ tươi sườn xám */
+  --color-primary-depth: #c92a2a; /* Đỏ sậm độ dày */
+  --color-primary-container: #ffc9c9; /* Đỏ nhạt */
+  --color-on-primary-container: #5c0e10;
+  --color-secondary: #fd7e14; /* Cam lồng đèn */
+  --color-secondary-depth: #e8590c;
+  --color-secondary-container: #ffe8cc;
+  --color-on-secondary-container: #762c00;
+  --color-tertiary: #0b8457; /* Xanh tre trúc */
+  --color-tertiary-depth: #096f48;
+  --color-tertiary-container: #c2eed8;
+  --color-accent: #fcc419; /* Vàng kim may mắn */
+  --color-accent-depth: #f59f00;
+  --color-surface: #ffffff;
+  --color-on-surface: #2b1f1d;
+  --color-surface-container: #fdf2e9;
+  --color-outline-variant: #ebd9cb;
 }
 
 [data-theme="leopard"] {
@@ -416,7 +416,7 @@ body {
 .tactile-btn-primary {
   background-color: var(--color-primary);
   color: var(--color-background, #ffffff);
-  /* Tránh tương phản kém, nếu là pig (hồng nhạt) hoặc dino (xanh lá) */
+  /* Tránh tương phản kém, nếu là panda (đỏ) hoặc dino (xanh lá) */
   color: #ffffff;
   box-shadow: 4px 4px 0 0 #0f172a;
 }

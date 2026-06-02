@@ -3,7 +3,7 @@ import { Subject } from '@/data/subjects';
 import { useProgress } from '@/hooks/useProgress';
 import { useSound } from '@/contexts/SoundContext';
 import { motion } from 'framer-motion';
-import { ChevronRight, Star } from 'lucide-react';
+import { ChevronRight, Star, BookOpen } from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -57,9 +57,9 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
         <motion.h2 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-4xl md:text-5xl font-black text-slate-800 mb-3 drop-shadow-sm tracking-wide"
+          className="text-4xl md:text-5xl font-black text-slate-800 mb-3 drop-shadow-sm tracking-wide flex items-center justify-center gap-2"
         >
-          🎒 Lớp Học Kỳ Diệu
+          <BookOpen className="w-10 h-10 text-sky-600" /> Lớp Học Kỳ Diệu
         </motion.h2>
         <motion.p 
           initial={{ opacity: 0 }}
@@ -67,7 +67,7 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
           transition={{ delay: 0.2 }}
           className="text-lg md:text-xl text-sky-650 font-black"
         >
-          Bé hãy chọn một môn học để bắt đầu chuyến phiêu lưu tri thức nhé! 🚀
+          Bé hãy chọn một môn học để bắt đầu chuyến phiêu lưu tri thức nhé!
         </motion.p>
       </div>
 
@@ -106,10 +106,6 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
                     alt={subject.name}
                     className="max-w-full max-h-full object-contain rounded-2xl transform group-hover:scale-105 transition-transform duration-300"
                   />
-                  {/* Floating Icon */}
-                  <div className="absolute bottom-3 right-3 w-10 h-10 bg-white border-2 border-slate-800 rounded-xl flex items-center justify-center text-xl shadow-sm transform group-hover:scale-110 transition-transform z-10">
-                    {subject.icon}
-                  </div>
                 </div>
               ) : (
                 <div className={`h-36 w-full bg-gradient-to-br ${subject.color} relative overflow-hidden border-b-4 border-slate-800 flex items-center justify-center`}>
@@ -177,9 +173,9 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
         className="mt-14 text-center"
       >
         <div className="inline-flex items-center gap-2 bg-dino-green/15 border-2 border-slate-800 rounded-2xl px-4 md:px-6 py-3.5 shadow-[3px_3px_0px_0px_#1e293b] hover:scale-102 transition-transform">
-          <div className="w-3.5 h-3.5 bg-dino-green rounded-full animate-ping shrink-0 border border-slate-800"></div>
+          <Star className="w-4 h-4 text-amber-500 fill-amber-300 animate-pulse shrink-0" />
           <span className="text-slate-850 font-black text-xs md:text-base">
-            Tất cả các môn đều có phần thưởng Sao Vàng và Huy Hiệu đang chờ bé! ⭐
+            Tất cả các môn đều có phần thưởng Sao Vàng và Huy Hiệu đang chờ bé!
           </span>
         </div>
       </motion.div>

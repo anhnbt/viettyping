@@ -14,7 +14,7 @@ const MASCOT_NAMES: Record<string, string> = {
   dino: 'Khủng Long',
   turtle: 'Rùa Con',
   bunny: 'Thỏ Ngọc',
-  pig: 'Heo Hồng',
+  panda: 'Gấu Trúc',
   leopard: 'Báo Đốm'
 };
 

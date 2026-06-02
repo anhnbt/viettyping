@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Trophy, Flame, Crown, Sparkles, Medal, Play } from 'lucide-react';
+import { ArrowLeft, Trophy, Flame, Crown, Sparkles, Medal, Play, Calendar, Zap, Heart, Lock } from 'lucide-react';
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
 import { weeklyLeaderboard, allTimeLeaderboard, LeaderboardUser } from '@/data/leaderboard';
@@ -248,10 +248,10 @@ export default function LeaderboardPage() {
             animate={{ scale: 1 }}
             className="text-4xl md:text-5xl font-black text-slate-900 drop-shadow-sm tracking-wide flex items-center justify-center gap-3"
           >
-            🏆 Bảng Vàng Cao Thủ
+            <Trophy className="w-10 h-10 text-yellow-500 fill-yellow-300 animate-bounce" /> Bảng Vàng Cao Thủ
           </motion.h1>
           <p className="text-sm md:text-base text-slate-650 font-bold mt-2">
-            Nơi vinh danh các siêu nhân gõ phím chăm chỉ nhất hệ mặt trời! 🌟
+            Nơi vinh danh các siêu nhân gõ phím chăm chỉ nhất hệ mặt trời!
           </p>
         </div>
 
@@ -260,23 +260,23 @@ export default function LeaderboardPage() {
           <div className="inline-flex bg-[var(--color-surface-container)] border-4 border-[var(--color-foreground)] rounded-[24px] p-1.5 shadow-[4px_4px_0px_0px_var(--color-foreground)]">
             <button
               onClick={() => handleTabChange('weekly')}
-              className={`px-6 py-2.5 rounded-[18px] text-sm font-black transition-all cursor-pointer ${
+              className={`px-6 py-2.5 rounded-[18px] text-sm font-black transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'weekly'
                   ? 'bg-[var(--color-primary)] text-white border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)]'
                   : 'text-[var(--color-foreground)] opacity-70 hover:opacity-100 bg-transparent border-2 border-transparent'
               }`}
             >
-              📅 Tuần Này
+              <Calendar className="w-4 h-4" /> Tuần Này
             </button>
             <button
               onClick={() => handleTabChange('alltime')}
-              className={`px-6 py-2.5 rounded-[18px] text-sm font-black transition-all cursor-pointer ${
+              className={`px-6 py-2.5 rounded-[18px] text-sm font-black transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'alltime'
                   ? 'bg-[var(--color-primary)] text-white border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)]'
                   : 'text-[var(--color-foreground)] opacity-70 hover:opacity-100 bg-transparent border-2 border-transparent'
               }`}
             >
-              👑 Cao Thủ All-Time
+              <Crown className="w-4 h-4 text-yellow-500 fill-yellow-300" /> Cao Thủ All-Time
             </button>
           </div>
         </div>
@@ -425,7 +425,8 @@ export default function LeaderboardPage() {
           {/* Nhóm 1: Hành Trình Tốc Độ WPM */}
           <div>
             <h2 className="text-lg md:text-xl font-black text-slate-900 mb-5 flex items-center gap-2">
-              <span>⚡ Hành Trình Tốc Độ (WPM)</span>
+              <Zap className="w-5 h-5 text-amber-500 fill-amber-250 animate-pulse" />
+              <span>Hành Trình Tốc Độ (WPM)</span>
               <span className="text-[10px] md:text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full border border-indigo-200 font-extrabold uppercase tracking-wider">Bé gõ càng nhanh, huy hiệu càng xịn!</span>
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
@@ -457,7 +458,7 @@ export default function LeaderboardPage() {
                     {/* Khoá 🔒 nếu chưa mở */}
                     {!badge.unlocked && (
                       <div className="absolute -top-1 -right-1 bg-slate-200 border-2 border-slate-400 rounded-full w-5 h-5 flex items-center justify-center text-[10px] text-slate-500 shadow-sm select-none">
-                        🔒
+                        <Lock className="w-2.5 h-2.5 text-slate-500" />
                       </div>
                     )}
                   </div>
@@ -478,7 +479,8 @@ export default function LeaderboardPage() {
           {/* Nhóm 2: Kỷ Niệm Đáng Yêu */}
           <div>
             <h2 className="text-lg md:text-xl font-black text-slate-900 mb-5 flex items-center gap-2">
-              <span>💖 Kỷ Niệm Đáng Yêu (Học tập & Trò chơi)</span>
+              <Heart className="w-5 h-5 text-pink-500 fill-pink-250 animate-pulse" />
+              <span>Kỷ Niệm Đáng Yêu (Học tập & Trò chơi)</span>
               <span className="text-[10px] md:text-xs bg-pink-100 text-pink-700 px-2.5 py-0.5 rounded-full border border-pink-200 font-extrabold uppercase tracking-wider">Hoàn thành thử thách để nhận quà!</span>
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -498,7 +500,7 @@ export default function LeaderboardPage() {
                     </span>
                     {!badge.unlocked && (
                       <div className="absolute -top-1.5 -right-1.5 bg-slate-200 border-2 border-slate-400 rounded-full w-5 h-5 flex items-center justify-center text-[10px] text-slate-500 shadow-sm">
-                        🔒
+                        <Lock className="w-2.5 h-2.5 text-slate-500" />
                       </div>
                     )}
                   </div>
@@ -521,8 +523,8 @@ export default function LeaderboardPage() {
         <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)] border-t-4 border-[var(--color-foreground)] p-4 shadow-[0_-8px_20px_rgba(0,0,0,0.05)] transition-colors">
           <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-yellow-300 border-2 border-slate-800 rounded-full flex items-center justify-center text-3xl shadow-sm animate-bounce">
-                👑
+              <div className="w-12 h-12 bg-yellow-300 border-2 border-slate-800 rounded-full flex items-center justify-center shadow-sm animate-bounce">
+                <Crown className="w-6 h-6 text-yellow-600 fill-yellow-250" />
               </div>
               <div className="text-left">
                 <h4 className="text-slate-900 font-black text-sm md:text-base flex items-center gap-1.5">
@@ -531,7 +533,7 @@ export default function LeaderboardPage() {
                 </h4>
                 <p className="text-xs text-slate-500 font-semibold mt-0.5">
                   {userRank <= 10 ? (
-                    <span className="text-emerald-600 font-bold">🎉 Thật tuyệt vời! Con đang nằm trong Top 10 bảng vàng học tập đó!</span>
+                    <span className="text-emerald-600 font-bold">Thật tuyệt vời! Con đang nằm trong Top 10 bảng vàng học tập đó!</span>
                   ) : (
                     <span>Chỉ cần tích lũy thêm <span className="text-amber-600 font-extrabold">{diffXpToTop10} XP</span> nữa là lọt vào Top 10 rồi!</span>
                   )}

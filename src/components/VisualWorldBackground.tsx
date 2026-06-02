@@ -236,7 +236,7 @@ export const VisualWorldBackground: React.FC<VisualWorldBackgroundProps> = ({
           </g>
         </svg>
 
-        {/* Cây bên phải: Cây thông tròn xếp tầng có quả cam */}
+        {/* Cây bên phải: Cây Cam xum xuê thực thụ với quả cam chín mọng */}
         <svg className="absolute bottom-0 right-[2.5%] w-48 h-96 z-20" viewBox="0 0 120 220" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="trunkGradRight" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -251,64 +251,75 @@ export const VisualWorldBackground: React.FC<VisualWorldBackgroundProps> = ({
               <stop offset="0%" stopColor="#a3e635" />
               <stop offset="100%" stopColor="#2ecc71" />
             </linearGradient>
+            <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffbe76" />
+              <stop offset="100%" stopColor="#e67e22" />
+            </linearGradient>
           </defs>
 
           {/* Thân cây thẳng gốc to */}
           <path d="M54 210 C50 170 52 130 56 100 C58 98 62 98 64 100 C68 130 70 170 66 210 Z" fill="url(#trunkGradRight)" stroke="#0f172a" strokeWidth="3" />
           
-          {/* Tán lá xếp tầng 1 (Dưới) */}
-          <path d="M20 120 Q20 90 60 90 Q100 90 100 120 Q60 135 20 120 Z" fill="url(#foliageGradRight1)" stroke="#0f172a" strokeWidth="3.2" strokeLinejoin="round" />
+          {/* Tán lá cây cam lớp phía sau (lớn hơn, đậm màu hơn) */}
+          <path d="M60 25
+                   C35 15, 10 30, 15 62
+                   C0 70, 0 100, 15 118
+                   C20 135, 55 140, 72 122
+                   C88 135, 115 118, 110 90
+                   C120 62, 98 30, 78 42
+                   C72 27, 65 25, 60 25 Z" 
+                fill="url(#foliageGradRight1)" stroke="#0f172a" strokeWidth="3.5" strokeLinejoin="round" />
 
-          {/* Tán lá xếp tầng 2 (Giữa) */}
-          <path d="M30 85 Q30 60 60 60 Q90 60 90 85 Q60 98 30 85 Z" fill="url(#foliageGradRight2)" stroke="#0f172a" strokeWidth="3.2" strokeLinejoin="round" />
+          {/* Tán lá cây cam lớp phía trước (nhỏ hơn, sáng màu hơn để tạo độ nổi 3D) */}
+          <path d="M60 35
+                   C42 27, 22 38, 26 62
+                   C13 68, 13 92, 26 106
+                   C30 118, 58 122, 70 108
+                   C82 118, 104 106, 100 84
+                   C108 62, 90 38, 76 46
+                   C71 36, 66 35, 60 35 Z" 
+                fill="url(#foliageGradRight2)" stroke="#0f172a" strokeWidth="2.5" strokeLinejoin="round" />
 
-          {/* Tán lá xếp tầng 3 (Trên) */}
-          <path d="M40 50 Q40 30 60 30 Q80 30 80 50 Q60 60 40 50 Z" fill="url(#foliageGradRight1)" stroke="#0f172a" strokeWidth="3.2" strokeLinejoin="round" />
-
-          {/* Quả màu cam lấp lánh */}
-          <g transform="translate(45, 105)">
-            <circle cx="0" cy="0" r="4.5" fill="#e67e22" stroke="#0f172a" strokeWidth="1.5" />
-            <circle cx="-1.2" cy="-1.2" r="1" fill="white" opacity="0.7" />
+          {/* Các quả cam chín mọng lấp lánh có cuống và lá */}
+          <g transform="translate(38, 75)">
+            <circle cx="0" cy="0" r="5.5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
+            <path d="M0 -5.5 C1 -8, 2.5 -8, 2.5 -6" stroke="#4a2206" strokeWidth="0.8" fill="none" />
+            <path d="M2.5 -8 C4 -8.5, 5 -7, 4 -6 C3 -5, 2 -7.5, 2.5 -8" fill="#2ecc71" />
+            <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.75" />
           </g>
-          <g transform="translate(75, 108)">
-            <circle cx="0" cy="0" r="4.5" fill="#e67e22" stroke="#0f172a" strokeWidth="1.5" />
-            <circle cx="-1.2" cy="-1.2" r="1" fill="white" opacity="0.7" />
+
+          <g transform="translate(78, 65)">
+            <circle cx="0" cy="0" r="6" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
+            <path d="M0 -6 C1 -8.5, 2.5 -8.5, 2.5 -6.5" stroke="#4a2206" strokeWidth="0.8" fill="none" />
+            <path d="M2.5 -8.5 C4 -9, 5 -7.5, 4 -6.5 C3 -5.5, 2 -8, 2.5 -8.5" fill="#2ecc71" />
+            <circle cx="-1.8" cy="-1.8" r="1.5" fill="white" opacity="0.75" />
           </g>
-          <g transform="translate(58, 74)">
-            <circle cx="0" cy="0" r="4" fill="#e67e22" stroke="#0f172a" strokeWidth="1.5" />
-            <circle cx="-1" cy="-1" r="0.9" fill="white" opacity="0.7" />
+
+          <g transform="translate(54, 98)">
+            <circle cx="0" cy="0" r="5.5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
+            <path d="M0 -5.5 C1 -8, 2.5 -8, 2.5 -6" stroke="#4a2206" strokeWidth="0.8" fill="none" />
+            <path d="M2.5 -8 C4 -8.5, 5 -7, 4 -6 C3 -5, 2 -7.5, 2.5 -8" fill="#2ecc71" />
+            <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.75" />
+          </g>
+
+          <g transform="translate(88, 92)">
+            <circle cx="0" cy="0" r="5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
+            <path d="M0 -5 C1 -7.5, 2 -7.5, 2 -5.5" stroke="#4a2206" strokeWidth="0.8" fill="none" />
+            <path d="M2 -7.5 C3.2 -8, 4 -6.8, 3.2 -5.8 C2.4 -4.8, 1.6 -7, 2 -7.5" fill="#2ecc71" />
+            <circle cx="-1.2" cy="-1.2" r="1.2" fill="white" opacity="0.75" />
+          </g>
+
+          <g transform="translate(58, 50)">
+            <circle cx="0" cy="0" r="5.5" fill="url(#orangeGrad)" stroke="#0f172a" strokeWidth="1.5" />
+            <path d="M0 -5.5 C1 -8, 2.5 -8, 2.5 -6" stroke="#4a2206" strokeWidth="0.8" fill="none" />
+            <path d="M2.5 -8 C4 -8.5, 5 -7, 4 -6 C3 -5, 2 -7.5, 2.5 -8" fill="#2ecc71" />
+            <circle cx="-1.5" cy="-1.5" r="1.3" fill="white" opacity="0.75" />
           </g>
         </svg>
 
-        {/* Bụi cỏ & hoa nhỏ xinh bên góc trái */}
-        <div className="absolute bottom-2 left-[12%] z-20 flex gap-1 items-end">
-          <div className="w-4 h-6 bg-[#2ecc71] border-2 border-slate-900 rounded-t-full"></div>
-          <div className="w-5 h-9 bg-[#27ae60] border-2 border-slate-900 rounded-t-full"></div>
-          <div className="w-3 h-5 bg-[#2ecc71] border-2 border-slate-900 rounded-t-full"></div>
-          {/* Bông hoa nhỏ */}
-          <div className="absolute bottom-7 left-2 w-3.5 h-3.5 bg-red-400 border border-slate-900 rounded-full flex items-center justify-center">
-            <div className="w-1.5 h-1.5 bg-yellow-300 rounded-full"></div>
-          </div>
-        </div>
       </div>
 
-      {/* --- PHẦN 4: MASCOT KHỦNGLONG DỄ THƯƠNG ĐỨNG GÓC PHẢI --- */}
-      <div className="absolute bottom-2 right-[12%] w-44 h-44 z-20 pointer-events-none select-none">
-        <motion.div
-          animate={{
-            scaleY: [1, 1.03, 1],
-            y: [0, -2, 0]
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 3.5,
-            ease: 'easeInOut'
-          }}
-          style={{ transformOrigin: 'bottom center' }}
-        >
-          <DinoMascot className="w-44 h-44" />
-        </motion.div>
-      </div>
+
 
       {/* --- PHẦN 5: CONTAINER NỘI DUNG CHÍNH (TRANG TRÍ LÊN NỀN) --- */}
       <div className="flex-1 w-full relative z-20 flex flex-col min-w-0">

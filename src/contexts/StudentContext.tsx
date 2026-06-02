@@ -7,7 +7,7 @@ export interface StudentInfo {
   nickname: string;  // Biệt danh / Tên gọi yêu thích
   grade: string;     // Lớp học (ví dụ: Lớp 1, Lớp 2...)
   avatar: string;    // Emoji avatar (ví dụ: 🦁)
-  theme?: 'dino' | 'turtle' | 'bunny' | 'pig' | 'leopard'; // Theme giao diện của bé
+  theme?: 'dino' | 'turtle' | 'bunny' | 'panda' | 'leopard'; // Theme giao diện của bé
 }
 
 interface StudentContextType {

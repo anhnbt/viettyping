@@ -12,7 +12,7 @@ const THEME_TO_EMOJI: Record<string, string> = {
   dino: "🦖",
   turtle: "🐢",
   bunny: "🐰",
-  pig: "🐷",
+  panda: "🐼",
   leopard: "🐆"
 };
 
@@ -22,7 +22,7 @@ const MASCOTS = [
   { id: "dino", name: "Khủng Long", emoji: "🦖", desc: "Khủng long xanh lá" },
   { id: "turtle", name: "Rùa Con", emoji: "🐢", desc: "Rùa con đại dương" },
   { id: "bunny", name: "Thỏ Ngọc", emoji: "🐰", desc: "Thỏ con cà rốt" },
-  { id: "pig", name: "Heo Hồng", emoji: "🐷", desc: "Heo con vui nhộn" },
+  { id: "panda", name: "Gấu Trúc", emoji: "🐼", desc: "Gấu trúc thông minh" },
   { id: "leopard", name: "Báo Đốm", emoji: "🐆", desc: "Báo đốm thần tốc" }
 ];
 
@@ -34,7 +34,7 @@ export default function StudentConfigModal() {
   const [nickname, setNickname] = useState("");
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("Lớp 1");
-  const [theme, setTheme] = useState<'dino' | 'turtle' | 'bunny' | 'pig' | 'leopard'>("dino");
+  const [theme, setTheme] = useState<'dino' | 'turtle' | 'bunny' | 'panda' | 'leopard'>("dino");
   const [error, setError] = useState("");
   const [unlockedMascots, setUnlockedMascots] = useState<string[]>(["dino", "turtle"]);
 

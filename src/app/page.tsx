@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Trophy, Flame, Keyboard, ArrowRight, Smile, Menu, X, Gift, Award, Home as HomeIcon, CheckSquare, BookOpen } from 'lucide-react';
+import { Sparkles, Trophy, Flame, Keyboard, ArrowRight, Smile, Menu, X, Gift, Award, Home as HomeIcon, CheckSquare, BookOpen, Users, Gamepad2, TrendingUp, User } from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import Logo from '@/components/Logo';
 import DinoMascot from '@/components/DinoMascot';
@@ -22,11 +22,24 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 const titles = [
-  'Học Tập Kỳ Thú Cho Bé 🌟',
-  'Luyện Gõ Phím Cực Vui! ⌨️',
-  'Khám Phá Tri Thức Mới 📚',
-  'Trở Thành Siêu Nhân Gõ Phím! ⚡'
+  'Học Tập Kỳ Thú Cho Bé',
+  'Luyện Gõ Phím Cực Vui!',
+  'Khám Phá Tri Thức Mới',
+  'Trở Thành Siêu Nhân Gõ Phím!'
 ];
+
+const renderTaskIcon = (iconName: string) => {
+  switch (iconName) {
+    case 'book':
+      return <BookOpen className="w-6 h-6 text-[var(--color-foreground)]" />;
+    case 'keyboard':
+      return <Keyboard className="w-6 h-6 text-[var(--color-foreground)]" />;
+    case 'gamepad':
+      return <Gamepad2 className="w-6 h-6 text-[var(--color-foreground)]" />;
+    default:
+      return <CheckSquare className="w-6 h-6 text-[var(--color-foreground)]" />;
+  }
+};
 
 export default function Home() {
   const router = useRouter();
@@ -97,8 +110,8 @@ export default function Home() {
     switch(theme) {
       case 'turtle':
         return { name: 'RÙA CON CHĂM CHỈ', motto: 'Chậm mà chắc', desc: 'Hãy cùng nhau xây dựng nền tảng vững chắc cho đôi bàn tay của bạn nhé!' };
-      case 'pig':
-        return { name: 'HEO HỒNG ĐÁNG YÊU', motto: 'Đáng yêu & Kiên trì', desc: 'Luyện tập mỗi ngày giúp đôi bàn tay xinh xắn của bạn gõ thật khéo léo!' };
+      case 'panda':
+        return { name: 'GẤU TRÚC THÔNG THÁI', motto: 'Đáng yêu & Kiên trì', desc: 'Luyện tập mỗi ngày cùng bạn Gấu Trúc để đôi bàn tay xinh xắn của con gõ thật khéo léo!' };
       case 'bunny':
         return { name: 'THỎ NGỌC NHANH NHẸN', motto: 'Nhanh như chớp', desc: 'Bứt phá tốc độ và rèn luyện phản xạ gõ phím cực nhanh cùng bạn Thỏ!' };
       case 'leopard':
@@ -111,7 +124,7 @@ export default function Home() {
   const getThemeMascotName = (theme: string) => {
     switch(theme) {
       case 'turtle': return 'Rùa';
-      case 'pig': return 'Heo';
+      case 'panda': return 'Gấu Trúc';
       case 'bunny': return 'Thỏ';
       case 'leopard': return 'Báo';
       default: return 'Khủng Long';
@@ -173,10 +186,10 @@ export default function Home() {
       <div className="w-full px-4 mt-auto">
         <button
           onClick={() => handleNavClick('/typing')}
-          className="tactile-btn tactile-btn-primary w-full py-4 text-base rounded-2xl gap-2 cursor-pointer"
+          className="tactile-btn tactile-btn-primary w-full py-4 text-base rounded-2xl gap-2 cursor-pointer flex items-center justify-center"
         >
           <span>Bắt đầu gõ</span>
-          <span>🚀</span>
+          <Sparkles className="w-5 h-5 text-white animate-pulse" />
         </button>
       </div>
     </div>
@@ -241,10 +254,12 @@ export default function Home() {
             <Link
               href="/"
               onClick={() => playSound('click')}
-              className="flex items-center gap-2 group font-black text-[var(--color-foreground)] tracking-wide"
+              className="flex items-center gap-2.5 group font-black tracking-wide cursor-pointer"
             >
-              <Logo className="w-12 h-12" />
-              <span className="text-lg md:text-xl hidden sm:inline-block">VietTyping</span>
+              <Logo className="w-10 h-10" />
+              <span className="text-xl md:text-2xl font-black bg-gradient-to-r from-[#2ecc71] via-[#3498db] to-[#e74c3c] bg-clip-text text-transparent filter drop-shadow-[0.5px_0.5px_0px_rgba(0,0,0,0.15)] select-none">
+                Việt Typing
+              </span>
             </Link>
           </div>
 
@@ -272,7 +287,11 @@ export default function Home() {
               className="w-10 h-10 rounded-full border-2 border-[var(--color-foreground)] bg-[var(--color-surface)] flex items-center justify-center text-xl shadow-[2px_2px_0px_0px_var(--color-foreground)] hover:scale-105 active:translate-y-[1px] active:shadow-none transition-all cursor-pointer"
               title="Cấu hình hồ sơ của bé"
             >
-              {studentInfo ? studentInfo.avatar : '👤'}
+              {studentInfo ? (
+                <span className="text-xl">{studentInfo.avatar}</span>
+              ) : (
+                <User className="w-5 h-5 text-[var(--color-foreground)]" />
+              )}
             </button>
           </div>
         </header>
@@ -304,21 +323,24 @@ export default function Home() {
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <button
                   onClick={() => handleNavClick('/lesson')}
-                  className="tactile-btn tactile-btn-secondary px-6 py-3.5 text-sm cursor-pointer flex items-center gap-1.5"
+                  className="tactile-btn tactile-btn-secondary px-6 py-3.5 text-sm cursor-pointer flex items-center gap-2"
                 >
-                  <span>BÀI HỌC CỦA BÉ 🚀</span>
+                  <BookOpen className="w-4 h-4" />
+                  <span>BÀI HỌC CỦA BÉ</span>
                 </button>
                 <button
                   onClick={() => handleNavClick('/typing')}
-                  className="tactile-btn tactile-btn-tertiary px-6 py-3.5 text-sm cursor-pointer"
+                  className="tactile-btn tactile-btn-tertiary px-6 py-3.5 text-sm cursor-pointer flex items-center gap-2"
                 >
-                  ĐẢO GÕ PHÍM ⌨️
+                  <Keyboard className="w-4 h-4" />
+                  <span>ĐẢO GÕ PHÍM</span>
                 </button>
                 <button
                   onClick={() => handleNavClick('/parents')}
-                  className="tactile-btn tactile-btn-gray px-6 py-3.5 text-sm cursor-pointer"
+                  className="tactile-btn tactile-btn-gray px-6 py-3.5 text-sm cursor-pointer flex items-center gap-2"
                 >
-                  GÓC PHỤ HUYNH 👨‍👩‍👧‍👦
+                  <Users className="w-4 h-4" />
+                  <span>GÓC PHỤ HUYNH</span>
                 </button>
               </div>
             </div>
@@ -339,7 +361,7 @@ export default function Home() {
             <div className="bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[24px] shadow-[6px_6px_0px_0px_var(--color-foreground)] p-6 transition-colors">
               <h3 className="text-xl font-black text-[var(--color-foreground)] flex items-center justify-between mb-4">
                 <span>Tiến trình tuần</span>
-                <span className="text-emerald-500">📈</span>
+                <TrendingUp className="w-5 h-5 text-emerald-500" />
               </h3>
               <div className="flex justify-between items-center text-xs font-black text-[var(--color-foreground)] opacity-85 mb-1.5">
                 <span>KINH NGHIỆM</span>
@@ -393,7 +415,9 @@ export default function Home() {
           {/* Block 3: Nhiệm Vụ Hàng Ngày */}
           <div className="space-y-4">
             <h3 className="text-2xl font-black text-[var(--color-foreground)] flex items-center gap-2">
-              <span className="p-2 bg-[var(--color-accent)] border-2 border-[var(--color-foreground)] rounded-xl shadow-[2px_2px_0px_0px_var(--color-foreground)]">📋</span>
+              <span className="p-2 bg-[var(--color-accent)] border-2 border-[var(--color-foreground)] rounded-xl shadow-[2px_2px_0px_0px_var(--color-foreground)] flex items-center justify-center">
+                <CheckSquare className="w-5 h-5 text-[var(--color-foreground)]" />
+              </span>
               <span>Nhiệm vụ hàng ngày</span>
             </h3>
             
@@ -404,7 +428,7 @@ export default function Home() {
                   title: 'Luyện chữ cái A-Ă-Â',
                   desc: 'Làm quen với các dấu thanh đặc biệt.',
                   xp: '200 XP',
-                  icon: '🅰️',
+                  icon: 'book',
                   path: '/subjects/tieng-viet/topics/tv-1'
                 },
                 {
@@ -412,7 +436,7 @@ export default function Home() {
                   title: 'Tốc độ bền bỉ',
                   desc: 'Gõ 5 phút không sai lỗi nào.',
                   xp: '150 XP',
-                  icon: '⌨️',
+                  icon: 'keyboard',
                   path: '/typing'
                 },
                 {
@@ -420,7 +444,7 @@ export default function Home() {
                   title: 'Giải cứu Rùa con',
                   desc: 'Trò chơi gõ phím vượt chướng ngại vật.',
                   xp: '300 XP',
-                  icon: '🎮',
+                  icon: 'gamepad',
                   path: '/typing/turtle-rescue'
                 }
               ].map((t) => (
@@ -430,7 +454,9 @@ export default function Home() {
                   className="bg-[var(--color-surface)] border-3 border-[var(--color-foreground)] rounded-[20px] p-5 shadow-[4px_4px_0px_0px_var(--color-foreground)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_var(--color-foreground)] transition-all cursor-pointer flex flex-col justify-between"
                 >
                   <div className="flex justify-between items-start gap-2 mb-4">
-                    <span className="text-2xl p-2 bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-xl shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)]">{t.icon}</span>
+                    <span className="p-2 bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-xl shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)] flex items-center justify-center">
+                      {renderTaskIcon(t.icon)}
+                    </span>
                     <span className="bg-[var(--color-accent)] text-[var(--color-foreground)] border border-[var(--color-foreground)] text-[9px] font-black px-2 py-0.5 rounded-full shadow-[1px_1px_0px_0px_var(--color-foreground)]">
                       +{t.xp}
                     </span>
@@ -447,7 +473,7 @@ export default function Home() {
           {/* SubjectSelector Grid */}
           <div className="pt-4">
             <div className="flex items-center gap-2 mb-6">
-              <span className="text-2xl">🎒</span>
+              <BookOpen className="w-6 h-6 text-[var(--color-primary-depth)]" />
               <h3 className="text-2xl font-black text-[var(--color-foreground)]">Chọn Môn Học Tự Do</h3>
             </div>
             <SubjectSelector
@@ -462,8 +488,8 @@ export default function Home() {
           {/* Parents Corner Entry Card */}
           <div className="max-w-4xl mx-auto pt-6 text-center">
             <div className="inline-flex flex-col md:flex-row items-center gap-4 bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] p-6 rounded-3xl shadow-[5px_5px_0px_0px_var(--color-foreground)]">
-              <div className="p-3.5 bg-[var(--color-primary-container)] border-2 border-[var(--color-foreground)] rounded-2xl text-3xl shrink-0">
-                👨‍👩‍👧‍👦
+              <div className="p-3 bg-[var(--color-primary-container)] border-2 border-[var(--color-foreground)] rounded-2xl shrink-0 flex items-center justify-center">
+                <Users className="w-8 h-8 text-[var(--color-primary-depth)]" />
               </div>
               <div className="text-center md:text-left flex flex-col items-center md:items-start">
                 <h4 className="text-[var(--color-foreground)] font-black text-lg flex items-center justify-center md:justify-start gap-1.5">
@@ -477,24 +503,19 @@ export default function Home() {
             </div>
           </div>
 
-        </main>
-        </VisualWorldBackground>
-
-        {/* Brutalist Footer */}
-        <footer className="border-t-4 border-[var(--color-foreground)] bg-[var(--color-surface)] py-8 px-6 transition-colors">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs md:text-sm font-black text-[var(--color-foreground)] opacity-90">
-            <div>
-              <span>VietTyping © {new Date().getFullYear()} • Kiến tạo kỹ năng gõ tiếng Việt cho bé.</span>
-            </div>
-            <div className="flex gap-4">
-              <Link href="/parents" onClick={() => playSound('click')} className="hover:underline">Chính sách bảo mật</Link>
+          {/* Dòng bản quyền tinh tế trên nền cỏ */}
+          <div className="text-center text-xs font-black text-emerald-850/60 pt-12 pb-6 max-w-xl mx-auto flex flex-col sm:flex-row justify-center items-center gap-3 select-none">
+            <span>VietTyping © {new Date().getFullYear()} • Kiến tạo kỹ năng gõ tiếng Việt cho bé.</span>
+            <span className="hidden sm:inline-block">•</span>
+            <div className="flex gap-3">
+              <Link href="/parents" onClick={() => playSound('click')} className="hover:underline">Bảo mật</Link>
               <span>•</span>
-              <Link href="/typing" onClick={() => playSound('click')} className="hover:underline">Điều khoản sử dụng</Link>
-              <span>•</span>
-              <Link href="/parents" onClick={() => playSound('click')} className="hover:underline">Hỗ trợ</Link>
+              <Link href="/typing" onClick={() => playSound('click')} className="hover:underline">Điều khoản</Link>
             </div>
           </div>
-        </footer>
+
+        </main>
+        </VisualWorldBackground>
 
       </div>
     </div>

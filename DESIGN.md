@@ -22,7 +22,7 @@ Hệ thống thiết kế này sử dụng kiến trúc **Tiered Primary Archite
 - **Surface (Nền):** Màu kem ngà (Ivory base) ấm áp, thân thiện như trang giấy.
 - **Text (Chữ):** Màu nâu than đậm (Deep Charcoal-Brown) tạo độ tương phản cao nhưng dịu mắt, tránh cảm giác khô khan của màu đen thuần.
 - **Bảng phân tầng Tier System:**
-  - 🐷 **PigTyper:** Màu Hồng Dễ Thương (Bắt đầu - Beginner) - Mã màu `#ffb6c1`
+  - 🐼 **PandaTyper:** Màu Đỏ May Mắn (Bắt đầu - Beginner) - Mã màu `#e03131`
   - 🐢 **TurtleTyper:** Màu Xanh Lá Cây Ngọc (Kiên trì - Steady) - Mã màu `#006d30`
   - 🐰 **BunnyTyper:** Màu Cam Ấm Áp (Nhanh nhẹn - Fast) - Mã màu `#8f4e00` (Container màu `#ff9f43`)
   - 🐆 **LeopardTyper:** Màu Vàng Gold (Thần tốc - Elite) - Mã màu `#7a5900`

@@ -15,7 +15,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 interface MascotItem {
-  id: 'dino' | 'turtle' | 'bunny' | 'pig' | 'leopard';
+  id: 'dino' | 'turtle' | 'bunny' | 'panda' | 'leopard';
   name: string;
   emoji: string;
   desc: string;
@@ -27,12 +27,12 @@ interface MascotItem {
 const SHOP_MASCOTS: MascotItem[] = [
   {
     id: 'dino',
-    name: 'Khủng Long',
+    name: 'Khủng Long Siêu Phàm',
     emoji: '🦖',
     desc: 'Mạnh mẽ & nhanh nhẹn, luôn đồng hành cùng bé!',
     price: 0,
     colorClass: 'border-emerald-300 bg-emerald-50 text-emerald-800 shadow-emerald-200',
-    image: '' 
+    image: '/assets/dino-3d.png' 
   },
   {
     id: 'turtle',
@@ -41,7 +41,7 @@ const SHOP_MASCOTS: MascotItem[] = [
     desc: 'Chậm mà chắc, nền tảng gõ chuẩn 100%!',
     price: 0,
     colorClass: 'border-teal-300 bg-teal-50 text-teal-850 shadow-teal-200',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ujKzOv1Gfnk7V0Hg2Xw-oGB35KqunPyykSPt02wU5_NQT29AZTYRZCIF5nNJSModwaKW_Y8-2rLRnSE9sfL0jN6TGSCEgF46KEgcBSYLBkwJQgOWvgcCwvup3wIJbNPu8LWQX0vyOT_5SqRXJiZ9BrAJ5Ze8wLAXtv-s8EwfjLlyQ5x6D4pOUHLzmMBR0POACvACLBjThdbGM5VRwEZ3ZprFLg43Y0Ys__vdRoHSWXORzHKRdnXrmuP2cA'
+    image: '/assets/turtle-3d.png'
   },
   {
     id: 'bunny',
@@ -49,17 +49,17 @@ const SHOP_MASCOTS: MascotItem[] = [
     emoji: '🐰',
     desc: 'Nhanh như chớp, vượt mọi thử thách gõ phím!',
     price: 500,
-    colorClass: 'border-pink-300 bg-pink-50 text-pink-800 shadow-pink-200',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0uiccFaLr883SRghZuRfNoBoqOH659tF15YYtMeTb0kVjlVoRgvsV2QX90JKuFisj42VE23v7dpEIceDGKdreK12VNZi1Fi1SWUmcfgWr-93nxn6dJcICrv_mYUyari8BDXpdIBQVOE1MkvAlULAtYyF4EGIis7k8nsn3FoIqCepslojd-d8U6O8SiPYyOx6KYUWtBeiGDff7oqAQ9aElyDV1_znfHFhbSJ_lBTEyF2nIX7QjutpcpjxAaE0'
+    colorClass: 'border-pink-300 bg-pink-50 text-pink-850 shadow-pink-200',
+    image: '/assets/bunny-3d.png'
   },
   {
-    id: 'pig',
-    name: 'Heo Hồng Chăm Chỉ',
-    emoji: '🐷',
-    desc: 'Đáng yêu & kiên trì, chăm chỉ gõ phím mỗi ngày!',
+    id: 'panda',
+    name: 'Gấu Trúc Thông Thái',
+    emoji: '🐼',
+    desc: 'Đáng yêu & kiên trì, vui vẻ gõ phím tiếng Việt!',
     price: 800,
-    colorClass: 'border-amber-300 bg-amber-50 text-amber-800 shadow-amber-200',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ug0TuuXRulCzGueSZIjS6G90yWDUXxNedTwx2pz4aO_4i13vhO_JoUk6t0sIJKDemzFX-aKYe2efkg-pZI6wHFbRSVDWCNXN7qe74nrplxW4nDHThwE9KPUmU2nJo_jahgx4ErMp9afwTLyFzphVFvwyugKt2_1b8b7jntTHp6SHX3pYwSqr4zsEztrMUzdaQ6h9cvEhtWChvIPT4dYV0KgCnue-tKAx1N4a9dpTORjjHMLxNCNhoV4yJoy'
+    colorClass: 'border-red-300 bg-red-50 text-red-850 shadow-red-200',
+    image: '/assets/panda-3d.png'
   },
   {
     id: 'leopard',
@@ -67,8 +67,8 @@ const SHOP_MASCOTS: MascotItem[] = [
     emoji: '🐆',
     desc: 'Dũng mãnh & điêu luyện, vận tốc của nhà vô địch!',
     price: 1200,
-    colorClass: 'border-purple-300 bg-purple-50 text-purple-800 shadow-purple-200',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0uiNbpkX0J0Sz5jD3UUlwL6rwBenYBtjB6c8rEMXE0VCjQHbVpwYSgq-D-vnxTW6F0oyUwsf2NtJKV1gx5FnY1rBt8-HQnz8B5Rw29PDlUii1ibAPd8wCEz8JBNPHPUdQqeIjbuCd2lrAel-7qlXdcot49gy8_WPz6nwgiiCM_Z4YBX6H39Kw20oa35Kro9vLUr51NgXmjVvfox8BHcdNKnTfbnWIbMoCa9JU9DarmjWqQ0KqQ17brWlfpPs'
+    colorClass: 'border-purple-300 bg-purple-50 text-purple-850 shadow-purple-200',
+    image: '/assets/leopard-3d.png'
   }
 ];
 
