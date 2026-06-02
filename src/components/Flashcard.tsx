@@ -7,6 +7,11 @@ import { useSound } from "@/contexts/SoundContext";
 import { useWebSpeech } from "@/hooks/useWebSpeech";
 import confetti from "canvas-confetti";
 
+const isEmoji = (url: string) => {
+  if (!url) return false;
+  return !url.includes('/') && !url.includes('.') && url.length < 10;
+};
+
 interface FlashcardProps {
   word: string;
   wordUppercase: string;
@@ -147,6 +152,7 @@ export default function Flashcard({
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         style={{ transformStyle: "preserve-3d" }}
       >
+
         {/* Mặt Trước (Front) */}
         <div
           className="absolute w-full h-full backface-hidden rounded-3xl p-6 flex flex-col items-center justify-between shadow-2xl shadow-pink-200/50 border-4 border-white backdrop-blur-sm"
@@ -157,10 +163,14 @@ export default function Flashcard({
         >
           <div className="w-full h-32 md:h-40 bg-white/60 rounded-2xl flex items-center justify-center p-2 border-2 border-dashed border-white overflow-hidden relative shadow-inner">
             {imageUrl ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={imageUrl} alt={wordUppercase} className="w-full h-full object-contain rounded-xl drop-shadow-sm" />
-              </>
+              isEmoji(imageUrl) ? (
+                <span className="text-7xl md:text-8xl select-none animate-bounce">{imageUrl}</span>
+              ) : (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={imageUrl} alt={wordUppercase} className="w-full h-full object-contain rounded-xl drop-shadow-sm" />
+                </>
+              )
             ) : (
               <span className="text-center text-sm font-semibold text-pink-600">
                 [Image Placeholder]<br />

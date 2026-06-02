@@ -80,7 +80,7 @@ export default function LessonPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 font-sans overflow-y-auto flex flex-col pb-12">
+    <div className="canvas-bg bg-background text-foreground transition-colors min-h-screen font-sans overflow-y-auto flex flex-col pb-12">
       {/* Main Content với LessonCoordinator */}
       <main className="flex-1 flex flex-col items-center justify-center p-2 relative z-10 w-full max-w-7xl mx-auto">
         <LessonCoordinator
@@ -88,11 +88,6 @@ export default function LessonPage() {
           onAllActivitiesComplete={handleAllActivitiesComplete}
         />
       </main>
-
-      {/* Background Decor */}
-      <div className="fixed top-20 left-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-20 right-10 w-48 h-48 bg-pink-400/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl pointer-events-none" />
     </div>
   );
 }

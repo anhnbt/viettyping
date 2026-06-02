@@ -134,19 +134,19 @@ export default function TypingPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-8 relative z-10">
         {/* Thanh Điều hướng Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
-          <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-6 mb-8 w-full">
+          <div className="flex flex-wrap gap-3 justify-center lg:justify-start z-20">
             <Link
               href="/lesson"
               onClick={() => playSound('click')}
-              className="tactile-btn bg-white hover:bg-slate-100 text-indigo-650 text-sm"
+              className="tactile-btn bg-[var(--color-surface)] border-3 border-[var(--color-foreground)] shadow-[3px_3px_0px_0px_var(--color-foreground)] hover:translate-y-[-1px] active:translate-y-[1px] active:shadow-none text-[var(--color-foreground)] font-black text-sm transition-all"
             >
-              <BookOpen className="w-4 h-4 text-indigo-500 animate-bounce" />
+              <BookOpen className="w-4 h-4 text-[var(--color-primary-depth)] animate-bounce" />
               <span>📚 Bài học của bé</span>
             </Link>
             <button
               disabled
-              className="tactile-btn bg-[var(--color-secondary)] text-white text-sm cursor-default"
+              className="tactile-btn bg-[var(--color-secondary-container)] border-3 border-[var(--color-foreground)] shadow-[3px_3px_0px_0px_var(--color-foreground)] text-[var(--color-on-secondary-container)] font-black text-sm cursor-default opacity-90"
             >
               <Keyboard className="w-4 h-4" />
               <span>⌨️ Luyện gõ phím</span>
@@ -154,20 +154,22 @@ export default function TypingPage() {
             <Link
               href="/typing/asmr"
               onClick={() => playSound('click')}
-              className="tactile-btn bg-[var(--color-tertiary)] text-white text-sm"
+              className="tactile-btn bg-[var(--color-tertiary)] border-3 border-[var(--color-foreground)] shadow-[3px_3px_0px_0px_var(--color-foreground)] hover:translate-y-[-1px] active:translate-y-[1px] active:shadow-none text-white font-black text-sm transition-all"
             >
               <Sparkles className="w-4 h-4 animate-pulse text-yellow-200" />
               <span>✨ ASMR Thư giãn</span>
             </Link>
           </div>
 
-          <h1 className={`text-4xl md:text-5xl font-black text-center text-slate-800 tracking-wide drop-shadow-sm ${plusJakartaSans.className}`}>
-            ⌨️ Đảo Gõ Phím Kỳ Thú
-          </h1>
+          <div className="bg-[var(--color-surface-container)] border-4 border-[var(--color-foreground)] px-6 py-3 rounded-2xl shadow-[4px_4px_0px_0px_var(--color-foreground)] text-center lg:text-right min-w-[280px]">
+            <h1 className={`text-2xl md:text-3xl font-black text-[var(--color-foreground)] tracking-wide ${plusJakartaSans.className}`}>
+              ⌨️ Đảo Gõ Phím Kỳ Thú
+            </h1>
+          </div>
         </div>
  
         {/* Dashboard Thành Tích Sinh Động */}
-        <div className="bg-white/90 rounded-[24px] p-6 mb-8 border-3 border-slate-900 shadow-[6px_6px_0px_0px_#0f172a] flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="bg-[var(--color-surface)] rounded-[24px] p-6 mb-8 border-3 border-[var(--color-foreground)] shadow-[6px_6px_0px_0px_var(--color-foreground)] flex flex-col md:flex-row items-center justify-between gap-6 transition-colors">
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 w-full md:w-auto">
             {/* Card XP */}
             <TactileStarBadge color="yellow" value={`${xp} XP`} className="scale-110" />
@@ -176,7 +178,7 @@ export default function TypingPage() {
             <TactileStarBadge color="orange" value={`${streak} ngày`} className="scale-110" />
 
             {/* Card Progress */}
-            <div className="flex flex-col bg-sky-50 border-2 border-sky-200 px-5 py-3 rounded-2xl shadow-[3px_3px_0px_0px_#bae6fd] min-w-[200px]">
+            <div className="flex flex-col bg-[var(--color-surface-container)] border-2 border-[var(--color-foreground)] px-5 py-3 rounded-2xl shadow-[3px_3px_0px_0px_var(--color-outline-variant)] min-w-[200px] transition-colors">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs text-sky-700 font-bold uppercase tracking-wider">Tiến trình</span>
                 <span className="text-sm font-black text-sky-600">{completedCount}/{totalLessonsCount} bài</span>
@@ -202,7 +204,7 @@ export default function TypingPage() {
         </div>
 
         {/* Bộ chọn hòn đảo (Tab Selector) */}
-        <div className="grid grid-cols-3 gap-3 mb-8 max-w-2xl mx-auto bg-gray-200/50 backdrop-blur-sm p-2 rounded-3xl border border-gray-100">
+        <div className="grid grid-cols-3 gap-3 mb-8 max-w-2xl mx-auto bg-[var(--color-surface-container)] p-2 rounded-3xl border-3 border-[var(--color-foreground)] shadow-[4px_4px_0px_0px_var(--color-foreground)] transition-colors">
           {(['basic', 'intermediate', 'advanced'] as const).map((tab) => {
             const isSelected = activeTab === tab;
             const tabInfo = levelNames[tab];
@@ -216,8 +218,8 @@ export default function TypingPage() {
                 }}
                 className={`relative px-4 py-4 rounded-2xl font-black text-sm md:text-base flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
                   isSelected 
-                    ? `bg-gradient-to-r ${tabInfo.color} text-white shadow-[0_4px_0_0_rgba(0,0,0,0.15)] scale-105` 
-                    : 'text-gray-600 hover:bg-white/40'
+                    ? `bg-gradient-to-r ${tabInfo.color} text-white border-2 border-[var(--color-foreground)] shadow-[3px_3px_0px_0px_var(--color-foreground)] scale-105` 
+                    : 'text-[var(--color-foreground)] opacity-75 hover:opacity-100 hover:bg-[var(--color-background)]/60'
                 }`}
               >
                 <span className="text-xl md:text-2xl">{tabInfo.icon}</span>
@@ -235,7 +237,7 @@ export default function TypingPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.25 }}
-            className={`rounded-3xl p-6 md:p-8 border-2 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.1)] ${levelNames[activeTab].bgClass} ${levelNames[activeTab].borderClass}`}
+            className={`rounded-3xl p-6 md:p-8 border-3 border-[var(--color-foreground)] shadow-[6px_6px_0px_0px_var(--color-foreground)] ${levelNames[activeTab].bgClass} ${levelNames[activeTab].borderClass} transition-all`}
           >
             {/* Banner Đảo */}
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-8 text-center sm:text-left border-b-2 border-dashed border-gray-200/60 pb-6">
@@ -336,7 +338,7 @@ export default function TypingPage() {
         </AnimatePresence>
 
         {/* Hướng dẫn Đặt Ngón Tay & Luyện tập */}
-        <div className="bg-white/90 rounded-3xl p-6 mt-8 border-2 border-indigo-100 shadow-[6px_6px_0px_0px_#e0e7ff] flex flex-col md:flex-row items-center gap-6">
+        <div className="bg-[var(--color-surface)] rounded-3xl p-6 mt-8 border-3 border-[var(--color-foreground)] shadow-[6px_6px_0px_0px_var(--color-foreground)] flex flex-col md:flex-row items-center gap-6 transition-colors">
           <div className="p-4 bg-indigo-50 rounded-2xl text-4xl shrink-0">
             💡
           </div>

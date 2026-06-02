@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Topic, Activity, subjects } from '@/data/subjects';
 import { IoArrowBack } from 'react-icons/io5';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useProgress } from '@/hooks/useProgress';
 import { hasVietnameseDiacritics } from '@/utils/vietnameseUtils';
 import TelexGuide from './TelexGuide';
@@ -33,6 +33,7 @@ interface ActivityViewProps {
 
 const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const params = useParams();
+  const router = useRouter();
   const subjectId = params.subjectId as string;
   const subject = subjects.find(s => s.id === subjectId);
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
@@ -193,11 +194,26 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
     }
   };
 
-  if (!isLoaded) return null;
-
   const activityIds = topic.activities.map(a => a.id);
   const progress = getTopicProgress(activityIds);
   const isTopicComplete = progress === 100;
+
+  // Listen to Enter key when topic is completed to go to the next lesson
+  useEffect(() => {
+    if (!isTopicComplete) return;
+
+    const handleEnterPress = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        router.push(`/subjects/${subjectId}`);
+      }
+    };
+
+    window.addEventListener('keydown', handleEnterPress);
+    return () => window.removeEventListener('keydown', handleEnterPress);
+  }, [isTopicComplete, subjectId, router]);
+
+  if (!isLoaded) return null;
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-soft-cream">
@@ -343,13 +359,13 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
                     clearTopicProgress(activityIds);
                     setCurrentActivityIndex(0);
                   }}
-                  className="px-6 py-3 bg-slate-100 text-slate-700 rounded-xl font-black border-2 border-slate-800 shadow-[0_4px_0_0_#CBD5E1] hover:translate-y-[-1px] hover:shadow-[0_5px_0_0_#CBD5E1] active:translate-y-[2px] active:shadow-[0_2px_0_0_#CBD5E1] transition-all cursor-pointer"
+                  className="tactile-btn tactile-btn-gray px-6 py-3"
                 >
                   Làm lại
                 </button>
                 <Link 
                   href={`/subjects/${subjectId}`} 
-                  className="px-8 py-3 bg-dino-green text-slate-800 rounded-xl font-black border-2 border-slate-800 shadow-[0_4px_0_0_#16A34A] hover:translate-y-[-1px] hover:shadow-[0_5px_0_0_#16A34A] active:translate-y-[2px] active:shadow-[0_2px_0_0_#16A34A] transition-all cursor-pointer"
+                  className="tactile-btn tactile-btn-primary px-8 py-3"
                 >
                   Bài học tiếp theo
                 </Link>

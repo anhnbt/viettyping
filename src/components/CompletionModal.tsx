@@ -140,6 +140,21 @@ export default function CompletionModal({
         };
     }, [isOpen, finalScore, playSound, fireConfetti]);
 
+    // Listen to Enter key to automatically continue
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                onContinue();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, onContinue]);
+
     if (!isOpen) return null;
 
     return (
@@ -204,14 +219,14 @@ export default function CompletionModal({
                 <div className={`flex gap-3 transition-all duration-500 ${showStars ? 'opacity-100' : 'opacity-0'}`}>
                     <button
                         onClick={onRestart}
-                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 sm:px-4 sm:py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors whitespace-nowrap text-sm sm:text-base"
+                        className="flex-1 tactile-btn tactile-btn-gray whitespace-nowrap text-sm sm:text-base"
                     >
                         <IoRefreshOutline className="text-lg shrink-0" />
                         <span>Làm lại</span>
                     </button>
                     <button
                         onClick={onContinue}
-                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 sm:px-4 sm:py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg whitespace-nowrap text-sm sm:text-base"
+                        className="flex-1 tactile-btn tactile-btn-primary whitespace-nowrap text-sm sm:text-base"
                     >
                         <span>{continueLabel}</span>
                         <IoArrowForward className="text-lg shrink-0" />

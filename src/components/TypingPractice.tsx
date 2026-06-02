@@ -330,6 +330,21 @@ export default function TypingPractice({ task, onComplete, onStatsChange }: Prop
     };
   }, []);
 
+  // Listen to Enter key when success modal is shown to trigger next step
+  useEffect(() => {
+    if (!showSuccessModal) return;
+
+    const handleEnterPress = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleNextClick();
+      }
+    };
+
+    window.addEventListener('keydown', handleEnterPress);
+    return () => window.removeEventListener('keydown', handleEnterPress);
+  }, [showSuccessModal, handleNextClick]);
+
   const { wpm, accuracy } = calculateStats();
   const totalTimeLimit = task.time_limit_seconds || 60;
   const timeLeftPercent = (timeLeft / totalTimeLimit) * 100;

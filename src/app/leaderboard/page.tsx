@@ -141,7 +141,7 @@ export default function LeaderboardPage() {
   const diffXpToTop10 = rank10User ? Math.max(0, rank10User.xp - userXp) : 0;
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-yellow-55 via-amber-50 to-orange-100 relative pb-28 ${plusJakartaSans.className}`}>
+    <div className={`canvas-bg bg-background text-foreground transition-colors min-h-screen relative pb-28 ${plusJakartaSans.className}`}>
       
       {/* Hiệu ứng bong bóng tròn nhẹ nhàng */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -175,16 +175,16 @@ export default function LeaderboardPage() {
         <div className="flex items-center justify-between mb-8">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-slate-800 rounded-2xl shadow-[3px_3px_0px_0px_#1e293b] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer text-slate-800 font-black text-sm"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer text-[var(--color-foreground)] font-black text-sm"
           >
             <ArrowLeft className="w-4 h-4 stroke-[3px]" />
             <span>Quay lại</span>
           </button>
           
-          <div className="flex items-center gap-2 bg-white border-2 border-slate-800 px-4 py-2 rounded-2xl shadow-[3px_3px_0px_0px_#1e293b]">
+          <div className="flex items-center gap-2 bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] px-4 py-2 rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] text-[var(--color-foreground)]">
             <Trophy className="w-5 h-5 text-yellow-500 fill-yellow-300 animate-bounce" />
-            <span className="text-sm font-black text-slate-800">
-              Điểm của bé: <span className="text-indigo-650">{userXp} XP</span>
+            <span className="text-sm font-black">
+              Điểm của bé: <span className="text-[var(--color-primary-depth)]">{userXp} XP</span>
             </span>
           </div>
         </div>
@@ -205,13 +205,13 @@ export default function LeaderboardPage() {
 
         {/* Switch Tabs (Weekly vs Alltime) */}
         <div className="flex justify-center mb-10">
-          <div className="inline-flex bg-slate-100 border-4 border-slate-800 rounded-[24px] p-1.5 shadow-[4px_4px_0px_0px_#1e293b]">
+          <div className="inline-flex bg-[var(--color-surface-container)] border-4 border-[var(--color-foreground)] rounded-[24px] p-1.5 shadow-[4px_4px_0px_0px_var(--color-foreground)]">
             <button
               onClick={() => handleTabChange('weekly')}
               className={`px-6 py-2.5 rounded-[18px] text-sm font-black transition-all cursor-pointer ${
                 activeTab === 'weekly'
-                  ? 'bg-[var(--color-primary)] text-white border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b]'
-                  : 'text-slate-650 hover:text-slate-800 bg-transparent border-2 border-transparent'
+                  ? 'bg-[var(--color-primary)] text-white border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)]'
+                  : 'text-[var(--color-foreground)] opacity-70 hover:opacity-100 bg-transparent border-2 border-transparent'
               }`}
             >
               📅 Tuần Này
@@ -220,8 +220,8 @@ export default function LeaderboardPage() {
               onClick={() => handleTabChange('alltime')}
               className={`px-6 py-2.5 rounded-[18px] text-sm font-black transition-all cursor-pointer ${
                 activeTab === 'alltime'
-                  ? 'bg-[var(--color-primary)] text-white border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b]'
-                  : 'text-slate-650 hover:text-slate-800 bg-transparent border-2 border-transparent'
+                  ? 'bg-[var(--color-primary)] text-white border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)]'
+                  : 'text-[var(--color-foreground)] opacity-70 hover:opacity-100 bg-transparent border-2 border-transparent'
               }`}
             >
               👑 Cao Thủ All-Time
@@ -247,7 +247,7 @@ export default function LeaderboardPage() {
                 {secondRank.xp} XP
               </div>
               {/* Cột bục hạng 2 */}
-              <div className="w-full bg-slate-200 border-4 border-slate-850 border-b-0 rounded-t-2xl h-24 flex flex-col items-center justify-center shadow-inner relative">
+              <div className="w-full bg-slate-200 border-4 border-[var(--color-foreground)] border-b-0 rounded-t-2xl h-24 flex flex-col items-center justify-center shadow-inner relative">
                 <Medal className="w-8 h-8 text-slate-400 fill-slate-200" />
                 <span className="text-xl md:text-2xl font-black text-slate-700 mt-1">2</span>
               </div>
@@ -278,7 +278,7 @@ export default function LeaderboardPage() {
                 {firstRank.xp} XP
               </div>
               {/* Cột bục hạng 1 */}
-              <div className="w-full bg-gradient-to-b from-yellow-300 to-amber-400 border-4 border-slate-850 border-b-0 rounded-t-2xl h-36 flex flex-col items-center justify-center shadow-[inset_0_4px_0_0_rgba(255,255,255,0.4)] relative">
+              <div className="w-full bg-gradient-to-b from-yellow-300 to-amber-400 border-4 border-[var(--color-foreground)] border-b-0 rounded-t-2xl h-36 flex flex-col items-center justify-center shadow-[inset_0_4px_0_0_rgba(255,255,255,0.4)] relative">
                 <div className="absolute top-2 w-4 h-4 bg-white/30 rounded-full blur-sm animate-ping"></div>
                 <span className="text-3xl md:text-4xl font-black text-slate-900">1</span>
               </div>
@@ -301,7 +301,7 @@ export default function LeaderboardPage() {
                 {thirdRank.xp} XP
               </div>
               {/* Cột bục hạng 3 */}
-              <div className="w-full bg-amber-75/30 border-4 border-slate-850 border-b-0 rounded-t-2xl h-16 flex flex-col items-center justify-center shadow-inner relative">
+              <div className="w-full bg-amber-75/30 border-4 border-[var(--color-foreground)] border-b-0 rounded-t-2xl h-16 flex flex-col items-center justify-center shadow-inner relative">
                 <Medal className="w-8 h-8 text-amber-700 fill-amber-55" />
                 <span className="text-lg md:text-xl font-black text-amber-800 mt-1">3</span>
               </div>
@@ -314,7 +314,7 @@ export default function LeaderboardPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="space-y-3 bg-white/70 backdrop-blur-md border-4 border-slate-800 rounded-[28px] p-4 md:p-6 shadow-[6px_6px_0px_0px_#1e293b]"
+          className="space-y-3 bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[28px] p-4 md:p-6 shadow-[6px_6px_0px_0px_var(--color-foreground)] transition-colors"
         >
           {restList.map((user) => {
             const isMe = user.id === 'current-user';
@@ -331,7 +331,7 @@ export default function LeaderboardPage() {
               >
                 <div className="flex items-center gap-3.5">
                   {/* Số thứ hạng */}
-                  <span className={`w-8 h-8 rounded-full border-2 border-slate-800 flex items-center justify-center font-black text-xs shadow-[1.5px_1.5px_0px_0px_#1e293b] ${
+                  <span className={`w-8 h-8 rounded-full border-2 border-[var(--color-foreground)] flex items-center justify-center font-black text-xs shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)] ${
                     isMe ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-surface-container)] text-[var(--color-foreground)]'
                   }`}>
                     {user.rank}
@@ -368,7 +368,7 @@ export default function LeaderboardPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-8 bg-white/70 backdrop-blur-md border-4 border-slate-800 rounded-[28px] p-5 md:p-6 shadow-[6px_6px_0px_0px_#1e293b]"
+          className="mt-8 bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[28px] p-5 md:p-6 shadow-[6px_6px_0px_0px_var(--color-foreground)] transition-colors"
         >
           <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
             <span>🏅 Huy Hiệu Học Tập Của Bé</span>
@@ -411,7 +411,7 @@ export default function LeaderboardPage() {
         </motion.div>
 
         {/* Sticky Bottom Card động viên bé */}
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t-4 border-slate-850 p-4 shadow-[0_-8px_20px_rgba(0,0,0,0.05)]">
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)] border-t-4 border-[var(--color-foreground)] p-4 shadow-[0_-8px_20px_rgba(0,0,0,0.05)] transition-colors">
           <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-yellow-300 border-2 border-slate-800 rounded-full flex items-center justify-center text-3xl shadow-sm animate-bounce">

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoChevronBack, IoChevronForward, IoPlay, IoRibbon, IoWalkOutline, IoMusicalNotesOutline, IoTimeOutline, IoStar } from "react-icons/io5";
 import { LessonConfig, LessonStep, ActivityResult, LessonSummary, TelemetryPayload, MiniGameConfig } from "@/types/lesson";
@@ -39,6 +40,7 @@ export default function LessonCoordinator({
 }: LessonCoordinatorProps) {
   const { studentInfo } = useStudent();
   const { currentXP } = useLesson();
+  const router = useRouter();
   
   // State nhận các thông số thời gian thực từ TypingPractice
   const [typingStats, setTypingStats] = useState<{
@@ -77,6 +79,21 @@ export default function LessonCoordinator({
     // Reset timer whenever step changes
     stepStartTimeRef.current = Date.now();
   }, [step, gameIndex, typingPracticeIndex]);
+
+  // Listen to Enter key when summary screen is shown to go back home
+  useEffect(() => {
+    if (step !== "summary") return;
+
+    const handleEnterPress = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        router.push("/");
+      }
+    };
+
+    window.addEventListener("keydown", handleEnterPress);
+    return () => window.removeEventListener("keydown", handleEnterPress);
+  }, [step, router]);
 
   useEffect(() => {
     const isDev = typeof window !== 'undefined' && window.location.search.includes('dev');
@@ -313,7 +330,7 @@ export default function LessonCoordinator({
             </div>
 
             {/* Flashcard Navigation */}
-            <div className="flex items-center gap-6 bg-white/80 backdrop-blur-md px-6 py-3 rounded-full shadow-lg border border-purple-100">
+            <div className="flex items-center gap-6 bg-[var(--color-surface)] px-6 py-3 rounded-full border-3 border-[var(--color-foreground)] shadow-[4px_4px_0px_0px_var(--color-foreground)]">
               <motion.button
                 data-testid="prev-fc-btn"
                 whileHover={{ scale: flashcardIndex > 0 ? 1.1 : 1 }}
@@ -374,7 +391,7 @@ export default function LessonCoordinator({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -30 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-7xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-3 md:p-4 flex flex-col items-center justify-center text-center border border-white/40"
+            className="w-full max-w-7xl keycap-card p-4 md:p-6 flex flex-col items-center justify-center text-center transition-colors"
           >
             <p className="text-lg text-purple-600 mb-3 font-medium bg-purple-100 px-4 py-1 rounded-full">
               {currentTask.description}
@@ -543,7 +560,7 @@ export default function LessonCoordinator({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -30 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-7xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-4 md:p-6 flex flex-col items-center justify-center text-center border border-white/40"
+            className="w-full max-w-7xl keycap-card p-6 md:p-8 flex flex-col items-center justify-center text-center transition-colors"
           >
             {renderGame()}
           </motion.div>
@@ -563,7 +580,7 @@ export default function LessonCoordinator({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -100, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 80, damping: 12 }}
-            className="bg-white/95 backdrop-blur-md rounded-3xl p-8 max-w-md w-full text-center shadow-2xl border-4 border-yellow-400 relative overflow-hidden"
+            className="keycap-card border-4 border-[var(--color-accent)] p-8 max-w-md w-full text-center relative overflow-hidden transition-colors"
           >
             {/* Background Sparkles / Decorative stars */}
             <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-yellow-200/40 to-transparent pointer-events-none" />
@@ -703,23 +720,23 @@ export default function LessonCoordinator({
     <div className="w-full flex flex-col items-center relative">
       {/* Header động */}
       {step !== "summary" && (
-        <header className="py-2 md:py-3 px-4 flex items-center justify-between relative z-20 w-full max-w-7xl mx-auto gap-2">
+        <header className="py-2 md:py-3 px-4 flex items-center justify-between relative z-20 w-full max-w-7xl mx-auto gap-3">
           <Link
             href="/"
-            className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl text-purple-700 font-bold hover:bg-white/90 transition-all shadow-sm border border-white/20 text-sm md:text-base cursor-pointer shrink-0"
+            className="flex items-center gap-2 bg-[var(--color-surface)] px-4 py-2.5 rounded-xl text-[var(--color-foreground)] font-black hover:translate-y-[-1px] active:translate-y-[1px] transition-all shadow-[2px_2px_0px_0px_var(--color-foreground)] border-2 border-[var(--color-foreground)] text-sm md:text-base cursor-pointer shrink-0"
           >
-            <IoChevronBack size={20} />
+            <IoChevronBack size={20} className="stroke-[2px]" />
             <span className="hidden sm:inline">Quay lại</span>
           </Link>
           
           {/* Tiêu đề trò chơi/bài học ở giữa */}
           <div className="flex-1 text-center px-1">
-            <span className="inline-block font-black text-indigo-950 text-sm sm:text-lg md:text-xl bg-white/60 backdrop-blur-sm px-3 py-1.5 sm:px-5 sm:py-2 rounded-2xl border border-indigo-100/40 shadow-sm capitalize truncate max-w-[140px] sm:max-w-[300px] md:max-w-none">
-              {headerTitle}
+            <span className="inline-block font-black text-[var(--color-foreground)] text-sm sm:text-lg bg-[var(--color-surface-container)] px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)] capitalize truncate max-w-[140px] sm:max-w-[300px] md:max-w-none">
+               {headerTitle}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-white/20 text-sm md:text-base shrink-0">
+          <div className="flex items-center gap-2 bg-[var(--color-surface)] px-4 py-2 rounded-xl shadow-[2px_2px_0px_0px_var(--color-foreground)] border-2 border-[var(--color-foreground)] text-sm md:text-base shrink-0">
             {/* Chỉ số Luyện gõ phím thời gian thực */}
             {step === "typing_practice" && typingStats && (
               <div className="flex items-center gap-2 md:gap-3 border-r border-slate-300/60 pr-2 md:pr-3 mr-1 text-xs sm:text-sm">

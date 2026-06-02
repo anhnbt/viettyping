@@ -8,6 +8,11 @@ import { GameAdapterProps, TelemetryPayload, Flashcard } from "@/types/lesson";
 import { useStudent } from "@/contexts/StudentContext";
 import { useSound } from "@/contexts/SoundContext";
 
+const isEmoji = (url: string) => {
+  if (!url) return false;
+  return !url.includes('/') && !url.includes('.') && url.length < 10;
+};
+
 export interface SpinWheelGameConfig {
   id: string;
   items: string[];
@@ -205,11 +210,15 @@ export default function SpinWheelGame({ gameConfig, onComplete, flashcards = [] 
                   transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
                   className="w-36 h-36 mx-auto mb-6 relative rounded-3xl overflow-hidden border-4 border-dashed border-purple-400 p-1 shadow-md bg-purple-50/50 flex items-center justify-center animate-bounce"
                 >
-                  <img
-                    src={matchedFlashcard.image_url}
-                    alt={selectedItem}
-                    className="w-full h-full object-cover rounded-2xl"
-                  />
+                  {isEmoji(matchedFlashcard.image_url) ? (
+                    <span className="text-6xl md:text-7xl select-none">{matchedFlashcard.image_url}</span>
+                  ) : (
+                    <img
+                      src={matchedFlashcard.image_url}
+                      alt={selectedItem}
+                      className="w-full h-full object-cover rounded-2xl"
+                    />
+                  )}
                 </motion.div>
               )}
 

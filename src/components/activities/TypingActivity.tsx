@@ -66,7 +66,7 @@ export const TypingActivity: React.FC<ActivityAdapterProps> = ({ activity, onCom
       </div>
       <button
         onClick={() => setShowTypingModal(true)}
-        className="inline-flex items-center gap-2 px-8 py-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors font-bold text-xl shadow-lg hover:shadow-blue-300"
+        className="tactile-btn tactile-btn-primary text-xl px-8 py-4"
       >
         <IoPlay className="text-2xl" />
         Bắt đầu gõ

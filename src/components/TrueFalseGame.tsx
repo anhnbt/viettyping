@@ -13,6 +13,11 @@ export interface MappedTrueFalseItem {
   image_url: string;
 }
 
+const isEmoji = (url: string) => {
+  if (!url) return false;
+  return !url.includes('/') && !url.includes('.') && url.length < 10;
+};
+
 export interface TrueFalseGameConfig {
   id: string;
   items: MappedTrueFalseItem[];
@@ -118,14 +123,25 @@ export default function TrueFalseGame({ gameConfig, onComplete }: GameAdapterPro
   return (
     <div className="w-full flex flex-col items-center">
       <div className="relative w-48 h-48 md:w-64 md:h-64 mb-8 bg-white/50 rounded-3xl p-4 shadow-inner border-2 border-dashed border-purple-200">
-        <motion.img
-          key={currentItem.image_url}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-full h-full object-contain drop-shadow-xl"
-          src={currentItem.image_url}
-          alt="Game image"
-        />
+        {isEmoji(currentItem.image_url) ? (
+          <motion.div
+            key={currentItem.image_url}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full h-full flex items-center justify-center text-7xl md:text-8xl select-none"
+          >
+            {currentItem.image_url}
+          </motion.div>
+        ) : (
+          <motion.img
+            key={currentItem.image_url}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full h-full object-contain drop-shadow-xl"
+            src={currentItem.image_url}
+            alt="Game image"
+          />
+        )}
         
         {/* Feedback Overlay */}
         <AnimatePresence>

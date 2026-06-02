@@ -4,27 +4,27 @@
   "flashcards": [
     {
       "word": "ba",
-      "word_uppercase": "BA",
+      "word_uppercase": "Ba",
       "spelling_guide": "bờ - a - ba",
       "example_sentence": "Ba đưa bé đi chơi bóng.",
       "image_prompt": "A cute cartoon superhero boy playing with his dad, vibrant colors, 2d vector art, for kids.",
-      "image_url": "/assets/ba.jpg"
+      "image_url": "👨"
     },
     {
       "word": "bóng",
-      "word_uppercase": "BÓNG",
+      "word_uppercase": "Bóng",
       "spelling_guide": "bờ - ong - bong - sắc - bóng",
       "example_sentence": "Bé đá bóng rất giỏi.",
       "image_prompt": "A cool soccer ball with superhero colors glowing, 2d vector art, for kids.",
-      "image_url": "/assets/bong.jpg"
+      "image_url": "⚽"
     },
     {
       "word": "bò",
-      "word_uppercase": "BÒ",
+      "word_uppercase": "Bò",
       "spelling_guide": "bờ - o - bo - huyền - bò",
       "example_sentence": "Bò sữa đang học bài.",
       "image_prompt": "A cute cartoon bull wearing a superhero cape, vibrant red and blue, 2d vector art, for kids.",
-      "image_url": "/assets/bo.jpg"
+      "image_url": "🐂"
     }
   ],
   "typing_practice": [

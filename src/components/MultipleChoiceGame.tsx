@@ -32,6 +32,12 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return newArray;
 };
 
+const isEmoji = (url: string) => {
+  if (!url) return false;
+  return !url.includes('/') && !url.includes('.') && url.length < 10;
+};
+
+
 export default function MultipleChoiceGame({ gameConfig, flashcards, onComplete }: MultipleChoiceGameProps) {
   const { id: gameId, items } = gameConfig;
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -207,11 +213,17 @@ export default function MultipleChoiceGame({ gameConfig, flashcards, onComplete 
                 {hasAnyImage && (
                   <div className="w-20 h-20 md:w-28 md:h-28 bg-white/95 rounded-2xl p-2 shadow-inner flex items-center justify-center mb-1.5 shrink-0">
                     {choiceImg ? (
-                      <img 
-                        src={choiceImg} 
-                        alt={choice} 
-                        className="w-full h-full object-contain drop-shadow-md"
-                      />
+                      isEmoji(choiceImg) ? (
+                        <span className="text-4xl md:text-5xl select-none animate-bounce" role="img" aria-label={choice}>
+                          {choiceImg}
+                        </span>
+                      ) : (
+                        <img 
+                          src={choiceImg} 
+                          alt={choice} 
+                          className="w-full h-full object-contain drop-shadow-md"
+                        />
+                      )
                     ) : (
                       <span className="text-3xl md:text-4xl select-none" role="img" aria-label="question-mark">❓</span>
                     )}

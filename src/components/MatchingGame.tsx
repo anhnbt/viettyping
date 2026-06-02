@@ -55,6 +55,11 @@ function DraggableWord({ id, word }: { id: string; word: string }) {
   );
 }
 
+const isEmoji = (url: string) => {
+  if (!url) return false;
+  return !url.includes('/') && !url.includes('.') && url.length < 10;
+};
+
 // Droppable Component
 function DroppableSlot({
   id,
@@ -85,14 +90,22 @@ function DroppableSlot({
       }`}
     >
       {imageUrl && (
-        <Image
-          src={imageUrl}
-          alt="Slot"
-          fill
-          className={`object-contain p-2 ${
-            isMatched ? "opacity-40" : "opacity-100"
-          }`}
-        />
+        isEmoji(imageUrl) ? (
+          <div className={`w-full h-full flex items-center justify-center text-6xl md:text-7xl select-none transition-opacity duration-300 ${
+            isMatched ? "opacity-35" : "opacity-100"
+          }`}>
+            {imageUrl}
+          </div>
+        ) : (
+          <Image
+            src={imageUrl}
+            alt="Slot"
+            fill
+            className={`object-contain p-2 ${
+              isMatched ? "opacity-40" : "opacity-100"
+            }`}
+          />
+        )
       )}
       
       {/* Hiển thị text đè lên ảnh khi đã match thành công */}

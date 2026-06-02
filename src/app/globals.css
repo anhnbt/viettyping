@@ -2,7 +2,7 @@
 
 :root, [data-theme="dino"] {
   --color-background: #fdfbf7; /* Soft Cream */
-  --color-foreground: #1e293b; /* Slate-800 */
+  --color-foreground: #231a11; /* Deep Charcoal-Brown */
   --color-primary: #22c55e; /* dino green */
   --color-primary-depth: #15803d;
   --color-primary-container: #86efac;
@@ -14,30 +14,30 @@
   --color-accent: #fbbf24; /* sunshine yellow */
   --color-accent-depth: #d97706;
   --color-surface: #ffffff;
-  --color-on-surface: #1e293b;
+  --color-on-surface: #231a11;
   --color-surface-container: #f1eee2;
   --color-outline-variant: #e2e8f0;
 }
 
 [data-theme="turtle"] {
   --color-background: #FCF9ED;
-  --color-foreground: #3C3C3B;
-  --color-primary: #50D17B;
-  --color-primary-depth: #3C3C3B;
+  --color-foreground: #231a11;
+  --color-primary: #006d30;
+  --color-primary-depth: #004720;
   --color-primary-container: #50D17B;
-  --color-on-primary-container: #3C3C3B;
+  --color-on-primary-container: #ffffff;
   --color-secondary: #4DABF7;
-  --color-secondary-depth: #3C3C3B;
+  --color-secondary-depth: #2563eb;
   --color-secondary-container: #4DABF7;
-  --color-on-secondary-container: #3C3C3B;
+  --color-on-secondary-container: #ffffff;
   --color-tertiary: #FF6B6B;
-  --color-tertiary-depth: #3C3C3B;
+  --color-tertiary-depth: #dc2626;
   --color-tertiary-container: #FF6B6B;
   --color-on-tertiary-container: #ffffff;
   --color-accent: #FFCA3A;
-  --color-accent-depth: #3C3C3B;
+  --color-accent-depth: #d97706;
   --color-surface: #ffffff;
-  --color-on-surface: #3C3C3B;
+  --color-on-surface: #231a11;
   --color-surface-container: #FCF9ED;
   --color-outline-variant: #CBC4D2;
 }
@@ -66,7 +66,7 @@
 
 [data-theme="pig"] {
   --color-background: #fcf9ed;
-  --color-foreground: #1d1b20;
+  --color-foreground: #231a11;
   --color-primary: #ffb6c1;
   --color-primary-depth: #d496a0;
   --color-primary-container: #ffb6c1;
@@ -81,7 +81,7 @@
   --color-accent: #ffdf93;
   --color-accent-depth: #765b00;
   --color-surface: #fdf7ff;
-  --color-on-surface: #1d1b20;
+  --color-on-surface: #231a11;
   --color-surface-container: #f2ecf4;
   --color-outline-variant: #cbc4d2;
 }
