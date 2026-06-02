@@ -41,13 +41,13 @@ export default function AsmrVisualizer({ triggerSignal, ledMode }: Props) {
     // Xác định màu sắc sóng dựa trên chế độ LED
     const getWaveColor = (alpha: number) => {
       if (ledMode === 'rgb') {
-        return `rgba(139, 92, 246, ${alpha})`; // Tím huyền ảo
+        return `rgba(79, 70, 229, ${alpha})`; // Indigo đậm đà tươi sáng
       } else if (ledMode === 'warm') {
-        return `rgba(245, 158, 11, ${alpha})`; // Cam ấm
+        return `rgba(217, 119, 6, ${alpha})`; // Hổ phách sáng
       } else if (ledMode === 'cool') {
-        return `rgba(6, 182, 212, ${alpha})`; // Xanh mát
+        return `rgba(8, 145, 178, ${alpha})`; // Cyan sáng
       }
-      return `rgba(148, 163, 184, ${alpha})`; // Xám dịu
+      return `rgba(100, 116, 139, ${alpha})`; // Slate
     };
 
     const draw = () => {
@@ -122,9 +122,9 @@ export default function AsmrVisualizer({ triggerSignal, ledMode }: Props) {
   }, [ledMode]);
 
   return (
-    <div className="w-full h-16 relative flex items-center justify-center overflow-hidden rounded-2xl bg-slate-950/40 border border-slate-900/60 p-1">
+    <div className="w-full h-16 relative flex items-center justify-center overflow-hidden rounded-2xl bg-[var(--color-surface-container)] border-2 border-[var(--color-foreground)] p-1 shadow-inner">
       <canvas ref={canvasRef} className="w-full h-full block" />
-      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-slate-950/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-surface-container)]/80 via-transparent to-[var(--color-surface-container)]/80 pointer-events-none" />
     </div>
   );
 }

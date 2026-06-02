@@ -182,8 +182,8 @@ export default function FingersVisualizer({ highlightKey, pressedKey }: Props) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 bg-gradient-to-b from-slate-50 to-white rounded-3xl border border-slate-100 shadow-inner mt-4">
-      <div className="text-xs font-black text-slate-500 mb-2 tracking-wide uppercase flex items-center gap-1.5">
+    <div className="flex flex-col items-center justify-center p-0 bg-transparent mt-2">
+      <div className="text-xs font-black text-current mb-2 tracking-wide uppercase flex items-center gap-1.5 opacity-60">
         👋 Hướng dẫn đặt ngón tay
       </div>
       
@@ -241,7 +241,7 @@ export default function FingersVisualizer({ highlightKey, pressedKey }: Props) {
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="mt-2 text-xs font-bold text-slate-700 bg-slate-100/80 px-3 py-1.5 rounded-full border border-slate-200/50 flex items-center gap-1.5"
+            className="mt-2 text-xs font-bold text-slate-300 bg-slate-900/40 px-3 py-1.5 rounded-full border border-slate-800/80 flex items-center gap-1.5"
           >
             <span
               className="w-2.5 h-2.5 rounded-full inline-block shadow-sm animate-pulse"
@@ -291,7 +291,7 @@ export default function FingersVisualizer({ highlightKey, pressedKey }: Props) {
             )}
           </motion.div>
         ) : (
-          <div className="mt-2 text-xs font-medium text-slate-400">
+          <div className="mt-2 text-xs font-medium text-slate-500">
             Đặt các ngón tay lên hàng phím cơ sở (A S D F - J K L ;)
           </div>
         )}

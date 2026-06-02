@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Sparkles, Flame, Check, Lock } from 'lucide-react';
+import { ArrowLeft, Sparkles, Flame, Check, Lock, ShoppingBag, Star, Lightbulb } from 'lucide-react';
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
 import { Plus_Jakarta_Sans } from 'next/font/google';
@@ -219,7 +219,7 @@ export default function ShopPage() {
               </div>
             )}
             <div className="flex items-center gap-2 bg-amber-50 border-2 border-slate-800 px-4 py-2 rounded-2xl shadow-[3px_3px_0px_0px_#1e293b]">
-              <span className="text-amber-500 text-lg">⭐</span>
+              <Star className="w-5 h-5 text-amber-500 fill-amber-300" />
               <span className="text-sm font-black text-slate-800">
                 Kho điểm của bé: <span className="text-indigo-600 text-base">{xp} XP</span>
               </span>
@@ -234,10 +234,10 @@ export default function ShopPage() {
             animate={{ scale: 1, opacity: 1 }}
             className="text-4xl md:text-5xl font-black text-slate-900 drop-shadow-sm tracking-wide flex items-center justify-center gap-3"
           >
-            🛍️ Cửa Hàng Linh Vật
+            <ShoppingBag className="w-10 h-10 text-indigo-600 animate-pulse" /> Cửa Hàng Linh Vật
           </motion.h1>
           <p className="text-sm md:text-base text-slate-600 font-bold mt-2.5 max-w-xl mx-auto leading-relaxed">
-            Dùng điểm kinh nghiệm (XP) con gõ phím được để mời thêm các bạn linh vật siêu dễ thương về đồng hành và thay đổi màu áo mới cho lớp học nhé! 💖
+            Dùng điểm kinh nghiệm (XP) con gõ phím được để mời thêm các bạn linh vật siêu dễ thương về đồng hành và thay đổi màu áo mới cho lớp học nhé!
           </p>
         </div>
 
@@ -295,8 +295,8 @@ export default function ShopPage() {
                       {mascot.price === 0 ? (
                         <span className="text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-lg border border-emerald-300">MIỄN PHÍ</span>
                       ) : (
-                        <span className={`flex items-center gap-0.5 ${isUnlocked ? 'text-slate-400 font-bold line-through' : 'text-amber-600'}`}>
-                          ⭐ {mascot.price} XP
+                        <span className={`flex items-center gap-1 ${isUnlocked ? 'text-slate-400 font-bold line-through' : 'text-amber-600'}`}>
+                          <Sparkles className="w-3.5 h-3.5 inline text-amber-500 fill-amber-300" /> {mascot.price} XP
                         </span>
                       )}
                     </span>
@@ -317,7 +317,7 @@ export default function ShopPage() {
                         onClick={() => handleSelectMascot(mascot)}
                         className="keycap-btn-primary w-full py-3 text-xs flex items-center justify-center gap-1"
                       >
-                        🚀 Chọn Bạn Đồng Hành
+                        <Check className="w-4 h-4 mr-1 stroke-[3px]" /> Chọn Bạn Đồng Hành
                       </button>
                     )
                   ) : (
@@ -341,8 +341,8 @@ export default function ShopPage() {
 
         {/* Thẻ gợi ý luyện tập để tích điểm */}
         <div className="bg-white/90 rounded-[28px] p-6 mt-10 border-2 border-indigo-100 shadow-[6px_6px_0px_0px_#e2e8f0] flex flex-col sm:flex-row items-center gap-5">
-          <div className="p-4 bg-indigo-50 border-2 border-indigo-200 rounded-2xl text-4xl shrink-0">
-            💡
+          <div className="p-4 bg-indigo-50 border-2 border-indigo-200 rounded-2xl text-4xl shrink-0 text-indigo-500">
+            <Lightbulb className="w-8 h-8" />
           </div>
           <div>
             <h3 className="text-lg font-black text-indigo-950">

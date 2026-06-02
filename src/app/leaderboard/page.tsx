@@ -111,7 +111,7 @@ export default function LeaderboardPage() {
   const achievementBadges = [
     {
       id: 'explore',
-      name: '🦖 Khám Phá',
+      name: 'Khám Phá',
       emoji: '🦖',
       desc: 'Hoàn thành bài luyện gõ đầu tiên',
       unlocked: completedCount >= 1,
@@ -119,7 +119,7 @@ export default function LeaderboardPage() {
     },
     {
       id: 'accuracy',
-      name: '🎯 Chính Xác',
+      name: 'Chính Xác',
       emoji: '🎯',
       desc: 'Gõ chuẩn xác 100% trong bài tập',
       unlocked: hasAccuracyBadge,
@@ -127,7 +127,7 @@ export default function LeaderboardPage() {
     },
     {
       id: 'streak',
-      name: '🔥 Chăm Chỉ',
+      name: 'Chăm Chỉ',
       emoji: '🔥',
       desc: 'Chuỗi học tập đạt từ 3 ngày',
       unlocked: userStreak >= 3,
@@ -135,7 +135,7 @@ export default function LeaderboardPage() {
     },
     {
       id: 'rescue',
-      name: '🐢 Hiệp Sĩ Rùa',
+      name: 'Hiệp Sĩ Rùa',
       emoji: '🐢',
       desc: 'Giải cứu thành công Rùa con',
       unlocked: hasTurtleBadge,

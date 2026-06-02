@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Play, Sparkles, Volume2, VolumeX, Shield, Heart } from 'lucide-react';
+import { ArrowLeft, Play, Sparkles, Volume2, VolumeX, Shield, Heart, Keyboard, Flag, Star } from 'lucide-react';
 import { useSound } from '@/contexts/SoundContext';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import confetti from 'canvas-confetti';
@@ -21,7 +21,7 @@ interface WordItem {
 
 const TOPICS = {
   animals: {
-    name: 'Động Vật 🐯',
+    name: 'Động Vật',
     desc: 'Bé giúp Rùa con tránh các loài sứa độc và tìm bạn động vật nhé!',
     color: 'from-amber-400 to-orange-500 border-amber-300 shadow-amber-200',
     words: [
@@ -39,7 +39,7 @@ const TOPICS = {
     ]
   },
   fruits: {
-    name: 'Trái Cây 🍎',
+    name: 'Trái Cây',
     desc: 'Hái những quả chín mọng và phá hủy các chai nhựa ô nhiễm biển nào!',
     color: 'from-emerald-400 to-teal-500 border-emerald-300 shadow-emerald-200',
     words: [
@@ -56,7 +56,7 @@ const TOPICS = {
     ]
   },
   objects: {
-    name: 'Đồ Vật 🎒',
+    name: 'Đồ Vật',
     desc: 'Gõ phím để dọn dẹp các mảnh lưới rác ngầm cứu Rùa nhé bé!',
     color: 'from-pink-400 to-rose-500 border-pink-300 shadow-pink-200',
     words: [
@@ -73,7 +73,7 @@ const TOPICS = {
     ]
   },
   letters: {
-    name: 'Chữ Cái 🅰️',
+    name: 'Chữ Cái',
     desc: 'Luyện tập các phím đơn giản nhất để Rùa tăng tốc về đích!',
     color: 'from-purple-400 to-indigo-500 border-purple-300 shadow-purple-200',
     words: [
@@ -280,11 +280,11 @@ export default function TurtleRescuePage() {
         </button>
 
         <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2 tracking-wide">
-          🐢 Giải cứu Rùa con
+          Giải cứu Rùa con
         </h1>
 
         <div className="flex items-center gap-2 bg-amber-50 border-2 border-slate-850 px-3.5 py-1.5 rounded-xl shadow-[2.5px_2.5px_0px_0px_#1e293b]">
-          <span className="text-amber-500">⭐</span>
+          <Star className="w-4 h-4 text-amber-500 fill-amber-300" />
           <span className="text-xs font-black text-slate-800">{xp} XP</span>
         </div>
       </header>
@@ -371,7 +371,7 @@ export default function TurtleRescuePage() {
                   </div>
                 </div>
                 
-                <span className="text-xl">🏁</span>
+                <Flag className="w-5 h-5 text-indigo-500" />
               </div>
 
               {/* Sân khấu Đại dương Game Canvas */}
@@ -494,7 +494,8 @@ export default function TurtleRescuePage() {
               {/* Ô gõ phím & Bàn phím gõ */}
               <div className="flex flex-col items-center justify-center space-y-4 pt-2">
                 <label className="text-slate-800 font-extrabold text-base flex items-center gap-2">
-                  <span>⌨️ Bé gõ đúng chữ ở trên nhé:</span>
+                  <Keyboard className="w-5 h-5 text-slate-700" />
+                  <span>Bé gõ đúng chữ ở trên nhé:</span>
                 </label>
                 
                 <motion.div
@@ -514,7 +515,7 @@ export default function TurtleRescuePage() {
                     className="w-full text-2xl font-black text-slate-800 placeholder-slate-350 focus:outline-none bg-transparent"
                     autoFocus
                   />
-                  <span className="text-3xl select-none">⌨️</span>
+                  <Keyboard className="w-8 h-8 text-slate-400" />
                 </motion.div>
 
                 <p className="text-slate-500 text-xs font-bold italic">
@@ -548,7 +549,8 @@ export default function TurtleRescuePage() {
                 <div className="text-left">
                   <div className="text-[10px] text-amber-700 font-black uppercase tracking-wider">Phần Thưởng Đạt Được</div>
                   <div className="text-2xl font-black text-amber-600 flex items-center gap-1">
-                    <span>⭐ +300 XP</span>
+                    <Sparkles className="w-5 h-5 text-amber-500 fill-amber-300 inline mr-1" />
+                    <span>+300 XP</span>
                   </div>
                 </div>
                 <div className="text-4xl animate-pulse">🎁</div>
@@ -581,7 +583,7 @@ export default function TurtleRescuePage() {
 
       {/* Footer */}
       <footer className="py-6 shrink-0 border-t-4 border-slate-850 bg-white text-center text-xs font-black text-slate-500">
-        <span>Bé yêu gõ phím chính xác để đập tan chướng ngại vật bảo vệ biển cả nhé! 🌊🐢</span>
+        <span>Bé yêu gõ phím chính xác để đập tan chướng ngại vật bảo vệ biển cả nhé!</span>
       </footer>
 
     </div>
