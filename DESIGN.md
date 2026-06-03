@@ -55,5 +55,18 @@ Sử dụng màu nền giấy ngà ấm áp với viền mỏng và bóng đổ 
 *   Bàn phím ảo phải mô phỏng trực quan các phím vật lý đang gõ.
 *   Khi trẻ gõ đúng ký tự, phím ảo tương ứng sẽ chuyển màu `primary` của chủ đề hiện tại và nhún xuống.
 
-### 4. Khung chứa Linh Vật (Animal Mascots)
-Linh vật luôn được đặt trong các khung hình tròn, có hiệu ứng "pop-out" (phần đầu hoặc tai của linh vật hơi nhô ra ngoài viền khung) để tạo chiều sâu trực quan sinh động.
+### 4. Khung chứa Linh Vật & Kỹ thuật Hiệu ứng Pop-out (Out of Bounds)
+Để tạo ấn tượng thị giác mạnh mẽ (tương tự như hiệu ứng quảng cáo xe máy 3D), linh vật không bị nhốt trong hộp vuông hay hình tròn kín, mà được thiết kế **nổi hẳn ra ngoài biên của khung nền** theo các nguyên tắc sau:
+*   **Cấu trúc phân lớp (Layering Structure):**
+    *   **Container ngoài cùng:** Phải được thiết kế có `position: relative`, và tuyệt đối **không sử dụng `overflow-hidden`** để phần nhô ra ngoài của linh vật không bị cắt cụt.
+    *   **Khung nền phía sau (Background Card):** Có chiều cao nhỏ hơn container ngoài (thường chiếm từ 75% - 80% chiều cao), nằm sát đáy (`absolute bottom-0 w-full z-0`). Khung nền này sử dụng màu sắc chủ đề rực rỡ hoặc màu nhạt đồng bộ môn học (`bgLight50`).
+    *   **Linh vật (DinoMascot/PNG Image):** Đặt ở lớp trên cùng (`z-10` hoặc `z-20`), có kích thước lớn hơn khung nền, nhô hẳn phần đầu và nửa thân trên lên trên viền của khung nền (sử dụng định vị tuyệt đối hoặc biên dịch âm như `absolute -top-12` hoặc `bottom-10`).
+*   **Hiệu ứng đổ bóng 3D (3D Depth Shadow):**
+    *   Sử dụng bộ lọc CSS `filter: drop-shadow(...)` trực tiếp lên hình ảnh PNG trong suốt của linh vật (thay vì `box-shadow` thông thường trên thẻ div bọc ngoài). Bộ lọc này đổ bóng theo đúng đường viền của cơ thể linh vật lên khung nền phía sau và mặt đất, tạo chiều sâu 3D chân thực.
+    *   Mức đổ bóng chuẩn: `drop-shadow-[0_10px_15px_rgba(0,0,0,0.3)]`.
+*   **Tương tác xúc giác & Chuyển động (Tactile & Micro-animations):**
+    *   **Mặc định:** Linh vật đung đưa hoặc nhấp nhô nhẹ nhàng bằng CSS keyframe animation (`animate-dino-body` hoặc `animate-dino-victory`).
+    *   **Khi rê chuột (Hover):** Linh vật tự động phóng to nhẹ và nhô lên cao hơn nữa để phản hồi tương tác (`transform hover:scale-110 hover:-translate-y-1 transition-all duration-300`).
+*   **Tính Đồng Bộ Thiết Kế:**
+    *   Các nhãn chữ (như tên Cấp độ hoặc tên Linh vật) luôn được bo góc tròn kiểu sticker dính (`rounded-full`), có viền dày và đổ bóng phẳng, nằm đè ở chân linh vật hoặc đè lên viền của khung nền để tăng tính liên kết vật lý.
+

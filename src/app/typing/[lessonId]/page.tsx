@@ -86,6 +86,19 @@ export default function LessonPage({ params }: Props) {
       if (wpmValue >= 50) {
         localStorage.setItem('viettyping_badge_speed_50', 'true');
       }
+
+      // 5. Cập nhật WPM và Accuracy trung bình lũy tiến
+      const totalLessons = parseInt(localStorage.getItem('typing_total_lessons') || '0', 10);
+      const avgWpm = parseFloat(localStorage.getItem('typing_avg_wpm') || '0');
+      const avgAcc = parseFloat(localStorage.getItem('typing_avg_accuracy') || '0');
+      
+      const newTotal = totalLessons + 1;
+      const newAvgWpm = Math.round((avgWpm * totalLessons + wpmValue) / newTotal);
+      const newAvgAcc = Math.round((avgAcc * totalLessons + telemetry.score) / newTotal);
+      
+      localStorage.setItem('typing_total_lessons', String(newTotal));
+      localStorage.setItem('typing_avg_wpm', String(newAvgWpm));
+      localStorage.setItem('typing_avg_accuracy', String(newAvgAcc));
     } catch (err) {
       console.error('Failed to save typing progress to localStorage:', err);
     }

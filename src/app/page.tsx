@@ -48,6 +48,8 @@ export default function Home() {
   
   const [xp, setXp] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
+  const [avgWpm, setAvgWpm] = useState<number>(0);
+  const [avgAccuracy, setAvgAccuracy] = useState<number>(0);
   const [typedText, setTypedText] = useState('');
   const [titleIndex, setTitleIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -62,8 +64,12 @@ export default function Home() {
     try {
       const savedXp = parseInt(localStorage.getItem('typing_xp') || '0', 10);
       const savedStreak = parseInt(localStorage.getItem('typing_streak') || '0', 10);
+      const savedWpm = parseInt(localStorage.getItem('typing_avg_wpm') || '0', 10);
+      const savedAcc = parseInt(localStorage.getItem('typing_avg_accuracy') || '0', 10);
       setXp(savedXp);
       setStreak(savedStreak);
+      setAvgWpm(savedWpm);
+      setAvgAccuracy(savedAcc);
     } catch (e) {
       console.error('Failed to load learning progress:', e);
     }
@@ -334,12 +340,22 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Mascot Container */}
-            <div className="w-48 h-48 shrink-0 flex flex-col items-center justify-center relative bg-[var(--color-surface-container)] border-2 border-[var(--color-foreground)] rounded-3xl p-4 shadow-[3px_3px_0px_0px_var(--color-foreground)]">
-              <DinoMascot theme={currentTheme} className="w-36 h-36" />
-              <span className="text-[10px] font-black text-[var(--color-foreground)] mt-2 uppercase tracking-wide opacity-80">
-                {levelConfig.name}
-              </span>
+            {/* Mascot Container với hiệu ứng 3D Pop-out */}
+            <div className="relative w-48 h-56 flex flex-col justify-end items-center select-none shrink-0">
+              {/* Khung nền màu rực rỡ, bo góc, viền dày kiểu Neo-brutalism lùi xuống dưới */}
+              <div className="absolute bottom-0 w-full h-[78%] bg-[var(--color-surface-container)] border-3 border-[var(--color-foreground)] rounded-3xl shadow-[4px_4px_0px_0px_var(--color-foreground)] z-0" />
+              
+              {/* Linh vật phóng to, nhô lên trên ngoài viền của khung nền */}
+              <div className="relative z-10 mb-2 filter drop-shadow-[0_10px_12px_rgba(0,0,0,0.3)] hover:scale-110 hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+                <DinoMascot className="w-36 h-36" />
+              </div>
+
+              {/* Nhãn tên cấp độ nằm đè ở chân linh vật, ngay phía trên khung nền */}
+              <div className="relative z-20 mb-3">
+                <span className="bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] text-[9px] font-black text-[var(--color-foreground)] px-2.5 py-1 rounded-full uppercase tracking-wider shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+                  {levelConfig.name}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -369,11 +385,11 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="border-2 border-[var(--color-foreground)] rounded-xl p-3 bg-[var(--color-background)] text-center shadow-[2px_2px_0px_0px_var(--color-foreground)]">
                   <div className="text-[10px] font-black opacity-60 uppercase">Tốc độ</div>
-                  <div className="text-lg font-black text-[var(--color-foreground)]">15 WPM</div>
+                  <div className="text-lg font-black text-[var(--color-foreground)]">{avgWpm || 0} WPM</div>
                 </div>
                 <div className="border-2 border-[var(--color-foreground)] rounded-xl p-3 bg-[var(--color-background)] text-center shadow-[2px_2px_0px_0px_var(--color-foreground)]">
                   <div className="text-[10px] font-black opacity-60 uppercase">Chính xác</div>
-                  <div className="text-lg font-black text-[var(--color-foreground)]">98%</div>
+                  <div className="text-lg font-black text-[var(--color-foreground)]">{avgAccuracy || 0}%</div>
                 </div>
               </div>
             </div>

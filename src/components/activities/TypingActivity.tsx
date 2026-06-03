@@ -26,6 +26,23 @@ export const TypingActivity: React.FC<ActivityAdapterProps> = ({ activity, onCom
     setTypingStats(stats);
     setShowCompletionModal(true);
     if (onProgressUpdate) onProgressUpdate(100);
+
+    // Cập nhật WPM và Accuracy trung bình lũy tiến
+    try {
+      const totalLessons = parseInt(localStorage.getItem('typing_total_lessons') || '0', 10);
+      const avgWpm = parseFloat(localStorage.getItem('typing_avg_wpm') || '0');
+      const avgAcc = parseFloat(localStorage.getItem('typing_avg_accuracy') || '0');
+      
+      const newTotal = totalLessons + 1;
+      const newAvgWpm = Math.round((avgWpm * totalLessons + stats.wpm) / newTotal);
+      const newAvgAcc = Math.round((avgAcc * totalLessons + stats.accuracy) / newTotal);
+      
+      localStorage.setItem('typing_total_lessons', String(newTotal));
+      localStorage.setItem('typing_avg_wpm', String(newAvgWpm));
+      localStorage.setItem('typing_avg_accuracy', String(newAvgAcc));
+    } catch (e) {
+      console.error('Failed to update typing stats in activity:', e);
+    }
   }, [onProgressUpdate]);
 
   const handleTypingRestart = useCallback(() => {

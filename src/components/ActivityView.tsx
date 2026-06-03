@@ -334,12 +334,22 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
               <TelexGuide />
             )}
 
-            {/* Context/Mascot - Makes it friendly for kids */}
-            <div className="mt-auto pt-8 flex flex-col items-center gap-2.5 text-center select-none">
-              <DinoMascot className="w-32 h-32" />
-              <span className="text-xs font-black text-slate-700 bg-dino-green/10 px-3 py-1.5 rounded-full border-2 border-slate-800 shadow-[2px_2px_0px_0px_#1e293b]">
-                Bạn {currentMascotName} đang cổ vũ bé!
-              </span>
+            {/* Context/Mascot với hiệu ứng 3D Pop-out cổ vũ bé */}
+            <div className="relative w-full flex flex-col items-center justify-end select-none pt-14 mt-auto">
+              {/* Linh vật nổi ở trên, nhô ra ngoài hộp */}
+              <div className="absolute top-0 z-10 filter drop-shadow-[0_8px_10px_rgba(0,0,0,0.25)] hover:scale-115 hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+                <DinoMascot className="w-28 h-28" />
+              </div>
+              
+              {/* Khung thoại làm nền nâng linh vật sử dụng màu sắc chủ đề môn học */}
+              <div className={`w-full ${theme.bgLight50} border-2 border-slate-800 rounded-2xl pt-11 pb-3 px-4 shadow-[3px_3px_0px_0px_#1e293b] text-center z-0`}>
+                <p className={`text-[11px] font-black ${theme.text} uppercase tracking-wider mb-0.5`}>
+                  Bạn {currentMascotName}
+                </p>
+                <p className="text-[10px] font-bold text-slate-600">
+                  đang cổ vũ bé cố lên!
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -365,11 +375,17 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
           </div>
         </div>
 
-        {/* Completion Overlay */}
+        {/* Completion Overlay với hiệu ứng 3D Pop-out linh vật chiến thắng */}
         {isTopicComplete && (
           <div className="absolute inset-0 bg-white/90 z-50 flex items-center justify-center backdrop-blur-sm animate-fade-in">
-            <div className="text-center p-8 bg-white rounded-3xl shadow-[8px_8px_0px_0px_#1e293b] border-4 border-slate-800 max-w-lg mx-4 flex flex-col items-center">
-              <DinoMascot variant="victory" className="w-44 h-44 mb-4" />
+            {/* Hộp thoại có position relative và padding-top lớn hơn để nhường chỗ cho linh vật */}
+            <div className="relative text-center pt-24 pb-8 px-8 bg-white rounded-3xl shadow-[8px_8px_0px_0px_#1e293b] border-4 border-slate-800 max-w-lg mx-4 flex flex-col items-center z-10">
+              
+              {/* Linh vật nhảy vọt lên trên ngoài viền của hộp thoại và đổ bóng sâu */}
+              <div className="absolute -top-24 left-1/2 -translate-x-1/2 z-20 w-48 h-48 filter drop-shadow-[0_12px_20px_rgba(0,0,0,0.35)]">
+                <DinoMascot variant="victory" className="w-full h-full" />
+              </div>
+
               <h3 className="text-3xl font-black text-slate-800 mb-2">
                 Hoàn thành xuất sắc!
               </h3>

@@ -22,6 +22,8 @@ export default function LeaderboardPage() {
   const [activeTab, setActiveTab] = useState<'weekly' | 'alltime'>('weekly');
   const [userXp, setUserXp] = useState<number>(0);
   const [userStreak, setUserStreak] = useState<number>(0);
+  const [userWpm, setUserWpm] = useState<number>(0);
+  const [userAccuracy, setUserAccuracy] = useState<number>(0);
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   // States tính toán Huy hiệu
@@ -41,8 +43,12 @@ export default function LeaderboardPage() {
     try {
       const savedXp = parseInt(localStorage.getItem('typing_xp') || '0', 10);
       const savedStreak = parseInt(localStorage.getItem('typing_streak') || '0', 10);
+      const savedWpm = parseInt(localStorage.getItem('typing_avg_wpm') || '0', 10);
+      const savedAcc = parseInt(localStorage.getItem('typing_avg_accuracy') || '0', 10);
       setUserXp(savedXp);
       setUserStreak(savedStreak);
+      setUserWpm(savedWpm);
+      setUserAccuracy(savedAcc);
 
       const completed = JSON.parse(localStorage.getItem('typing_completed_lessons') || '[]');
       setCompletedCount(completed.length);
@@ -223,21 +229,41 @@ export default function LeaderboardPage() {
 
       <div className="max-w-4xl mx-auto px-4 py-8 relative z-10">
         
-        {/* Header với nút quay lại */}
-        <div className="flex items-center justify-between mb-8">
+        {/* Header với nút quay lại và thông số của bé */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer text-[var(--color-foreground)] font-black text-sm"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer text-[var(--color-foreground)] font-black text-sm"
           >
             <ArrowLeft className="w-4 h-4 stroke-[3px]" />
-            <span>Quay lại</span>
+            <span>Quay lại trang chủ</span>
           </button>
           
-          <div className="flex items-center gap-2 bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] px-4 py-2 rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] text-[var(--color-foreground)]">
-            <Trophy className="w-5 h-5 text-yellow-500 fill-yellow-300 animate-bounce" />
-            <span className="text-sm font-black">
-              Điểm của bé: <span className="text-[var(--color-primary-depth)]">{userXp} XP</span>
-            </span>
+          {/* Cụm thông số gõ phím của bé */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {/* Tốc độ */}
+            <div className="flex items-center gap-1.5 bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] px-3.5 py-2 rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] text-[var(--color-foreground)]">
+              <span className="text-base select-none">⚡</span>
+              <span className="text-xs font-black">
+                Tốc độ: <span className="text-amber-600 font-extrabold">{userWpm || 0} WPM</span>
+              </span>
+            </div>
+            
+            {/* Độ chính xác */}
+            <div className="flex items-center gap-1.5 bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] px-3.5 py-2 rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] text-[var(--color-foreground)]">
+              <span className="text-base select-none">🎯</span>
+              <span className="text-xs font-black">
+                Chính xác: <span className="text-emerald-600 font-extrabold">{userAccuracy || 0}%</span>
+              </span>
+            </div>
+
+            {/* Điểm số */}
+            <div className="flex items-center gap-1.5 bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] px-3.5 py-2 rounded-2xl shadow-[3px_3px_0px_0px_var(--color-foreground)] text-[var(--color-foreground)]">
+              <Trophy className="w-4 h-4 text-yellow-500 fill-yellow-300 animate-bounce" />
+              <span className="text-xs font-black">
+                Điểm số: <span className="text-[var(--color-primary-depth)]">{userXp} XP</span>
+              </span>
+            </div>
           </div>
         </div>
 
