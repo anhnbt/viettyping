@@ -5,7 +5,7 @@
 export interface MatchingGameItem {
   id: string;
   type: 'matching_game';
-  items: { word: string; image_prompt: string }[];
+  items: { word: string; image_prompt: string; image_url?: string }[];
 }
 
 export interface TrueFalseItem {

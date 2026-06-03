@@ -136,23 +136,14 @@ export default function Home() {
 
   const sidebarContent = (
     <div className="flex flex-col h-full items-center justify-between py-6">
-      {/* Student Profile Info */}
-      <div className="w-full flex flex-col items-center px-4">
-        <div 
-          onClick={() => {
-            playSound('click');
-            setIsOpenConfig(true);
-          }}
-          className="w-24 h-24 rounded-full border-4 border-[var(--color-foreground)] bg-[var(--color-surface-container)] flex items-center justify-center shadow-[4px_4px_0px_0px_var(--color-foreground)] overflow-hidden relative cursor-pointer hover:scale-105 transition-transform"
-        >
-          <DinoMascot theme={currentTheme} className="w-20 h-20" />
+      {/* Logo Thương Hiệu */}
+      <div className="w-full px-6 py-2 flex justify-center border-b-2 border-dashed border-[var(--color-foreground)]/10 pb-4">
+        <div className="flex items-center gap-2.5">
+          <Logo className="w-10 h-10" />
+          <span className="text-xl font-black bg-gradient-to-r from-[#2ecc71] via-[#3498db] to-[#e74c3c] bg-clip-text text-transparent filter drop-shadow-[0.5px_0.5px_0px_rgba(0,0,0,0.15)] select-none">
+            Việt Typing
+          </span>
         </div>
-        <h4 className="font-black text-[var(--color-foreground)] text-lg mt-3 text-center">
-          Chào {studentInfo ? studentInfo.nickname : 'bạn nhỏ'}!
-        </h4>
-        <span className="text-xs font-black px-2.5 py-0.5 mt-1 rounded-full bg-[var(--color-accent)] border border-[var(--color-foreground)] text-[var(--color-foreground)] shadow-[1px_1px_0px_0px_var(--color-foreground)]">
-          Cấp độ {Math.floor(xp / 1000) + 1}
-        </span>
       </div>
 
       {/* Navigation Menu Vertical */}
@@ -249,18 +240,6 @@ export default function Home() {
             >
               <Menu className="w-5 h-5" />
             </button>
-
-            {/* Logo */}
-            <Link
-              href="/"
-              onClick={() => playSound('click')}
-              className="flex items-center gap-2.5 group font-black tracking-wide cursor-pointer"
-            >
-              <Logo className="w-10 h-10" />
-              <span className="text-xl md:text-2xl font-black bg-gradient-to-r from-[#2ecc71] via-[#3498db] to-[#e74c3c] bg-clip-text text-transparent filter drop-shadow-[0.5px_0.5px_0px_rgba(0,0,0,0.15)] select-none">
-                Việt Typing
-              </span>
-            </Link>
           </div>
 
           {/* Navigation Links (Horizontal) */}
@@ -278,20 +257,30 @@ export default function Home() {
             {/* Stars/Coins */}
             <TactileStarBadge color="yellow" value={xp >= 1000 ? `${(xp / 1000).toFixed(1)} XP` : `${xp} XP`} className="scale-105" />
 
-            {/* Profile Avatar Button */}
+            {/* Profile Info & Config Button */}
             <button
               onClick={() => {
                 playSound('click');
                 setIsOpenConfig(true);
               }}
-              className="w-10 h-10 rounded-full border-2 border-[var(--color-foreground)] bg-[var(--color-surface)] flex items-center justify-center text-xl shadow-[2px_2px_0px_0px_var(--color-foreground)] hover:scale-105 active:translate-y-[1px] active:shadow-none transition-all cursor-pointer"
+              className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl border-2 border-[var(--color-foreground)] bg-[var(--color-surface)] shadow-[2.5px_2.5px_0px_0px_var(--color-foreground)] hover:translate-y-[-1px] active:translate-y-[1px] active:shadow-none transition-all cursor-pointer text-left"
               title="Cấu hình hồ sơ của bé"
             >
-              {studentInfo ? (
-                <span className="text-xl">{studentInfo.avatar}</span>
-              ) : (
-                <User className="w-5 h-5 text-[var(--color-foreground)]" />
-              )}
+              <div className="w-8 h-8 rounded-full border-2 border-[var(--color-foreground)] bg-[var(--color-surface-container)] flex items-center justify-center text-lg overflow-hidden shrink-0">
+                {studentInfo ? (
+                  <span className="text-lg leading-none">{studentInfo.avatar}</span>
+                ) : (
+                  <User className="w-4 h-4 text-[var(--color-foreground)]" />
+                )}
+              </div>
+              <div className="hidden sm:flex flex-col pr-1 leading-tight">
+                <span className="text-xs font-black text-[var(--color-foreground)]">
+                  Chào {studentInfo ? studentInfo.nickname : 'Khoai Tây'}!
+                </span>
+                <span className="text-[10px] font-bold text-[var(--color-foreground)]/65">
+                  Cấp độ {Math.floor(xp / 1000) + 1}
+                </span>
+              </div>
             </button>
           </div>
         </header>
@@ -473,7 +462,7 @@ export default function Home() {
           <div className="pt-4">
             <div className="flex items-center gap-2 mb-6">
               <BookOpen className="w-6 h-6 text-[var(--color-primary-depth)]" />
-              <h3 className="text-2xl font-black text-[var(--color-foreground)]">Chọn Môn Học Tự Do</h3>
+              <h3 className="text-2xl font-black text-[var(--color-foreground)]">Khám Phá Môn Học</h3>
             </div>
             <SubjectSelector
               subjects={subjects}
@@ -503,10 +492,26 @@ export default function Home() {
           </div>
 
           {/* Dòng bản quyền tinh tế trên nền cỏ */}
-          <div className="text-center text-xs font-black text-emerald-850/60 pt-12 pb-6 max-w-xl mx-auto flex flex-col sm:flex-row justify-center items-center gap-3 select-none">
-            <span>VietTyping © {new Date().getFullYear()} • Kiến tạo kỹ năng gõ tiếng Việt cho bé.</span>
-            <span className="hidden sm:inline-block">•</span>
-            <div className="flex gap-3">
+          <div className="text-center text-xs font-black text-emerald-850/60 pt-12 pb-6 max-w-2xl mx-auto flex flex-col justify-center items-center gap-2 select-none">
+            <div className="flex flex-wrap justify-center items-center gap-1.5">
+              <span>VietTyping © {new Date().getFullYear()}</span>
+              <span>•</span>
+              <span>Phát triển bởi</span>
+              <a 
+                href="http://github.com/anhnbt" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[var(--color-primary-depth)] hover:underline font-extrabold cursor-pointer"
+                onClick={() => playSound('click')}
+              >
+                Nguyễn Bá Tuấn Anh
+              </a>
+              <span>•</span>
+              <span className="bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shadow-[0.5px_0.5px_0px_rgba(0,0,0,0.1)]">
+                Bản Thử Nghiệm
+              </span>
+            </div>
+            <div className="flex gap-3 mt-1.5 opacity-80">
               <Link href="/parents" onClick={() => playSound('click')} className="hover:underline">Bảo mật</Link>
               <span>•</span>
               <Link href="/typing" onClick={() => playSound('click')} className="hover:underline">Điều khoản</Link>

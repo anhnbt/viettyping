@@ -592,6 +592,114 @@ export const subjects: Subject[] = [
     thumbnailUrl: '/assets/thumbnails/tieng_viet.png',
     topics: [
       {
+        id: 'tv-chu-b',
+        title: 'Chữ B và vần BA kỳ thú',
+        description: 'Bé học nhận biết chữ B, vần BA và tham gia các trò chơi vui nhộn',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'ba bò bóng bé bàn',
+        activities: [
+          {
+            id: 'tv-b-1',
+            type: 'typing',
+            title: 'Luyện gõ chữ B và vần BA',
+            content: 'ba bò bóng bé bàn Ba đưa bé đi chơi bóng.',
+            instructions: 'Bé hãy gõ thật cẩn thận chữ B và vần BA nhé!',
+          },
+          {
+            id: 'tv-b-2',
+            type: 'game',
+            title: 'Ghép tranh chữ B',
+            content: 'Nối từ với hình ảnh đúng',
+            instructions: 'Bé hãy kéo thả các từ nối với hình ảnh tương ứng nhé!',
+            data: {
+              subtype: 'matching',
+              items: [
+                { word: 'ba', image_url: '👨' },
+                { word: 'bóng', image_url: '⚽' },
+                { word: 'bò', image_url: '🐂' }
+              ]
+            }
+          },
+          {
+            id: 'tv-b-3',
+            type: 'game',
+            title: 'Đố vui Đúng Sai',
+            content: 'Chọn từ viết đúng chính tả',
+            instructions: 'Bé hãy nhìn hình ảnh và chọn xem từ nào viết đúng nhé!',
+            data: {
+              subtype: 'true_false',
+              items: [
+                {
+                  correct_word: 'bóng',
+                  distractor_word: 'bong',
+                  image_url: '⚽'
+                },
+                {
+                  correct_word: 'bò',
+                  distractor_word: 'bo',
+                  image_url: '🐂'
+                }
+              ]
+            }
+          },
+          {
+            id: 'tv-b-4',
+            type: 'game',
+            title: 'Vòng quay kỳ diệu',
+            content: 'Quay vòng quay để luyện gõ',
+            instructions: 'Bé hãy click để quay vòng quay và gõ thật nhanh từ trúng thưởng nhé!',
+            data: {
+              subtype: 'spinwheel',
+              items: ['ba', 'bóng', 'bò', 'bé', 'bàn'],
+              flashcards: [
+                { word: 'ba', image_url: '👨' },
+                { word: 'bóng', image_url: '⚽' },
+                { word: 'bò', image_url: '🐂' },
+                { word: 'bé', image_url: '👶' },
+                { word: 'bàn', image_url: '🪑' }
+              ]
+            }
+          },
+          {
+            id: 'tv-b-5',
+            type: 'game',
+            title: 'Điền từ còn thiếu',
+            content: 'Bé hãy điền chữ cái còn thiếu vào ô trống',
+            instructions: 'Nhìn hình ảnh và điền chữ cái còn thiếu để hoàn thành từ nhé!',
+            data: {
+              subtype: 'fill_in_the_blank',
+              items: [
+                {
+                  full_word: 'bóng',
+                  missing_char: 'ó',
+                  sentence: 'Bé đá b_ng.',
+                  image_url: '⚽'
+                }
+              ]
+            }
+          },
+          {
+            id: 'tv-b-6',
+            type: 'game',
+            title: 'Trắc nghiệm Ong vàng',
+            content: 'Chọn câu trả lời chính xác nhất',
+            instructions: 'Bé đọc câu hỏi và chọn đáp án chính xác nhất nhé!',
+            data: {
+              subtype: 'multiple_choice',
+              items: [
+                {
+                  question: 'Chữ nào bắt đầu bằng chữ B?',
+                  correct_answer: 'bóng',
+                  distractors: ['cá', 'gà'],
+                  image_url: '⚽'
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
         id: 'tv-1',
         title: 'Bảng chữ cái',
         description: 'Học 29 chữ cái tiếng Việt',

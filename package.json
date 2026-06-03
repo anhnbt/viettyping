@@ -2,6 +2,7 @@
   "name": "typing",
   "version": "0.1.0",
   "private": true,
+  "author": "Nguyễn Bá Tuấn Anh <anhnbt.it@gmail.com> (http://github.com/anhnbt)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -131,13 +131,12 @@ export default function MatchingGame({ gameConfig, flashcards = [], onComplete }
   const [errorSlot, setErrorSlot] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
 
-  // Map rawItems to include image_url from flashcards
   const items = React.useMemo(() => {
     return rawItems.map((item) => {
       const flashcard = flashcards.find((f) => f.word.toLowerCase() === item.word.toLowerCase());
       return {
         word: item.word,
-        image_url: flashcard?.image_url || "/assets/placeholder.png",
+        image_url: item.image_url || flashcard?.image_url || "/assets/placeholder.png",
       };
     });
   }, [rawItems, flashcards]);
