@@ -119,7 +119,7 @@ export default function Home() {
       case 'panda':
         return { name: 'GẤU TRÚC THÔNG THÁI', motto: 'Đáng yêu & Kiên trì', desc: 'Luyện tập mỗi ngày cùng bạn Gấu Trúc để đôi bàn tay xinh xắn của con gõ thật khéo léo!' };
       case 'bunny':
-        return { name: 'THỎ NGỌC NHANH NHẸN', motto: 'Nhanh như chớp', desc: 'Bứt phá tốc độ và rèn luyện phản xạ gõ phím cực nhanh cùng bạn Thỏ!' };
+        return { name: 'THỎ NGỌC SIÊU TỐC', motto: 'Nhanh như chớp', desc: 'Bứt phá tốc độ và rèn luyện phản xạ gõ phím cực nhanh cùng bạn Thỏ!' };
       case 'leopard':
         return { name: 'BÁO ĐỐM THẦN TỐC', motto: 'Dũng mãnh & Điêu luyện', desc: 'Chinh phục mọi thử thách gõ phím khó nhất và đạt tốc độ của nhà vô địch!' };
       default:

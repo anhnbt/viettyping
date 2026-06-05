@@ -70,3 +70,37 @@ Sử dụng màu nền giấy ngà ấm áp với viền mỏng và bóng đổ 
 *   **Tính Đồng Bộ Thiết Kế:**
     *   Các nhãn chữ (như tên Cấp độ hoặc tên Linh vật) luôn được bo góc tròn kiểu sticker dính (`rounded-full`), có viền dày và đổ bóng phẳng, nằm đè ở chân linh vật hoặc đè lên viền của khung nền để tăng tính liên kết vật lý.
 
+---
+
+## 📝 Tài Nguyên Prompt AI Sinh Ảnh Đồ Họa 3D (Phong Cách Pixar/Disney)
+
+Để duy trì tính đồng bộ trực quan cao cấp trên toàn hệ thống VietTyping, dưới đây là bộ khung prompt (prompt template) chất lượng cao đã được tối ưu hóa để sinh ảnh minh họa 3D cho linh vật và các môn học khác.
+
+### 1. Khung Prompt Sinh Linh Vật (Mascot Template)
+> Dùng để tạo hình ảnh linh vật đơn lẻ trên nền trơn sáng màu, hỗ trợ việc tách nền và làm hình đại diện.
+
+```text
+A cute 3D cartoon baby [TÊN_CON_VẬT] character (mascot named [TÊN_LINH_VẬT]), Pixar or Disney animation style, big sparkling eyes, friendly smile, [ĐẶC_ĐIỂM_NỔI_BẬT_NHƯ_ĐEO_KÍNH_HOẶC_NƠ], studio lighting, soft shadows, volumetric lighting, high depth of field, detailed [VẢI_LÔNG_HOẶC_DA] texture, isolated on a light solid background, front-facing view, extremely adorable and appealing to 6-year-old children.
+```
+
+**Ví dụ thực tế đã áp dụng:**
+*   **Khủng Long Siêu Phàm (Dino):** `A cute 3D cartoon baby green dinosaur character (mascot named Dino), Pixar or Disney animation style, big sparkling eyes, friendly smile, studio lighting, soft shadows, volumetric lighting, high depth of field, detailed scales texture, isolated on a light solid background, front-facing view, extremely adorable and appealing to 6-year-old children.`
+*   **Gấu Trúc Thông Thái (Panda):** `A cute 3D cartoon baby panda character (mascot named Panda), Pixar or Disney animation style, big sparkling eyes, friendly smile, carrying or wearing small round glasses, studio lighting, soft shadows, volumetric lighting, high depth of field, detailed fur texture, isolated on a light solid background, front-facing view, extremely adorable and appealing to 6-year-old children.`
+
+---
+
+### 2. Khung Prompt Sinh Thumbnail Môn Học (Subject Thumbnail Template)
+> Dùng để tạo các bức tranh hoạt cảnh có chiều sâu, kết hợp linh vật với các đối tượng/kiến thức môn học cụ thể.
+
+```text
+A cute 3D cartoon baby [TÊN_CON_VẬT] character [HÀNH_ĐỘNG_CỦA_CON_VẬT]. Volumetric 3D colorful [ĐỐI_TƯỢNG_MÔN_HỌC_BAY_LƯỢN] floating in the air. Pixar or Disney animation style, big sparkling eyes, friendly smile, studio lighting, soft shadows, volumetric lighting, high depth of field, detailed [BỐI_CẢNH_PHÙ_HỢP] background, extremely adorable and appealing to 6-year-old children.
+```
+
+**Các prompt chất lượng đã dùng trong ứng dụng:**
+*   **Môn Luyện Gõ 10 Ngón (Khủng Long):** `A cute 3D cartoon baby green dinosaur character excitedly typing on a colorful glowing mechanical computer keyboard. Volumetric bubble letters of the alphabet flying out from the keyboard. Pixar or Disney animation style, big sparkling eyes, friendly smile, studio lighting, soft shadows, volumetric lighting, high depth of field, detailed keyboard keys, isolated on a soft colorful background, extremely adorable and appealing to 6-year-old children.`
+*   **Môn Toán Học (Gấu Trúc):** `A cute 3D cartoon baby panda character wearing small round glasses, excitedly pointing to a blackboard with simple math equations like '3 + 4 = 7' and '1 + 1 = 2'. Volumetric colorful 3D numbers floating in the air. Pixar or Disney animation style, big sparkling eyes, friendly smile, studio lighting, soft shadows, volumetric lighting, high depth of field, detailed classroom background, extremely adorable and appealing to 6-year-old children.`
+*   **Môn Tiếng Việt (Rùa Con):** `A cute 3D cartoon baby turtle character with a green shell, reading a colorful picture book under a tropical tree. Volumetric 3D colorful Vietnamese alphabet letters like 'A', 'Ă', 'Â', 'B', 'C' floating in the air. Pixar or Disney animation style, big sparkling eyes, friendly smile, studio lighting, soft shadows, volumetric lighting, high depth of field, detailed grassy background with cute flowers, extremely adorable and appealing to 6-year-old children.`
+*   **Môn Âm Nhạc (Thỏ Ngọc):** `A cute 3D cartoon baby white rabbit character wearing a little bow, happily singing into a microphone and dancing. Colorful 3D musical notes and sparkles floating in the air. Pixar or Disney animation style, big sparkling eyes, friendly smile, studio lighting, soft shadows, volumetric lighting, high depth of field, playful background with soft lights, extremely adorable and appealing to 6-year-old children.`
+*   **Môn Đạo Đức (Báo Đốm):** `A cute 3D cartoon baby leopard character with yellow fur and black spots, gently holding a big glowing red heart with its paws, symbolizing love and kindness. Pixar or Disney animation style, big sparkling eyes, friendly smile, studio lighting, soft shadows, volumetric lighting, high depth of field, warm and cozy colorful background with sparkles, extremely adorable and appealing to 6-year-old children.`
+
+

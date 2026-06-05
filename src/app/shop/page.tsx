@@ -36,7 +36,7 @@ const SHOP_MASCOTS: MascotItem[] = [
   },
   {
     id: 'turtle',
-    name: 'Rùa Con Lon Ton',
+    name: 'Rùa Con Chăm Chỉ',
     emoji: '🐢',
     desc: 'Chậm mà chắc, nền tảng gõ chuẩn 100%!',
     price: 0,
