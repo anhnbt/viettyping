@@ -432,8 +432,8 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
                     initial={{ scale: 0 }}
                     animate={{ 
                       scale: 1,
-                      x: [`${bubble.x}%`, `${bubble.x + (bubble.id % 2 === 0 ? 5 : -5)}%`, `${bubble.x}%`],
-                      y: [`${bubble.y}%`, `${bubble.y - 8}%`, `${bubble.y}%`],
+                      x: [0, bubble.id % 2 === 0 ? 20 : -20, 0],
+                      y: [0, -30, 0],
                     }}
                     exit={{ scale: 1.4, opacity: 0, transition: { duration: 0.15 } }}
                     transition={{
@@ -446,8 +446,8 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
                       position: 'absolute',
                       width: bubble.size,
                       height: bubble.size,
-                      left: 0,
-                      top: 0,
+                      left: `${bubble.x}%`,
+                      top: `${bubble.y}%`,
                     }}
                     className={`rounded-full ${bubble.color} border-3 border-slate-800 flex items-center justify-center cursor-pointer shadow-[inset_-6px_-6px_0px_rgba(0,0,0,0.15)] filter drop-shadow-md`}
                   >
