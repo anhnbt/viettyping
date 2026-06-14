@@ -1317,5 +1317,37 @@ export const subjects: Subject[] = [
         ]
       }
     ]
+  },
+  {
+    id: 'tin-hoc',
+    name: 'Tin học cơ bản',
+    description: 'Làm quen với máy tính và rèn luyện kỹ năng sử dụng chuột siêu đẳng!',
+    icon: '💻',
+    color: 'from-indigo-400 to-indigo-600',
+    grade: 'Mầm non & Lớp 1',
+    thumbnailUrl: '/assets/thumbnails/tin_hoc.png',
+    topics: [
+      {
+        id: 'th-chuot',
+        title: 'Làm quen máy tính & Chuột',
+        description: 'Nhận biết các bộ phận máy tính và thực hành 5 thao tác sử dụng chuột cơ bản.',
+        difficulty: 'easy',
+        estimatedTime: 15,
+        content: 'Màn hình, laptop, máy tính để bàn, chuột. Di chuyển, nháy chuột, nháy phải, nháy đúp và kéo thả.',
+        activities: [
+          {
+            id: 'th-chuot-act-1',
+            type: 'game',
+            title: 'Bé tập dùng Chuột & Máy tính',
+            instructions: 'Bé hãy cùng bạn Khủng Long khám phá thế giới máy tính và vượt qua các thử thách chuột nhé!',
+            content: 'mouse_practice',
+            data: {
+              subtype: 'mouse_practice'
+            }
+          }
+        ]
+      }
+    ]
   }
 ];
+

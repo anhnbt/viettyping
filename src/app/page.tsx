@@ -359,6 +359,40 @@ export default function Home() {
             </div>
           </div>
 
+          {/* New IT & Mouse Course Banner */}
+          <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 border-3 border-[var(--color-foreground)] rounded-[24px] shadow-[4px_4px_0px_0px_var(--color-foreground)] p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden text-white">
+            <div className="absolute -right-8 -bottom-8 text-9xl opacity-15 rotate-12 select-none pointer-events-none">
+              🖱️
+            </div>
+            <div className="absolute -left-6 -top-6 text-8xl opacity-10 -rotate-12 select-none pointer-events-none">
+              💻
+            </div>
+            
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+              <div className="w-16 h-16 bg-white rounded-2xl border-2 border-[var(--color-foreground)] flex items-center justify-center text-4xl shrink-0 shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+                🖱️
+              </div>
+              <div>
+                <span className="bg-amber-400 border border-[var(--color-foreground)] text-[10px] font-black text-[var(--color-foreground)] px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)]">
+                  Bài học mới
+                </span>
+                <h3 className="text-xl md:text-2xl font-black mt-2">
+                  Làm Quen Máy Tính & Luyện Chuột Siêu Đẳng!
+                </h3>
+                <p className="text-xs md:text-sm font-semibold opacity-90 mt-1 max-w-xl">
+                  Bé hãy cùng bạn Khủng Long Dino học cách nhận diện Màn hình, Laptop, Máy tính để bàn và tập di chuyển, click chuột thật khéo tay nhé!
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => handleNavClick('/subjects/tin-hoc/topics/th-chuot')}
+              className="tactile-btn bg-amber-400 hover:bg-amber-350 text-[var(--color-foreground)] border-2 border-[var(--color-foreground)] font-black px-6 py-3.5 text-sm rounded-xl shrink-0 cursor-pointer shadow-[3px_3px_0px_0px_var(--color-foreground)] active:translate-y-[2px] active:shadow-[1px_1px_0px_0px_var(--color-foreground)]"
+            >
+              Học ngay thôi! 🚀
+            </button>
+          </div>
+
           {/* Block 2: Tiến Trình Tuần & Giới Thiệu Thế Giới Linh Vật */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             

@@ -35,6 +35,7 @@ import TrueFalseGame from '@/components/TrueFalseGame';
 import SpinWheelGame from '@/components/SpinWheelGame';
 import FillInTheBlankGame from '@/components/FillInTheBlankGame';
 import MultipleChoiceGame from '@/components/MultipleChoiceGame';
+import MousePracticeGame from '@/components/MousePracticeGame';
 
 interface ActivityViewProps {
   topic: Topic;
@@ -193,6 +194,18 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
                   score: telemetry.score,
                   duration: telemetry.durationSeconds,
                   rawPayload: telemetry
+                })}
+              />
+            );
+          }
+          case 'mouse_practice': {
+            return (
+              <MousePracticeGame
+                key={activity.id}
+                onComplete={(telemetry) => handleActivityComplete({
+                  score: telemetry.score,
+                  duration: telemetry.durationSeconds,
+                  rawPayload: telemetry.rawPayload
                 })}
               />
             );
