@@ -25,8 +25,7 @@ type StepType = 'welcome' | 'devices' | 'move' | 'click' | 'right_click' | 'doub
 interface DeviceItem {
   id: string;
   name: string;
-  emoji: string;
-  icon: React.ReactNode;
+  imageUrl: string;
   description: string;
 }
 
@@ -40,10 +39,10 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
 
   // Màn 1: Nhận diện thiết bị
   const devices: DeviceItem[] = [
-    { id: 'desktop', name: 'Máy tính để bàn', emoji: '🖥️', icon: <Monitor className="w-12 h-12 text-blue-500" />, description: 'Có màn hình lớn, thùng máy to đùng đặt trên bàn.' },
-    { id: 'laptop', name: 'Máy tính xách tay (Laptop)', emoji: '💻', icon: <Laptop className="w-12 h-12 text-purple-500" />, description: 'Gập mở gọn gàng, bé có thể mang đi khắp mọi nơi.' },
-    { id: 'screen', name: 'Màn hình máy tính', emoji: '📺', icon: <Monitor className="w-12 h-12 text-emerald-500" />, description: 'Nơi hiển thị hình ảnh, phim hoạt hình và bài học cho bé.' },
-    { id: 'mouse', name: 'Chuột máy tính', emoji: '🖱️', icon: <Mouse className="w-12 h-12 text-rose-500" />, description: 'Chú chuột nhỏ nhắn giúp bé di chuyển và lựa chọn trên màn hình.' }
+    { id: 'desktop', name: 'Máy tính để bàn', imageUrl: '/assets/devices/desktop.png', description: 'Có màn hình lớn, thùng máy to đùng đặt trên bàn.' },
+    { id: 'laptop', name: 'Máy tính xách tay (Laptop)', imageUrl: '/assets/devices/laptop.png', description: 'Gập mở gọn gàng, bé có thể mang đi khắp mọi nơi.' },
+    { id: 'screen', name: 'Màn hình máy tính', imageUrl: '/assets/devices/screen.png', description: 'Nơi hiển thị hình ảnh, phim hoạt hình và bài học cho bé.' },
+    { id: 'mouse', name: 'Chuột máy tính', imageUrl: '/assets/devices/mouse.png', description: 'Chú chuột nhỏ nhắn giúp bé di chuyển và lựa chọn trên màn hình.' }
   ];
   
   const [deviceQuestionIndex, setDeviceQuestionIndex] = useState(0);
@@ -373,13 +372,17 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
                   whileTap={{ scale: deviceFeedback ? 1 : 0.98 }}
                   onClick={() => handleDeviceSelect(device.id)}
                   disabled={deviceFeedback === 'correct'}
-                  className={`p-5 rounded-3xl text-left flex items-start gap-4 transition-all cursor-pointer ${cardStyle}`}
+                  className={`p-6 rounded-[32px] text-center flex flex-col items-center transition-all cursor-pointer h-full ${cardStyle}`}
                 >
-                  <div className="p-3 bg-white rounded-2xl border-2 border-slate-800 shrink-0 shadow-[2px_2px_0px_0px_#1e293b]">
-                    {device.icon}
+                  <div className="w-full h-32 md:h-36 bg-slate-50 border-2 border-slate-800 rounded-2xl flex items-center justify-center p-2 mb-4 overflow-hidden shadow-[2px_2px_0px_0px_#1e293b]">
+                    <img 
+                      src={device.imageUrl} 
+                      alt={device.name} 
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                   <div>
-                    <h4 className="text-lg font-black text-slate-800 mb-1">{device.name}</h4>
+                    <h4 className="text-xl font-black text-slate-850 mb-2">{device.name}</h4>
                     <p className="text-xs font-bold text-slate-500 leading-relaxed">{device.description}</p>
                   </div>
                 </motion.button>
