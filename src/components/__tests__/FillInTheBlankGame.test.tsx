@@ -31,6 +31,7 @@ jest.mock('@/contexts/SoundContext', () => ({
     isMuted: false,
     toggleMute: jest.fn(),
     playSound: jest.fn(),
+    playAudio: jest.fn(),
   }),
 }));
 

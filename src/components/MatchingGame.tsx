@@ -125,7 +125,7 @@ function DroppableSlot({
 
 export default function MatchingGame({ gameConfig, flashcards = [], onComplete }: GameAdapterProps<MatchingGameItem>) {
   const { id: gameId, items: rawItems } = gameConfig;
-  const { playSound } = useSound();
+  const { playSound, playAudio } = useSound();
   const [matches, setMatches] = useState<Record<string, string>>({}); // Slot ID -> Word ID
   const [unmatchedWords, setUnmatchedWords] = useState<string[]>([]);
   const [errorSlot, setErrorSlot] = useState<string | null>(null);
@@ -189,6 +189,9 @@ export default function MatchingGame({ gameConfig, flashcards = [], onComplete }
 
         // Kiểm tra xem đã hoàn thành tất cả chưa
         if (unmatchedWords.length === 1) {
+          // Phát âm thanh giọng nói chúc mừng ghép đúng toàn bộ
+          playAudio('/audio/tuyet-voi-ban-da-ghep-dung-het.wav');
+
           // Add a small delay so user can see the final match effect before completing
           setTimeout(() => {
             const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);

@@ -34,7 +34,7 @@ export default function CompletionModal({
     onContinue,
     continueLabel = 'Tiếp tục',
 }: CompletionModalProps) {
-    const { playSound } = useSound();
+    const { playSound, playAudio } = useSound();
     const { studentInfo } = useStudent();
     const [displayScore, setDisplayScore] = useState(0);
     const [isCountingDone, setIsCountingDone] = useState(false);
@@ -122,6 +122,15 @@ export default function CompletionModal({
                     hasPlayedTada.current = true;
                     playSound('tada');
                     fireConfetti();
+
+                    // Phát âm thanh giọng nói tiếng Việt theo số sao đạt được
+                    if (stars === 3) {
+                        playAudio('/audio/tuyet-voi-con-lam-tot-lam.wav');
+                    } else if (stars === 2) {
+                        playAudio('/audio/rat-tot-con-co-gang-them-chut-nua-nhe.wav');
+                    } else {
+                        playAudio('/audio/co-len-con-lam-duoc-ma.wav');
+                    }
                 }
 
                 // Show stars after a short delay
@@ -138,7 +147,7 @@ export default function CompletionModal({
             clearTimeout(timer);
             cancelAnimationFrame(animFrameRef.current);
         };
-    }, [isOpen, finalScore, playSound, fireConfetti]);
+    }, [isOpen, finalScore, playSound, fireConfetti, playAudio, stars]);
 
     // Listen to Enter key to automatically continue
     useEffect(() => {

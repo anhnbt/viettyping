@@ -31,7 +31,7 @@ interface DeviceItem {
 
 export default function MousePracticeGame({ onComplete }: MousePracticeGameProps) {
   const [step, setStep] = useState<StepType>('welcome');
-  const { playSound } = useSound();
+  const { playSound, playAudio } = useSound();
   
   // Telemetry
   const startTimeRef = useRef<number>(Date.now());
@@ -96,6 +96,13 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
     startTimeRef.current = Date.now();
   }, []);
 
+  // Phát âm thanh chúc mừng khi hoàn thành tất cả bài luyện tập chuột
+  useEffect(() => {
+    if (step === 'finish') {
+      playAudio('/audio/tuyet-voi-ong-mat-troi-be-da-hoan-thanh-xuat-sac-tat-ca-cac-bai-luyen-tap-roi-do.wav');
+    }
+  }, [step, playAudio]);
+
   // Xử lý khi bắt đầu học
   const startLearning = () => {
     playSound('click');
@@ -153,6 +160,8 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
           setPoppedBubblesCount(c => {
             const newCount = c + 1;
             if (newCount >= bubbles.length) {
+              // Phát âm thanh giọng chúc mừng hoàn thành bong bóng
+              playAudio('/audio/tuyet-voi-be-da-lam-vo-toan-bo-bong-bong-roi.wav');
               setTimeout(() => {
                 playSound('complete');
                 setStep('click');

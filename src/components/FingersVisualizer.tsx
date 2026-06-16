@@ -32,6 +32,43 @@ const signatureColors: Record<string, string> = {
   'pinky-right': '#A855F7',
 };
 
+// Colors optimized for text rendering to ensure high contrast on light backgrounds
+const fingerTextColors: Record<string, string> = {
+  'pinky-left': '#991B1B',   // red-800
+  'ring-left': '#9A3412',    // orange-800
+  'middle-left': '#854D0E',  // yellow-800
+  'index-left': '#166534',   // green-800
+  'thumb': '#374151',        // gray-700
+  'index-right': '#065F46',  // emerald-800
+  'middle-right': '#1E40AF', // blue-800
+  'ring-right': '#3730A3',   // indigo-800
+  'pinky-right': '#6B21A8',  // purple-800
+};
+
+const fingerBgColors: Record<string, string> = {
+  'pinky-left': '#FEF2F2',   // red-50
+  'ring-left': '#FFF7ED',    // orange-50
+  'middle-left': '#FEFCE8',  // yellow-50
+  'index-left': '#F0FDF4',   // green-50
+  'thumb': '#F9FAFB',        // gray-50
+  'index-right': '#ECFDF5',  // emerald-50
+  'middle-right': '#EFF6FF', // blue-50
+  'ring-right': '#EEF2FF',   // indigo-50
+  'pinky-right': '#FAF5FF',  // purple-50
+};
+
+const fingerBorderColors: Record<string, string> = {
+  'pinky-left': '#FCA5A5',   // red-300
+  'ring-left': '#FED7AA',    // orange-300
+  'middle-left': '#FEF08A',  // yellow-300
+  'index-left': '#BBF7D0',   // green-300
+  'thumb': '#E5E7EB',        // gray-200
+  'index-right': '#A7F3D0',  // emerald-300
+  'middle-right': '#BFDBFE', // blue-300
+  'ring-right': '#C7D2FE',   // indigo-300
+  'pinky-right': '#E9D5FF',  // purple-300
+};
+
 // Skin colors for resting state
 const skinFill = '#FFF5F0';
 const skinStroke = '#FCA5A5'; // rose-300
@@ -74,24 +111,24 @@ export default function FingersVisualizer({ highlightKey, pressedKey }: Props) {
 
   const activeFingers = React.useMemo(() => {
     if (!highlightKeyStr) return [];
-    
+
     // Kiểm tra xem highlightKeyStr có phải là chữ viết hoa hoặc ký tự cần Shift
     const isShiftRequired = /[A-ZÀ-ỸĐ]/.test(highlightKeyStr) || highlightKeyStr in shiftKeyMap;
 
     if (isShiftRequired) {
-      const baseChar = /[A-ZÀ-ỸĐ]/.test(highlightKeyStr) 
-        ? highlightKeyStr.toLowerCase() 
+      const baseChar = /[A-ZÀ-ỸĐ]/.test(highlightKeyStr)
+        ? highlightKeyStr.toLowerCase()
         : shiftKeyMap[highlightKeyStr];
-        
+
       const charFinger = fingerMap[baseChar];
       if (!charFinger) return [];
-      
+
       const isLeftHand = charFinger.includes('left');
       const shiftFinger = isLeftHand ? 'pinky-right' : 'pinky-left';
-      
+
       return [charFinger, shiftFinger];
     }
-    
+
     const lowerChar = highlightKeyStr.toLowerCase();
     if (lowerChar === ' ') return ['thumb'];
     const finger = fingerMap[lowerChar] || fingerMap[highlightKeyStr] || null;
@@ -111,7 +148,7 @@ export default function FingersVisualizer({ highlightKey, pressedKey }: Props) {
   ) => {
     const isActive = activeFingers.includes(fingerId);
     const isPressed = pressedFinger === fingerId;
-    
+
     // Determine styles
     const fill = isActive || isPressed ? activeFingerColors[fingerId].fill : skinFill;
     const stroke = isActive || isPressed ? activeFingerColors[fingerId].stroke : skinStroke;
@@ -181,12 +218,36 @@ export default function FingersVisualizer({ highlightKey, pressedKey }: Props) {
     );
   };
 
+  const renderFingerBadge = (fingerId: string) => {
+    const nameMap: Record<string, string> = {
+      'pinky-left': 'ngón út tay trái',
+      'ring-left': 'ngón áp út tay trái',
+      'middle-left': 'ngón giữa tay trái',
+      'index-left': 'ngón trỏ tay trái',
+      'thumb': 'ngón cái',
+      'index-right': 'ngón trỏ tay phải',
+      'middle-right': 'ngón giữa tay phải',
+      'ring-right': 'ngón áp út tay phải',
+      'pinky-right': 'ngón út tay phải',
+    };
+
+    return (
+      <span
+        className="font-extrabold px-1.5 py-0.5 mx-0.5 rounded border text-[11px] inline-block shadow-sm transition-all"
+        style={{
+          backgroundColor: fingerBgColors[fingerId] || '#F9FAFB',
+          borderColor: fingerBorderColors[fingerId] || '#E5E7EB',
+          color: fingerTextColors[fingerId] || '#374151',
+        }}
+      >
+        {nameMap[fingerId]}
+      </span>
+    );
+  };
+
   return (
     <div className="flex flex-col items-center justify-center p-0 bg-transparent mt-2">
-      <div className="text-xs font-black text-current mb-2 tracking-wide uppercase flex items-center gap-1.5 opacity-60">
-        👋 Hướng dẫn đặt ngón tay
-      </div>
-      
+
       <div className="w-full max-w-[420px] aspect-[2.1/1]">
         <svg viewBox="0 0 420 200" className="w-full h-full select-none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -241,57 +302,34 @@ export default function FingersVisualizer({ highlightKey, pressedKey }: Props) {
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="mt-2 text-xs font-bold text-slate-300 bg-slate-900/40 px-3 py-1.5 rounded-full border border-slate-800/80 flex items-center gap-1.5"
+            className="mt-3 text-xs font-bold text-slate-700 bg-white/95 px-4 py-2.5 rounded-2xl border-2 border-slate-200/90 shadow-sm flex items-center justify-center gap-1.5"
           >
             <span
-              className="w-2.5 h-2.5 rounded-full inline-block shadow-sm animate-pulse"
+              className="w-2.5 h-2.5 rounded-full inline-block shadow-sm animate-pulse shrink-0"
               style={{ backgroundColor: highlightKey === '⌫' ? signatureColors['pinky-right'] : signatureColors[activeFingers[0]] }}
             />
             {highlightKey === '⌫' ? (
               <span>
-                Bé hãy nhấn phím <span className="font-extrabold text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">Xóa (⌫)</span> bằng{' '}
-                <span className="font-extrabold" style={{ color: signatureColors['pinky-right'] }}>ngón út tay phải</span> để sửa chữ viết sai nhé! 💜
+                Bé hãy nhấn phím <span className="font-extrabold text-red-650 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">Xóa (⌫)</span> bằng{' '}
+                {renderFingerBadge('pinky-right')} để sửa chữ viết sai nhé! 💜
               </span>
             ) : activeFingers.length === 2 ? (
               <span>
-                Giữ phím <span className="font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">Shift</span> bằng{' '}
-                <span className="font-extrabold" style={{ color: signatureColors[activeFingers[1]] }}>
-                  {activeFingers[1] === 'pinky-left' && 'ngón út tay trái'}
-                  {activeFingers[1] === 'pinky-right' && 'ngón út tay phải'}
-                </span>
+                Giữ phím <span className="font-extrabold text-blue-650 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">Shift</span> bằng{' '}
+                {renderFingerBadge(activeFingers[1])}
                 {' '}và gõ chữ bằng{' '}
-                <span className="font-extrabold" style={{ color: signatureColors[activeFingers[0]] }}>
-                  {activeFingers[0] === 'pinky-left' && 'ngón út tay trái'}
-                  {activeFingers[0] === 'ring-left' && 'ngón áp út tay trái'}
-                  {activeFingers[0] === 'middle-left' && 'ngón giữa tay trái'}
-                  {activeFingers[0] === 'index-left' && 'ngón trỏ tay trái'}
-                  {activeFingers[0] === 'thumb' && 'ngón cái'}
-                  {activeFingers[0] === 'index-right' && 'ngón trỏ tay phải'}
-                  {activeFingers[0] === 'middle-right' && 'ngón giữa tay phải'}
-                  {activeFingers[0] === 'ring-right' && 'ngón áp út tay phải'}
-                  {activeFingers[0] === 'pinky-right' && 'ngón út tay phải'}
-                </span>
+                {renderFingerBadge(activeFingers[0])}
               </span>
             ) : (
               <span>
                 Dùng{' '}
-                <span className="font-extrabold" style={{ color: signatureColors[activeFingers[0]] }}>
-                  {activeFingers[0] === 'pinky-left' && 'ngón út tay trái'}
-                  {activeFingers[0] === 'ring-left' && 'ngón áp út tay trái'}
-                  {activeFingers[0] === 'middle-left' && 'ngón giữa tay trái'}
-                  {activeFingers[0] === 'index-left' && 'ngón trỏ tay trái'}
-                  {activeFingers[0] === 'thumb' && 'ngón cái'}
-                  {activeFingers[0] === 'index-right' && 'ngón trỏ tay phải'}
-                  {activeFingers[0] === 'middle-right' && 'ngón giữa tay phải'}
-                  {activeFingers[0] === 'ring-right' && 'ngón áp út tay phải'}
-                  {activeFingers[0] === 'pinky-right' && 'ngón út tay phải'}
-                </span>{' '}
+                {renderFingerBadge(activeFingers[0])}{' '}
                 để gõ phím nhé!
               </span>
             )}
           </motion.div>
         ) : (
-          <div className="mt-2 text-xs font-medium text-slate-500">
+          <div className="mt-3 text-xs font-bold text-slate-500 bg-slate-100/60 px-4 py-2.5 rounded-2xl border-2 border-dashed border-slate-200">
             Đặt các ngón tay lên hàng phím cơ sở (A S D F - J K L ;)
           </div>
         )}

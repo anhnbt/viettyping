@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IoTimeOutline, IoRefreshOutline, IoWarning, IoSpeedometerOutline, IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { Keyboard } from 'lucide-react';
 import { useTypingSound } from '@/hooks/useTypingSound';
+import { useSound } from '@/contexts/SoundContext';
 import VirtualKeyboard from './VirtualKeyboard';
 import { TelemetryPayload } from '@/types/lesson';
 import { stringToTelexKeys, buildCharMappings, validateInput, getNextHighlightKey, getCharColorStates } from '@/utils/telex';
@@ -85,7 +86,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
   const [timeLeft, setTimeLeft] = useState(task.time_limit_seconds || 60);
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const [showKeyboard, setShowKeyboard] = useState(true);
-  
+
   // States cho Popup thành tích EdTech
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [finalStats, setFinalStats] = useState<{ wpm: number; accuracy: number; incorrectCount: number; durationSeconds: number } | null>(null);
@@ -94,6 +95,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const wrongSoundTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const { playCorrectSound, playWrongSound } = useTypingSound();
+  const { playAudio } = useSound();
 
   // Tự động ẩn bàn phím ảo trên màn hình có chiều cao thấp
   useEffect(() => {
@@ -108,6 +110,27 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Phát âm thanh tiếng Việt khi hoàn thành bài tập luyện gõ
+  useEffect(() => {
+    if (showSuccessModal && finalStats) {
+      // 1. Phát âm thanh "Quá xuất sắc bé ơi!"
+      playAudio('/audio/xuat_sac.wav');
+
+      // 2. Sau 1.5 giây, phát âm thanh nhận xét về tốc độ gõ (Rùa, Thỏ, Báo)
+      const timer = setTimeout(() => {
+        if (finalStats.wpm < 10) {
+          playAudio('/audio/be-go-cham-rai-va-rat-can-than-nhu-chu-rua-dang-yeu.wav');
+        } else if (finalStats.wpm < 25) {
+          playAudio('/audio/be-go-nhip-nhang-va-nhanh-nhen-nhu-chu-tho-tinh-nghich.wav');
+        } else {
+          playAudio('/audio/be-go-sieu-toc-do-nhu-chu-bao-dung-manh.wav');
+        }
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessModal, finalStats, playAudio]);
 
   const targetTelexKeys = useMemo(() => stringToTelexKeys(task.content), [task.content]);
   const charMappings = useMemo(() => buildCharMappings(task.content), [task.content]);
@@ -233,7 +256,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
         return Math.random() * (max - min) + min;
       };
 
-      const interval = setInterval(function() {
+      const interval = setInterval(function () {
         const timeLeft = animationEnd - Date.now();
 
         if (timeLeft <= 0) {
@@ -252,14 +275,14 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
   const completeLesson = (stats: { wpm: number; accuracy: number; incorrectCount: number }) => {
     setIsComplete(true);
     clearInterval(timerRef.current);
-    
+
     const durationSeconds = startTime ? Math.round((Date.now() - startTime) / 1000) : 0;
-    
+
     setFinalStats({
       ...stats,
       durationSeconds
     });
-    
+
     // Hiển thị modal ăn mừng và bắn confetti
     setShowSuccessModal(true);
     triggerConfetti();
@@ -416,15 +439,15 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
           Cần bàn phím vật lý!
         </h2>
         <p className="text-gray-600 text-lg">
-          Bài tập luyện gõ phím 10 ngón được thiết kế tối ưu nhất khi sử dụng máy tính (Desktop/Laptop). 
-          <br/><br/>
+          Bài tập luyện gõ phím 10 ngón được thiết kế tối ưu nhất khi sử dụng máy tính (Desktop/Laptop).
+          <br /><br />
           Bé hoặc phụ huynh hãy mở trên thiết bị có bàn phím vật lý để thực hành nhé!
         </p>
       </div>
 
       {/* Desktop/Tablet Content */}
       <div className="hidden md:flex flex-col w-full h-full min-h-0">
-        
+
         {/* Compact Stats Bar */}
         <div className={`flex items-center justify-between gap-4 px-2 py-1.5 mb-2 shrink-0 w-full ${hideStatsBar ? 'justify-end' : ''}`}>
           {!hideStatsBar && (
@@ -448,17 +471,16 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowKeyboard(prev => !prev)}
-              className={`flex items-center gap-1 px-3 py-1.5 text-xs border-2 border-slate-800 rounded-xl font-bold cursor-pointer transition-all shadow-[0_3px_0_0_var(--color-outline-variant)] ${
-                showKeyboard 
-                  ? "bg-indigo-100 text-indigo-850" 
+              className={`flex items-center gap-1 px-3 py-1.5 text-xs border-2 border-slate-800 rounded-xl font-bold cursor-pointer transition-all shadow-[0_3px_0_0_var(--color-outline-variant)] ${showKeyboard
+                  ? "bg-indigo-100 text-indigo-850"
                   : "bg-white text-gray-655"
-              } active:translate-y-0.5 active:shadow-none`}
+                } active:translate-y-0.5 active:shadow-none`}
               title={showKeyboard ? "Ẩn bàn phím ảo" : "Hiện bàn phím ảo"}
             >
               <Keyboard size={14} className="shrink-0" />
               <span>{showKeyboard ? "Ẩn phím" : "Hiện phím"}</span>
             </button>
-            
+
             <button
               onClick={handleRestart}
               className="flex items-center gap-1 px-4 py-1.5 text-xs bg-white border-2 border-slate-800 text-gray-750 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all font-bold cursor-pointer shadow-[0_3px_0_0_var(--color-outline-variant)] active:translate-y-0.5 active:shadow-none"
@@ -472,13 +494,13 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
         {/* Sticker minh họa sinh động cho từ đang gõ */}
         <div className="h-24 mb-2 flex items-center justify-center shrink-0 relative z-10">
           <AnimatePresence mode="wait">
-            {currentSticker ? (
+            {currentSticker && (
               <motion.div
                 key={currentWord}
                 initial={{ scale: 0, rotate: -15, opacity: 0 }}
                 animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0], opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
-                transition={{ 
+                transition={{
                   scale: { duration: 0.3 },
                   rotate: { repeat: Infinity, duration: 4, ease: "easeInOut" }
                 }}
@@ -486,14 +508,6 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
               >
                 <span className="text-5xl filter drop-shadow-sm select-none">{currentSticker}</span>
                 <span className="text-[10px] font-black text-amber-700 uppercase mt-1 tracking-wider">{currentWord}</span>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.6 }}
-                className="text-slate-400 text-sm font-bold italic"
-              >
-                Nhìn tranh và luyện gõ phím nhé bé yêu! 🎯
               </motion.div>
             )}
           </AnimatePresence>
@@ -516,10 +530,10 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
             const isCorrect = state === 'correct';
             const isIncorrect = state === 'incorrect';
             const isCurrent = state === 'current';
-              
+
             let colorClass = 'text-gray-400';
             let borderClass = '';
-            
+
             if (isCorrect) {
               colorClass = 'text-green-600 font-black drop-shadow-sm';
             } else if (isIncorrect) {
@@ -536,7 +550,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
             } else if (isCurrent) {
               borderClass = 'cursor-blink border-b-4 border-blue-500 font-black';
             }
-            
+
             return (
               <span
                 key={i}
@@ -551,14 +565,13 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
                       return (
                         <React.Fragment key={keyIdx}>
                           {keyIdx > 0 && <span className="text-yellow-900 text-[10px] font-bold">+</span>}
-                          <span 
-                            className={`px-2 py-0.5 rounded-lg font-mono text-sm leading-none ${
-                              isCurrentKey 
-                                ? 'bg-primary text-white ring-2 ring-primary/30 font-extrabold' 
-                                : isTyped 
-                                  ? 'text-slate-400 line-through font-normal' 
+                          <span
+                            className={`px-2 py-0.5 rounded-lg font-mono text-sm leading-none ${isCurrentKey
+                                ? 'bg-primary text-white ring-2 ring-primary/30 font-extrabold'
+                                : isTyped
+                                  ? 'text-slate-400 line-through font-normal'
                                   : 'bg-accent/40 text-slate-700 font-semibold'
-                            }`}
+                              }`}
                           >
                             {key}
                           </span>
@@ -581,7 +594,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
             className="mb-3 p-3 bg-secondary/5 rounded-xl text-center text-sm font-bold text-secondary flex items-center justify-center gap-2 relative z-20"
           >
             <span className="text-lg animate-bounce">⚠️</span>
-            <span>Bé gõ chưa đúng rồi! Hãy nhấn phím <b>Xóa (⌫)</b> màu tím để sửa lại nhé!</span>
+            <span>Bé gõ chưa đúng rồi! Hãy nhấn phím <b>Xóa (⌫)</b> màu vàng đang nhún nhảy để sửa lại nhé! 🌟</span>
           </motion.div>
         )}
 
@@ -622,10 +635,10 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
               </h2>
 
               <p className="text-gray-600 font-bold mb-6 text-sm">
-                {finalStats.wpm < 10 
-                  ? 'Bé gõ chậm rãi và rất cẩn thận như chú Rùa đáng yêu! 🐢' 
-                  : finalStats.wpm < 25 
-                    ? 'Bé gõ nhịp nhàng và nhanh nhẹn như chú Thỏ tinh nghịch! 🐰' 
+                {finalStats.wpm < 10
+                  ? 'Bé gõ chậm rãi và rất cẩn thận như chú Rùa đáng yêu! 🐢'
+                  : finalStats.wpm < 25
+                    ? 'Bé gõ nhịp nhàng và nhanh nhẹn như chú Thỏ tinh nghịch! 🐰'
                     : 'Bé gõ siêu tốc độ như chú Báo dũng mãnh! 🐆'}
               </p>
 

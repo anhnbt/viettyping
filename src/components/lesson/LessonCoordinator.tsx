@@ -16,6 +16,7 @@ import MultipleChoiceGame from "@/components/MultipleChoiceGame";
 import TypingPractice from "@/components/TypingPractice";
 import RealWorldMathGame from "@/components/RealWorldMathGame";
 import ColoringCanvas from "@/components/ColoringCanvas";
+import { useSound } from "@/contexts/SoundContext";
 
 const formatTime = (seconds: number) => {
   const mins = Math.floor(seconds / 60);
@@ -41,6 +42,7 @@ export default function LessonCoordinator({
   initialStep = "flashcards",
 }: LessonCoordinatorProps) {
   const router = useRouter();
+  const { playAudio } = useSound();
   
   // State nhận các thông số thời gian thực từ TypingPractice
   const [typingStats, setTypingStats] = useState<{
@@ -94,6 +96,20 @@ export default function LessonCoordinator({
     window.addEventListener("keydown", handleEnterPress);
     return () => window.removeEventListener("keydown", handleEnterPress);
   }, [step, router]);
+
+  // Phát âm thanh giọng chúc mừng hoàn thành bài học khi chuyển sang step summary
+  useEffect(() => {
+    if (step === "summary") {
+      playAudio('/audio/chuc-mung-be-yeu-go-chu-rat-gioi.wav');
+    }
+  }, [step, playAudio]);
+
+  // Phát âm thanh giọng nhắc nhở bé học tiếp khi bé không hoạt động (Idle)
+  useEffect(() => {
+    if (showIdleReminder) {
+      playAudio('/audio/be-dang-hoc-rat-gioi-co-len-nhe.wav');
+    }
+  }, [showIdleReminder, playAudio]);
 
   useEffect(() => {
     const isDev = typeof window !== 'undefined' && window.location.search.includes('dev');

@@ -8,9 +8,21 @@ interface SoundContextType {
   isMuted: boolean;
   toggleMute: () => void;
   playSound: (type: SoundType) => void;
+  playAudio: (src: string) => void;
 }
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
+
+// Bộ nhớ cache cho các đối tượng Audio để tránh tạo mới liên tục và tối ưu bộ nhớ
+const audioCache: Record<string, HTMLAudioElement> = {};
+
+const getCachedAudio = (src: string): HTMLAudioElement | null => {
+  if (typeof window === 'undefined') return null;
+  if (!audioCache[src]) {
+    audioCache[src] = new Audio(src);
+  }
+  return audioCache[src];
+};
 
 export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isMuted, setIsMuted] = useState(false);
@@ -284,8 +296,24 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [isMuted, audioContext]);
 
+  const playAudio = useCallback((src: string) => {
+    if (isMuted) return;
+    const audio = getCachedAudio(src);
+    if (!audio) return;
+
+    try {
+      audio.currentTime = 0;
+      audio.play().catch((err) => {
+        // Trình duyệt có thể chặn tự động phát nếu người dùng chưa tương tác
+        console.warn(`Autoplay blocked or failed for audio: ${src}`, err);
+      });
+    } catch (err) {
+      console.warn(`Failed to play audio: ${src}`, err);
+    }
+  }, [isMuted]);
+
   return (
-    <SoundContext.Provider value={{ isMuted, toggleMute, playSound }}>
+    <SoundContext.Provider value={{ isMuted, toggleMute, playSound, playAudio }}>
       {children}
     </SoundContext.Provider>
   );
