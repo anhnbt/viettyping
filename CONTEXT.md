@@ -58,6 +58,7 @@ Xây dựng một ứng dụng web giáo dục tương tác cao, tập trung chu
 - **Thiết kế component Toán đặt tính hàng dọc (Vertical Math):** Dạng Grid căn thẳng hàng chục và hàng đơn vị, ô nhớ (carry) động xuất hiện khi phép tính có nhớ/mượn. Nhập từ phải qua trái (đơn vị trước, chục sau), tự động focus chuyển ô khi đúng và báo lỗi đỏ tại chỗ khi sai chữ số.
 - **Hướng dẫn gõ Telex động (Keystroke Bubble Hint):** Hiển thị bong bóng gợi ý tổ hợp phím Telex động (ví dụ `[a] + [s]` trên chữ `á`) ngay phía trên chữ đang cần gõ, cập nhật trạng thái phím đang gõ dở trong tổ hợp.
 - **Phân phối âm thanh & hiệu ứng tương tác:** Component tương tác tự phát âm thanh phản hồi nhanh (Ting/Buzz) và chạy hiệu ứng cục bộ (wiggle/bounce) để tăng độ nhạy tương tác. Phần thưởng lớn (Confetti, XP, lên cấp) do Page Adapter cấp trên kiểm soát khi kết thúc toàn bộ bài học.
+- **Thiết lập vai trò AI theo môn học & lớp trong System Prompt:** Khi định nghĩa hoặc sử dụng System Prompt để sinh dữ liệu bài học (Lesson Config), bắt buộc quy định rõ vai trò sư phạm tương ứng với môn học và cấp lớp cụ thể (ví dụ: "Giáo viên Tin học cấp Tiểu học" cho kỹ năng luyện gõ cơ bản, hoặc "Giáo viên Toán lớp 1" cho môn Toán), giúp mô hình AI sinh dữ liệu phù hợp tối đa với kiến thức môn học và tâm sinh lý lứa tuổi của trẻ.
 
 ## Links & Resources
 - Tài liệu cấu trúc bài học: `SYSTEM_PROMPT.md`
