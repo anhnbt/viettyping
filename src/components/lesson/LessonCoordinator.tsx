@@ -16,6 +16,7 @@ import MultipleChoiceGame from "@/components/MultipleChoiceGame";
 import TypingPractice from "@/components/TypingPractice";
 import RealWorldMathGame from "@/components/RealWorldMathGame";
 import ColoringCanvas from "@/components/ColoringCanvas";
+import MousePracticeGame from "@/components/MousePracticeGame";
 import { useSound } from "@/contexts/SoundContext";
 import { QuizActivity, ReadingActivity, DrawingActivity, ListeningActivity, MathActivity } from "@/components/activities";
 import { Topic } from "@/types/subject";
@@ -648,6 +649,18 @@ export default function LessonCoordinator({
                   key={currentGame.id}
                   gameConfig={currentGame}
                   onComplete={(telemetry) => handleGameComplete(currentGame.id, telemetry)}
+                />
+              );
+
+            case "mouse_practice":
+              return (
+                <MousePracticeGame
+                  key={currentGame.id}
+                  onComplete={(telemetry) => handleGameComplete(currentGame.id, {
+                    score: telemetry.score,
+                    durationSeconds: telemetry.durationSeconds,
+                    metadata: telemetry.rawPayload
+                  })}
                 />
               );
 

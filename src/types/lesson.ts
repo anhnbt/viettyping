@@ -70,6 +70,11 @@ export interface TraditionalActivityItem {
   activity: Activity;
 }
 
+export interface MousePracticeItem {
+  id: string;
+  type: 'mouse_practice';
+}
+
 export type MiniGameConfig = 
   | MatchingGameItem 
   | TrueFalseItem 
@@ -78,7 +83,8 @@ export type MiniGameConfig =
   | MultipleChoiceItem
   | RealWorldMathGameItem
   | ColoringCanvasItem
-  | TraditionalActivityItem;
+  | TraditionalActivityItem
+  | MousePracticeItem;
 
 // --- Lesson Config Interfaces ---
 

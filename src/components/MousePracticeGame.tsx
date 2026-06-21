@@ -22,11 +22,24 @@ interface MousePracticeGameProps {
 
 type StepType = 'welcome' | 'devices' | 'move' | 'click' | 'right_click' | 'double_click' | 'drag_drop' | 'finish';
 
-interface DeviceItem {
-  id: string;
+interface DeviceQuestion {
+  id: string; // 'screen' | 'cpu' | 'keyboard' | 'mouse' | 'laptop'
   name: string;
-  imageUrl: string;
   description: string;
+  imageUrl: string;
+  num?: number;
+  mode: 'desktop_part' | 'laptop';
+  // Vị trí hotspot (nếu là desktop_part)
+  hotspot?: {
+    top: string;
+    left: string;
+    width: string;
+    height: string;
+  };
+  labelPos?: {
+    top: string;
+    left: string;
+  };
 }
 
 export default function MousePracticeGame({ onComplete }: MousePracticeGameProps) {
@@ -38,16 +51,60 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
   const [errorsCount, setErrorsCount] = useState(0);
 
   // Màn 1: Nhận diện thiết bị
-  const devices: DeviceItem[] = [
-    { id: 'desktop', name: 'Máy tính để bàn', imageUrl: '/assets/devices/desktop.png', description: 'Có màn hình lớn, thùng máy to đùng đặt trên bàn.' },
-    { id: 'laptop', name: 'Máy tính xách tay (Laptop)', imageUrl: '/assets/devices/laptop.png', description: 'Gập mở gọn gàng, bé có thể mang đi khắp mọi nơi.' },
-    { id: 'screen', name: 'Màn hình máy tính', imageUrl: '/assets/devices/screen.png', description: 'Nơi hiển thị hình ảnh, phim hoạt hình và bài học cho bé.' },
-    { id: 'mouse', name: 'Chuột máy tính', imageUrl: '/assets/devices/mouse.png', description: 'Chú chuột nhỏ nhắn giúp bé di chuyển và lựa chọn trên màn hình.' }
+  const devices: DeviceQuestion[] = [
+    { 
+      id: 'screen', 
+      name: 'Màn hình máy tính', 
+      description: 'Màn hình trông giống như ti vi. Màn hình là nơi hiển thị kết quả làm việc của máy tính.', 
+      imageUrl: '/assets/devices/screen.png',
+      num: 1,
+      mode: 'desktop_part',
+      hotspot: { top: '7%', left: '5%', width: '58%', height: '62%' },
+      labelPos: { top: '15%', left: '10%' }
+    },
+    { 
+      id: 'cpu', 
+      name: 'Thân máy tính', 
+      description: 'Thân máy là bộ phận quan trọng nhất của máy tính. Trong thân máy có bộ xử lý, nó giống như bộ não điều khiển mọi hoạt động của máy tính.', 
+      imageUrl: '/assets/devices/cpu.png',
+      num: 2,
+      mode: 'desktop_part',
+      hotspot: { top: '38%', left: '67%', width: '31%', height: '42%' },
+      labelPos: { top: '15%', left: '90%' }
+    },
+    { 
+      id: 'keyboard', 
+      name: 'Bàn phím máy tính', 
+      description: 'Bàn phím gồm nhiều phím. Khi gõ các phím, em gửi tín hiệu vào máy tính.', 
+      imageUrl: '/assets/devices/keyboard.png',
+      num: 3,
+      mode: 'desktop_part',
+      hotspot: { top: '74%', left: '23%', width: '44%', height: '16%' },
+      labelPos: { top: '85%', left: '10%' }
+    },
+    { 
+      id: 'mouse', 
+      name: 'Chuột máy tính', 
+      description: 'Chuột máy tính giúp em điều khiển máy tính thuận tiện hơn.', 
+      imageUrl: '/assets/devices/mouse.png',
+      num: 4,
+      mode: 'desktop_part',
+      hotspot: { top: '74%', left: '67%', width: '13%', height: '9%' },
+      labelPos: { top: '85%', left: '90%' }
+    },
+    { 
+      id: 'laptop', 
+      name: 'Máy tính xách tay (Laptop)', 
+      description: 'Laptop gập mở tiện lợi, gộp chung màn hình, bàn phím và chuột làm một để bé dễ dàng mang đi học, đi chơi khắp nơi.', 
+      imageUrl: '/assets/devices/laptop.png',
+      mode: 'laptop'
+    }
   ];
   
   const [deviceQuestionIndex, setDeviceQuestionIndex] = useState(0);
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [deviceFeedback, setDeviceFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const [activeHoveredPart, setActiveHoveredPart] = useState<string | null>(null);
   
   // Màn 2: Rê chuột vỡ bóng
   const [bubbles, setBubbles] = useState<Array<{ id: number; color: string; size: number; x: number; y: number; popped: boolean }>>([]);
@@ -73,6 +130,49 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
   const [applePosition, setApplePosition] = useState({ x: 0, y: 0 });
   const [isAppleEaten, setIsAppleEaten] = useState(false);
   const dinoRef = useRef<HTMLDivElement>(null);
+  const deviceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Phát âm tiếng Việt sử dụng Web Speech API
+  const speakVietnamese = (text: string) => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'vi-VN';
+      const voices = window.speechSynthesis.getVoices();
+      const viVoice = voices.find(v => v.lang.startsWith('vi'));
+      if (viVoice) utterance.voice = viVoice;
+      utterance.rate = 0.95;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  // Phát âm khi câu hỏi thiết bị thay đổi
+  useEffect(() => {
+    if (step === 'devices') {
+      const currentQuestion = devices[deviceQuestionIndex];
+      if (currentQuestion) {
+        if (currentQuestion.mode === 'desktop_part') {
+          speakVietnamese(`Bé hãy tìm và chọn: ${currentQuestion.name}`);
+        } else {
+          speakVietnamese(`Bé hãy bấm chọn: ${currentQuestion.name}`);
+        }
+      }
+    }
+  }, [step, deviceQuestionIndex]);
+
+  const handlePartHover = (partId: string) => {
+    if (activeHoveredPart !== partId && !deviceFeedback) {
+      setActiveHoveredPart(partId);
+      const targetPart = devices.find(d => d.id === partId);
+      if (targetPart) {
+        speakVietnamese(targetPart.name);
+      }
+    }
+  };
+
+  const handlePartLeave = () => {
+    setActiveHoveredPart(null);
+  };
 
   // Initialize bubbles for Màn 2
   const initBubbles = () => {
@@ -94,6 +194,14 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
 
   useEffect(() => {
     startTimeRef.current = Date.now();
+    return () => {
+      if (deviceTimeoutRef.current) {
+        clearTimeout(deviceTimeoutRef.current);
+      }
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
   }, []);
 
   // Phát âm thanh chúc mừng khi hoàn thành tất cả bài luyện tập chuột
@@ -110,11 +218,39 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
     setDeviceQuestionIndex(0);
     setSelectedDevice(null);
     setDeviceFeedback(null);
+    setActiveHoveredPart(null);
+  };
+
+  // Hàm chuyển sang câu hỏi thiết bị tiếp theo hoặc màn tiếp theo
+  const goToNextDeviceQuestion = () => {
+    if (deviceTimeoutRef.current) {
+      clearTimeout(deviceTimeoutRef.current);
+      deviceTimeoutRef.current = null;
+    }
+
+    if (deviceQuestionIndex < devices.length - 1) {
+      setDeviceQuestionIndex(prev => prev + 1);
+      setSelectedDevice(null);
+      setDeviceFeedback(null);
+      setActiveHoveredPart(null);
+    } else {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      playSound('complete');
+      initBubbles();
+      setStep('move');
+    }
   };
 
   // MÀN 1: Chọn Thiết Bị
   const handleDeviceSelect = (deviceId: string) => {
     if (deviceFeedback === 'correct') return;
+
+    if (deviceTimeoutRef.current) {
+      clearTimeout(deviceTimeoutRef.current);
+      deviceTimeoutRef.current = null;
+    }
 
     setSelectedDevice(deviceId);
     const currentQuestion = devices[deviceQuestionIndex];
@@ -123,31 +259,27 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
       playSound('coin');
       setDeviceFeedback('correct');
       confetti({
-        particleCount: 30,
-        spread: 30,
-        origin: { y: 0.7 }
+        particleCount: 50,
+        spread: 40,
+        origin: { y: 0.75 }
       });
       
-      setTimeout(() => {
-        if (deviceQuestionIndex < devices.length - 1) {
-          setDeviceQuestionIndex(prev => prev + 1);
-          setSelectedDevice(null);
-          setDeviceFeedback(null);
-        } else {
-          // Sang màn 2
-          playSound('complete');
-          initBubbles();
-          setStep('move');
-        }
-      }, 2000);
+      speakVietnamese(`Đúng rồi! ${currentQuestion.name}. ${currentQuestion.description}`);
+      
+      deviceTimeoutRef.current = setTimeout(() => {
+        goToNextDeviceQuestion();
+      }, 9500); // 9.5 giây đủ cho bé nghe xong đoạn mô tả chi tiết của SGK
     } else {
       playSound('wrong');
       setDeviceFeedback('wrong');
       setErrorsCount(prev => prev + 1);
-      setTimeout(() => {
+      
+      speakVietnamese(`Chưa đúng rồi! Bé hãy tìm ${currentQuestion.name} nhé!`);
+      
+      deviceTimeoutRef.current = setTimeout(() => {
         setDeviceFeedback(null);
         setSelectedDevice(null);
-      }, 1200);
+      }, 3000);
     }
   };
 
@@ -356,61 +488,274 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
       {/* 2. MÀN HỌC THIẾT BỊ (MÀN 1) */}
       {step === 'devices' && (
         <div className="w-full max-w-4xl flex flex-col items-center">
-          <div className="bg-amber-100 border-2 border-slate-800 rounded-2xl py-3.5 px-6 mb-6 text-center shadow-[3px_3px_0px_0px_#1e293b]">
+          {/* Header câu hỏi */}
+          <div className="bg-amber-100 border-2 border-slate-800 rounded-2xl py-3.5 px-6 mb-6 text-center shadow-[3px_3px_0px_0px_#1e293b] w-full max-w-2xl">
             <h3 className="text-xl md:text-2xl font-black text-amber-800 leading-normal">
               Thử thách 1: Bé hãy chỉ ra <span className="underline decoration-wavy decoration-rose-500 font-extrabold text-rose-600">{devices[deviceQuestionIndex].name}</span> nhé!
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-3xl">
-            {devices.map((device) => {
-              const isSelected = selectedDevice === device.id;
-              const isCorrect = deviceFeedback === 'correct';
-              const isWrong = deviceFeedback === 'wrong';
-              
-              let cardStyle = "bg-white border-4 border-slate-800 hover:bg-slate-50 shadow-[5px_5px_0px_0px_#1e293b]";
-              if (isSelected) {
-                if (isCorrect) cardStyle = "bg-green-100 border-green-600 border-4 shadow-[2px_2px_0px_0px_#1e293b] translate-y-1";
-                if (isWrong) cardStyle = "bg-red-100 border-red-600 border-4 shadow-[2px_2px_0px_0px_#1e293b] translate-y-1 animate-shake";
-              }
+          <div className="w-full flex flex-col items-center justify-center">
+            {devices[deviceQuestionIndex].mode === 'desktop_part' ? (
+              /* CHẾ ĐỘ 1: Tương tác bộ phận trên ảnh Máy tính để bàn */
+              <div className="relative w-full max-w-[540px] aspect-square border-4 border-slate-800 rounded-[36px] overflow-hidden shadow-[8px_8px_0px_0px_#1e293b] bg-white">
+                {/* Ảnh bộ máy tính chính */}
+                <img 
+                  src="/assets/devices/desktop.png" 
+                  alt="Máy tính để bàn hoàn chỉnh" 
+                  className="w-full h-full object-cover select-none pointer-events-none"
+                />
 
-              return (
-                <motion.button
-                  key={device.id}
-                  whileHover={{ scale: deviceFeedback ? 1 : 1.02 }}
-                  whileTap={{ scale: deviceFeedback ? 1 : 0.98 }}
-                  onClick={() => handleDeviceSelect(device.id)}
-                  disabled={deviceFeedback === 'correct'}
-                  className={`p-6 rounded-[32px] text-center flex flex-col items-center transition-all cursor-pointer h-full ${cardStyle}`}
-                >
-                  <div className="w-full h-32 md:h-36 bg-slate-50 border-2 border-slate-800 rounded-2xl flex items-center justify-center p-2 mb-4 overflow-hidden shadow-[2px_2px_0px_0px_#1e293b]">
-                    <img 
-                      src={device.imageUrl} 
-                      alt={device.name} 
-                      className="w-full h-full object-contain"
+                {/* SVG Overlay vẽ các đường line nối giống Sách Giáo Khoa */}
+                <svg viewBox="0 0 100 100" className="absolute inset-0 pointer-events-none w-full h-full z-15">
+                  {devices.filter(d => d.mode === 'desktop_part').map((part) => {
+                    if (!part.hotspot || !part.labelPos) return null;
+                    
+                    const x1 = parseFloat(part.labelPos.left);
+                    const y1 = parseFloat(part.labelPos.top);
+                    const x2 = parseFloat(part.hotspot.left) + parseFloat(part.hotspot.width) / 2;
+                    const y2 = parseFloat(part.hotspot.top) + parseFloat(part.hotspot.height) / 2;
+                    
+                    const isHovered = activeHoveredPart === part.id;
+                    const isCurrent = devices[deviceQuestionIndex].id === part.id;
+                    const isCorrect = selectedDevice === part.id && deviceFeedback === 'correct';
+                    const isHighlighted = isHovered || isCurrent || isCorrect;
+
+                    return (
+                      <g key={`line-${part.id}`}>
+                        <line
+                          x1={`${x1}%`}
+                          y1={`${y1}%`}
+                          x2={`${x2}%`}
+                          y2={`${y2}%`}
+                          stroke={isCorrect ? "#22c55e" : isHighlighted ? "#6366f1" : "#cbd5e1"}
+                          strokeWidth={isHighlighted ? "1.2" : "0.6"}
+                          strokeDasharray={isHighlighted ? "none" : "2 2"}
+                          className="transition-all duration-300"
+                        />
+                        {/* Điểm neo nhỏ tại tâm thiết bị */}
+                        <circle
+                          cx={`${x2}%`}
+                          cy={`${y2}%`}
+                          r={isHighlighted ? "1.5" : "0.8"}
+                          fill={isCorrect ? "#22c55e" : isHighlighted ? "#6366f1" : "#94a3b8"}
+                          className="transition-all duration-300"
+                        />
+                      </g>
+                    );
+                  })}
+                </svg>
+
+                {/* Nút tròn số chỉ dẫn ngoài rìa */}
+                {devices.filter(d => d.mode === 'desktop_part').map((part) => {
+                  if (!part.labelPos) return null;
+                  const isHovered = activeHoveredPart === part.id;
+                  const isCurrent = devices[deviceQuestionIndex].id === part.id;
+                  const isCorrect = selectedDevice === part.id && deviceFeedback === 'correct';
+                  const isWrong = selectedDevice === part.id && deviceFeedback === 'wrong';
+
+                  return (
+                    <div
+                      key={`label-container-${part.id}`}
+                      style={{
+                        position: 'absolute',
+                        top: part.labelPos.top,
+                        left: part.labelPos.left,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                      className="z-25 flex flex-col items-center pointer-events-auto"
+                    >
+                      <motion.button
+                        whileHover={{ scale: 1.15 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleDeviceSelect(part.id)}
+                        onMouseEnter={() => handlePartHover(part.id)}
+                        onMouseLeave={handlePartLeave}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-base border-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] transition-all ${
+                          isCorrect
+                            ? 'bg-green-500 border-green-700 text-white'
+                            : isWrong
+                            ? 'bg-red-500 border-red-700 text-white animate-shake'
+                            : isCurrent
+                            ? 'bg-amber-400 border-slate-800 text-slate-800 animate-pulse'
+                            : isHovered
+                            ? 'bg-indigo-500 border-indigo-700 text-white scale-110'
+                            : 'bg-white border-slate-800 text-slate-800 hover:bg-slate-100'
+                        }`}
+                      >
+                        {part.num}
+                      </motion.button>
+
+                      {/* Tooltip nhỏ xinh hiển thị tên thiết bị khi hover hoặc khi tìm đúng */}
+                      <AnimatePresence>
+                        {(isHovered || isCorrect) && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.8 }}
+                            className="absolute top-12 whitespace-nowrap bg-slate-800 text-white font-bold text-xs px-2.5 py-1.5 rounded-xl border border-slate-700 shadow-md"
+                          >
+                            {part.name}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+
+                {/* Các vùng hotspot trong suốt nằm đè lên ảnh thiết bị */}
+                {devices.filter(d => d.mode === 'desktop_part').map((part) => {
+                  if (!part.hotspot) return null;
+                  const isHovered = activeHoveredPart === part.id;
+                  const isCorrect = selectedDevice === part.id && deviceFeedback === 'correct';
+
+                  return (
+                    <div
+                      key={`hotspot-${part.id}`}
+                      onMouseEnter={() => handlePartHover(part.id)}
+                      onMouseLeave={handlePartLeave}
+                      onClick={() => handleDeviceSelect(part.id)}
+                      style={{
+                        position: 'absolute',
+                        top: part.hotspot.top,
+                        left: part.hotspot.left,
+                        width: part.hotspot.width,
+                        height: part.hotspot.height,
+                      }}
+                      className={`rounded-[24px] cursor-pointer transition-all duration-300 z-20 ${
+                        isHovered 
+                          ? 'border-4 border-dashed border-indigo-500 bg-indigo-500/10 shadow-[0_0_20px_rgba(99,102,241,0.5)]'
+                          : isCorrect
+                          ? 'border-4 border-solid border-green-500 bg-green-500/5'
+                          : 'border-0 border-transparent'
+                      }`}
                     />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-black text-slate-850 mb-2">{device.name}</h4>
-                    <p className="text-xs font-bold text-slate-500 leading-relaxed">{device.description}</p>
-                  </div>
-                </motion.button>
-              );
-            })}
+                  );
+                })}
+              </div>
+            ) : (
+              /* CHẾ ĐỘ 2: Click giới thiệu chiếc Laptop xách tay */
+              <motion.div 
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                className="w-full max-w-md bg-white border-4 border-slate-800 rounded-[36px] p-6 shadow-[8px_8px_0px_0px_#1e293b] text-center flex flex-col items-center"
+              >
+                <div 
+                  onClick={() => handleDeviceSelect('laptop')}
+                  className="w-full h-56 md:h-64 bg-slate-50 border-2 border-slate-800 rounded-2xl flex items-center justify-center p-3 mb-6 overflow-hidden shadow-[2px_2px_0px_0px_#1e293b] cursor-pointer hover:bg-slate-100 transition-all group"
+                >
+                  <img 
+                    src="/assets/devices/laptop.png" 
+                    alt="Máy tính xách tay Laptop" 
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform"
+                  />
+                </div>
+                <h4 className="text-2xl font-black text-slate-850 mb-2">Máy tính xách tay (Laptop)</h4>
+                <p className="text-xs font-bold text-slate-500 leading-relaxed max-w-xs mb-4">
+                  Một chiếc máy tính vô cùng gọn nhẹ, tích hợp màn hình, bàn phím và chuột làm một để bé dễ dàng mang đi học, đi chơi khắp nơi!
+                </p>
+                <button
+                  onClick={() => handleDeviceSelect('laptop')}
+                  className="tactile-btn tactile-btn-primary px-6 py-2.5 text-sm rounded-xl font-bold"
+                >
+                  Nhấn để tìm hiểu!
+                </button>
+              </motion.div>
+            )}
           </div>
 
-          {/* Feedback popup */}
+          {/* Pop-up giải thích chi tiết kèm ảnh phóng to khi trả lời đúng */}
           <AnimatePresence>
-            {deviceFeedback && (
+            {deviceFeedback === 'correct' && (
+              <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  className="bg-[#fffdfa] border-4 border-slate-800 rounded-[40px] p-6 md:p-8 max-w-2xl w-full shadow-[8px_8px_0px_0px_#1e293b] flex flex-col md:flex-row items-center gap-6 relative overflow-hidden"
+                >
+                  {/* Decorative background shape */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-green-100 rounded-full -mr-16 -mt-16 pointer-events-none z-0" />
+                  
+                  {/* Cột 1: Ảnh phóng to thiết bị */}
+                  <div className="w-full md:w-2/5 flex flex-col items-center z-10 shrink-0">
+                    <div className="w-40 h-40 md:w-48 md:h-48 bg-white border-4 border-slate-800 rounded-[32px] overflow-hidden shadow-[4px_4px_0px_0px_#1e293b] p-3 flex items-center justify-center">
+                      <img
+                        src={devices[deviceQuestionIndex].imageUrl}
+                        alt={devices[deviceQuestionIndex].name}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <span className="mt-3.5 bg-indigo-100 text-indigo-700 text-xs md:text-sm font-black px-4 py-1.5 rounded-full border-2 border-indigo-200">
+                      {devices[deviceQuestionIndex].name}
+                    </span>
+                  </div>
+
+                  {/* Cột 2: Lời giải thích chuẩn SGK */}
+                  <div className="w-full md:w-3/5 text-left flex flex-col z-10">
+                    <span className="text-2xl md:text-3xl font-black text-green-600 mb-2 block flex items-center gap-1.5">
+                      🎉 Bé giỏi quá!
+                    </span>
+                    
+                    {/* Đoạn giải thích chi tiết */}
+                    <div className="text-slate-700 text-sm md:text-base font-bold leading-relaxed mb-6">
+                      {(() => {
+                        const desc = devices[deviceQuestionIndex].description;
+                        if (devices[deviceQuestionIndex].id === 'screen') {
+                          return (
+                            <p>
+                              Màn hình <span className="underline decoration-wavy decoration-indigo-400 font-black text-indigo-650">trông giống như ti vi</span>. Màn hình là nơi <span className="text-indigo-650 font-black">hiển thị kết quả làm việc</span> của máy tính.
+                            </p>
+                          );
+                        } else if (devices[deviceQuestionIndex].id === 'cpu') {
+                          return (
+                            <p>
+                              Thân máy là <span className="text-indigo-650 font-black">bộ phận quan trọng nhất</span> của máy tính. Trong thân máy có <span className="underline decoration-wavy decoration-indigo-400 font-black text-indigo-650">bộ xử lý</span>, nó giống như <span className="text-rose-500 font-black">bộ não</span> điều khiển mọi hoạt động của máy tính.
+                            </p>
+                          );
+                        } else if (devices[deviceQuestionIndex].id === 'keyboard') {
+                          return (
+                            <p>
+                              Bàn phím <span className="text-indigo-650 font-black">gồm nhiều phím</span>. Khi gõ các phím, em <span className="underline decoration-wavy decoration-indigo-400 font-black text-indigo-650">gửi tín hiệu</span> vào máy tính.
+                            </p>
+                          );
+                        } else if (devices[deviceQuestionIndex].id === 'mouse') {
+                          return (
+                            <p>
+                              Chuột máy tính giúp em <span className="text-indigo-650 font-black">điều khiển máy tính thuận tiện hơn</span>.
+                            </p>
+                          );
+                        }
+                        return <p>{desc}</p>;
+                      })()}
+                    </div>
+
+                    {/* Nút bấm chuyển câu tiếp theo */}
+                    <button
+                      onClick={goToNextDeviceQuestion}
+                      className="tactile-btn tactile-btn-primary px-6 py-3 rounded-2xl flex items-center justify-center gap-2 self-start text-sm"
+                    >
+                      <span>Tiếp tục học</span>
+                      <ArrowRight className="w-4 h-4 animate-pulse" />
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
+
+          {/* Feedback khi trả lời sai (Không hiện modal lớn để bé dễ chọn lại) */}
+          <AnimatePresence>
+            {deviceFeedback === 'wrong' && (
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
-                className={`mt-6 font-black text-xl px-6 py-3 rounded-full border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] ${
-                  deviceFeedback === 'correct' ? 'bg-green-400 text-white' : 'bg-red-400 text-white'
-                }`}
+                className="mt-6 font-bold text-base px-6 py-3.5 rounded-2xl border-3 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] text-center bg-red-100 text-red-800 max-w-md w-full"
               >
-                {deviceFeedback === 'correct' ? '🎉 Ôi bé giỏi quá! Hoàn toàn chính xác!' : '😢 Ôi chưa đúng rồi, bé thử tìm lại nhé!'}
+                <span className="text-lg font-black block mb-0.5">😢 Chưa đúng rồi bé ơi!</span>
+                <span className="text-xs md:text-sm font-semibold">Bé hãy thử chỉ ra {devices[deviceQuestionIndex].name} trên hình máy tính nhé!</span>
               </motion.div>
             )}
           </AnimatePresence>
