@@ -212,32 +212,52 @@ export function StudentProvider({ children }: { children: ReactNode }) {
               setStudentInfo(mergedProfile);
               localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedProfile));
               document.documentElement.setAttribute('data-theme', mergedProfile.theme || 'dino');
-            }
 
-            // Cập nhật State & LocalStorage
-            setXp(data.xp);
-            setStreak(data.streak);
-            setAvgWpm(data.avgWpm);
-            setAvgAccuracy(data.avgAccuracy);
+              // Cập nhật State & LocalStorage
+              setXp(data.xp);
+              setStreak(data.streak);
+              setAvgWpm(data.avgWpm);
+              setAvgAccuracy(data.avgAccuracy);
 
-            localStorage.setItem('typing_xp', String(data.xp));
-            localStorage.setItem('typing_streak', String(data.streak));
-            localStorage.setItem('typing_avg_wpm', String(data.avgWpm));
-            localStorage.setItem('typing_avg_accuracy', String(data.avgAccuracy));
-            localStorage.setItem('typing_total_lessons', String(data.totalLessons));
+              localStorage.setItem('typing_xp', String(data.xp));
+              localStorage.setItem('typing_streak', String(data.streak));
+              localStorage.setItem('typing_avg_wpm', String(data.avgWpm));
+              localStorage.setItem('typing_avg_accuracy', String(data.avgAccuracy));
+              localStorage.setItem('typing_total_lessons', String(data.totalLessons));
 
-            if (data.completedLessons) {
-              localStorage.setItem('typing_completed_lessons', JSON.stringify(data.completedLessons));
+              if (data.completedLessons) {
+                localStorage.setItem('typing_completed_lessons', JSON.stringify(data.completedLessons));
+              }
+              if (data.badges) {
+                data.badges.forEach((badgeId: string) => {
+                  localStorage.setItem(`viettyping_badge_${badgeId}`, 'true');
+                });
+              }
+              if (data.progressMap) {
+                localStorage.setItem('kids_learning_progress', JSON.stringify(data.progressMap));
+              }
+              setLastSyncedAt(new Date().toISOString());
+            } else if (localProfile) {
+              // Nếu Server chưa có hồ sơ nhưng Client đã có thông tin lưu cục bộ trước đó -> Đẩy lên Server
+              try {
+                await supabase
+                  .from('student_profiles')
+                  .insert({
+                    id: userId,
+                    name: localProfile.name,
+                    nickname: localProfile.nickname,
+                    grade: localProfile.grade,
+                    avatar: localProfile.avatar,
+                    theme: localProfile.theme || 'dino',
+                    xp: localXp,
+                    streak: localStreak,
+                    avg_wpm: localWpm,
+                    avg_accuracy: localAcc
+                  });
+              } catch (err) {
+                console.error("Lỗi khi đồng bộ hồ sơ cục bộ lên máy chủ:", err);
+              }
             }
-            if (data.badges) {
-              data.badges.forEach((badgeId: string) => {
-                localStorage.setItem(`viettyping_badge_${badgeId}`, 'true');
-              });
-            }
-            if (data.progressMap) {
-              localStorage.setItem('kids_learning_progress', JSON.stringify(data.progressMap));
-            }
-            setLastSyncedAt(new Date().toISOString());
 
             // Sau khi khôi phục dữ liệu xong, thử đồng bộ bất kỳ gói tin local nào còn sót
             setTimeout(() => {

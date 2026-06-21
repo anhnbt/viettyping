@@ -43,7 +43,19 @@ export async function GET(
 
     if (profileError) {
       if (profileError.code === "PGRST116") {
-        return NextResponse.json({ message: "Chưa có hồ sơ học sinh" }, { status: 404 });
+        // Trả về 200 với thông tin profile trống để tránh trình duyệt báo đỏ lỗi 404 cho học sinh mới
+        return NextResponse.json({
+          profile: null,
+          profileExists: false,
+          xp: 0,
+          streak: 0,
+          avgWpm: 0,
+          avgAccuracy: 0,
+          totalLessons: 0,
+          completedLessons: [],
+          badges: [],
+          progressMap: {},
+        });
       }
       return NextResponse.json({ error: "Lỗi tải hồ sơ: " + profileError.message }, { status: 500 });
     }
