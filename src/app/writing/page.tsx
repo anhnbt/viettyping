@@ -430,6 +430,7 @@ export default function WritingPractice() {
     setIsDrawing(false);
     setIsStrokeError(false);
     setErrorMessage(null);
+    setShowSuccessModal(false);
   };
 
   return (
@@ -729,7 +730,7 @@ export default function WritingPractice() {
               <span className="text-xs font-black text-indigo-600 bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 rounded-full uppercase tracking-wide">
                 Ví dụ minh họa
               </span>
-              <h3 className="text-2xl font-black text-[var(--color-foreground)] mt-1.5 capitalize">
+              <h3 className="text-2xl font-black text-[var(--color-foreground)] mt-1.5">
                 {currentLetter.letter.toUpperCase()} {currentLetter.letter}
               </h3>
               <p className="text-sm font-semibold text-[var(--color-foreground)] opacity-75 mt-0.5">
@@ -834,7 +835,7 @@ export default function WritingPractice() {
                 BÉ HOÀN THÀNH XUẤT SẮC!
               </span>
 
-              <h2 className="text-3xl font-black text-[var(--color-foreground)] mt-5 mb-1 capitalize">
+              <h2 className="text-3xl font-black text-[var(--color-foreground)] mt-5 mb-1">
                 Chữ "{currentLetter.letter.toUpperCase()} {currentLetter.letter}"
               </h2>
               
