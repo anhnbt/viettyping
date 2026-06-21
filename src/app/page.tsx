@@ -53,7 +53,7 @@ export default function Home() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(100);
   const [isMounted, setIsMounted] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<'home' | 'lesson' | 'tasks' | 'shop' | 'leaderboard'>('home');
+  const [activeMenu, setActiveMenu] = useState<'home' | 'alphabet-book' | 'lesson' | 'tasks' | 'shop' | 'leaderboard'>('home');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Đọc dữ liệu gamification
@@ -142,6 +142,7 @@ export default function Home() {
       <nav className="w-full px-4 space-y-3 mt-8 flex-1">
         {[
           { id: 'home', label: 'Trang chủ', icon: <HomeIcon className="w-5 h-5" />, path: '/' },
+          { id: 'alphabet-book', label: 'Sách chữ cái', icon: <BookOpen className="w-5 h-5 animate-pulse" />, path: '/alphabet-book' },
           { id: 'lesson', label: 'Bài học của bé', icon: <BookOpen className="w-5 h-5" />, path: '/lesson' },
           { id: 'tasks', label: 'Đảo Gõ Phím', icon: <Keyboard className="w-5 h-5" />, path: '/typing' },
           { id: 'shop', label: 'Cửa hàng', icon: <Gift className="w-5 h-5" />, path: '/shop' },
@@ -349,6 +350,40 @@ export default function Home() {
                 </span>
               </div>
             </div>
+          </div>
+
+          {/* Alphabet Book Course Banner */}
+          <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-500 border-3 border-[var(--color-foreground)] rounded-[24px] shadow-[4px_4px_0px_0px_var(--color-foreground)] p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden text-white">
+            <div className="absolute -right-8 -bottom-8 text-9xl opacity-15 rotate-12 select-none pointer-events-none">
+              📖
+            </div>
+            <div className="absolute -left-6 -top-6 text-8xl opacity-10 -rotate-12 select-none pointer-events-none">
+              🅰️
+            </div>
+            
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+              <div className="w-16 h-16 bg-white rounded-2xl border-2 border-[var(--color-foreground)] flex items-center justify-center text-4xl shrink-0 shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+                📚
+              </div>
+              <div>
+                <span className="bg-indigo-600 border border-[var(--color-foreground)] text-[10px] font-black text-white px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)]">
+                  Sách nói cực vui
+                </span>
+                <h3 className="text-xl md:text-2xl font-black mt-2">
+                  Cuốn Sách Bảng Chữ Cái Kỳ Thú!
+                </h3>
+                <p className="text-xs md:text-sm font-semibold opacity-90 mt-1 max-w-xl">
+                  Bé hãy cùng khám phá 29 chữ cái tiếng Việt với những hình minh họa rực rỡ, luyện phát âm chuẩn giọng nói và nhận huy hiệu rực rỡ nhé!
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => handleNavClick('/alphabet-book')}
+              className="tactile-btn bg-indigo-600 hover:bg-indigo-500 text-white border-2 border-[var(--color-foreground)] font-black px-6 py-3.5 text-sm rounded-xl shrink-0 cursor-pointer shadow-[3px_3px_0px_0px_var(--color-foreground)] active:translate-y-[2px] active:shadow-[1px_1px_0px_0px_var(--color-foreground)]"
+            >
+              Mở sách ngay! 📖
+            </button>
           </div>
 
           {/* New IT & Mouse Course Banner */}

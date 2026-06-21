@@ -129,6 +129,44 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({
         </div>
       </div>
 
+      {/* Alphabet Book Banner for Tieng Viet */}
+      {subject.id === 'tieng-viet' && (
+        <div className="max-w-6xl mx-auto px-4 pt-8">
+          <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-500 rounded-3xl p-6 border-3 border-slate-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-white flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+            <div className="absolute -right-8 -bottom-8 text-9xl opacity-15 rotate-12 select-none pointer-events-none">
+              📖
+            </div>
+            <div className="absolute -left-6 -top-6 text-8xl opacity-10 -rotate-12 select-none pointer-events-none">
+              🅰️
+            </div>
+            
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+              <div className="w-16 h-16 bg-white rounded-2xl border-2 border-slate-800 flex items-center justify-center text-4xl shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                📚
+              </div>
+              <div>
+                <span className="bg-indigo-600 border border-slate-800 text-[10px] font-black text-white px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)]">
+                  Bài học bổ trợ
+                </span>
+                <h3 className="text-xl md:text-2xl font-black mt-2 text-slate-800">
+                  Cuốn Sách Bảng Chữ Cái Kỳ Thú!
+                </h3>
+                <p className="text-xs md:text-sm font-semibold opacity-90 mt-1 max-w-xl text-slate-700">
+                  Bé hãy cùng khám phá 29 chữ cái tiếng Việt, tập nghe và luyện phát âm chuẩn giọng nói với hình minh họa cực kỳ đáng yêu nhé!
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/alphabet-book"
+              className="tactile-btn bg-indigo-600 hover:bg-indigo-500 text-white border-2 border-slate-800 font-black px-6 py-3.5 text-sm rounded-xl shrink-0 cursor-pointer shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center"
+            >
+              Mở sách ngay! 📖
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Topics Grid */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
