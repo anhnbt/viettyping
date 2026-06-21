@@ -22,41 +22,42 @@ interface AlphabetLetter {
   emoji: string;
   spelling: string;
   sentence: string;
+  tip: string;
   color: string;
   borderColor: string;
 }
 
 // 29 chữ cái tiếng Việt cùng hình ảnh và câu ví dụ sinh động
 const ALPHABET_DATA: AlphabetLetter[] = [
-  { id: 'a', letter: 'a', uppercase: 'A', word: 'quả na', emoji: '🍈', spelling: 'a - n - a - na', sentence: 'Bé ăn quả na chín ngọt.', color: 'from-pink-100 to-pink-200 text-pink-700', borderColor: 'border-pink-300' },
-  { id: 'aw', letter: 'ă', uppercase: 'Ă', word: 'con tằm', emoji: '🐛', spelling: 'ă - t - tăm - huyền - tằm', sentence: 'Con tằm ăn lá dâu tơ.', color: 'from-orange-100 to-orange-200 text-orange-700', borderColor: 'border-orange-300' },
-  { id: 'aa', letter: 'â', uppercase: 'Â', word: 'cái cân', emoji: '⚖️', spelling: 'â - c - ân - cân', sentence: 'Cái cân dùng đo cân nặng.', color: 'from-amber-100 to-amber-200 text-amber-700', borderColor: 'border-amber-300' },
-  { id: 'b', letter: 'b', uppercase: 'B', word: 'quả bơ', emoji: '🥑', spelling: 'bờ - ơ - bơ', sentence: 'Quả bơ sáp béo ngậy thơm ngon.', color: 'from-yellow-100 to-yellow-200 text-yellow-700', borderColor: 'border-yellow-300' },
-  { id: 'c', letter: 'c', uppercase: 'C', word: 'con cá', emoji: '🐟', spelling: 'cờ - a - ca - sắc - cá', sentence: 'Con cá bơi lội dưới làn nước.', color: 'from-lime-100 to-lime-200 text-lime-700', borderColor: 'border-lime-300' },
-  { id: 'd', letter: 'd', uppercase: 'D', word: 'con dê', emoji: '🐐', spelling: 'dờ - ê - dê', sentence: 'Con dê trắng kêu he he ăn cỏ.', color: 'from-green-100 to-green-200 text-green-700', borderColor: 'border-green-300' },
-  { id: 'dd', letter: 'đ', uppercase: 'Đ', word: 'quả đu đủ', emoji: '🥭', spelling: 'đờ - u - đu - dờ - u - du', sentence: 'Quả đu đủ chín vàng ngọt mát.', color: 'from-emerald-100 to-emerald-200 text-emerald-700', borderColor: 'border-emerald-300' },
-  { id: 'e', letter: 'e', uppercase: 'E', word: 'em bé', emoji: '👶', spelling: 'e - m - em - bờ - ê - bê - sắc - bé', sentence: 'Em bé cười tươi chào ông bà.', color: 'from-teal-100 to-teal-200 text-teal-700', borderColor: 'border-teal-300' },
-  { id: 'ee', letter: 'ê', uppercase: 'Ê', word: 'con ếch', emoji: '🐸', spelling: 'ê - ch - ếch - sắc - ếch', sentence: 'Con ếch nhảy nhót dưới trời mưa.', color: 'from-cyan-100 to-cyan-200 text-cyan-700', borderColor: 'border-cyan-300' },
-  { id: 'g', letter: 'g', uppercase: 'G', word: 'con gà', emoji: '🐓', spelling: 'gờ - a - ga - huyền - gà', sentence: 'Con gà trống gáy vang ó ó o.', color: 'from-sky-100 to-sky-200 text-sky-700', borderColor: 'border-sky-300' },
-  { id: 'h', letter: 'h', uppercase: 'H', word: 'bông hoa', emoji: '🌸', spelling: 'hờ - oa - hoa', sentence: 'Bông hoa hồng nở rực rỡ.', color: 'from-blue-100 to-blue-200 text-blue-700', borderColor: 'border-blue-300' },
-  { id: 'i', letter: 'i', uppercase: 'I', word: 'viên bi', emoji: '🔮', spelling: 'bờ - i - bi', sentence: 'Bé chơi bi ve tròn xoe.', color: 'from-indigo-100 to-indigo-200 text-indigo-700', borderColor: 'border-indigo-300' },
-  { id: 'k', letter: 'k', uppercase: 'K', word: 'cây kem', emoji: '🍦', spelling: 'cờ - em - kem', sentence: 'Cây kem dâu tây mát lạnh.', color: 'from-violet-100 to-violet-200 text-violet-700', borderColor: 'border-violet-300' },
-  { id: 'l', letter: 'l', uppercase: 'L', word: 'quả lê', emoji: '🍐', spelling: 'lờ - ê - lê', sentence: 'Quả lê ngọt mát mọng nước.', color: 'from-purple-100 to-purple-200 text-purple-700', borderColor: 'border-purple-300' },
-  { id: 'm', letter: 'm', uppercase: 'M', word: 'con mèo', emoji: '🐱', spelling: 'mờ - eo - meo - huyền - mèo', sentence: 'Con mèo lười sưởi nắng ấm áp.', color: 'from-fuchsia-100 to-fuchsia-200 text-fuchsia-700', borderColor: 'border-fuchsia-300' },
-  { id: 'n', letter: 'n', uppercase: 'N', word: 'quả nho', emoji: '🍇', spelling: 'nhờ - o - nho', sentence: 'Chùm quả nho chín tím mọng.', color: 'from-pink-100 to-pink-200 text-pink-700', borderColor: 'border-pink-300' },
-  { id: 'o', letter: 'o', uppercase: 'O', word: 'con ong', emoji: '🐝', spelling: 'o - ng - ong', sentence: 'Con ong vàng chăm chỉ hút mật.', color: 'from-rose-100 to-rose-200 text-rose-700', borderColor: 'border-rose-300' },
-  { id: 'oo', letter: 'ô', uppercase: 'Ô', word: 'cái ô', emoji: '🌂', spelling: 'ô', sentence: 'Cái ô đỏ che bóng mát cho bé.', color: 'from-orange-100 to-orange-200 text-orange-700', borderColor: 'border-orange-300' },
-  { id: 'ow', letter: 'ơ', uppercase: 'Ơ', word: 'lá cờ', emoji: '🚩', spelling: 'cờ - ơ - cơ - huyền - cờ', sentence: 'Lá cờ đỏ sao vàng bay phất phơ.', color: 'from-amber-100 to-amber-200 text-amber-700', borderColor: 'border-amber-300' },
-  { id: 'p', letter: 'p', uppercase: 'P', word: 'đèn pin', emoji: '🔦', spelling: 'đờ - en - đen - huyền - đèn - p - in - pin', sentence: 'Đèn pin chiếu sáng trong đêm tối.', color: 'from-yellow-100 to-yellow-200 text-yellow-700', borderColor: 'border-yellow-300' },
-  { id: 'q', letter: 'q', uppercase: 'Q', word: 'quả quýt', emoji: '🍊', spelling: 'quờ - yt - quýt - sắc - quýt', sentence: 'Quả quýt chua ngọt nhiều vitamin.', color: 'from-lime-100 to-lime-200 text-lime-700', borderColor: 'border-lime-300' },
-  { id: 'r', letter: 'r', uppercase: 'R', word: 'con rùa', emoji: '🐢', spelling: 'rờ - ua - rua - huyền - rùa', sentence: 'Con rùa con bò chậm chạp.', color: 'from-green-100 to-green-200 text-green-700', borderColor: 'border-green-300' },
-  { id: 's', letter: 's', uppercase: 'S', word: 'ngôi sao', emoji: '⭐', spelling: 'sờ - ao - sao', sentence: 'Ngôi sao lấp lánh trên trời cao.', color: 'from-teal-100 to-teal-200 text-teal-700', borderColor: 'border-teal-300' },
-  { id: 't', letter: 't', uppercase: 'T', word: 'quả táo', emoji: '🍎', spelling: 'tờ - ao - tao - sắc - táo', sentence: 'Quả táo đỏ giòn ngọt thơm phức.', color: 'from-cyan-100 to-cyan-200 text-cyan-700', borderColor: 'border-cyan-300' },
-  { id: 'u', letter: 'u', uppercase: 'U', word: 'cái mũ', emoji: '👒', spelling: 'mờ - u - mu - ngã - mũ', sentence: 'Cái mũ vải bảo vệ đầu bé.', color: 'from-sky-100 to-sky-200 text-sky-700', borderColor: 'border-sky-300' },
-  { id: 'uw', letter: 'ư', uppercase: 'Ư', word: 'con hươu', emoji: '🦌', spelling: 'hờ - ươu - hươu', sentence: 'Con hươu sao ăn lá non trong rừng.', color: 'from-blue-100 to-blue-200 text-blue-700', borderColor: 'border-blue-300' },
-  { id: 'v', letter: 'v', uppercase: 'V', word: 'con vịt', emoji: '🦆', spelling: 'vờ - yt - vịt - nặng - vịt', sentence: 'Con vịt kêu cạp cạp tìm mồi.', color: 'from-indigo-100 to-indigo-200 text-indigo-700', borderColor: 'border-indigo-300' },
-  { id: 'x', letter: 'x', uppercase: 'X', word: 'cái xô', emoji: '🪣', spelling: 'sờ - ô - xô', sentence: 'Cái xô nhựa dùng đựng nước.', color: 'from-violet-100 to-violet-200 text-violet-700', borderColor: 'border-violet-300' },
-  { id: 'y', letter: 'y', uppercase: 'Y', word: 'y tá', emoji: '🧑‍⚕️', spelling: 'y - tờ - a - ta - sắc - tá', sentence: 'Cô y tá dịu dàng chăm sóc bé.', color: 'from-purple-100 to-purple-200 text-purple-700', borderColor: 'border-purple-300' }
+  { id: 'a', letter: 'a', uppercase: 'A', word: 'quả na', emoji: '🍈', spelling: 'a - n - a - na', sentence: 'Bé ăn quả na chín ngọt.', tip: 'Bụng tròn xoe, nét móc ngắn bên phải.', color: 'from-pink-100 to-pink-200 text-pink-700', borderColor: 'border-pink-300' },
+  { id: 'aw', letter: 'ă', uppercase: 'Ă', word: 'con tằm', emoji: '🐛', spelling: 'ă - t - tăm - huyền - tằm', sentence: 'Con tằm ăn lá dâu tơ.', tip: 'Đội thêm vầng trăng khuyết ngửa.', color: 'from-orange-100 to-orange-200 text-orange-700', borderColor: 'border-orange-300' },
+  { id: 'aa', letter: 'â', uppercase: 'Â', word: 'cái cân', emoji: '⚖️', spelling: 'â - c - ân - cân', sentence: 'Cái cân dùng đo cân nặng.', tip: 'Đội nón úp giống như cái mái nhà.', color: 'from-amber-100 to-amber-200 text-amber-700', borderColor: 'border-amber-300' },
+  { id: 'b', letter: 'b', uppercase: 'B', word: 'quả bơ', emoji: '🥑', spelling: 'bờ - ơ - bơ', sentence: 'Quả bơ sáp béo ngậy thơm ngon.', tip: 'Nét đứng cao, bụng tròn to bên phải.', color: 'from-yellow-100 to-yellow-200 text-yellow-700', borderColor: 'border-yellow-300' },
+  { id: 'c', letter: 'c', uppercase: 'C', word: 'con cá', emoji: '🐟', spelling: 'cờ - a - ca - sắc - cá', sentence: 'Con cá bơi lội dưới làn nước.', tip: 'Cong cong như vầng trăng khuyết mở rộng.', color: 'from-lime-100 to-lime-200 text-lime-700', borderColor: 'border-lime-300' },
+  { id: 'd', letter: 'd', uppercase: 'D', word: 'con dê', emoji: '🐐', spelling: 'dờ - ê - dê', sentence: 'Con dê trắng kêu he he ăn cỏ.', tip: 'Bụng tròn bên trái, nét đứng cao bên phải.', color: 'from-green-100 to-green-200 text-green-700', borderColor: 'border-green-300' },
+  { id: 'dd', letter: 'đ', uppercase: 'Đ', word: 'quả đu đủ', emoji: '🥭', spelling: 'đờ - u - đu - dờ - u - du', sentence: 'Quả đu đủ chín vàng ngọt mát.', tip: 'Giống chữ d nhưng có thêm gạch ngang.', color: 'from-emerald-100 to-emerald-200 text-emerald-700', borderColor: 'border-emerald-300' },
+  { id: 'e', letter: 'e', uppercase: 'E', word: 'em bé', emoji: '👶', spelling: 'e - m - em - bờ - ê - bê - sắc - bé', sentence: 'Em bé cười tươi chào ông bà.', tip: 'Vòng thắt đầu rồi cong tròn sang trái.', color: 'from-teal-100 to-teal-200 text-teal-700', borderColor: 'border-teal-300' },
+  { id: 'ee', letter: 'ê', uppercase: 'Ê', word: 'con ếch', emoji: '🐸', spelling: 'ê - ch - ếch - sắc - ếch', sentence: 'Con ếch nhảy nhót dưới trời mưa.', tip: 'Giống chữ e nhưng đội nón xuôi xinh xắn.', color: 'from-cyan-100 to-cyan-200 text-cyan-700', borderColor: 'border-cyan-300' },
+  { id: 'g', letter: 'g', uppercase: 'G', word: 'con gà', emoji: '🐓', spelling: 'gờ - a - ga - huyền - gà', sentence: 'Con gà trống gáy vang ó ó o.', tip: 'Cái đầu tròn trịa, đuôi dài cong xuống dưới.', color: 'from-sky-100 to-sky-200 text-sky-700', borderColor: 'border-sky-300' },
+  { id: 'h', letter: 'h', uppercase: 'H', word: 'bông hoa', emoji: '🌸', spelling: 'hờ - oa - hoa', sentence: 'Bông hoa hồng nở rực rỡ.', tip: 'Nét đứng cao nối liền nét móc xuôi tròn.', color: 'from-blue-100 to-blue-200 text-blue-700', borderColor: 'border-blue-300' },
+  { id: 'i', letter: 'i', uppercase: 'I', word: 'viên bi', emoji: '🔮', spelling: 'bờ - i - bi', sentence: 'Bé chơi bi ve tròn xoe.', tip: 'Nét đứng ngắn có chấm tròn hạt ngọc.', color: 'from-indigo-100 to-indigo-200 text-indigo-700', borderColor: 'border-indigo-300' },
+  { id: 'k', letter: 'k', uppercase: 'K', word: 'cây kem', emoji: '🍦', spelling: 'cờ - em - kem', sentence: 'Cây kem dâu tây mát lạnh.', tip: 'Nét đứng cao kèm hai nét xiên như răng nhỏ.', color: 'from-violet-100 to-violet-200 text-violet-700', borderColor: 'border-violet-300' },
+  { id: 'l', letter: 'l', uppercase: 'L', word: 'quả lê', emoji: '🍐', spelling: 'lờ - ê - lê', sentence: 'Quả lê ngọt mát mọng nước.', tip: 'Một nét khuyết xuôi cao vút như chiếc gậy.', color: 'from-purple-100 to-purple-200 text-purple-700', borderColor: 'border-purple-300' },
+  { id: 'm', letter: 'm', uppercase: 'M', word: 'con mèo', emoji: '🐱', spelling: 'mờ - eo - meo - huyền - mèo', sentence: 'Con mèo lười sưởi nắng ấm áp.', tip: 'Hai nét móc xuôi nối liền nhau tròn trịa.', color: 'from-fuchsia-100 to-fuchsia-200 text-fuchsia-700', borderColor: 'border-fuchsia-300' },
+  { id: 'n', letter: 'n', uppercase: 'N', word: 'quả nho', emoji: '🍇', spelling: 'nhờ - o - nho', sentence: 'Chùm quả nho chín tím mọng.', tip: 'Một nét móc xuôi đơn giản, dễ thương.', color: 'from-pink-100 to-pink-200 text-pink-700', borderColor: 'border-pink-300' },
+  { id: 'o', letter: 'o', uppercase: 'O', word: 'con ong', emoji: '🐝', spelling: 'o - ng - ong', sentence: 'Con ong vàng chăm chỉ hút mật.', tip: 'Tròn xoe như quả trứng gà.', color: 'from-rose-100 to-rose-200 text-rose-700', borderColor: 'border-rose-300' },
+  { id: 'oo', letter: 'ô', uppercase: 'Ô', word: 'cái ô', emoji: '🌂', spelling: 'ô', sentence: 'Cái ô đỏ che bóng mát cho bé.', tip: 'Giống chữ o nhưng đội nón úp che đầu.', color: 'from-orange-100 to-orange-200 text-orange-700', borderColor: 'border-orange-300' },
+  { id: 'ow', letter: 'ơ', uppercase: 'Ơ', word: 'lá cờ', emoji: '🚩', spelling: 'cờ - ơ - cơ - huyền - cờ', sentence: 'Lá cờ đỏ sao vàng bay phất phơ.', tip: 'Giống chữ o nhưng có thêm chiếc râu nhỏ.', color: 'from-amber-100 to-amber-200 text-amber-700', borderColor: 'border-amber-300' },
+  { id: 'p', letter: 'p', uppercase: 'P', word: 'đèn pin', emoji: '🔦', spelling: 'đờ - en - đen - huyền - đèn - p - in - pin', sentence: 'Đèn pin chiếu sáng trong đêm tối.', tip: 'Nét đứng kéo xuống, bụng tròn bên phải.', color: 'from-yellow-100 to-yellow-200 text-yellow-700', borderColor: 'border-yellow-300' },
+  { id: 'q', letter: 'q', uppercase: 'Q', word: 'quả quýt', emoji: '🍊', spelling: 'quờ - yt - quýt - sắc - quýt', sentence: 'Quả quýt chua ngọt nhiều vitamin.', tip: 'Bụng tròn bên trái, nét đứng dài bên phải.', color: 'from-lime-100 to-lime-200 text-lime-700', borderColor: 'border-lime-300' },
+  { id: 'r', letter: 'r', uppercase: 'R', word: 'con rùa', emoji: '🐢', spelling: 'rờ - ua - rua - huyền - rùa', sentence: 'Con rùa con bò chậm chạp.', tip: 'Nét đứng ngắn có chiếc tai nhỏ vểnh phải.', color: 'from-green-100 to-green-200 text-green-700', borderColor: 'border-green-300' },
+  { id: 's', letter: 's', uppercase: 'S', word: 'ngôi sao', emoji: '⭐', spelling: 'sờ - ao - sao', sentence: 'Ngôi sao lấp lánh trên trời cao.', tip: 'Uốn lượn cong cong như chú rắn nhỏ.', color: 'from-teal-100 to-teal-200 text-teal-700', borderColor: 'border-teal-300' },
+  { id: 't', letter: 't', uppercase: 'T', word: 'quả táo', emoji: '🍎', spelling: 'tờ - ao - tao - sắc - táo', sentence: 'Quả táo đỏ giòn ngọt thơm phức.', tip: 'Nét đứng thẳng có gạch ngang ở ngực.', color: 'from-cyan-100 to-cyan-200 text-cyan-700', borderColor: 'border-cyan-300' },
+  { id: 'u', letter: 'u', uppercase: 'U', word: 'cái mũ', emoji: '👒', spelling: 'mờ - u - mu - ngã - mũ', sentence: 'Cái mũ vải bảo vệ đầu bé.', tip: 'Cái móc dưới rộng rãi mở lên trên.', color: 'from-sky-100 to-sky-200 text-sky-700', borderColor: 'border-sky-300' },
+  { id: 'uw', letter: 'ư', uppercase: 'Ư', word: 'con hươu', emoji: '🦌', spelling: 'hờ - ươu - hươu', sentence: 'Con hươu sao ăn lá non trong rừng.', tip: 'Giống chữ u nhưng có chiếc râu nhỏ bên phải.', color: 'from-blue-100 to-blue-200 text-blue-700', borderColor: 'border-blue-300' },
+  { id: 'v', letter: 'v', uppercase: 'V', word: 'con vịt', emoji: '🦆', spelling: 'vờ - yt - vịt - nặng - vịt', sentence: 'Con vịt kêu cạp cạp tìm mồi.', tip: 'Hai nét xiên gặp nhau ở dưới đáy nhọn.', color: 'from-indigo-100 to-indigo-200 text-indigo-700', borderColor: 'border-indigo-300' },
+  { id: 'x', letter: 'x', uppercase: 'X', word: 'cái xô', emoji: '🪣', spelling: 'sờ - ô - xô', sentence: 'Cái xô nhựa dùng đựng nước.', tip: 'Hai nét xiên chéo nhau như chiếc kéo.', color: 'from-violet-100 to-violet-200 text-violet-700', borderColor: 'border-violet-300' },
+  { id: 'y', letter: 'y', uppercase: 'Y', word: 'y tá', emoji: '🧑‍⚕️', spelling: 'y - tờ - a - ta - sắc - tá', sentence: 'Cô y tá dịu dàng chăm sóc bé.', tip: 'Nét xiên ngắn trái và nét xiên dài có đuôi.', color: 'from-purple-100 to-purple-200 text-purple-700', borderColor: 'border-purple-300' }
 ];
 
 // Định nghĩa các trang của cuốn sách: 6 item trên 1 tờ giấy (trang) - Grid 2x3 cực kỳ thoáng và cân đối
@@ -376,44 +377,48 @@ export default function AlphabetBookPage() {
                     </div>
                   </div>
 
-                  {/* MẶT SAU: Đánh vần chi tiết và luyện đọc giọng nói */}
+                  {/* MẶT SAU: Bento Grid Đánh vần, Mẹo nhớ và Luyện nói */}
                   <div
-                    className="absolute inset-0 backface-hidden rounded-3xl p-3 md:p-4 flex flex-col justify-between border-3 bg-white border-indigo-200 shadow-[3px_3px_0px_0px_rgba(99,102,241,0.1)]"
+                    className="absolute inset-0 backface-hidden rounded-3xl p-3 flex flex-col justify-between border-3 bg-white border-indigo-200 shadow-[3px_3px_0px_0px_rgba(99,102,241,0.1)]"
                     style={{ 
                       backfaceVisibility: 'hidden',
                       transform: 'rotateY(180deg)' 
                     }}
                   >
-                    {/* Đánh vần */}
-                    <div className="text-center bg-indigo-50 border border-indigo-100 rounded-xl py-1.5 px-3 shrink-0">
-                      <p className="text-[10px] sm:text-xs font-black text-indigo-700 tracking-wide">
-                        Đánh vần: {item.spelling}
+                    {/* Khối Bento 1: Mẹo nhớ & Đánh vần (Viền nét đứt màu cam ấm) */}
+                    <div className="border-2 border-dashed border-amber-400 bg-amber-50/50 rounded-2xl p-2.5 shrink-0 flex flex-col gap-1.5">
+                      <div className="text-[10px] sm:text-xs font-black text-amber-800 leading-snug">
+                        💡 <span className="text-amber-600 uppercase font-extrabold">Mẹo nhớ:</span> {item.tip}
+                      </div>
+                      <div className="text-[10px] sm:text-xs font-black text-indigo-800 border-t border-dashed border-amber-300 pt-1.5">
+                        🗣️ <span className="text-indigo-600 uppercase font-extrabold">Đánh vần:</span> <span className="text-rose-600 underline decoration-wavy decoration-rose-300">{item.spelling}</span>
+                      </div>
+                    </div>
+
+                    {/* Khối Bento 2: Luyện đọc câu ví dụ (Nền xanh pastel nổi bật) */}
+                    <div className="flex-1 flex flex-col items-center justify-center my-2 p-2 bg-indigo-50/40 border border-indigo-100 rounded-2xl">
+                      <span className="text-[9px] font-black text-indigo-500 uppercase tracking-wider mb-1">📖 Bé luyện đọc:</span>
+                      <p className="text-xs sm:text-sm font-black text-slate-800 text-center leading-relaxed px-1">
+                        "{item.sentence}"
                       </p>
                     </div>
 
-                    {/* Câu ví dụ */}
-                    <div className="flex-1 flex flex-col items-center justify-center my-1.5 overflow-hidden">
-                      <p className="text-xs sm:text-sm md:text-base font-black text-slate-800 text-center leading-relaxed px-1">
-                        {item.sentence}
-                      </p>
-                    </div>
-
-                    {/* Bộ điều khiển tương tác */}
+                    {/* Khối Điều Khiển Luyện Nói */}
                     <div className="flex items-center justify-center gap-3 shrink-0">
-                      {/* Nút nghe lại câu */}
+                      {/* Nút Nghe mẫu */}
                       <button
                         onClick={(e) => handlePlaySentence(e, item)}
-                        className="w-8 h-8 sm:w-9 h-9 rounded-full border-2 border-slate-200 bg-slate-50 text-slate-600 flex items-center justify-center shadow-sm hover:bg-slate-100 active:scale-95 cursor-pointer"
+                        className="w-8 h-8 rounded-full border-2 border-slate-200 bg-slate-50 text-slate-650 flex items-center justify-center shadow-sm hover:bg-slate-100 active:scale-95 cursor-pointer"
                         title="Nghe câu mẫu"
                       >
                         <Volume2 size={13} />
                       </button>
 
-                      {/* Nút Micro luyện nói */}
+                      {/* Nút Mic ghi âm */}
                       {isSpeechSupported && (
                         <button
                           onClick={(e) => handleStartMic(e, item)}
-                          className={`w-9 h-9 sm:w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md active:scale-95 transition-all cursor-pointer ${
+                          className={`w-9 h-9 rounded-full flex items-center justify-center text-white shadow-md active:scale-95 transition-all cursor-pointer ${
                             isListeningThis
                               ? 'bg-rose-500 ring-4 ring-rose-200 animate-pulse'
                               : isSuccess
@@ -422,24 +427,18 @@ export default function AlphabetBookPage() {
                                   ? 'bg-amber-500'
                                   : 'bg-indigo-600 hover:bg-indigo-700'
                           }`}
-                          title="🎤 Bấm và đọc to câu mẫu!"
+                          title="Bấm để ghi âm luyện nói"
                         >
                           {isSuccess ? <Check size={16} className="stroke-[3]" /> : <Mic size={16} />}
                         </button>
                       )}
                     </div>
 
-                    {/* Trạng thái bé đọc giọng nói */}
-                    <div className="text-center leading-none mt-1 h-3">
-                      {isListeningThis && (
-                        <span className="text-[9px] text-red-500 font-extrabold animate-pulse">⚡ Bé hãy nói câu mẫu...</span>
-                      )}
-                      {isSuccess && (
-                        <span className="text-[9px] text-emerald-600 font-black animate-bounce block">✨ Bé phát âm giỏi quá!</span>
-                      )}
-                      {isError && (
-                        <span className="text-[9px] text-amber-600 font-bold block">😅 Bé hãy đọc lại nhé!</span>
-                      )}
+                    {/* Phản hồi trạng thái giọng nói */}
+                    <div className="text-center leading-none mt-0.5 h-3">
+                      {isListeningThis && <span className="text-[9px] text-red-500 font-extrabold animate-pulse">⚡ Bé hãy nói câu mẫu...</span>}
+                      {isSuccess && <span className="text-[9px] text-emerald-600 font-black animate-bounce block">✨ Bé phát âm giỏi quá!</span>}
+                      {isError && <span className="text-[9px] text-amber-600 font-bold block">😅 Bé hãy đọc lại nhé!</span>}
                     </div>
                   </div>
 
