@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 8px; font-family: system-ui, -apple-system, sans-serif;">
+  <!-- Định nghĩa lưới nền học sinh tiểu học (Grid) -->
+  <defs>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#f1f5f9" stroke-width="1" />
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#e2e8f0" stroke-width="1.5" />
+    </pattern>
+  </defs>
+  
+  <!-- Lưới ô ly nền -->
+  <rect width="100%" height="100%" fill="url(#grid)" />
+  
+  <!-- Tiêu đề debug chữ cái -->
+  <text x="20" y="35" font-size="20" font-weight="bold" fill="#1e293b">Chữ: A (a)</text>
+  <text x="20" y="55" font-size="12" fill="#64748b">Từ ví dụ: quả na 🍈</text>
+  
+  <!-- Trục hướng dẫn chuẩn (Chính giữa) -->
+  <line x1="250" y1="0" x2="250" y2="500" stroke="#cbd5e1" stroke-dasharray="4 4" stroke-width="1" />
+  <line x1="0" y1="250" x2="500" y2="250" stroke="#cbd5e1" stroke-dasharray="4 4" stroke-width="1" />
+
+  <!-- ==================== Nét 1: Nét cong kín (a_1) ==================== -->
+  <g id="stroke_a_1">
+    <!-- 1. Đường hình dáng nét chữ chuẩn (độ dày thực tế, bán trong suốt) -->
+    <path d="M 260 170 C 180 170 140 210 140 260 C 140 310 180 350 260 350 C 340 350 380 310 380 260 C 380 210 340 170 260 170 Z M 260 200 C 310 200 340 220 340 260 C 340 300 310 320 260 320 C 210 320 180 300 180 260 C 180 220 210 200 260 200 Z" fill="#ef4444" fill-opacity="0.15" stroke="#ef4444" stroke-opacity="0.4" stroke-width="2" />
+    
+    <!-- 2. Đường xương chỉ hướng (Medians Skeleton) -->
+    <path d="M 320 190 L 260 175 L 180 200 L 150 260 L 180 320 L 260 345 L 330 320 L 350 260 L 320 190" fill="none" stroke="#ef4444" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Điểm bắt đầu (đặt bút) -->
+    <circle cx="320" cy="190" r="8" fill="#eab308" stroke="#1e293b" stroke-width="2" />
+    <circle cx="320" cy="190" r="3" fill="#1e293b" />
+    <text x="320" y="180" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">0</text>
+    <!-- Điểm trung gian 1 -->
+    <circle cx="260" cy="175" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" />
+    <text x="260" y="165" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">1</text>
+    <!-- Điểm trung gian 2 -->
+    <circle cx="180" cy="200" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" />
+    <text x="180" y="190" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">2</text>
+    <!-- Điểm trung gian 3 -->
+    <circle cx="150" cy="260" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" />
+    <text x="150" y="250" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">3</text>
+    <!-- Điểm trung gian 4 -->
+    <circle cx="180" cy="320" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" />
+    <text x="180" y="310" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">4</text>
+    <!-- Điểm trung gian 5 -->
+    <circle cx="260" cy="345" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" />
+    <text x="260" y="335" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">5</text>
+    <!-- Điểm trung gian 6 -->
+    <circle cx="330" cy="320" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" />
+    <text x="330" y="310" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">6</text>
+    <!-- Điểm trung gian 7 -->
+    <circle cx="350" cy="260" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" />
+    <text x="350" y="250" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">7</text>
+    <!-- Điểm kết thúc (dừng bút) -->
+    <circle cx="320" cy="190" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" />
+    <text x="320" y="180" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">8</text>
+  </g>
+
+  <!-- ==================== Nét 2: Nét móc ngược phải (a_2) ==================== -->
+  <g id="stroke_a_2">
+    <!-- 1. Đường hình dáng nét chữ chuẩn (độ dày thực tế, bán trong suốt) -->
+    <path d="M 350 170 L 380 170 L 380 310 C 380 330 395 340 415 340 L 415 365 C 380 365 350 340 350 310 Z" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" stroke-opacity="0.4" stroke-width="2" />
+    
+    <!-- 2. Đường xương chỉ hướng (Medians Skeleton) -->
+    <path d="M 365 170 L 365 260 L 365 320 L 390 345 L 415 345" fill="none" stroke="#3b82f6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Điểm bắt đầu (đặt bút) -->
+    <circle cx="365" cy="170" r="8" fill="#eab308" stroke="#1e293b" stroke-width="2" />
+    <circle cx="365" cy="170" r="3" fill="#1e293b" />
+    <text x="365" y="160" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">0</text>
+    <!-- Điểm trung gian 1 -->
+    <circle cx="365" cy="260" r="5" fill="#3b82f6" stroke="#ffffff" stroke-width="1.5" />
+    <text x="365" y="250" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">1</text>
+    <!-- Điểm trung gian 2 -->
+    <circle cx="365" cy="320" r="5" fill="#3b82f6" stroke="#ffffff" stroke-width="1.5" />
+    <text x="365" y="310" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">2</text>
+    <!-- Điểm trung gian 3 -->
+    <circle cx="390" cy="345" r="5" fill="#3b82f6" stroke="#ffffff" stroke-width="1.5" />
+    <text x="390" y="335" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">3</text>
+    <!-- Điểm kết thúc (dừng bút) -->
+    <circle cx="415" cy="345" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" />
+    <text x="415" y="335" font-size="11" font-weight="bold" fill="#1e293b" text-anchor="middle" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round;">4</text>
+  </g>
+
+  <!-- Chú thích nét vẽ (Legend) -->
+  <g transform="translate(20, 440)">
+    <rect width="460" height="45" fill="#f8fafc" rx="6" stroke="#e2e8f0" stroke-width="1" />
+    <text x="10" y="27" font-size="12" font-weight="bold" fill="#475569">Các nét:</text>
+    <g transform="translate(75, 15)">
+      <circle cx="10" cy="12" r="6" fill="#ef4444" />
+      <text x="22" y="16" font-size="11" fill="#475569">Nét cong kín</text>
+    </g>
+    <g transform="translate(200, 15)">
+      <circle cx="10" cy="12" r="6" fill="#3b82f6" />
+      <text x="22" y="16" font-size="11" fill="#475569">Nét móc ngược phải</text>
+    </g>
+  </g>
+</svg>

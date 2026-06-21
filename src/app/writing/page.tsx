@@ -133,6 +133,22 @@ export default function WritingPractice() {
     return `M ${points[0].x} ${points[0].y} ` + points.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ');
   };
 
+  // Hàm nội suy đường cong Bezier bậc 2 để làm mượt nét vẽ phấn tự do của bé
+  const getBezierPath = (points: Point[]): string => {
+    if (points.length === 0) return '';
+    if (points.length === 1) return `M ${points[0].x} ${points[0].y} A 2 2 0 1 1 ${points[0].x} ${points[0].y - 0.1}`;
+    if (points.length === 2) return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
+    
+    let d = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length - 1; i++) {
+      const xc = (points[i].x + points[i + 1].x) / 2;
+      const yc = (points[i].y + points[i + 1].y) / 2;
+      d += ` Q ${points[i].x} ${points[i].y}, ${xc} ${yc}`;
+    }
+    d += ` L ${points[points.length - 1].x} ${points[points.length - 1].y}`;
+    return d;
+  };
+
   // Demo hoạt họa viết mẫu
   const playDemo = async () => {
     if (isDemoPlaying || !currentLetter) return;
@@ -142,18 +158,37 @@ export default function WritingPractice() {
     setErrorMessage(null);
     playSound('click');
 
+    // Hàm nội suy mịn tuyến tính giữa các điểm để tạo hoạt ảnh vẽ trơn tru
+    const getFinePoints = (points: Point[], segments: number = 6): Point[] => {
+      if (points.length < 2) return points;
+      const finePoints: Point[] = [];
+      for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        for (let j = 0; j < segments; j++) {
+          const t = j / segments;
+          finePoints.push({
+            x: p1.x + (p2.x - p1.x) * t,
+            y: p1.y + (p2.y - p1.y) * t
+          });
+        }
+      }
+      finePoints.push(points[points.length - 1]);
+      return finePoints;
+    };
+
     // Chạy demo lần lượt từng nét vẽ
     for (let strokeIdx = 0; strokeIdx < currentLetter.strokes.length; strokeIdx++) {
       const stroke = currentLetter.strokes[strokeIdx];
-      const medians = stroke.medians;
+      const fineMedians = getFinePoints(stroke.medians, 6);
       
       setDemoPoints([]);
       
-      for (let i = 0; i < medians.length; i++) {
-        setDemoCursor(medians[i]);
-        setDemoPoints(prev => [...prev, medians[i]]);
-        // Chờ 70ms giữa các điểm để nét vẽ di chuyển từ từ
-        await new Promise(resolve => setTimeout(resolve, 70));
+      for (let i = 0; i < fineMedians.length; i++) {
+        setDemoCursor(fineMedians[i]);
+        setDemoPoints(prev => [...prev, fineMedians[i]]);
+        // Chờ 12ms giữa các điểm để nét vẽ di chuyển cực kỳ mượt mà
+        await new Promise(resolve => setTimeout(resolve, 12));
       }
       
       // Chờ một khoảng nghỉ ngắn giữa các nét vẽ
@@ -261,7 +296,7 @@ export default function WritingPractice() {
   const checkStrokeMatch = (
     points: Point[],
     medians: Point[]
-  ): { success: boolean; reason: 'too_short' | 'wrong_direction' | 'too_far' | 'wrong_start' | 'wrong_end' } => {
+  ): { success: boolean; reason?: 'too_short' | 'wrong_direction' | 'too_far' | 'wrong_start' | 'wrong_end' } => {
     if (points.length < 2 || medians.length < 2) {
       return { success: false, reason: 'too_short' };
     }
@@ -489,6 +524,16 @@ export default function WritingPractice() {
                   <rect width="100" height="100" fill="url(#smallGrid)" />
                   <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(52, 211, 153, 0.35)" strokeWidth="2" />
                 </pattern>
+                {/* SVG Chalk Filter tạo hiệu ứng phấn viết bảng EdTech chân thực */}
+                <filter id="chalk" x="-10%" y="-10%" width="120%" height="120%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" result="noise" />
+                  <feGaussianBlur stdDeviation="0.8" result="blur" />
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.5" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+                  <feMerge>
+                    <feMergeNode in="blur" opacity="0.35" />
+                    <feMergeNode in="displaced" />
+                  </feMerge>
+                </filter>
               </defs>
 
               {/* Phủ nền lưới ô ly */}
@@ -526,39 +571,70 @@ export default function WritingPractice() {
               {/* 3. Hiển thị nét vẽ xương chỉ dẫn (nét đứt) cho nét ĐANG cần vẽ */}
               {currentStroke && !isDemoPlaying && (
                 <path
-                  d={getMedianPath(currentStroke.medians)}
+                  d={getBezierPath(currentStroke.medians)}
                   fill="none"
                   stroke="#38bdf8"
-                  strokeWidth="5"
+                  strokeWidth="4"
                   strokeDasharray="8 6"
                   strokeLinecap="round"
                   className="animate-pulse"
                 />
               )}
 
+              {/* Mũi tên động chạy dọc nét chữ hướng dẫn chiều vẽ (EdTech sinh động) */}
+              {currentStroke && !isDemoPlaying && currentStroke.medians.length > 1 && (
+                <g>
+                  <path
+                    id="arrow-motion-path"
+                    d={getBezierPath(currentStroke.medians)}
+                    fill="none"
+                    stroke="transparent"
+                  />
+                  <g>
+                    {/* Hình dạng mũi tên hướng dẫn sắc nét */}
+                    <path
+                      d="M -12,-8 L 4,0 L -12,8 L -8,0 Z"
+                      fill="#22c55e"
+                      stroke="#ffffff"
+                      strokeWidth="1.5"
+                      className="drop-shadow-md"
+                    />
+                    <animateMotion
+                      dur="2.5s"
+                      repeatCount="indefinite"
+                      rotate="auto"
+                    >
+                      <mpath href="#arrow-motion-path" />
+                    </animateMotion>
+                  </g>
+                </g>
+              )}
+
               {/* 4. Hiển thị nét vẽ phấn thực tế của bé (vẽ tự do bằng tay) */}
               {userPathPoints.length > 1 && (
                 <path
-                  d={getMedianPath(userPathPoints)}
+                  d={getBezierPath(userPathPoints)}
                   fill="none"
                   stroke={isStrokeError ? '#ef4444' : '#ffffff'}
-                  strokeWidth="15"
+                  strokeWidth="10"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="opacity-90 drop-shadow-[0_0_2px_rgba(255,255,255,0.8)]"
+                  filter="url(#chalk)"
+                  className="opacity-95 drop-shadow-[0_0_2px_rgba(255,255,255,0.8)]"
                 />
               )}
 
               {/* 5. Hiển thị hoạt ảnh khi bé bấm Xem Mẫu */}
               {isDemoPlaying && demoPoints.length > 0 && (
                 <path
-                  d={getMedianPath(demoPoints)}
+                  d={getBezierPath(demoPoints)}
                   fill="none"
                   stroke="#fbbf24"
-                  strokeWidth="15"
+                  strokeWidth="10"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="opacity-90 drop-shadow-[0_0_3px_rgba(251,191,36,0.8)]"
+                  filter="url(#chalk)"
+                  className="opacity-95 drop-shadow-[0_0_3px_rgba(251,191,36,0.8)]"
                 />
               )}
 

@@ -79,7 +79,7 @@ function ParentsDashboardContent() {
   const { playSound } = useSound();
   const { studentInfo, setIsOpenConfig } = useStudent();
   const { subjects, isLoading: isSubjectsLoading } = useSubjects();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'analyzer' | 'psychology'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'analyzer' | 'psychology' | 'apps'>('dashboard');
   const [mounted, setMounted] = useState(false);
 
   React.useEffect(() => {
@@ -264,6 +264,20 @@ function ParentsDashboardContent() {
               <Brain className="w-5 h-5" />
               <span>Cẩm Nang Tâm Lý</span>
             </button>
+            <button
+              onClick={() => {
+                playSound('click');
+                setActiveTab('apps');
+              }}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] text-sm font-black transition-all cursor-pointer ${
+                activeTab === 'apps'
+                  ? 'bg-[var(--color-primary)] text-white border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)] translate-y-[-2px]'
+                  : 'text-[var(--color-foreground)] opacity-70 hover:opacity-100'
+              }`}
+            >
+              <Gamepad2 className="w-5 h-5" />
+              <span>Ứng Dụng Giáo Dục</span>
+            </button>
           </div>
         </div>
       </header>
@@ -427,7 +441,7 @@ function ParentsDashboardContent() {
             >
               <ReportCardAnalyzer />
             </motion.div>
-          ) : (
+          ) : activeTab === 'psychology' ? (
             <motion.div
               key="psychology"
               initial={{ opacity: 0, y: 15 }}
@@ -567,6 +581,173 @@ function ParentsDashboardContent() {
                     <span className="text-xl mb-2 block">3. Trò chuyện về cảm xúc sau khi học</span>
                     <p className="text-sm text-slate-600 font-semibold leading-relaxed mt-1">
                       Sau mỗi buổi học, ba mẹ hãy hỏi con hôm nay chơi game nào vui nhất. Cảm xúc tích cực và sự quan tâm từ ba mẹ giúp con ghi nhớ bài lâu cực kỳ luôn.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="apps"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-8"
+            >
+              {/* Nội dung giới thiệu Ứng Dụng Giáo Dục */}
+              <div className="flex flex-col md:flex-row items-center gap-6 bg-[var(--color-surface)] p-6 md:p-8 rounded-[24px] border-4 border-[var(--color-foreground)] shadow-[6px_6px_0px_0px_var(--color-foreground)] transition-colors">
+                <div className="w-16 h-16 bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] rounded-2xl border-2 border-[var(--color-foreground)] flex items-center justify-center text-4xl shrink-0 shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+                  🚀
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-black text-[var(--color-foreground)] mb-3 flex items-center gap-2">
+                    <span>Ứng Dụng Giáo Dục Bổ Ích Cho Bé</span>
+                  </h2>
+                  <p className="text-[var(--color-foreground)] opacity-90 text-sm md:text-base font-semibold leading-relaxed max-w-2xl">
+                    Ba mẹ ơi! Bên cạnh việc luyện gõ tiếng Việt trên VietTyping, việc kết hợp các phần mềm và kỹ năng máy tính bổ trợ khác sẽ giúp bé phát triển tư duy công nghệ và phản xạ tay mắt một cách toàn diện hơn. Dưới đây là các ứng dụng và bài tập thực hành được chọn lọc kỹ lưỡng dành riêng cho bé 6 tuổi nhé!
+                  </p>
+                </div>
+              </div>
+
+              {/* Danh sách 3 ứng dụng */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* 1. Kiran's Typing Tutor */}
+                <div className="bg-[var(--color-surface)] p-6 rounded-[24px] border-4 border-[var(--color-foreground)] shadow-[4px_4px_0px_0px_var(--color-foreground)] flex flex-col justify-between hover:translate-y-[-4px] transition-all duration-300">
+                  <div>
+                    <div className="w-12 h-12 bg-cyan-100 rounded-2xl flex items-center justify-center border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)] mb-4 text-2xl">
+                      ⌨️
+                    </div>
+                    <h3 className="text-lg font-black text-[var(--color-foreground)] mb-2 uppercase tracking-wide">
+                      Kiran's Typing Tutor
+                    </h3>
+                    <p className="text-sm font-semibold text-slate-600 leading-relaxed mb-4">
+                      Phần mềm luyện gõ phím chuyên nghiệp dành cho trẻ em, giúp bé nhanh chóng làm quen với cách đặt ngón tay và bố cục bàn phím QWERTY chuẩn quốc tế.
+                    </p>
+                    <ul className="space-y-2 text-xs font-bold text-slate-700 mb-6">
+                      <li className="flex items-start gap-2">
+                        <span className="text-[var(--color-primary)]">✔</span>
+                        <span>Bài tập thiết kế riêng cho trẻ nhỏ sinh động.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-[var(--color-primary)]">✔</span>
+                        <span>Nhiều mini-game gõ phím thú vị, giảm nhàm chán.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-[var(--color-primary)]">✔</span>
+                        <span>Đo lường tốc độ gõ (WPM) và độ chính xác của con.</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <a
+                    href="https://apps.microsoft.com/detail/9nblggh68dhj?hl=en-US&gl=VN"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => playSound('click')}
+                    className="tactile-btn bg-cyan-400 hover:bg-cyan-300 text-[var(--color-foreground)] border-2 border-[var(--color-foreground)] font-black py-3 text-center text-sm rounded-xl shadow-[3px_3px_0px_0px_var(--color-foreground)] active:translate-y-[2px] active:shadow-[1px_1px_0px_0px_var(--color-foreground)] transition-all block w-full"
+                  >
+                    Tải Trên Microsoft Store 🚀
+                  </a>
+                </div>
+
+                {/* 2. Kids Games Learning Science */}
+                <div className="bg-[var(--color-surface)] p-6 rounded-[24px] border-4 border-[var(--color-foreground)] shadow-[4px_4px_0px_0px_var(--color-foreground)] flex flex-col justify-between hover:translate-y-[-4px] transition-all duration-300">
+                  <div>
+                    <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)] mb-4 text-2xl">
+                      🔬
+                    </div>
+                    <h3 className="text-lg font-black text-[var(--color-foreground)] mb-2 uppercase tracking-wide">
+                      Kids Games Learning Science
+                    </h3>
+                    <p className="text-sm font-semibold text-slate-600 leading-relaxed mb-4">
+                      Khám phá thế giới khoa học kỳ thú qua các trò chơi tương tác. Rất tốt để rèn luyện tư duy logic và ôn tập môn Tự nhiên và Xã hội lớp 1 cho bé.
+                    </p>
+                    <ul className="space-y-2 text-xs font-bold text-slate-700 mb-6">
+                      <li className="flex items-start gap-2">
+                        <span className="text-[var(--color-primary)]">✔</span>
+                        <span>Học về động vật, cơ thể người, hệ mặt trời...</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-[var(--color-primary)]">✔</span>
+                        <span>Hình ảnh đồ họa hoạt hình đầy màu sắc thu hút trẻ.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-[var(--color-primary)]">✔</span>
+                        <span>Kích thích trí tò mò và niềm đam mê khám phá khoa học.</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <a
+                    href="https://apps.microsoft.com/detail/9pggg738psdp?hl=en-us&gl=VN"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => playSound('click')}
+                    className="tactile-btn bg-purple-400 hover:bg-purple-300 text-white border-2 border-[var(--color-foreground)] font-black py-3 text-center text-sm rounded-xl shadow-[3px_3px_0px_0px_var(--color-foreground)] active:translate-y-[2px] active:shadow-[1px_1px_0px_0px_var(--color-foreground)] transition-all block w-full"
+                  >
+                    Tải Trên Microsoft Store 🚀
+                  </a>
+                </div>
+
+                {/* 3. Basic Mouse Skills */}
+                <div className="bg-[var(--color-surface)] p-6 rounded-[24px] border-4 border-[var(--color-foreground)] shadow-[4px_4px_0px_0px_var(--color-foreground)] flex flex-col justify-between hover:translate-y-[-4px] transition-all duration-300">
+                  <div>
+                    <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)] mb-4 text-2xl">
+                      🖱️
+                    </div>
+                    <h3 className="text-lg font-black text-[var(--color-foreground)] mb-2 uppercase tracking-wide">
+                      Kỹ năng dùng Chuột Cơ bản
+                    </h3>
+                    <p className="text-sm font-semibold text-slate-600 leading-relaxed mb-4">
+                      Sử dụng chuột khéo léo là kỹ năng nền tảng cực kỳ quan trọng đối với bé 6 tuổi. Bé cần nắm vững các kỹ năng di chuột, nhấp chuột và kéo thả.
+                    </p>
+                    <ul className="space-y-2 text-xs font-bold text-slate-700 mb-6">
+                      <li className="flex items-start gap-2">
+                        <span className="text-[var(--color-primary)]">✔</span>
+                        <span>Di chuyển chuột chính xác tới các mục tiêu.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-[var(--color-primary)]">✔</span>
+                        <span>Nháy chuột trái, nháy đúp và kéo thả thành thạo.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-[var(--color-primary)]">✔</span>
+                        <span>Tạo sự tự tin khi tự mình điều khiển máy tính.</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <Link
+                    href="/subjects/tin-hoc/topics/th-chuot"
+                    onClick={() => playSound('click')}
+                    className="tactile-btn bg-amber-400 hover:bg-amber-300 text-[var(--color-foreground)] border-2 border-[var(--color-foreground)] font-black py-3 text-center text-sm rounded-xl shadow-[3px_3px_0px_0px_var(--color-foreground)] active:translate-y-[2px] active:shadow-[1px_1px_0px_0px_var(--color-foreground)] transition-all block w-full"
+                  >
+                    Bé Luyện Chuột Ngay! 🖱️
+                  </Link>
+                </div>
+              </div>
+
+              {/* Mẹo nhỏ khi cho bé làm quen với máy tính */}
+              <div className="bg-[var(--color-surface-container)] border-4 border-[var(--color-foreground)] shadow-[4px_4px_0px_0px_var(--color-foreground)] p-6 md:p-8 rounded-[24px] relative overflow-hidden transition-colors">
+                <h3 className="text-xl font-black text-[var(--color-foreground)] mb-4 flex items-center gap-2">
+                  <Lightbulb className="w-6 h-6 text-amber-500 animate-pulse" />
+                  <span>Mẹo nhỏ khi cho bé làm quen với máy tính</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-bold text-[var(--color-foreground)]">
+                  <div className="p-4 bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-xl shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+                    <span className="text-base mb-2 block text-[var(--color-primary-depth)] font-extrabold">1. Lựa chọn chuột vừa tay bé</span>
+                    <p className="text-sm text-slate-600 font-semibold leading-relaxed mt-1">
+                      Bàn tay bé 6 tuổi còn nhỏ, ba mẹ nên chuẩn bị một chú chuột kích thước nhỏ gọn (hoặc chuột dành riêng cho trẻ em) để con dễ dàng nhấp chuột và kéo thả nhé!
+                    </p>
+                  </div>
+                  <div className="p-4 bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-xl shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+                    <span className="text-base mb-2 block text-[var(--color-primary-depth)] font-extrabold">2. Sử dụng miếng lót chuột màu sắc</span>
+                    <p className="text-sm text-slate-600 font-semibold leading-relaxed mt-1">
+                      Một miếng lót chuột có hình vẽ ngộ nghĩnh không chỉ kích thích sự tò mò của bé, mà còn giúp cảm biến của chuột hoạt động chính xác và nhạy hơn.
+                    </p>
+                  </div>
+                  <div className="p-4 bg-[var(--color-background)] border-2 border-[var(--color-foreground)] rounded-xl shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+                    <span className="text-base mb-2 block text-[var(--color-primary-depth)] font-extrabold">3. Giới hạn thời gian học tập</span>
+                    <p className="text-sm text-slate-600 font-semibold leading-relaxed mt-1">
+                      Mỗi buổi học và thực hành chuột, bàn phím chỉ nên kéo dài tối đa 15-20 phút. Ba mẹ hãy nhắc bé nghỉ ngơi, chớp mắt và vận động nhẹ nhàng sau mỗi bài nhé.
                     </p>
                   </div>
                 </div>
