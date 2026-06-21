@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Subject, Topic } from '@/data/subjects';
+import { Subject, Topic } from '@/types/subject';
 import { IoArrowBack, IoTime, IoTrophy, IoCheckmarkCircle, IoLibrary, IoRocket } from 'react-icons/io5';
 import Link from 'next/link';
 import { useProgress } from '@/hooks/useProgress';

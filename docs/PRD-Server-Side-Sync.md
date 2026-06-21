@@ -1,5 +1,7 @@
 # PRD: Đồng bộ hóa Tiến trình Học tập & Hệ thống Streak Server-Side (Phase 3)
 
+**Trạng thái:** ✅ Đã hoàn thành
+
 ## Problem Statement
 
 Hiện tại, toàn bộ tiến trình học tập của học sinh bao gồm điểm kinh nghiệm (XP), Cấp độ (Level), chuỗi ngày học tập liên tục (Streak), và danh sách bài học đã hoàn thành chỉ được lưu trữ cục bộ trên trình duyệt thông qua `localStorage`. Điều này dẫn đến hai vấn đề lớn:
@@ -33,9 +35,9 @@ Chuyển đổi hệ thống quản lý tiến trình sang mô hình **Offline-F
       - Nếu cách từ 2 ngày trở lên: Reset Streak về 1 (bé đã bị ngắt chuỗi học tập).
 
 - **Modules Built/Modified:**
-  - `src/utils/syncQueue.ts` [NEW]: Quản lý hàng đợi offline-first, lưu trữ các gói tin đồng bộ chưa gửi thành công và thực hiện cơ chế tự động gửi lại (retry exponential backoff).
-  - `src/contexts/StudentContext.tsx` [MODIFY]: Tích hợp thêm trạng thái đồng bộ (`isSyncing`, `lastSyncedAt`) và các phương thức đồng bộ thông tin cấu hình từ Server.
-  - `src/app/typing/[lessonId]/page.tsx` và `src/app/typing/turtle-rescue/page.tsx` [MODIFY]: Chuyển đổi từ việc tăng trực tiếp XP/Streak ở client sang việc gọi qua `syncQueue`.
+  - [x] `src/utils/syncQueue.ts` [NEW]: Quản lý hàng đợi offline-first, lưu trữ các gói tin đồng bộ chưa gửi thành công và thực hiện cơ chế tự động gửi lại (retry exponential backoff).
+  - [x] `src/contexts/StudentContext.tsx` [MODIFY]: Tích hợp thêm trạng thái đồng bộ (`isSyncing`, `lastSyncedAt`) và các phương thức đồng bộ thông tin cấu hình từ Server.
+  - [x] `src/app/typing/[lessonId]/page.tsx` và `src/app/typing/turtle-rescue/page.tsx` [MODIFY]: Chuyển đổi từ việc tăng trực tiếp XP/Streak ở client sang việc gọi qua `syncQueue`.
 
 - **API Contracts (Khái niệm):**
   - `POST /api/v1/students/{studentId}/sync-progress`: Gửi danh sách các gói tin tiến trình đã làm (id bài học, điểm số, timestamp, timezone). Phản hồi trạng thái XP, Level, Streak và danh sách Huy hiệu mới nhất từ Server.

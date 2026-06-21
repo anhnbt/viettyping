@@ -62,16 +62,15 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(COLORS[6].hex); // Mặc định hồng
+  const [selectedColor, setSelectedColor] = useState(COLORS[6].hex);
   const [brushSize, setBrushSize] = useState(20);
+  const [mode, setMode] = useState<"fill" | "brush">("fill");
   const [isClient, setIsClient] = useState(false);
   
-  // Realtime stats
   const [coveragePercent, setCoveragePercent] = useState(0);
   const [bleedPercent, setBleedPercent] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Telemetry references
   const startTimeRef = useRef<number>(Date.now());
   const drawingStrokesRef = useRef<number>(0);
 
@@ -79,16 +78,13 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     setIsClient(true);
     startTimeRef.current = Date.now();
     drawingStrokesRef.current = 0;
-    
-    // Draw outline once canvas is mounted
     setTimeout(drawOutline, 100);
   }, [gameId, shapeKey]);
 
-  // Transform parameters to scale and center shape inside canvas
   const getTransformParams = (canvasWidth: number, canvasHeight: number) => {
     const scaleX = canvasWidth / shape.width;
     const scaleY = canvasHeight / shape.height;
-    const scale = Math.min(scaleX, scaleY) * 0.85; // Scale down slightly for margin (85%)
+    const scale = Math.min(scaleX, scaleY) * 0.85;
     const translateX = (canvasWidth - shape.width * scale) / 2;
     const translateY = (canvasHeight - shape.height * scale) / 2;
     return { scale, translateX, translateY };
@@ -100,17 +96,14 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw the shape outline path with scale and translate
     ctx.save();
     const { scale, translateX, translateY } = getTransformParams(canvas.width, canvas.height);
     ctx.translate(translateX, translateY);
     ctx.scale(scale, scale);
 
-    ctx.strokeStyle = "#475569"; // Slate gray border
-    ctx.lineWidth = 6 / scale; // Keep border thick regardless of scale
+    ctx.strokeStyle = "#475569";
+    ctx.lineWidth = 6 / scale;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     
@@ -122,66 +115,147 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     setBleedPercent(0);
   };
 
+  const playAudioCue = (src: string, volume = 0.5) => {
+    try {
+      const audio = new Audio(src);
+      audio.volume = volume;
+      audio.play().catch(() => {});
+    } catch { }
+  };
+
+  const hexToRgba = (hex: string) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16),
+      a: 255
+    } : null;
+  };
+
+  const floodFill = (startX: number, startY: number, fillColorHex: string) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+    startX = Math.floor(startX);
+    startY = Math.floor(startY);
+    const fillColorRgba = hexToRgba(fillColorHex);
+    if (!fillColorRgba) return;
+
+    const imgData = ctx.getImageData(0, 0, width, height);
+    const data = imgData.data;
+    const startIdx = (startY * width + startX) * 4;
+    const startR = data[startIdx], startG = data[startIdx + 1], startB = data[startIdx + 2], startA = data[startIdx + 3];
+
+    if (startR === fillColorRgba.r && startG === fillColorRgba.g && startB === fillColorRgba.b && startA === fillColorRgba.a) return;
+
+    const isBorderColor = (r: number, g: number, b: number, a: number) => {
+      return Math.abs(r - 71) < 15 && Math.abs(g - 85) < 15 && Math.abs(b - 105) < 15 && a > 100;
+    };
+
+    if (isBorderColor(startR, startG, startB, startA)) return;
+
+    const queue: [number, number][] = [[startX, startY]];
+    const visited = new Uint8Array(width * height);
+    visited[startY * width + startX] = 1;
+
+    while (queue.length > 0) {
+      const [cx, cy] = queue.shift()!;
+      const idx = (cy * width + cx) * 4;
+      data[idx] = fillColorRgba.r; data[idx+1] = fillColorRgba.g; data[idx+2] = fillColorRgba.b; data[idx+3] = fillColorRgba.a;
+      
+      const neighbors = [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]];
+      for (const [nx, ny] of neighbors) {
+        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+          const nIdx = ny * width + nx;
+          if (!visited[nIdx]) {
+            visited[nIdx] = 1;
+            const pIdx = nIdx * 4;
+            if (!isBorderColor(data[pIdx], data[pIdx+1], data[pIdx+2], data[pIdx+3])) {
+              queue.push([nx, ny]);
+            }
+          }
+        }
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    ctx.save();
+    const { scale, translateX, translateY } = getTransformParams(canvas.width, canvas.height);
+    ctx.translate(translateX, translateY);
+    ctx.scale(scale, scale);
+    ctx.strokeStyle = "#475569";
+    ctx.lineWidth = 6 / scale;
+    const p = new Path2D(shape.path);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.stroke(p);
+    ctx.restore();
+    calculateCoverageAndBleed();
+  };
+
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+    if (mode === "fill") {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const clientX = "touches" in e ? (e.touches.length ? e.touches[0].clientX : 0) : (e as React.MouseEvent).clientX;
+      const clientY = "touches" in e ? (e.touches.length ? e.touches[0].clientY : 0) : (e as React.MouseEvent).clientY;
+      const x = ((clientX - rect.left) / rect.width) * canvas.width;
+      const y = ((clientY - rect.top) / rect.height) * canvas.height;
+      playAudioCue("/ting.mp3", 0.2);
+      floodFill(x, y, selectedColor);
+      return;
+    }
     setIsDrawing(true);
     drawingStrokesRef.current += 1;
     draw(e);
   };
 
   const stopDrawing = () => {
+    if (mode === "fill") return;
     setIsDrawing(false);
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.beginPath();
-      }
+      if (ctx) ctx.beginPath();
     }
     calculateCoverageAndBleed();
   };
 
   const draw = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDrawing || !canvasRef.current) return;
+    if (mode === "fill" || !isDrawing || !canvasRef.current) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     const rect = canvas.getBoundingClientRect();
-    let x, y;
-
-    // Get correct mouse/touch coordinates relative to canvas width/height attributes
-    // rect.width and rect.height could be smaller/larger due to responsive styling
-    if ("touches" in e) {
-      x = ((e.touches[0].clientX - rect.left) / rect.width) * canvas.width;
-      y = ((e.touches[0].clientY - rect.top) / rect.height) * canvas.height;
-    } else {
-      x = (((e as React.MouseEvent).clientX - rect.left) / rect.width) * canvas.width;
-      y = (((e as React.MouseEvent).clientY - rect.top) / rect.height) * canvas.height;
-    }
+    const x = ("touches" in e) ? ((e.touches[0].clientX - rect.left) / rect.width) * canvas.width : (((e as React.MouseEvent).clientX - rect.left) / rect.width) * canvas.width;
+    const y = ("touches" in e) ? ((e.touches[0].clientY - rect.top) / rect.height) * canvas.height : (((e as React.MouseEvent).clientY - rect.top) / rect.height) * canvas.height;
 
     ctx.save();
     ctx.lineWidth = brushSize;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.strokeStyle = selectedColor;
-    ctx.globalCompositeOperation = "destination-over"; // Draw behind outline black lines
-
+    ctx.globalCompositeOperation = "destination-over";
     ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(x, y);
     ctx.restore();
 
-    // Redraw outline on top so it doesn't get covered by paint
     ctx.save();
     const { scale, translateX, translateY } = getTransformParams(canvas.width, canvas.height);
     ctx.translate(translateX, translateY);
     ctx.scale(scale, scale);
-
     ctx.strokeStyle = "#475569";
     ctx.lineWidth = 6 / scale;
     const p = new Path2D(shape.path);
-    ctx.globalCompositeOperation = "source-over"; // Draw outline on top
+    ctx.globalCompositeOperation = "source-over";
     ctx.stroke(p);
     ctx.restore();
   };
@@ -192,268 +266,119 @@ export default function ColoringCanvas({ gameConfig, onComplete }: GameAdapterPr
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const width = canvas.width;
-    const height = canvas.height;
-    
-    // Path definition
+    const width = canvas.width, height = canvas.height;
     const path = new Path2D(shape.path);
     const { scale, translateX, translateY } = getTransformParams(canvas.width, canvas.height);
-
-    // Sample points in a grid
     const step = 8;
-    let insideTotal = 0;
-    let insidePainted = 0;
-    let outsidePainted = 0;
+    let insideTotal = 0, insidePainted = 0, outsidePainted = 0;
 
     for (let x = step; x < width; x += step) {
       for (let y = step; y < height; y += step) {
-        // Dịch ngược tọa độ canvas về hệ tọa độ gốc của path để kiểm tra isPointInPath
-        const xOrig = (x - translateX) / scale;
-        const yOrig = (y - translateY) / scale;
-        
+        const xOrig = (x - translateX) / scale, yOrig = (y - translateY) / scale;
         const isInside = ctx.isPointInPath(path, xOrig, yOrig);
-        
         const imgData = ctx.getImageData(x, y, 1, 1).data;
-        const isPainted = imgData[3] > 30; // Check alpha channel
-
+        const isPainted = imgData[3] > 30;
         if (isInside) {
           insideTotal++;
           if (isPainted) {
-            // Exclude the outline color itself (#475569)
-            const r = imgData[0];
-            const g = imgData[1];
-            const b = imgData[2];
-            const isOutlineColor = r === 0x47 && g === 0x55 && b === 0x69;
-            if (!isOutlineColor) {
-              insidePainted++;
-            }
+            if (!(imgData[0] === 0x47 && imgData[1] === 0x55 && imgData[2] === 0x69)) insidePainted++;
           }
-        } else {
-          if (isPainted) {
-            // Count as bleed if it is painted and not the outline color
-            const r = imgData[0];
-            const g = imgData[1];
-            const b = imgData[2];
-            const isOutlineColor = r === 0x47 && g === 0x55 && b === 0x69;
-            if (!isOutlineColor) {
-              outsidePainted++;
-            }
-          }
+        } else if (isPainted) {
+          if (!(imgData[0] === 0x47 && imgData[1] === 0x55 && imgData[2] === 0x69)) outsidePainted++;
         }
       }
     }
-
-    const coverage = Math.round((insidePainted / Math.max(insideTotal, 1)) * 100);
-    const bleed = Math.round((outsidePainted / Math.max(insideTotal, 1)) * 100);
-
-    setCoveragePercent(coverage);
-    setBleedPercent(Math.min(100, bleed));
+    setCoveragePercent(Math.round((insidePainted / Math.max(insideTotal, 1)) * 100));
+    setBleedPercent(Math.min(100, Math.round((outsidePainted / Math.max(insideTotal, 1)) * 100)));
   };
 
-  const handleClear = () => {
-    drawOutline();
-    setErrorMessage(null);
-  };
+  const handleClear = () => { drawOutline(); setErrorMessage(null); };
 
   const handleFinish = () => {
     if (coveragePercent < 35) {
       setErrorMessage("Bé ơi, hãy tô màu thêm một chút nữa trước khi hoàn thành nhé!");
       return;
     }
-
     const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
     const score = Math.max(10, Math.min(100, coveragePercent - Math.round(bleedPercent * 0.5)));
-
-    onComplete({
-      score,
-      durationSeconds,
-      metadata: {
-        colorCoveragePercent: coveragePercent,
-        colorBleedPercent: bleedPercent,
-      }
-    });
+    onComplete({ score, durationSeconds, metadata: { colorCoveragePercent: coveragePercent, colorBleedPercent: bleedPercent } });
   };
 
   if (!isClient) return null;
 
   return (
     <div className="w-full flex flex-col items-center gap-5 max-w-3xl mx-auto px-4">
-      
-      {/* Title Block */}
       <div className="w-full bg-pink-50/90 border-4 border-slate-800 rounded-3xl p-4 shadow-[6px_6px_0px_0px_#1e293b] text-center">
         <h4 className="text-xl md:text-2xl font-black text-pink-700 mb-1 leading-snug flex items-center justify-center gap-2">
           <IoSparkles className="text-pink-500 animate-pulse" />
           <span>{currentItem.title}</span>
           <IoSparkles className="text-pink-500 animate-pulse" />
         </h4>
-        <p className="text-slate-600 text-xs md:text-sm font-semibold">
-          Nhiệm vụ: Chọn bút sáp màu bên dưới và di cọ vẽ để tô kín bên trong hình nhé!
+        <p className="text-slate-600 text-xs md:text-sm font-semibold mb-3">
+          {mode === "fill" ? "Nhiệm vụ: Chọn bút sáp màu bên dưới và chạm vào các vùng trống trong hình để tô màu nhé!" : "Nhiệm vụ: Chọn bút sáp màu bên dưới và di chuột/ngón tay để tô màu bên trong hình nhé!"}
         </p>
-      </div>
-
-      {/* Canvas painting area (750x500 for Premium Desktop size) */}
-      <div className="bg-gradient-to-tr from-pink-100/30 via-purple-50/20 to-indigo-100/30 border-4 border-slate-800 rounded-[32px] p-4 shadow-[6px_6px_0px_0px_#1e293b] relative w-full">
-        <canvas
-          ref={canvasRef}
-          width={750}
-          height={500}
-          className="bg-white border-3 border-slate-800 rounded-[24px] cursor-crosshair touch-none w-full shadow-inner aspect-[1.5/1]"
-          onMouseDown={startDrawing}
-          onMouseUp={stopDrawing}
-          onMouseLeave={stopDrawing}
-          onMouseMove={draw}
-          onTouchStart={startDrawing}
-          onTouchEnd={stopDrawing}
-          onTouchMove={draw}
-        />
-      </div>
-
-      {/* Colors Palette: Beautiful 3D Crayons Box */}
-      <div className="flex flex-col items-center p-4 bg-amber-50 rounded-3xl border-3 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b] w-full">
-        <div className="text-xs font-black text-amber-800 uppercase tracking-wider mb-3 text-center">
-          🖍️ Hộp Bút Màu Sáp
+        <div className="flex justify-center gap-3">
+          <button type="button" onClick={() => setMode("fill")} className={`flex items-center gap-1.5 px-4 py-2 text-xs font-black rounded-xl transition-all border-2 cursor-pointer shadow-[2px_2px_0px_0px_#1e293b] active:translate-y-0.5 active:shadow-none ${mode === "fill" ? "bg-pink-400 text-white border-slate-800" : "bg-white text-slate-700 border-slate-800"}`}>🪄 Tự động (Dễ)</button>
+          <button type="button" onClick={() => setMode("brush")} className={`flex items-center gap-1.5 px-4 py-2 text-xs font-black rounded-xl transition-all border-2 cursor-pointer shadow-[2px_2px_0px_0px_#1e293b] active:translate-y-0.5 active:shadow-none ${mode === "brush" ? "bg-pink-400 text-white border-slate-800" : "bg-white text-slate-700 border-slate-800"}`}>🖌️ Tự di cọ (Khó)</button>
         </div>
-        
-        {/* Crayon container - horizontal layout */}
+      </div>
+
+      <div className="bg-gradient-to-tr from-pink-100/30 via-purple-50/20 to-indigo-100/30 border-4 border-slate-800 rounded-[32px] p-4 shadow-[6px_6px_0px_0px_#1e293b] relative w-full">
+        <canvas ref={canvasRef} width={750} height={500} className="bg-white border-3 border-slate-800 rounded-[24px] cursor-crosshair touch-none w-full shadow-inner aspect-[1.5/1]" onMouseDown={startDrawing} onMouseUp={stopDrawing} onMouseLeave={stopDrawing} onMouseMove={draw} onTouchStart={startDrawing} onTouchEnd={stopDrawing} onTouchMove={draw} />
+      </div>
+
+      <div className="flex flex-col items-center p-4 bg-amber-50 rounded-3xl border-3 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b] w-full">
+        <div className="text-xs font-black text-amber-800 uppercase tracking-wider mb-3 text-center">🖍️ Hộp Bút Màu Sáp</div>
         <div className="flex flex-row gap-3 md:gap-5 justify-center items-end flex-wrap px-2 h-16 w-full">
           {COLORS.map((c) => {
             const isSelected = selectedColor === c.hex;
             return (
-              <motion.button
-                key={c.hex}
-                onClick={() => setSelectedColor(c.hex)}
-                animate={isSelected ? { y: -12, scale: 1.1 } : { y: 0, scale: 1 }}
-                whileHover={{ y: -6 }}
-                transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                className="relative flex flex-col items-center focus:outline-none cursor-pointer"
-                title={c.name}
-              >
-                {/* Crayon Tip (Đầu bút nhọn) */}
-                <div 
-                  className="w-4 h-3.5 border border-slate-700/10"
-                  style={{ 
-                    backgroundColor: c.hex, 
-                    clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)" 
-                  }}
-                />
-                {/* Crayon Body (Thân bút sáp màu) */}
-                <div 
-                  className={`w-6 h-10 rounded-b border ${
-                    isSelected ? "border-slate-800 shadow-md" : "border-slate-700/20"
-                  } shadow-sm flex items-center justify-center text-[9px] font-black text-white/90 select-none`}
-                  style={{ backgroundColor: c.hex }}
-                >
-                  <span className="drop-shadow">{c.name[0]}</span>
-                </div>
-                {/* Shadow overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-black/20 rounded-b pointer-events-none" />
+              <motion.button key={c.hex} onClick={() => setSelectedColor(c.hex)} animate={isSelected ? { y: -12, scale: 1.1 } : { y: 0, scale: 1 }} className="relative flex flex-col items-center focus:outline-none cursor-pointer">
+                <div className="w-4 h-3.5 border border-slate-700/10" style={{ backgroundColor: c.hex, clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)" }} />
+                <div className={`w-6 h-10 rounded-b border ${isSelected ? "border-slate-800 shadow-md" : "border-slate-700/20"} shadow-sm flex items-center justify-center text-[9px] font-black text-white/90 select-none`} style={{ backgroundColor: c.hex }}><span className="drop-shadow">{c.name[0]}</span></div>
               </motion.button>
             );
           })}
         </div>
       </div>
 
-      {/* Error alert message */}
       <AnimatePresence>
         {errorMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="flex items-center gap-1.5 text-red-500 bg-red-50 px-4 py-2 rounded-2xl font-bold border border-red-200 w-full justify-center text-xs"
-          >
-            <IoAlertCircle className="text-base" />
-            <span>{errorMessage}</span>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-1.5 text-red-500 bg-red-50 px-4 py-2 rounded-2xl font-bold border border-red-200 w-full justify-center text-xs">
+            <IoAlertCircle className="text-base" /><span>{errorMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Bottom Control Station: Brush sizes, Stats, and Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full items-center bg-white p-4 rounded-3xl border-3 border-slate-800 shadow-[6px_6px_0px_0px_#1e293b]">
-        
-        {/* Brush Size Selector */}
         <div className="flex items-center justify-center gap-3">
           <span className="text-xs font-black text-slate-500 uppercase tracking-wider">Cọ vẽ</span>
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setBrushSize(12)}
-              className={`w-10 h-10 rounded-2xl flex flex-col items-center justify-center transition-all border-2 font-black cursor-pointer ${
-                brushSize === 12 ? "bg-amber-500 text-white border-2 border-slate-800 shadow-none translate-y-[3px]" : "bg-white text-slate-800 border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] hover:bg-slate-50 active:translate-y-[3px] active:shadow-none"
-              }`}
-            >
-              <div className="w-2.5 h-2.5 bg-current rounded-full" />
-              <span className="text-[9px] mt-0.5 font-bold">Nhỏ</span>
+            <button type="button" disabled={mode === "fill"} onClick={() => setBrushSize(12)} className={`w-10 h-10 rounded-2xl flex flex-col items-center justify-center transition-all border-2 font-black cursor-pointer ${mode === "fill" ? "opacity-50 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-350 shadow-none" : brushSize === 12 ? "bg-amber-500 text-white border-2 border-slate-800 shadow-none translate-y-[3px]" : "bg-white text-slate-800 border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] hover:bg-slate-50 active:translate-y-[3px] active:shadow-none"}`}>
+              <div className="w-2.5 h-2.5 bg-current rounded-full" /><span className="text-[9px] mt-0.5 font-bold">Nhỏ</span>
             </button>
-            <button
-              type="button"
-              onClick={() => setBrushSize(22)}
-              className={`w-10 h-10 rounded-2xl flex flex-col items-center justify-center transition-all border-2 font-black cursor-pointer ${
-                brushSize === 22 ? "bg-amber-500 text-white border-2 border-slate-800 shadow-none translate-y-[3px]" : "bg-white text-slate-800 border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] hover:bg-slate-50 active:translate-y-[3px] active:shadow-none"
-              }`}
-            >
-              <div className="w-5 h-5 bg-current rounded-full" />
-              <span className="text-[9px] mt-0.5 font-bold">To</span>
+            <button type="button" disabled={mode === "fill"} onClick={() => setBrushSize(22)} className={`w-10 h-10 rounded-2xl flex flex-col items-center justify-center transition-all border-2 font-black cursor-pointer ${mode === "fill" ? "opacity-50 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-350 shadow-none" : brushSize === 22 ? "bg-amber-500 text-white border-2 border-slate-800 shadow-none translate-y-[3px]" : "bg-white text-slate-800 border-2 border-slate-800 shadow-[3px_3px_0px_0px_#1e293b] hover:bg-slate-50 active:translate-y-[3px] active:shadow-none"}`}>
+              <div className="w-5 h-5 bg-current rounded-full" /><span className="text-[9px] mt-0.5 font-bold">To</span>
             </button>
           </div>
         </div>
 
-        {/* Stats Display (Coverage and Bleed) */}
         <div className="space-y-2 border-y md:border-y-0 md:border-x border-slate-100 py-2.5 md:py-0 px-4">
           <div>
-            <div className="flex justify-between items-center text-slate-600 font-bold mb-1 text-[10px]">
-              <span>Phủ màu:</span>
-              <span className="text-[10px] font-black text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full">
-                {coveragePercent}% / {currentItem.targetCoveragePercent}%
-              </span>
-            </div>
-            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200">
-              <motion.div 
-                className="bg-gradient-to-r from-pink-400 to-rose-500 h-full rounded-full"
-                animate={{ width: `${coveragePercent}%` }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
+            <div className="flex justify-between items-center text-slate-600 font-bold mb-1 text-[10px]"><span>Phủ màu:</span><span className="text-[10px] font-black text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full">{coveragePercent}% / {currentItem.targetCoveragePercent}%</span></div>
+            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200"><motion.div className="bg-gradient-to-r from-pink-400 to-rose-500 h-full rounded-full" animate={{ width: `${coveragePercent}%` }} transition={{ duration: 0.3 }} /></div>
           </div>
           <div>
-            <div className="flex justify-between items-center text-slate-600 font-bold mb-1 text-[10px]">
-              <span>Lem viền:</span>
-              <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                {bleedPercent}%
-              </span>
-            </div>
-            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200">
-              <motion.div 
-                className={`h-full rounded-full ${bleedPercent > 18 ? "bg-red-500" : "bg-emerald-500"}`}
-                animate={{ width: `${bleedPercent}%` }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
+            <div className="flex justify-between items-center text-slate-600 font-bold mb-1 text-[10px]"><span>Lem viền:</span><span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{bleedPercent}%</span></div>
+            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200"><motion.div className={`h-full rounded-full ${bleedPercent > 18 ? "bg-red-500" : "bg-emerald-500"}`} animate={{ width: `${bleedPercent}%` }} transition={{ duration: 0.3 }} /></div>
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex justify-center gap-3">
-          <button
-            type="button"
-            onClick={handleClear}
-            className="flex items-center gap-1 px-4 py-2.5 bg-white border-2 border-slate-800 hover:bg-slate-50 text-slate-800 font-black rounded-xl transition-all shadow-[3px_3px_0px_0px_#1e293b] active:translate-y-[3px] active:shadow-none text-xs cursor-pointer"
-          >
-            <IoTrashOutline className="text-sm" />
-            <span>Tô lại</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleFinish}
-            className="flex items-center gap-1.5 px-6 py-3 bg-pink-400 hover:bg-pink-300 text-white border-2 border-slate-800 font-black text-sm rounded-xl shadow-[3px_3px_0px_0px_#1e293b] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer"
-          >
-            <IoCheckmarkCircle size={16} />
-            <span>Hoàn thành</span>
-          </button>
+          <button type="button" onClick={handleClear} className="flex items-center gap-1 px-4 py-2.5 bg-white border-2 border-slate-800 hover:bg-slate-50 text-slate-800 font-black rounded-xl transition-all shadow-[3px_3px_0px_0px_#1e293b] active:translate-y-[3px] active:shadow-none text-xs cursor-pointer"><IoTrashOutline className="text-sm" /><span>Tô lại</span></button>
+          <button type="button" onClick={handleFinish} className="flex items-center gap-1.5 px-6 py-3 bg-pink-400 hover:bg-pink-300 text-white border-2 border-slate-800 font-black text-sm rounded-xl shadow-[3px_3px_0px_0px_#1e293b] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer"><IoCheckmarkCircle size={16} /><span>Hoàn thành</span></button>
         </div>
       </div>
-
     </div>
   );
 }
-

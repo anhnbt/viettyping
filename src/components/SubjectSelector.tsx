@@ -1,5 +1,5 @@
 import React from 'react';
-import { Subject } from '@/data/subjects';
+import { Subject } from '@/types/subject';
 import { useProgress } from '@/hooks/useProgress';
 import { useSound } from '@/contexts/SoundContext';
 import { motion } from 'framer-motion';

@@ -10,14 +10,14 @@ Trẻ sẽ nhìn thấy một thước đo tốc độ dễ thương với hình
 
 ## Acceptance criteria
 
-- [ ] Thu thập thời gian bắt đầu gõ và số ký tự/từ gõ đúng để tính WPM theo thời gian thực.
-- [ ] Xây dựng component `TypingSpeedMeter` dạng hoạt ảnh con vật:
+- [x] Thu thập thời gian bắt đầu gõ và số ký tự/từ gõ đúng để tính WPM theo thời gian thực.
+- [x] Xây dựng component `TypingSpeedMeter` dạng hoạt ảnh con vật:
   - Tốc độ dưới 10 WPM: Con rùa 🐢 bò chậm rãi.
   - Tốc độ từ 10 đến 25 WPM: Con thỏ 🐰 nhảy lò cò.
   - Tốc độ trên 25 WPM: Con báo 🐆 chạy rất nhanh.
-- [ ] Tích hợp thanh thời gian đếm ngược dạng màu sắc thay đổi động: Xanh lá (nhiều thời gian) -> Vàng (trung bình) -> Đỏ (sắp hết giờ).
-- [ ] Gửi thông tin `wpm` và `accuracy` vào thuộc tính `metadata` của `TelemetryPayload` khi hoàn thành hoạt động luyện gõ phím.
-- [ ] Viết Unit Test cho hàm tính toán WPM đảm bảo tính đúng đắn khi gõ ngắt quãng.
+- [x] Tích hợp thanh thời gian đếm ngược dạng màu sắc thay đổi động: Xanh lá (nhiều thời gian) -> Vàng (trung bình) -> Đỏ (sắp hết giờ).
+- [x] Gửi thông tin `wpm` và `accuracy` vào thuộc tính `metadata` của `TelemetryPayload` khi hoàn thành hoạt động luyện gõ phím.
+- [x] Viết Unit Test cho hàm tính toán WPM đảm bảo tính đúng đắn khi gõ ngắt quãng.
 
 ## Blocked by
 

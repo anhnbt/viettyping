@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { notFound, useRouter } from 'next/navigation';
-import { subjects } from '@/data/subjects';
+import { useSubjects } from '@/contexts/SubjectsContext';
 import TypingPractice, { TypingTask } from '@/components/TypingPractice';
 import CompletionModal from '@/components/CompletionModal';
 import { IoArrowBack } from 'react-icons/io5';
@@ -25,6 +25,7 @@ interface Stats {
 
 export default function PracticePage({ params }: Props) {
     const router = useRouter();
+    const { subjects, isLoading } = useSubjects();
     const resolvedParams = React.use(params);
     const { subjectId, topicId } = resolvedParams;
 
@@ -36,6 +37,14 @@ export default function PracticePage({ params }: Props) {
     const [showModal, setShowModal] = useState(false);
     const [resetKey, setResetKey] = useState(0);
     const { saveProgress } = useProgress();
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-soft-cream">
+                <div className="w-12 h-12 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     if (!subject || !topic) {
         notFound();

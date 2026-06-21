@@ -18,7 +18,13 @@ import {
   Activity as HeartIcon, 
   Target,
   PenTool,
-  BrainCircuit
+  BrainCircuit,
+  Activity,
+  Globe,
+  Heart,
+  Eye,
+  Star,
+  GraduationCap
 } from 'lucide-react';
 import { useSound } from '@/contexts/SoundContext';
 
@@ -66,11 +72,11 @@ function renderBoldText(text: string): React.ReactNode[] {
 function renderTableJSX(headers: string[], rows: string[][], keyIndex: number) {
   return (
     <div key={keyIndex} className="w-full overflow-x-auto border-3 border-[var(--color-foreground)] rounded-[20px] shadow-[3px_3px_0px_0px_var(--color-foreground)] my-5 bg-[var(--color-surface)] max-w-full">
-      <table className="w-full text-left border-collapse text-xs md:text-sm min-w-[500px]">
+      <table className="w-full text-left border-collapse text-sm min-w-[500px]">
         <thead>
           <tr className="bg-[var(--color-primary)] text-[var(--color-on-primary-container)] border-b-3 border-[var(--color-foreground)] font-black">
             {headers.map((h, idx) => (
-              <th key={idx} className="p-3 md:p-3.5 font-black uppercase tracking-wider text-xs">
+              <th key={idx} className="p-3 md:p-3.5 font-black uppercase tracking-wider text-sm">
                 {renderBoldText(h)}
               </th>
             ))}
@@ -85,7 +91,7 @@ function renderTableJSX(headers: string[], rows: string[][], keyIndex: number) {
               }`}
             >
               {row.map((cell, cellIdx) => (
-                <td key={cellIdx} className="p-3 md:p-3.5 text-slate-700 leading-relaxed text-xs md:text-sm">
+                <td key={cellIdx} className="p-3 md:p-3.5 text-slate-700 leading-relaxed text-sm">
                   {renderBoldText(cell)}
                 </td>
               ))}
@@ -142,7 +148,7 @@ function parseMarkdownToJSX(text: string) {
     if (line.startsWith('===') && line.endsWith('===')) {
       const titleText = line.replace(/===/g, '').trim();
       elements.push(
-        <div key={i} className="my-5 p-3 bg-[var(--color-surface-container)] border-l-4 border-[var(--color-primary)] border-y border-r border-[var(--color-foreground)] rounded-r-xl text-[var(--color-foreground)] font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-[2px_2px_0px_0px_var(--color-foreground)]">
+        <div key={i} className="my-5 p-3 bg-[var(--color-surface-container)] border-l-4 border-[var(--color-primary)] border-y border-r border-[var(--color-foreground)] rounded-r-xl text-[var(--color-foreground)] font-black text-sm uppercase tracking-wider flex items-center gap-2 shadow-[2px_2px_0px_0px_var(--color-foreground)]">
           <span>{titleText}</span>
         </div>
       );
@@ -154,8 +160,8 @@ function parseMarkdownToJSX(text: string) {
       const content = line.substring(1).trim();
       elements.push(
         <div key={i} className="flex items-start gap-2 my-2 pl-1.5">
-          <span className="text-amber-500 text-base mt-0.5">✨</span>
-          <span className="text-slate-700 text-xs md:text-sm font-semibold leading-relaxed">
+          <Sparkles className="w-4 h-4 text-amber-500 mt-1 shrink-0" />
+          <span className="text-slate-700 text-sm font-semibold leading-relaxed">
             {renderBoldText(content)}
           </span>
         </div>
@@ -165,7 +171,7 @@ function parseMarkdownToJSX(text: string) {
 
     // Standard paragraph
     elements.push(
-      <p key={i} className="text-slate-600 text-xs md:text-sm my-1.5 font-medium leading-relaxed">
+      <p key={i} className="text-slate-600 text-sm my-1.5 font-medium leading-relaxed">
         {renderBoldText(line)}
       </p>
     );
@@ -227,8 +233,8 @@ export default function ReportCardAnalyzer() {
             subjectName: 'Tiếng Việt',
             taskTitle: 'Luyện gõ đúng tốc độ & Đọc hiểu',
             reason: 'Rèn luyện tốc độ gõ phím nhanh và rèn luyện đọc hiểu cốt truyện Rùa và Thỏ.',
-            recommendation: 'Đặt mục tiêu gõ đều tay, tập trung và nâng tốc độ lên trên 25 từ/phút (WPM).',
-            icon: '📚',
+            recommendation: 'Ba mẹ ơi, đừng giục bé gõ nhanh kẻo bé bị căng thẳng nha. Hãy khuyến khích con gõ đều tay, xem việc vượt thử thách 25 từ/phút (WPM) như một trò chơi thú vị thôi nè.',
+            icon: 'book',
             color: 'from-green-400 to-emerald-500 shadow-green-100',
             difficulty: 'medium'
           });
@@ -249,8 +255,8 @@ export default function ReportCardAnalyzer() {
             subjectName: 'Toán học',
             taskTitle: 'Toán học thực tế & Cẩn thận',
             reason: 'Áp dụng phép toán cộng trừ vào bài toán đi chợ mua quả và gõ biểu thức số học.',
-            recommendation: 'Khuyến khích bé đếm kỹ các đồ vật trước khi gõ đáp án để rèn tính cẩn thận.',
-            icon: '🔢',
+            recommendation: 'Hãy khuyến khích bé đếm kỹ các món đồ xinh xắn hiển thị trên màn hình trước khi gõ đáp án nha ba mẹ. Cách này vừa rèn tính cẩn thận, vừa giúp con liên hệ toán học với thực tế siêu tốt đó.',
+            icon: 'math',
             color: 'from-blue-400 to-indigo-500 shadow-blue-100',
             difficulty: 'medium'
           });
@@ -269,8 +275,8 @@ export default function ReportCardAnalyzer() {
             subjectName: 'Tiếng Anh',
             taskTitle: 'Luyện gõ từ vựng tiếng Anh',
             reason: 'Thách thức bé gõ các từ vựng tiếng Anh giao tiếp cơ bản để tiếp tục phát huy.',
-            recommendation: 'Giúp bé phát âm từ vựng to rõ khi gõ để khắc sâu trí nhớ.',
-            icon: '🌍',
+            recommendation: 'Hãy cùng con phát âm thật to và rõ các từ vựng khi gõ nha ba mẹ. Vừa học vừa tương tác thế này sẽ giúp bé nhớ bài siêu nhanh và tăng tính gắn kết gia đình nữa nè!',
+            icon: 'english',
             color: 'from-indigo-400 to-purple-500 shadow-indigo-100',
             difficulty: 'easy'
           });
@@ -289,8 +295,8 @@ export default function ReportCardAnalyzer() {
           subjectName: 'Đạo đức',
           taskTitle: 'Yêu thương gia đình',
           reason: 'Luyện gõ và trả lời các tình huống về tình yêu thương gia đình, thầy cô và bạn bè.',
-          recommendation: 'Trò chuyện cùng bé về những việc tốt bé đã làm hôm nay để củng cố phẩm chất nhân ái.',
-          icon: '❤️',
+          recommendation: 'Ba mẹ hãy dành lời khen cho những hành động nhỏ siêu dễ thương như giúp đỡ bạn bè hay lễ phép hôm nay của bé nha. Trò chuyện cùng con về tình thương gia đình sẽ tiếp thêm năng lượng tích cực cho con đó.',
+          icon: 'heart',
           color: 'from-red-400 to-pink-500 shadow-red-100',
           difficulty: 'easy'
         });
@@ -307,8 +313,8 @@ export default function ReportCardAnalyzer() {
             subjectName: 'Thể dục & Sức khỏe',
             taskTitle: 'Tư thế ngồi gõ phím đúng cách',
             reason: 'Học cách ngồi thẳng lưng, bảo vệ mắt và các quy tắc nghỉ ngơi vận động khi học tập.',
-            recommendation: 'Cùng bé tập bài tập duỗi tay và nhắm mắt thư giãn sau mỗi 20 phút học.',
-            icon: '🏃',
+            recommendation: 'Sau mỗi 15 phút học, ba mẹ nhớ cùng bé tập vài động tác duỗi tay nhẹ nhàng hoặc nhắm mắt chơi trò "trốn tìm" 5 phút nha. Việc này giúp bé giải tỏa năng lượng và bảo vệ đôi mắt cho con yêu nè.',
+            icon: 'run',
             color: 'from-amber-400 to-orange-500 shadow-amber-100',
             difficulty: 'easy'
           });
@@ -326,8 +332,8 @@ export default function ReportCardAnalyzer() {
             subjectName: 'Âm nhạc',
             taskTitle: 'Rèn hát đúng giai điệu & Nốt nhạc',
             reason: 'Gõ lời bài hát thiếu nhi quen thuộc và lắng nghe nhận biết nốt Sol trong nhạc lí.',
-            recommendation: 'Mở nhạc bài hát "Cả nhà thương nhau" cho bé nghe và hát theo khi gõ phím.',
-            icon: '🎵',
+            recommendation: 'Ba mẹ có thể bật bài nhạc thiếu nhi con thích, rồi khuyến khích bé vừa nghe vừa hát theo khi gõ phím nha. Âm nhạc sẽ biến giờ học gõ phím thành một buổi hòa nhạc siêu vui vẻ luôn!',
+            icon: 'music',
             color: 'from-purple-400 to-fuchsia-500 shadow-purple-100',
             difficulty: 'medium'
           });
@@ -345,8 +351,8 @@ export default function ReportCardAnalyzer() {
             subjectName: 'Mỹ thuật',
             taskTitle: 'Bố cục khung hình & Tô màu đều',
             reason: 'Học cách nhận biết bố cục cân đối và trò chơi tô màu kỹ thuật số đều tay.',
-            recommendation: 'Hướng dẫn bé cách di chuột/chạm tay đều đặn khi chơi game tô màu.',
-            icon: '🎨',
+            recommendation: 'Hãy khen ngợi nỗ lực chọn và phối màu cực sáng tạo của con thay vì đòi hỏi tô thật hoàn hảo ba mẹ nhé. Ba mẹ hướng dẫn nhẹ nhàng cách con di chuột hoặc chạm tay đều tay là được rồi nè.',
+            icon: 'palette',
             color: 'from-pink-400 to-rose-500 shadow-pink-100',
             difficulty: 'easy'
           });
@@ -364,8 +370,8 @@ export default function ReportCardAnalyzer() {
             subjectName: 'Trải nghiệm',
             taskTitle: 'Rèn luyện sự tập trung chú ý',
             reason: 'Bài tập gõ các cụm từ học tập chăm chỉ và quiz nhận diện hành vi tập trung trong lớp.',
-            recommendation: 'Thiết lập không gian học yên tĩnh và khen ngợi sự tập trung của bé sau khi gõ xong.',
-            icon: '🎯',
+            recommendation: 'Ba mẹ thử áp dụng mẹo "Pomodoro nhí" nha: chia nhỏ giờ học thành các chặng 10-15 phút, tắt tivi hay điện thoại để tránh xao nhãng và nhớ khen ngợi khi con kiên trì hoàn thành bài nhé!',
+            icon: 'target',
             color: 'from-orange-400 to-red-500 shadow-orange-100',
             difficulty: 'hard'
           });
@@ -384,19 +390,25 @@ export default function ReportCardAnalyzer() {
       }
 
       // Phân tích danh hiệu học tập
-      let title = 'Ngôi Sao Lớp Một 🌟';
+      let title = 'Ngôi Sao Lớp Một';
       if (strengths.length > 5) {
-        title = 'Siêu Nhân Học Tập Toàn Năng 🏆';
+        title = 'Siêu Nhân Học Tập Toàn Năng';
       } else if (weaknesses.length === 0) {
-        title = 'Học Sinh Xuất Sắc Toàn Diện 🥇';
+        title = 'Học Sinh Xuất Sắc Toàn Diện';
       } else if (weaknesses.length > 4) {
-        title = 'Ngôi Sao Triển Vọng Đang Tỏa Sáng 🚀';
+        title = 'Ngôi Sao Triển Vọng Đang Tỏa Sáng';
       }
 
-      // Tạo gợi ý chung cho Phụ huynh
-      parentTips.push('Thiết lập khung giờ học cố định từ 15-20 phút mỗi ngày để tạo thói quen tốt.');
-      parentTips.push('Luôn khen ngợi sự nỗ lực của bé thay vì chỉ chú trọng vào điểm số (Khen: "Mẹ thấy con hôm nay rất tập trung gõ phím đấy!").');
-      parentTips.push('Để bé tự gõ, không gõ hộ, hãy kiên nhẫn hướng dẫn bé đặt ngón tay đúng vị trí.');
+      // Tạo gợi ý dựa trên Tâm lý học trẻ em (Piaget, SDT, Growth Mindset)
+      parentTips.push('Khen ngợi nỗ lực, không khen thông minh: Ba mẹ nhớ khen quá trình kiên trì gõ phím hoặc tập trung của con thay vì chỉ nhìn điểm số nha (Ví dụ: "Mẹ rất vui vì hôm nay con đã tự gõ hết những từ khó này luôn!").');
+      parentTips.push('Tôn trọng sự tự chủ của con yêu: Hãy để con tự quyết định bài học mình thích hoặc tự đổi hình đại diện dễ thương. Trải nghiệm tự chọn giúp con hứng thú tự học hơn nhiều đó.');
+      parentTips.push('Trải nghiệm trực quan là chìa khóa: Bé 6 tuổi học qua hình ảnh và phản xạ thực tế. Ba mẹ hãy để bé tự gõ, tuyệt đối không gõ hộ kẻo mất tính chủ động của con nhé.');
+
+      if (weaknesses.length > 0) {
+        parentTips.push('Làm bạn với lỗi sai: Khi con gõ nhầm, ba mẹ hãy mỉm cười xoa đầu con: "Không sao nè, lỗi sai chính là cách bộ não của con đang học cách sửa để thông minh hơn đó!" để con luôn tự tin nha.');
+      } else {
+        parentTips.push('Cùng con chinh phục thử thách mới: Bé đang làm rất tốt và học siêu đều luôn! Ba mẹ hãy khuyến khích con tự thử sức với các bài học khó hơn một xíu để kích thích tính tò mò khám phá của con nha.');
+      }
 
       setAnalysisResult({
         title,
@@ -407,6 +419,20 @@ export default function ReportCardAnalyzer() {
       });
       setIsAnalyzing(false);
     }, 1500);
+  };
+
+  const getTaskIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'book': return <BookOpen className="w-6 h-6" />;
+      case 'math': return <BrainCircuit className="w-6 h-6" />;
+      case 'english': return <Globe className="w-6 h-6" />;
+      case 'heart': return <Heart className="w-6 h-6 text-rose-500" />;
+      case 'run': return <Activity className="w-6 h-6" />;
+      case 'music': return <Music className="w-6 h-6" />;
+      case 'palette': return <Palette className="w-6 h-6" />;
+      case 'target': return <Target className="w-6 h-6" />;
+      default: return <GraduationCap className="w-6 h-6" />;
+    }
   };
 
   const handleStartTask = (subjectId: string, topicId: string) => {
@@ -435,13 +461,13 @@ export default function ReportCardAnalyzer() {
           <button
             type="button"
             onClick={() => setInputMode('edit')}
-            className={`px-4 py-2 font-black text-xs md:text-sm border-b-4 transition-all cursor-pointer ${
+            className={`px-4 py-2 font-black text-sm border-b-4 transition-all cursor-pointer ${
               inputMode === 'edit'
                 ? 'border-[var(--color-foreground)] text-[var(--color-foreground)]'
                 : 'border-transparent text-[var(--color-foreground)] opacity-50 hover:opacity-100'
             }`}
           >
-            ✍️ Nhập nhận xét
+            <span className="flex items-center gap-1.5"><PenTool className="w-4 h-4" />Nhập nhận xét</span>
           </button>
           <button
             type="button"
@@ -450,13 +476,13 @@ export default function ReportCardAnalyzer() {
               setInputMode('preview');
               playSound('click');
             }}
-            className={`px-4 py-2 font-black text-xs md:text-sm border-b-4 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+            className={`px-4 py-2 font-black text-sm border-b-4 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
               inputMode === 'preview'
                 ? 'border-[var(--color-foreground)] text-[var(--color-foreground)]'
                 : 'border-transparent text-[var(--color-foreground)] opacity-50 hover:opacity-100'
             }`}
           >
-            👁️ Xem trước học bạ
+            <span className="flex items-center gap-1.5"><Eye className="w-4 h-4" />Xem trước học bạ</span>
           </button>
         </div>
 
@@ -478,10 +504,10 @@ export default function ReportCardAnalyzer() {
           <button
             type="button"
             onClick={handleFillSample}
-            className="keycap-btn-surface px-5 py-2.5 text-xs md:text-sm flex items-center gap-2 w-full sm:w-auto"
+            className="keycap-btn-surface px-5 py-2.5 text-sm flex items-center gap-2 w-full sm:w-auto"
           >
             <ClipboardList className="w-4 h-4" />
-            <span>Điền nhận xét mẫu của cô 📝</span>
+            <span>Điền nhận xét mẫu của cô</span>
           </button>
 
           <button
@@ -548,7 +574,7 @@ export default function ReportCardAnalyzer() {
                       key={idx} 
                       className="flex items-start gap-2 text-sm md:text-base font-black text-[var(--color-foreground)]/90"
                     >
-                      <span className="text-[var(--color-primary)] mt-1">⭐</span>
+                      <Star className="w-4 h-4 text-amber-500 mt-1 shrink-0 fill-amber-500" />
                       <span>{str}</span>
                     </motion.li>
                   ))}
@@ -571,14 +597,14 @@ export default function ReportCardAnalyzer() {
                         key={idx} 
                         className="flex items-start gap-2 text-sm md:text-base font-black text-[var(--color-foreground)]/90"
                       >
-                        <span className="text-[var(--color-tertiary)] mt-1">📌</span>
+                        <Lightbulb className="w-4 h-4 text-[var(--color-tertiary)] mt-1 shrink-0" />
                         <span>{weak}</span>
                       </motion.li>
                     ))}
                   </ul>
                 ) : (
-                  <div className="text-center py-6 text-[var(--color-primary)] font-black">
-                    🎉 Bé học đều và xuất sắc ở mọi mặt! Không có lưu ý đáng ngại nào.
+                  <div className="text-center py-6 text-[var(--color-primary)] font-black text-sm">
+                    Bé học đều và xuất sắc ở mọi mặt! Không có lưu ý đáng ngại nào.
                   </div>
                 )}
               </div>
@@ -594,22 +620,22 @@ export default function ReportCardAnalyzer() {
               <div className="space-y-6">
                 {analysisResult.tasks.map((task, idx) => (
                   <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.15 }}
-                    key={task.id}
-                    className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-[var(--color-background)] border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_var(--color-foreground)] transition-all group"
+                     initial={{ opacity: 0, y: 15 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ delay: idx * 0.15 }}
+                     key={task.id}
+                     className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-[var(--color-background)] border-2 border-[var(--color-foreground)] shadow-[2px_2px_0px_0px_var(--color-foreground)] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_var(--color-foreground)] transition-all group"
                   >
                     <div className="flex items-start gap-4">
-                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${task.color} text-white flex items-center justify-center text-2xl shrink-0 shadow-[2px_2px_0px_0px_var(--color-foreground)] border-2 border-[var(--color-foreground)]`}>
-                        {task.icon}
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${task.color} text-white flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_var(--color-foreground)] border-2 border-[var(--color-foreground)]`}>
+                        {getTaskIcon(task.icon)}
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-black px-2 py-0.5 rounded-full bg-[var(--color-surface)] border border-[var(--color-foreground)] text-[var(--color-foreground)] uppercase">
+                          <span className="text-sm font-black px-2 py-0.5 rounded-full bg-[var(--color-surface)] border border-[var(--color-foreground)] text-[var(--color-foreground)] uppercase">
                             {task.subjectName}
                           </span>
-                          <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full uppercase border border-[var(--color-foreground)] ${
+                          <span className={`text-sm font-black px-1.5 py-0.5 rounded-full uppercase border border-[var(--color-foreground)] ${
                             task.difficulty === 'easy' ? 'bg-[var(--color-primary-container)] text-[var(--color-foreground)]' :
                             task.difficulty === 'medium' ? 'bg-[var(--color-secondary-container)] text-[var(--color-foreground)]' : 'bg-red-200 text-red-950'
                           }`}>
@@ -622,8 +648,8 @@ export default function ReportCardAnalyzer() {
                         <p className="text-[var(--color-foreground)] opacity-95 text-sm mt-1 font-semibold leading-relaxed">
                           <span className="text-[var(--color-primary-depth)] font-black">Lý do:</span> {task.reason}
                         </p>
-                        <p className="text-xs text-[var(--color-foreground)] opacity-70 mt-1.5 font-bold italic">
-                          💡 Lời khuyên: {task.recommendation}
+                        <p className="text-sm text-[var(--color-foreground)] opacity-70 mt-1.5 font-bold italic">
+                          Lời khuyên: {task.recommendation}
                         </p>
                       </div>
                     </div>
@@ -656,7 +682,7 @@ export default function ReportCardAnalyzer() {
               <ul className="space-y-3">
                 {analysisResult.parentTips.map((tip, idx) => (
                   <li key={idx} className="flex items-start gap-2.5 text-sm md:text-base font-black text-[var(--color-foreground)]/90">
-                    <span className="text-[var(--color-primary)] mt-1">☀️</span>
+                    <Sparkles className="w-4 h-4 text-amber-500 mt-1 shrink-0" />
                     <span>{tip}</span>
                   </li>
                 ))}

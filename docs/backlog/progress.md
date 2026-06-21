@@ -21,7 +21,7 @@ Dự án VietTyping là hệ thống Web App học tiếng Việt tương tác c
 ---
 
 ## 🏃‍♂️ SPRINT 2: State Management & Cốt lõi Gamification
-**Trạng thái:** 🚧 Đang thực hiện
+**Trạng thái:** ✅ Đã hoàn thành
 
 - [x] **[Task 01]** Xây dựng State Management & Game Controller ([Chi tiết](./tasks/task-01-state-management.md))
   - [x] Khởi tạo `LessonContext` (hoặc Zustand) để quản lý `currentXP`, `streak`, `progress`, `completedGames`.
@@ -34,7 +34,7 @@ Dự án VietTyping là hệ thống Web App học tiếng Việt tương tác c
 ---
 
 ## 📅 SPRINT 3: Lõi Mini Games (Phần 1 - Nền tảng)
-**Trạng thái:** ⏳ Kế hoạch (To Do)
+**Trạng thái:** ✅ Đã hoàn thành
 
 - [x] **[Task 02]** Matching Game ([Chi tiết](./tasks/task-02-matching-game.md))
   - [x] Logic kéo thả nối từ vựng với hình ảnh sử dụng `@dnd-kit/core`.
@@ -44,7 +44,7 @@ Dự án VietTyping là hệ thống Web App học tiếng Việt tương tác c
 ---
 
 ## 📅 SPRINT 4: Lõi Mini Games (Phần 2 - Nâng cao)
-**Trạng thái:** ⏳ Kế hoạch (To Do)
+**Trạng thái:** ✅ Đã hoàn thành
 
 - [x] **[Task 04]** Spin Wheel Game ([Chi tiết](./tasks/task-04-spin-wheel-game.md))
   - [x] Vòng quay may mắn chọn chữ/vần kèm hiệu ứng quay và phát âm.
@@ -89,44 +89,44 @@ Dự án VietTyping là hệ thống Web App học tiếng Việt tương tác c
 ---
 
 ## 📅 SPRINT 5.8: Tối ưu hóa Visual & Hệ thống Vinh danh (Visual & Social Gamification)
-**Trạng thái:** ⏳ Kế hoạch (To Do)
+**Trạng thái:** ✅ Đã hoàn thành
 
-- [ ] **[Task 19]** Hình ảnh sinh động & Banner trang chủ
-  - [ ] Thiết kế và tích hợp `thumbnailUrl` cho các môn học (Subject).
-  - [ ] Sử dụng AI sinh hình ảnh hoạt họa 2D vector đẹp mắt kèm text nghệ thuật, lưu tại `public/assets/thumbnails/`.
-  - [ ] Thay thế emoji tĩnh bằng **Hero Slide Banner** chuyển động mượt mà tại Trang chủ (`/`).
-- [ ] **[Task 20]** Xây dựng Bảng xếp hạng thi đua (`/leaderboard`)
-  - [ ] Tạo trang `/leaderboard` với 2 tab: Tuần (Weekly) và Toàn thời gian (All-time).
-  - [ ] Hiển thị thông tin bằng Nickname & Avatar hoạt hình dễ thương bảo mật cho học sinh.
-  - [ ] Thiết kế hiệu ứng vinh danh Top 3 (vương miện, huy chương lấp lánh).
-  - [ ] Thêm widget động viên cá nhân hóa ở dưới cùng cho học sinh nằm ngoài Top 10 kèm nút học nhanh.
+- [x] **[Task 19]** Hình ảnh sinh động & Banner trang chủ
+  - [x] Thiết kế và tích hợp `thumbnailUrl` cho các môn học (Subject).
+  - [x] Sử dụng AI sinh hình ảnh hoạt họa 2D vector đẹp mắt kèm text nghệ thuật, lưu tại `public/assets/thumbnails/`.
+  - [x] Thay thế emoji tĩnh bằng **Hero Slide Banner** chuyển động mượt mà tại Trang chủ (`/`).
+- [x] **[Task 20]** Xây dựng Bảng xếp hạng thi đua (`/leaderboard`)
+  - [x] Tạo trang `/leaderboard` với 2 tab: Tuần (Weekly) và Toàn thời gian (All-time).
+  - [x] Hiển thị thông tin bằng Nickname & Avatar hoạt hình dễ thương bảo mật cho học sinh.
+  - [x] Thiết kế hiệu ứng vinh danh Top 3 (vương miện, huy chương lấp lánh).
+  - [x] Thêm widget động viên cá nhân hóa ở dưới cùng cho học sinh nằm ngoài Top 10 kèm nút học nhanh.
 
 ---
 
 ## 📅 SPRINT 6: Quản trị Dữ liệu Động (Admin CMS - Phase 2)
-**Trạng thái:** ⏳ Kế hoạch (Backlog)
+**Trạng thái:** ✅ Đã hoàn thành
 
-- [ ] **[Task 10]** Admin CMS Dashboard (`/admin`)
-  - [ ] Thiết lập cấu trúc giao diện Admin tập trung với thanh điều hướng side-navigation.
-  - [ ] Tích hợp phân hệ và biểu mẫu (Form UI) cho 8 chức năng cốt lõi:
-    - [ ] **1. Quản lý khóa học (Course Management):** Trình tạo và biên tập Lesson Config (JSON) trực quan.
-    - [ ] **2. Khóa học (Course Catalog):** Quản lý lớp học học tập và phân bổ bài học cho học sinh.
-    - [ ] **3. Bài viết (Parent Blog):** Soạn thảo, viết bài cẩm nang cho phụ huynh.
-    - [ ] **4. Danh mục (Categories):** Cấu hình các danh mục bài viết và phân loại môn học.
-    - [ ] **5. Người dùng (User Directory):** Quản lý hồ sơ và phân quyền tài khoản (Admin, Giáo viên, Phụ huynh, Học sinh).
-    - [ ] **6. Tiến độ học viên (Student Progress):** Bảng theo dõi lịch sử và hoạt động hoàn thành bài học của học viên.
-    - [ ] **7. Thống kê điểm (Learning Analytics):** Báo cáo và biểu đồ WPM, độ chính xác %, XP.
-    - [ ] **8. Email Marketing (Email Notifications):** Giao diện gửi newsletter và thiết lập email thông báo tự động.
-  - [ ] Kết nối REST API của Backend Java Spring Boot và MySQL, xử lý SSR/ISR và xác thực Token JWT.
+- [x] **[Task 10]** Admin CMS Dashboard (`/admin`)
+  - [x] Thiết lập cấu trúc giao diện Admin tập trung với thanh điều hướng side-navigation.
+  - [x] Tích hợp phân hệ và biểu mẫu (Form UI) cho 8 chức năng cốt lõi:
+    - [x] **1. Quản lý khóa học (Course Management):** Trình tạo và biên tập Lesson Config (JSON) trực quan.
+    - [x] **2. Khóa học (Course Catalog):** Quản lý lớp học học tập và phân bổ bài học cho học sinh.
+    - [x] **3. Bài viết (Parent Blog):** Soạn thảo, viết bài cẩm nang cho phụ huynh.
+    - [x] **4. Danh mục (Categories):** Cấu hình các danh mục bài viết và phân loại môn học.
+    - [x] **5. Người dùng (User Directory):** Quản lý hồ sơ và phân quyền tài khoản (Admin, Giáo viên, Phụ huynh, Học sinh).
+    - [x] **6. Tiến độ học viên (Student Progress):** Bảng theo dõi lịch sử và hoạt động hoàn thành bài học của học viên.
+    - [x] **7. Thống kê điểm (Learning Analytics):** Báo cáo và biểu đồ WPM, độ chính xác %, XP.
+    - [x] **8. Email Marketing (Email Notifications):** Giao diện gửi newsletter và thiết lập email thông báo tự động.
+  - [x] Kết nối trực tiếp cơ sở dữ liệu và xử lý xác thực Token JWT thông qua Supabase.
 
 ---
 
 ## 📅 SPRINT 7: Đồng bộ hóa Server-Side & Daily Streak Engine (Phase 3)
-**Trạng thái:** ⏳ Kế hoạch (Backlog)
+**Trạng thái:** ✅ Đã hoàn thành
 
-- [ ] **[Task 21]** Đồng bộ Server-Side & Daily Streak Engine ([Chi tiết](./tasks/task-21-server-side-sync.md))
-  - [ ] Thiết kế cơ chế offline-first syncQueue lưu trữ hàng đợi đồng bộ.
-  - [ ] Đồng bộ hóa hồ sơ, XP, Level và danh sách bài học hoàn thành với Java Spring Boot API.
-  - [ ] Cải tiến logic tính Streak chuẩn xác theo ngày học thực tế trên Server.
-  - [ ] Tích hợp trạng thái đồng bộ đám mây trực quan lên UI Header của học sinh.
+- [x] **[Task 21]** Đồng bộ Server-Side & Daily Streak Engine ([Chi tiết](./tasks/task-21-server-side-sync.md))
+  - [x] Thiết kế cơ chế offline-first syncQueue lưu trữ hàng đợi đồng bộ.
+  - [x] Đồng bộ hóa hồ sơ, XP, Level và danh sách bài học hoàn thành với Java Spring Boot API.
+  - [x] Cải tiến logic tính Streak chuẩn xác theo ngày học thực tế trên Server.
+  - [x] Tích hợp trạng thái đồng bộ đám mây trực quan lên UI Header của học sinh.
 

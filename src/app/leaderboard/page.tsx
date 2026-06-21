@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Trophy, Flame, Crown, Sparkles, Medal, Play, Calendar, Zap, Heart, Lock } from 'lucide-react';
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
-import { weeklyLeaderboard, allTimeLeaderboard, LeaderboardUser } from '@/data/leaderboard';
+import { LeaderboardUser } from '@/data/leaderboard';
+import { supabase } from '@/utils/supabase';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -20,6 +21,9 @@ export default function LeaderboardPage() {
   const { studentInfo } = useStudent();
   
   const [activeTab, setActiveTab] = useState<'weekly' | 'alltime'>('weekly');
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardUser[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [userXp, setUserXp] = useState<number>(0);
   const [userStreak, setUserStreak] = useState<number>(0);
   const [userWpm, setUserWpm] = useState<number>(0);
@@ -61,10 +65,63 @@ export default function LeaderboardPage() {
       setHasSpeed30(localStorage.getItem('viettyping_badge_speed_30') === 'true');
       setHasSpeed40(localStorage.getItem('viettyping_badge_speed_40') === 'true');
       setHasSpeed50(localStorage.getItem('viettyping_badge_speed_50') === 'true');
+
+      // Check user session
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          setCurrentUserId(session.user.id);
+        }
+      });
     } catch (e) {
       console.error('Failed to load user progress:', e);
     }
   }, []);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      setIsLoading(true);
+      try {
+        let query = supabase
+          .from('student_profiles')
+          .select('id, nickname, avatar, xp, streak');
+
+        if (activeTab === 'weekly') {
+          // Lấy các bé hoạt động trong 7 ngày gần nhất
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+          query = query.gte('updated_at', sevenDaysAgo.toISOString());
+        }
+
+        const { data, error } = await query
+          .order('xp', { ascending: false })
+          .limit(20);
+
+        if (error) throw error;
+
+        // Nếu bảng xếp hạng tuần rỗng (chưa có ai active trong 7 ngày), fallback lấy top chung
+        if (activeTab === 'weekly' && (!data || data.length === 0)) {
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from('student_profiles')
+            .select('id, nickname, avatar, xp, streak')
+            .order('xp', { ascending: false })
+            .limit(20);
+
+          if (fallbackError) throw fallbackError;
+          setLeaderboardData((fallbackData || []) as LeaderboardUser[]);
+        } else {
+          setLeaderboardData((data || []) as LeaderboardUser[]);
+        }
+      } catch (err) {
+        console.error('Lỗi khi fetch bảng xếp hạng từ Supabase:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (isMounted) {
+      fetchLeaderboard();
+    }
+  }, [activeTab, isMounted]);
 
   const speedBadges = [
     {
@@ -161,8 +218,8 @@ export default function LeaderboardPage() {
 
   if (!isMounted) return null;
 
-  // Lấy dữ liệu bảng xếp hạng hiện tại
-  const baseData = activeTab === 'weekly' ? weeklyLeaderboard : allTimeLeaderboard;
+  // Lấy dữ liệu bảng xếp hạng hiện tại và lọc bỏ tài khoản thật của chính mình (nếu có) để tránh lặp
+  const baseData = leaderboardData.filter(u => u.id !== currentUserId);
 
   // Ghép người dùng hiện tại vào bảng xếp hạng để hiển thị thứ hạng tương đối
   const currentUserObj: LeaderboardUser = {
@@ -175,7 +232,6 @@ export default function LeaderboardPage() {
 
   // Sắp xếp danh sách xếp hạng có kèm người dùng hiện tại
   const sortedWithUser = [...baseData, currentUserObj]
-    .filter((value, index, self) => self.findIndex(t => t.id === value.id) === index) // Unique
     .sort((a, b) => b.xp - a.xp);
 
   // Tìm thứ hạng của người dùng hiện tại
@@ -307,139 +363,148 @@ export default function LeaderboardPage() {
           </div>
         </div>
 
-        {/* Top 3 Vinh Danh - Bục 3D */}
-        <div className="flex justify-center items-end gap-3 md:gap-8 mb-12 px-4 select-none">
-          {/* HẠNG 2 (Bên Trái) */}
-          {secondRank && (
-            <motion.div 
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-col items-center w-24 md:w-32"
-            >
-              <div className="text-4xl md:text-5xl animate-bounce mb-2">{secondRank.avatar}</div>
-              <div className="text-[10px] md:text-xs font-black text-slate-700 text-center truncate w-full mb-1">
-                {secondRank.nickname.split(' ')[0]}
-              </div>
-              <div className="text-[10px] font-black text-slate-500 bg-slate-100 border-2 border-slate-300 px-2 py-0.5 rounded-full mb-2">
-                {secondRank.xp} XP
-              </div>
-              {/* Cột bục hạng 2 */}
-              <div className="w-full bg-slate-200 border-4 border-[var(--color-foreground)] border-b-0 rounded-t-2xl h-24 flex flex-col items-center justify-center shadow-inner relative">
-                <Medal className="w-8 h-8 text-slate-400 fill-slate-200" />
-                <span className="text-xl md:text-2xl font-black text-slate-700 mt-1">2</span>
-              </div>
-            </motion.div>
-          )}
-
-          {/* HẠNG 1 (Ở Giữa - Cao Nhất) */}
-          {firstRank && (
-            <motion.div 
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="flex flex-col items-center w-28 md:w-36 z-10"
-            >
-              {/* Vương miện nảy nhẹ trên đầu Hạng 1 */}
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                className="mb-1"
-              >
-                <Crown className="w-8 h-8 text-yellow-500 fill-yellow-300 stroke-[2px]" />
-              </motion.div>
-              <div className="text-5xl md:text-6xl mb-2">{firstRank.avatar}</div>
-              <div className="text-xs md:text-sm font-black text-indigo-950 text-center truncate w-full mb-1">
-                {firstRank.nickname.split(' ')[0]}
-              </div>
-              <div className="text-[11px] font-black text-amber-700 bg-amber-55 border-2 border-amber-300 px-2.5 py-0.5 rounded-full mb-2">
-                {firstRank.xp} XP
-              </div>
-              {/* Cột bục hạng 1 */}
-              <div className="w-full bg-gradient-to-b from-yellow-300 to-amber-400 border-4 border-[var(--color-foreground)] border-b-0 rounded-t-2xl h-36 flex flex-col items-center justify-center shadow-[inset_0_4px_0_0_rgba(255,255,255,0.4)] relative">
-                <div className="absolute top-2 w-4 h-4 bg-white/30 rounded-full blur-sm animate-ping"></div>
-                <span className="text-3xl md:text-4xl font-black text-slate-900">1</span>
-              </div>
-            </motion.div>
-          )}
-
-          {/* HẠNG 3 (Bên Phải) */}
-          {thirdRank && (
-            <motion.div 
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-col items-center w-24 md:w-32"
-            >
-              <div className="text-4xl md:text-5xl animate-bounce mb-2">{thirdRank.avatar}</div>
-              <div className="text-[10px] md:text-xs font-black text-slate-700 text-center truncate w-full mb-1">
-                {thirdRank.nickname.split(' ')[0]}
-              </div>
-              <div className="text-[10px] font-black text-slate-500 bg-slate-100 border-2 border-slate-300 px-2 py-0.5 rounded-full mb-2">
-                {thirdRank.xp} XP
-              </div>
-              {/* Cột bục hạng 3 */}
-              <div className="w-full bg-amber-75/30 border-4 border-[var(--color-foreground)] border-b-0 rounded-t-2xl h-16 flex flex-col items-center justify-center shadow-inner relative">
-                <Medal className="w-8 h-8 text-amber-700 fill-amber-55" />
-                <span className="text-lg md:text-xl font-black text-amber-800 mt-1">3</span>
-              </div>
-            </motion.div>
-          )}
-        </div>
-
-        {/* Danh sách thứ hạng từ 4 đến 10 */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="space-y-3 bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[28px] p-4 md:p-6 shadow-[6px_6px_0px_0px_var(--color-foreground)] transition-colors"
-        >
-          {restList.map((user) => {
-            const isMe = user.id === 'current-user';
-            
-            return (
-              <motion.div
-                key={user.id}
-                whileHover={{ scale: 1.01, x: 2 }}
-                className={`flex items-center justify-between p-3.5 rounded-2xl border-2 transition-all ${
-                  isMe
-                    ? 'bg-[var(--color-primary-container)] border-[var(--color-primary)] shadow-[3px_3px_0px_0px_var(--color-primary-depth)] text-[var(--color-on-primary-container)]'
-                    : 'bg-[var(--color-surface)] border-[var(--color-outline-variant)] hover:border-slate-400 text-[var(--color-foreground)]'
-                }`}
-              >
-                <div className="flex items-center gap-3.5">
-                  {/* Số thứ hạng */}
-                  <span className={`w-8 h-8 rounded-full border-2 border-[var(--color-foreground)] flex items-center justify-center font-black text-xs shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)] ${
-                    isMe ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-surface-container)] text-[var(--color-foreground)]'
-                  }`}>
-                    {user.rank}
-                  </span>
-                  
-                  {/* Avatar và Tên */}
-                  <span className="text-2xl">{user.avatar}</span>
-                  <span className={`text-xs md:text-sm font-black ${isMe ? 'text-indigo-900' : 'text-slate-800'}`}>
-                    {isMe ? `${user.nickname} (Con đó!)` : user.nickname}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  {/* Streak ngọn lửa */}
-                  {user.streak > 0 && (
-                    <div className="flex items-center gap-1 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200" title="Chuỗi ngày học">
-                      <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-100 animate-pulse" />
-                      <span className="text-[10px] font-black text-orange-700">{user.streak}d</span>
-                    </div>
-                  )}
-                  {/* Điểm XP */}
-                  <div className="flex items-center gap-1 bg-[var(--color-surface-container)] px-3 py-1 rounded-full border border-[var(--color-outline-variant)]">
-                    <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-                    <span className="text-[11px] font-black text-[var(--color-foreground)]">{user.xp} XP</span>
+        {isLoading ? (
+          <div className="flex flex-col justify-center items-center py-20 bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[28px] shadow-[6px_6px_0px_0px_var(--color-foreground)]">
+            <div className="w-12 h-12 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-sm font-black text-slate-500 mt-4">Đang tải bảng vàng cao thủ...</p>
+          </div>
+        ) : (
+          <>
+            {/* Top 3 Vinh Danh - Bục 3D */}
+            <div className="flex justify-center items-end gap-3 md:gap-8 mb-12 px-4 select-none">
+              {/* HẠNG 2 (Bên Trái) */}
+              {secondRank && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="flex flex-col items-center w-24 md:w-32"
+                >
+                  <div className="text-4xl md:text-5xl animate-bounce mb-2">{secondRank.avatar}</div>
+                  <div className="text-[10px] md:text-xs font-black text-slate-700 text-center truncate w-full mb-1">
+                    {secondRank.nickname.split(' ')[0]}
                   </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+                  <div className="text-[10px] font-black text-slate-500 bg-slate-100 border-2 border-slate-300 px-2 py-0.5 rounded-full mb-2">
+                    {secondRank.xp} XP
+                  </div>
+                  {/* Cột bục hạng 2 */}
+                  <div className="w-full bg-slate-200 border-4 border-[var(--color-foreground)] border-b-0 rounded-t-2xl h-24 flex flex-col items-center justify-center shadow-inner relative">
+                    <Medal className="w-8 h-8 text-slate-400 fill-slate-200" />
+                    <span className="text-xl md:text-2xl font-black text-slate-700 mt-1">2</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* HẠNG 1 (Ở Giữa - Cao Nhất) */}
+              {firstRank && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="flex flex-col items-center w-28 md:w-36 z-10"
+                >
+                  {/* Vương miện nảy nhẹ trên đầu Hạng 1 */}
+                  <motion.div
+                    animate={{ y: [0, -6, 0] }}
+                    transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+                    className="mb-1"
+                  >
+                    <Crown className="w-8 h-8 text-yellow-500 fill-yellow-300 stroke-[2px]" />
+                  </motion.div>
+                  <div className="text-5xl md:text-6xl mb-2">{firstRank.avatar}</div>
+                  <div className="text-xs md:text-sm font-black text-indigo-950 text-center truncate w-full mb-1">
+                    {firstRank.nickname.split(' ')[0]}
+                  </div>
+                  <div className="text-[11px] font-black text-amber-700 bg-amber-55 border-2 border-amber-300 px-2.5 py-0.5 rounded-full mb-2">
+                    {firstRank.xp} XP
+                  </div>
+                  {/* Cột bục hạng 1 */}
+                  <div className="w-full bg-gradient-to-b from-yellow-300 to-amber-400 border-4 border-[var(--color-foreground)] border-b-0 rounded-t-2xl h-36 flex flex-col items-center justify-center shadow-[inset_0_4px_0_0_rgba(255,255,255,0.4)] relative">
+                    <div className="absolute top-2 w-4 h-4 bg-white/30 rounded-full blur-sm animate-ping"></div>
+                    <span className="text-3xl md:text-4xl font-black text-slate-900">1</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* HẠNG 3 (Bên Phải) */}
+              {thirdRank && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="flex flex-col items-center w-24 md:w-32"
+                >
+                  <div className="text-4xl md:text-5xl animate-bounce mb-2">{thirdRank.avatar}</div>
+                  <div className="text-[10px] md:text-xs font-black text-slate-700 text-center truncate w-full mb-1">
+                    {thirdRank.nickname.split(' ')[0]}
+                  </div>
+                  <div className="text-[10px] font-black text-slate-500 bg-slate-100 border-2 border-slate-300 px-2 py-0.5 rounded-full mb-2">
+                    {thirdRank.xp} XP
+                  </div>
+                  {/* Cột bục hạng 3 */}
+                  <div className="w-full bg-amber-75/30 border-4 border-[var(--color-foreground)] border-b-0 rounded-t-2xl h-16 flex flex-col items-center justify-center shadow-inner relative">
+                    <Medal className="w-8 h-8 text-amber-700 fill-amber-55" />
+                    <span className="text-lg md:text-xl font-black text-amber-800 mt-1">3</span>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Danh sách thứ hạng từ 4 đến 10 */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="space-y-3 bg-[var(--color-surface)] border-4 border-[var(--color-foreground)] rounded-[28px] p-4 md:p-6 shadow-[6px_6px_0px_0px_var(--color-foreground)] transition-colors"
+            >
+              {restList.map((user) => {
+                const isMe = user.id === 'current-user';
+                
+                return (
+                  <motion.div
+                    key={user.id}
+                    whileHover={{ scale: 1.01, x: 2 }}
+                    className={`flex items-center justify-between p-3.5 rounded-2xl border-2 transition-all ${
+                      isMe
+                        ? 'bg-[var(--color-primary-container)] border-[var(--color-primary)] shadow-[3px_3px_0px_0px_var(--color-primary-depth)] text-[var(--color-on-primary-container)]'
+                        : 'bg-[var(--color-surface)] border-[var(--color-outline-variant)] hover:border-slate-400 text-[var(--color-foreground)]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3.5">
+                      {/* Số thứ hạng */}
+                      <span className={`w-8 h-8 rounded-full border-2 border-[var(--color-foreground)] flex items-center justify-center font-black text-xs shadow-[1.5px_1.5px_0px_0px_var(--color-foreground)] ${
+                        isMe ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-surface-container)] text-[var(--color-foreground)]'
+                      }`}>
+                        {user.rank}
+                      </span>
+                      
+                      {/* Avatar và Tên */}
+                      <span className="text-2xl">{user.avatar}</span>
+                      <span className={`text-xs md:text-sm font-black ${isMe ? 'text-indigo-900' : 'text-slate-800'}`}>
+                        {isMe ? `${user.nickname} (Con đó!)` : user.nickname}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      {/* Streak ngọn lửa */}
+                      {user.streak > 0 && (
+                        <div className="flex items-center gap-1 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200" title="Chuỗi ngày học">
+                          <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-100 animate-pulse" />
+                          <span className="text-[10px] font-black text-orange-700">{user.streak}d</span>
+                        </div>
+                      )}
+                      {/* Điểm XP */}
+                      <div className="flex items-center gap-1 bg-[var(--color-surface-container)] px-3 py-1 rounded-full border border-[var(--color-outline-variant)]">
+                        <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
+                        <span className="text-[11px] font-black text-[var(--color-foreground)]">{user.xp} XP</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </>
+        )}
 
         {/* Section Huy Hiệu của bé */}
         <motion.div 

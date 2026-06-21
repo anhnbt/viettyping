@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Topic, Activity, subjects } from '@/data/subjects';
+import { Topic, Activity } from '@/types/subject';
+import { useSubjects } from '@/contexts/SubjectsContext';
 import { IoArrowBack } from 'react-icons/io5';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -46,6 +47,7 @@ const ActivityView: React.FC<ActivityViewProps> = ({ topic, onComplete }) => {
   const params = useParams();
   const router = useRouter();
   const { studentInfo } = useStudent();
+  const { subjects } = useSubjects();
   const subjectId = params.subjectId as string;
   const subject = subjects.find(s => s.id === subjectId);
   const theme = useSubjectTheme();

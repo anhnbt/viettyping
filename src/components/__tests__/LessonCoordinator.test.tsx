@@ -399,4 +399,34 @@ describe("LessonCoordinator Integration", () => {
     expect(summary.totalScore).toBe(670);
     expect(summary.activityResults).toHaveLength(7);
   });
+
+  it("should show Focus Garden widget during FOCUS and handle Pomodoro BREAK transition", () => {
+    render(
+      <LessonCoordinator
+        config={mockConfig}
+        onActivityComplete={mockOnActivityComplete}
+        onAllActivitiesComplete={mockOnAllActivitiesComplete}
+      />
+    );
+
+    // Focus Garden should be rendered
+    expect(screen.getByText("Mầm tập trung")).toBeInTheDocument();
+    expect(screen.getByText("Đang nảy mầm")).toBeInTheDocument();
+
+    // Advance timer by 15 minutes (15 * 60 * 1000 = 900,000 ms)
+    act(() => {
+      jest.advanceTimersByTime(15 * 60 * 1000);
+    });
+
+    // Should transition to BREAK (either stretch or music)
+    expect(screen.getByText(/giải lao giãn cơ nhé|hát cùng nhạc nhé/i)).toBeInTheDocument();
+    
+    // Advance timer by 3 minutes (3 * 60 * 1000 = 180,000 ms) to return to FOCUS
+    act(() => {
+      jest.advanceTimersByTime(3 * 60 * 1000);
+    });
+
+    // Should return to FOCUS (BREAK screen should be gone)
+    expect(screen.queryByText(/giải lao giãn cơ nhé|hát cùng nhạc nhé/i)).not.toBeInTheDocument();
+  });
 });

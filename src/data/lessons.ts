@@ -1,12 +1,6 @@
-export interface Lesson {
-  id: string;
-  level: 'basic' | 'intermediate' | 'advanced';
-  title: string;
-  description: string;
-  content: string;
-  targetWPM: number;
-  minAccuracy: number;
-}
+import { Lesson } from '@/types/lesson';
+
+export type { Lesson };
 
 export const lessons: Lesson[] = [
   {

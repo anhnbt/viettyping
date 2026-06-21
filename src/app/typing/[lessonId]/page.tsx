@@ -2,7 +2,8 @@
 
 import React, { useState, useCallback } from 'react';
 import { notFound, useRouter } from 'next/navigation';
-import { lessons } from '@/data/lessons';
+import { useTypingLessons } from '@/contexts/TypingLessonsContext';
+import { useStudent } from '@/contexts/StudentContext';
 import TypingPractice, { TypingTask } from '@/components/TypingPractice';
 import CompletionModal from '@/components/CompletionModal';
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
@@ -28,6 +29,8 @@ interface Stats {
 
 export default function LessonPage({ params }: Props) {
   const router = useRouter();
+  const { queueProgress } = useStudent();
+  const { lessons, isLoading } = useTypingLessons();
   const [stats, setStats] = useState<Stats | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [resetKey, setResetKey] = useState(0);
@@ -35,20 +38,22 @@ export default function LessonPage({ params }: Props) {
   const resolvedParams = React.use(params);
   const lesson = lessons.find((l) => l.id === resolvedParams.lessonId);
 
-  if (!lesson) {
-    notFound();
-  }
+  const getNextLesson = useCallback(() => {
+    if (!lesson) return null;
+    const currentIndex = lessons.findIndex((l) => l.id === lesson.id);
+    return lessons[currentIndex + 1] || null;
+  }, [lesson, lessons]);
 
   const handleLessonComplete = useCallback((telemetry: TelemetryPayload) => {
+    const wpmValue = telemetry.metadata?.wpm || 0;
     const newStats = {
-      wpm: telemetry.metadata?.wpm || 0,
+      wpm: wpmValue,
       accuracy: telemetry.score,
       incorrectCount: telemetry.metadata?.incorrectCount || 0,
     };
     setStats(newStats);
     setShowModal(true);
 
-    // Lưu tiến trình thực tế vào localStorage để đồng bộ với danh sách bài học
     try {
       // 1. Lưu danh sách bài học đã hoàn thành
       const completedList = JSON.parse(localStorage.getItem('typing_completed_lessons') || '[]');
@@ -57,57 +62,12 @@ export default function LessonPage({ params }: Props) {
         localStorage.setItem('typing_completed_lessons', JSON.stringify(completedList));
       }
 
-      // 2. Tính toán & Cộng thêm XP (ví dụ: gõ tốt được 100 XP, gõ xuất sắc 3 sao được 150 XP)
-      const earnedXP = telemetry.score >= 90 ? 150 : 100;
-      const currentXP = parseInt(localStorage.getItem('typing_xp') || '0', 10);
-      localStorage.setItem('typing_xp', String(currentXP + earnedXP));
-
-      // 3. Cập nhật Streak
-      const currentStreak = parseInt(localStorage.getItem('typing_streak') || '0', 10);
-      localStorage.setItem('typing_streak', String(currentStreak + 1));
-
-      // 4. Lưu cờ Huy hiệu (Badges) dựa trên thành tích
-      if (telemetry.score === 100) {
-        localStorage.setItem('viettyping_badge_accuracy_100', 'true');
-      }
-      const wpmValue = telemetry.metadata?.wpm || 0;
-      if (wpmValue >= 10) {
-        localStorage.setItem('viettyping_badge_speed_10', 'true');
-      }
-      if (wpmValue >= 20) {
-        localStorage.setItem('viettyping_badge_speed_20', 'true');
-      }
-      if (wpmValue >= 30) {
-        localStorage.setItem('viettyping_badge_speed_30', 'true');
-      }
-      if (wpmValue >= 40) {
-        localStorage.setItem('viettyping_badge_speed_40', 'true');
-      }
-      if (wpmValue >= 50) {
-        localStorage.setItem('viettyping_badge_speed_50', 'true');
-      }
-
-      // 5. Cập nhật WPM và Accuracy trung bình lũy tiến
-      const totalLessons = parseInt(localStorage.getItem('typing_total_lessons') || '0', 10);
-      const avgWpm = parseFloat(localStorage.getItem('typing_avg_wpm') || '0');
-      const avgAcc = parseFloat(localStorage.getItem('typing_avg_accuracy') || '0');
-      
-      const newTotal = totalLessons + 1;
-      const newAvgWpm = Math.round((avgWpm * totalLessons + wpmValue) / newTotal);
-      const newAvgAcc = Math.round((avgAcc * totalLessons + telemetry.score) / newTotal);
-      
-      localStorage.setItem('typing_total_lessons', String(newTotal));
-      localStorage.setItem('typing_avg_wpm', String(newAvgWpm));
-      localStorage.setItem('typing_avg_accuracy', String(newAvgAcc));
+      // 2. Đẩy tiến độ học tập vào hàng đợi đồng bộ offline-first
+      queueProgress(resolvedParams.lessonId, telemetry.score, wpmValue, telemetry.score);
     } catch (err) {
-      console.error('Failed to save typing progress to localStorage:', err);
+      console.error('Failed to queue typing progress:', err);
     }
-  }, [resolvedParams.lessonId]);
-
-  const getNextLesson = useCallback(() => {
-    const currentIndex = lessons.findIndex((l) => l.id === lesson.id);
-    return lessons[currentIndex + 1] || null;
-  }, [lesson.id]);
+  }, [resolvedParams.lessonId, queueProgress]);
 
   const handleNextLesson = useCallback(() => {
     const nextLesson = getNextLesson();
@@ -132,6 +92,21 @@ export default function LessonPage({ params }: Props) {
       router.push('/typing');
     }
   }, [getNextLesson, router]);
+
+  if (isLoading) {
+    return (
+      <main className={`min-h-screen bg-gradient-to-b from-[var(--color-background)] to-[var(--color-surface)] py-6 flex items-center justify-center ${plusJakartaSans.className}`}>
+        <div className="text-center p-8 bg-[var(--color-surface)] border-3 border-[var(--color-foreground)] rounded-3xl shadow-[6px_6px_0px_0px_var(--color-foreground)] max-w-sm">
+          <div className="w-12 h-12 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[var(--color-foreground)] font-black text-lg">Đang tải bài học...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (!lesson) {
+    notFound();
+  }
 
   return (
     <main className={`min-h-screen bg-gradient-to-b from-[var(--color-background)] to-[var(--color-surface)] py-6 ${plusJakartaSans.className}`}>

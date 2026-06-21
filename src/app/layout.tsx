@@ -3,6 +3,8 @@ import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { SoundProvider } from '@/contexts/SoundContext'
 import { StudentProvider } from '@/contexts/StudentContext'
+import { SubjectsProvider } from '@/contexts/SubjectsContext'
+import { TypingLessonsProvider } from '@/contexts/TypingLessonsContext'
 import StudentConfigModal from '@/components/StudentConfigModal'
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -27,8 +29,12 @@ export default function RootLayout({
       <body className={plusJakartaSans.className}>
         <SoundProvider>
           <StudentProvider>
-            {children}
-            <StudentConfigModal />
+            <SubjectsProvider>
+              <TypingLessonsProvider>
+                {children}
+                <StudentConfigModal />
+              </TypingLessonsProvider>
+            </SubjectsProvider>
           </StudentProvider>
         </SoundProvider>
       </body>

@@ -1,5 +1,7 @@
 # PRD: Tái cấu trúc Game Engine & Bộ điều phối bài học (Game Engine & Lesson Coordinator Refactor)
 
+**Trạng thái:** ✅ Đã hoàn thành
+
 ## Problem Statement
 
 Hiện tại, ứng dụng VietTyping đang gặp phải các vấn đề về kiến trúc liên quan đến cách điều phối bài học (Lesson Orchestration) và sự không nhất quán giữa hai luồng học tập:
@@ -69,11 +71,11 @@ Tái cấu trúc lại Game Engine và cơ chế điều phối bài học bằn
 
 ### 2. Các thay đổi và điều chỉnh kiến trúc
 
-- **Hợp nhất Mini-game Components**:
+- [x] **Hợp nhất Mini-game Components**:
   - Cập nhật các game `MatchingGame`, `TrueFalseGame`, `SpinWheelGame`, `FillInTheBlankGame`, `MultipleChoiceGame` để tuân thủ `GameAdapterProps`. Chúng sẽ trả về đầy đủ `TelemetryPayload` (ví dụ: thời gian thực tế hoàn thành và chi tiết các câu trả lời sai) thay vì chỉ gọi callback `onComplete()` trống rỗng như trước.
-- **Tách biệt logic trong các trang Route**:
+- [x] **Tách biệt logic trong các trang Route**:
   - Đơn giản hóa `/lesson/page.tsx` để biến nó thành trang tổng hợp hoặc trang đích nạp `LessonCoordinator`. Các route con `/lesson/typing` và `/lesson/games` có thể được loại bỏ hoặc giữ lại làm các adapter độc lập cho mục đích học tập chuyên biệt (nếu cần), nhưng luồng bài học chính sẽ chạy tập trung trên một màn hình duy nhất dưới sự điều phối của `LessonCoordinator`.
-- **Tập trung hóa State gamification**:
+- [x] **Tập trung hóa State gamification**:
   - Logic phân bổ XP, streak và mở khóa badge sẽ được kích hoạt thông qua callback `onAllActivitiesComplete` của `LessonCoordinator` trên trang route cha. Tránh việc các component con trực tiếp gọi Context API (`useLesson`) nhằm duy trì tính độc lập tối đa cho Engine chạy bài học.
 
 ## Testing Decisions

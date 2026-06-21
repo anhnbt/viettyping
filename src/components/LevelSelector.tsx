@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lesson } from '@/data/lessons';
+import { Lesson } from '@/types/lesson';
 
 interface Props {
   lessons: Lesson[];

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { lessons, Lesson } from '@/data/lessons';
+import { useTypingLessons } from '@/contexts/TypingLessonsContext';
+import { Lesson } from '@/types/lesson';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSound } from '@/contexts/SoundContext';
@@ -9,6 +10,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, BookOpen, Keyboard, Sparkles, Trophy, Lightbulb, ArrowLeft, Lock } from 'lucide-react';
 import VisualWorldBackground from '@/components/VisualWorldBackground';
+import SyncStatusIndicator from '@/components/SyncStatusIndicator';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
@@ -48,6 +50,7 @@ const levelNames: Record<string, { name: string; description: string; color: str
 export default function TypingPage() {
   const router = useRouter();
   const { playSound } = useSound();
+  const { lessons, isLoading } = useTypingLessons();
 
   // States cho gamification
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
@@ -63,6 +66,19 @@ export default function TypingPage() {
       console.error('Failed to load typing progress:', e);
     }
   }, []);
+
+  if (isLoading) {
+    return (
+      <VisualWorldBackground>
+        <main className={`min-h-screen relative overflow-hidden flex items-center justify-center z-10 ${plusJakartaSans.className}`}>
+          <div className="text-center p-8 bg-[var(--color-surface)] border-3 border-[var(--color-foreground)] rounded-3xl shadow-[6px_6px_0px_0px_var(--color-foreground)] max-w-sm">
+            <div className="w-12 h-12 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-[var(--color-foreground)] font-black text-lg">Đang tải hòn đảo...</p>
+          </div>
+        </main>
+      </VisualWorldBackground>
+    );
+  }
 
   const getLessonsForLevel = (level: string) => {
     return lessons.filter(lesson => lesson.level === level);
@@ -108,8 +124,9 @@ export default function TypingPage() {
               </Link>
             </div>
 
-            {/* Bên phải: Nút ASMR Thư giãn */}
-            <div className="flex gap-3 justify-center md:justify-end z-20 w-full md:w-auto">
+            {/* Bên phải: Nút ASMR Thư giãn & Sync Indicator */}
+            <div className="flex gap-3 justify-center md:justify-end items-center z-20 w-full md:w-auto">
+              <SyncStatusIndicator />
               <Link
                 href="/typing/asmr"
                 onClick={() => playSound('click')}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Play, Sparkles, Volume2, VolumeX, Shield, Heart, Keyboard, Flag, Star } from 'lucide-react';
 import { useSound } from '@/contexts/SoundContext';
+import { useStudent } from '@/contexts/StudentContext';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import confetti from 'canvas-confetti';
 
@@ -102,6 +103,7 @@ const OBSTACLES = ['🍾', '🛍️', '👾', '🪨', '⚓'];
 export default function TurtleRescuePage() {
   const router = useRouter();
   const { playSound } = useSound();
+  const { queueProgress } = useStudent();
 
   // Trạng thái game: 'setup' | 'playing' | 'victory'
   const [gameState, setGameState] = useState<'setup' | 'playing' | 'victory'>('setup');
@@ -227,10 +229,10 @@ export default function TurtleRescuePage() {
     setXp(newXp);
     
     try {
-      localStorage.setItem('typing_xp', String(newXp));
-      localStorage.setItem('viettyping_badge_turtle_rescue', 'true');
+      // Gọi queueProgress để xử lý offline-first qua hàng đợi đồng bộ
+      queueProgress('turtle_rescue', 100, 0, 100);
     } catch (e) {
-      console.error('Failed to save rewards:', e);
+      console.error('Failed to queue rewards:', e);
     }
 
     // Pháo hoa ăn mừng rực rỡ

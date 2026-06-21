@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useProgress } from '@/hooks/useProgress';
-import { subjects } from '@/data/subjects';
+import { useSubjects } from '@/contexts/SubjectsContext';
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
 import { motion } from 'framer-motion';
@@ -16,6 +16,7 @@ export default function LessonPage() {
   const { playSound } = useSound();
   const { studentInfo } = useStudent();
   const { progress, isLoaded } = useProgress();
+  const { subjects } = useSubjects();
 
   // Tính toán tiến trình học tập của từng môn học
   const subjectProgresses = useMemo(() => {

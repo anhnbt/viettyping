@@ -1,4 +1,4 @@
-import { Activity } from "@/data/subjects";
+import { Activity } from "@/types/subject";
 
 export interface ActivityTelemetry {
   score: number;

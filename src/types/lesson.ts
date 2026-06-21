@@ -1,5 +1,18 @@
 // src/types/lesson.ts
 
+import { Activity } from "./subject";
+
+// --- Traditional Typing Lesson Interface ---
+export interface Lesson {
+  id: string;
+  level: 'basic' | 'intermediate' | 'advanced';
+  title: string;
+  description: string;
+  content: string;
+  targetWPM: number;
+  minAccuracy: number;
+}
+
 // --- Mini Games Interfaces ---
 
 export interface MatchingGameItem {
@@ -35,13 +48,26 @@ export interface MultipleChoiceItem {
 export interface RealWorldMathGameItem {
   id: string;
   type: 'math_realworld_dragdrop';
-  items: { question: string; targetNum: number; itemType: 'apple' | 'candy' | 'coin'; sentence: string }[];
+  items: { 
+    question: string; 
+    targetNum: number; 
+    itemType: 'apple' | 'candy' | 'coin'; 
+    sentence: string;
+    targetsCount?: number;
+    targetNames?: string[];
+  }[];
 }
 
 export interface ColoringCanvasItem {
   id: string;
   type: 'drawing_coloring_canvas';
   items: { outlineSvgName: string; title: string; targetCoveragePercent: number }[];
+}
+
+export interface TraditionalActivityItem {
+  id: string;
+  type: 'traditional_activity';
+  activity: Activity;
 }
 
 export type MiniGameConfig = 
@@ -51,7 +77,8 @@ export type MiniGameConfig =
   | FillInTheBlankItem 
   | MultipleChoiceItem
   | RealWorldMathGameItem
-  | ColoringCanvasItem;
+  | ColoringCanvasItem
+  | TraditionalActivityItem;
 
 // --- Lesson Config Interfaces ---
 

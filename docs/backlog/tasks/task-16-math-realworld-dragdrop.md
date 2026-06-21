@@ -10,11 +10,11 @@ Trò chơi cho phép trẻ kéo các vật thể trực quan (như đồng xu, q
 
 ## Acceptance criteria
 
-- [ ] Thiết kế giao diện kéo thả mượt mà cho trẻ 6 tuổi với các mục tiêu và vật thể kéo thả to, rõ ràng, dễ bắt dính (snap).
-- [ ] Xử lý logic phép toán cộng trừ dựa trên số lượng vật thể được thả thành công vào vùng mục tiêu.
-- [ ] Triển khai hiệu ứng rung khung hình (Visual Shake) nhẹ nhàng và làm nổi bật các vật thể khi câu trả lời chưa đúng, nhắc nhở trẻ đếm lại cẩn thận.
-- [ ] Gửi thông số `mathRetries` (số lần thử lại) vào `TelemetryPayload` để theo dõi mức độ cẩn thận của trẻ.
-- [ ] Đảm bảo ứng dụng chạy mượt mà trên cả thiết bị di động (cảm ứng) và máy tính (di chuột).
+- [x] Thiết kế giao diện kéo thả mượt mà cho trẻ 6 tuổi với các mục tiêu và vật thể kéo thả to, rõ ràng, dễ bắt dính (snap).
+- [x] Xử lý logic phép toán cộng trừ dựa trên số lượng vật thể được thả thành công vào vùng mục tiêu.
+- [x] Triển khai hiệu ứng rung khung hình (Visual Shake) nhẹ nhàng và làm nổi bật các vật thể khi câu trả lời chưa đúng, nhắc nhở trẻ đếm lại cẩn thận.
+- [x] Gửi thông số `mathRetries` (số lần thử lại) vào `TelemetryPayload` để theo dõi mức độ cẩn thận của trẻ.
+- [x] Đảm bảo ứng dụng chạy mượt mà trên cả thiết bị di động (cảm ứng) và máy tính (di chuột).
 
 ## Blocked by
 

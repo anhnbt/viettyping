@@ -17,6 +17,21 @@ const mockGameConfig: RealWorldMathGameItem = {
   ]
 };
 
+const mockMultiTargetConfig: RealWorldMathGameItem = {
+  id: 'math-test-2',
+  type: 'math_realworld_dragdrop',
+  items: [
+    {
+      question: 'Chia đều 6 quả táo cho 2 bạn',
+      targetNum: 6,
+      itemType: 'apple',
+      sentence: 'Bé hãy chia đều 6 quả táo cho 2 bạn nhé!',
+      targetsCount: 2,
+      targetNames: ['Bạn Hùng', 'Bạn Lan']
+    }
+  ]
+};
+
 const mockOnComplete = jest.fn();
 
 // Mock Audio
@@ -46,5 +61,22 @@ describe('RealWorldMathGame', () => {
     fireEvent.click(checkBtn);
     
     expect(screen.getByText('Bé cần thêm 5 vật phẩm nữa nhé!')).toBeInTheDocument();
+  });
+
+  it('renders multiple target containers with labels', () => {
+    render(<RealWorldMathGame gameConfig={mockMultiTargetConfig} onComplete={mockOnComplete} />);
+    
+    expect(screen.getByText('Bé hãy chia đều 6 quả táo cho 2 bạn nhé!')).toBeInTheDocument();
+    expect(screen.getByText('Bạn Hùng')).toBeInTheDocument();
+    expect(screen.getByText('Bạn Lan')).toBeInTheDocument();
+  });
+
+  it('shows smart error hint indicating exactly which friend is missing items', () => {
+    render(<RealWorldMathGame gameConfig={mockMultiTargetConfig} onComplete={mockOnComplete} />);
+    
+    const checkBtn = screen.getByRole('button', { name: /Kiểm tra/i });
+    fireEvent.click(checkBtn);
+    
+    expect(screen.getByText('Bạn Hùng đang thiếu 3 vật phẩm nhé!')).toBeInTheDocument();
   });
 });

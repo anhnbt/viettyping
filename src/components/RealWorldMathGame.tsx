@@ -69,47 +69,46 @@ function SourcePool({ id, items, itemType }: { id: string; items: string[]; item
 }
 
 // Droppable Target Area Component (Vùng giỏ chứa quả/kẹo/xu)
+interface TargetContainerProps {
+  id: string;
+  items: string[];
+  itemType: string;
+  isError: boolean;
+  label?: string;
+}
+
 function TargetContainer({
   id,
   items,
   itemType,
   isError,
-}: {
-  id: string;
-  items: string[];
-  itemType: string;
-  isError: boolean;
-}) {
+  label,
+}: TargetContainerProps) {
   const { isOver, setNodeRef } = useDroppable({ id });
 
   const getTargetBg = () => {
     if (isOver) return "bg-purple-100 shadow-[8px_8px_0px_0px_#1e293b] -translate-y-[2px] scale-105";
-    if (isError) return "bg-red-100 border-red-500 shadow-[2px_2px_0px_0px_#1e293b] translate-y-[4px]";
+    if (isError) return "bg-red-100 border-red-500 shadow-[2px_2px_0px_0px_#1e293b] ring-4 ring-red-400/60 translate-y-[4px]";
     return "bg-amber-50/50 shadow-[6px_6px_0px_0px_#1e293b]";
   };
 
   const getTargetIcon = () => {
+    if (label) return label;
     if (itemType === "apple") return "🧺 Giỏ Táo";
     if (itemType === "candy") return "🎁 Hộp Kẹo";
     return "👛 Ví Tiền";
   };
 
-  const getEmoji = () => {
-    if (itemType === "apple") return "🍎";
-    if (itemType === "candy") return "🍬";
-    return "🪙";
-  };
-
   return (
     <div className="flex flex-col items-center gap-2">
-      <div className="text-lg font-black text-amber-700 bg-amber-100/50 px-4 py-1.5 rounded-full border border-amber-200">
+      <div className="text-base md:text-lg font-black text-amber-700 bg-amber-100/50 px-4 py-1.5 rounded-full border border-amber-200 shadow-sm">
         {getTargetIcon()}
       </div>
       <motion.div
         ref={setNodeRef}
         animate={isError ? { x: [-10, 10, -10, 10, 0] } : {}}
         transition={{ duration: 0.4 }}
-        className={`relative w-64 h-64 md:w-80 md:h-72 rounded-[40px] border-4 border-slate-800 flex flex-wrap content-start items-center justify-center p-6 gap-3 transition-all ${getTargetBg()}`}
+        className={`relative w-48 h-48 md:w-64 md:h-60 rounded-[32px] border-4 border-slate-800 flex flex-wrap content-start items-center justify-center p-4 gap-2 transition-all overflow-y-auto ${getTargetBg()}`}
       >
         <AnimatePresence>
           {items.map((itemId) => (
@@ -118,7 +117,7 @@ function TargetContainer({
               initial={{ scale: 0, rotate: -30 }}
               animate={{ scale: 1, rotate: 0 }}
               exit={{ scale: 0, y: 50 }}
-              className="text-5xl select-none"
+              className="text-4xl select-none"
             >
               <DraggableItem id={itemId} itemType={itemType} />
             </motion.div>
@@ -127,13 +126,13 @@ function TargetContainer({
 
         {items.length === 0 && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 pointer-events-none p-4 text-center">
-            <span className="text-4xl mb-2">📥</span>
-            <span className="text-xs font-bold">Kéo thả vật phẩm vào đây</span>
+            <span className="text-3xl mb-1">📥</span>
+            <span className="text-[10px] font-bold">Kéo thả vào đây</span>
           </div>
         )}
       </motion.div>
-      <div className="text-sm font-bold text-slate-500">
-        Đang có: <span className="text-blue-600 font-extrabold text-lg">{items.length}</span> vật phẩm
+      <div className="text-xs font-bold text-slate-500">
+        Đang có: <span className="text-blue-600 font-extrabold text-base">{items.length}</span> vật phẩm
       </div>
     </div>
   );
@@ -145,8 +144,9 @@ export default function RealWorldMathGame({ gameConfig, onComplete }: GameAdapte
   const currentQuestion = items[currentQuestionIndex];
 
   const [sourceItems, setSourceItems] = useState<string[]>([]);
-  const [targetItems, setTargetItems] = useState<string[]>([]);
+  const [targetItems, setTargetItems] = useState<Record<string, string[]>>({});
   const [isError, setIsError] = useState(false);
+  const [errorContainers, setErrorContainers] = useState<string[]>([]);
   const [errorHint, setErrorHint] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
 
@@ -164,7 +164,6 @@ export default function RealWorldMathGame({ gameConfig, onComplete }: GameAdapte
     })
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setIsClient(true);
     resetQuestion(0);
@@ -177,11 +176,19 @@ export default function RealWorldMathGame({ gameConfig, onComplete }: GameAdapte
     const q = items[index];
     if (!q) return;
     
-    // Cung cấp sẵn 10 vật phẩm ở nguồn
+    // Cung cấp sẵn 12 vật phẩm ở nguồn
     const newSource = Array.from({ length: 12 }, (_, i) => `${q.itemType}_${i}`);
     setSourceItems(newSource);
-    setTargetItems([]);
+    
+    const targetsCount = q.targetsCount || 1;
+    const newTargets: Record<string, string[]> = {};
+    for (let i = 0; i < targetsCount; i++) {
+      newTargets[`target-pool-${i}`] = [];
+    }
+    
+    setTargetItems(newTargets);
     setIsError(false);
+    setErrorContainers([]);
     setErrorHint(null);
   };
 
@@ -192,19 +199,34 @@ export default function RealWorldMathGame({ gameConfig, onComplete }: GameAdapte
     const activeId = active.id as string;
     const overId = over.id as string;
 
-    // Kéo từ Nguồn vào Đích
-    if (overId === "target-pool" && sourceItems.includes(activeId)) {
-      setSourceItems((prev) => prev.filter((i) => i !== activeId));
-      setTargetItems((prev) => [...prev, activeId]);
-      
-      // Play a light audio cue
-      playAudioCue("/ting.mp3", 0.3);
+    const isInSource = sourceItems.includes(activeId);
+    const activeTargetPool = Object.keys(targetItems).find((key) => targetItems[key].includes(activeId));
+
+    // Kéo vào một Giỏ Mục Tiêu
+    if (overId.startsWith("target-pool")) {
+      if (isInSource) {
+        setSourceItems((prev) => prev.filter((i) => i !== activeId));
+        setTargetItems((prev) => ({
+          ...prev,
+          [overId]: [...(prev[overId] || []), activeId],
+        }));
+        playAudioCue("/ting.mp3", 0.3);
+      } else if (activeTargetPool && activeTargetPool !== overId) {
+        setTargetItems((prev) => ({
+          ...prev,
+          [activeTargetPool]: prev[activeTargetPool].filter((i) => i !== activeId),
+          [overId]: [...(prev[overId] || []), activeId],
+        }));
+        playAudioCue("/ting.mp3", 0.3);
+      }
     }
-    // Kéo từ Đích trả về Nguồn
-    else if (overId === "source-pool" && targetItems.includes(activeId)) {
-      setTargetItems((prev) => prev.filter((i) => i !== activeId));
+    // Kéo từ Giỏ trả về Nguồn
+    else if (overId === "source-pool" && activeTargetPool) {
+      setTargetItems((prev) => ({
+        ...prev,
+        [activeTargetPool]: prev[activeTargetPool].filter((i) => i !== activeId),
+      }));
       setSourceItems((prev) => [...prev, activeId]);
-      
       playAudioCue("/ting.mp3", 0.2);
     }
   };
@@ -220,22 +242,32 @@ export default function RealWorldMathGame({ gameConfig, onComplete }: GameAdapte
   };
 
   const handleCheckAnswer = () => {
-    const targetCount = targetItems.length;
     const expected = currentQuestion.targetNum;
+    const targetsCount = currentQuestion.targetsCount || 1;
+    const expectedPerTarget = targetsCount > 1 ? expected / targetsCount : expected;
+    
+    const newErrorContainers: string[] = [];
+    
+    Object.keys(targetItems).forEach((poolId) => {
+      const count = targetItems[poolId]?.length || 0;
+      if (count !== expectedPerTarget) {
+        newErrorContainers.push(poolId);
+      }
+    });
 
-    if (targetCount === expected) {
+    const isCorrect = newErrorContainers.length === 0;
+
+    if (isCorrect) {
       // Đúng phép tính!
       playAudioCue("/ting.mp3", 0.6);
       
       if (currentQuestionIndex < items.length - 1) {
-        // Chuyển câu hỏi kế tiếp
         const nextIdx = currentQuestionIndex + 1;
         setCurrentQuestionIndex(nextIdx);
         resetQuestion(nextIdx);
       } else {
-        // Hoàn thành tất cả các câu
         const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
-        const score = Math.max(0, 100 - (mathRetriesRef.current * 15)); // Giảm điểm dựa vào số lần thử sai
+        const score = Math.max(0, 100 - (mathRetriesRef.current * 15));
 
         onComplete({
           score,
@@ -249,30 +281,48 @@ export default function RealWorldMathGame({ gameConfig, onComplete }: GameAdapte
     } else {
       // Sai phép tính!
       setIsError(true);
+      setErrorContainers(newErrorContainers);
       mathRetriesRef.current += 1;
       playAudioCue("/buzz.mp3", 0.5);
 
-      // Thêm thông tin lỗi cho telemetry
       errorsRef.current.push({
         questionId: `${gameId}_q_${currentQuestionIndex}`,
-        userAnswer: `${targetCount}`,
-        correctAnswer: `${expected}`,
+        userAnswer: Object.keys(targetItems).map(k => `${k}:${targetItems[k].length}`).join(", "),
+        correctAnswer: `each:${expectedPerTarget}`,
       });
 
       // Tạo gợi ý thông minh ("Cơ hội thứ hai")
-      if (targetCount < expected) {
-        setErrorHint(`Bé cần thêm ${expected - targetCount} vật phẩm nữa nhé!`);
+      if (targetsCount === 1) {
+        const count = targetItems["target-pool-0"]?.length || 0;
+        if (count < expected) {
+          setErrorHint(`Bé cần thêm ${expected - count} vật phẩm nữa nhé!`);
+        } else {
+          setErrorHint(`Bé đã bỏ thừa mất ${count - expected} vật phẩm rồi!`);
+        }
       } else {
-        setErrorHint(`Bé đã bỏ thừa mất ${targetCount - expected} vật phẩm rồi!`);
+        const targetNames = currentQuestion.targetNames || Array.from({ length: targetsCount }, (_, i) => `Bạn ${i + 1}`);
+        const firstErrId = newErrorContainers[0];
+        const index = parseInt(firstErrId.replace("target-pool-", ""));
+        const count = targetItems[firstErrId]?.length || 0;
+        const name = targetNames[index] || `Giỏ ${index + 1}`;
+        
+        if (count < expectedPerTarget) {
+          setErrorHint(`${name} đang thiếu ${expectedPerTarget - count} vật phẩm nhé!`);
+        } else {
+          setErrorHint(`${name} đang bị thừa ${count - expectedPerTarget} vật phẩm rồi!`);
+        }
       }
 
       setTimeout(() => {
         setIsError(false);
-      }, 800);
+        setErrorContainers([]);
+      }, 1500);
     }
   };
 
   if (!isClient || !currentQuestion) return null;
+
+  const targetsCount = currentQuestion.targetsCount || 1;
 
   return (
     <div className="w-full flex flex-col items-center gap-6">
@@ -290,17 +340,26 @@ export default function RealWorldMathGame({ gameConfig, onComplete }: GameAdapte
 
       {/* Dnd Workspace */}
       <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
-        <div className="w-full flex flex-col md:flex-row items-center justify-center gap-8 py-4">
-          {/* Target Container */}
-          <TargetContainer
-            id="target-pool"
-            items={targetItems}
-            itemType={currentQuestion.itemType}
-            isError={isError}
-          />
+        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 py-4">
+          {/* Target Containers list */}
+          <div className="flex flex-wrap justify-center items-end gap-6 max-w-2xl">
+            {Object.keys(targetItems).map((poolId, idx) => {
+              const label = currentQuestion.targetNames?.[idx] || (targetsCount > 1 ? `Bạn ${idx + 1}` : undefined);
+              return (
+                <TargetContainer
+                  key={poolId}
+                  id={poolId}
+                  items={targetItems[poolId]}
+                  itemType={currentQuestion.itemType}
+                  isError={errorContainers.includes(poolId)}
+                  label={label}
+                />
+              );
+            })}
+          </div>
 
           {/* Source Pool */}
-          <div className="flex flex-col items-center gap-2 w-full md:w-auto">
+          <div className="flex flex-col items-center gap-2 w-full lg:w-auto">
             <span className="text-xs font-bold text-slate-400">Kho vật phẩm của bé</span>
             <SourcePool
               id="source-pool"

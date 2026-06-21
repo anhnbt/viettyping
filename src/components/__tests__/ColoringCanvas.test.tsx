@@ -43,4 +43,21 @@ describe('ColoringCanvas', () => {
     
     expect(screen.getByText(/Bé ơi, hãy tô màu thêm một chút nữa trước khi hoàn thành nhé!/i)).toBeInTheDocument();
   });
+
+  it('allows switching between auto fill and brush modes', () => {
+    render(<ColoringCanvas gameConfig={mockGameConfig} onComplete={mockOnComplete} />);
+    
+    // Check buttons
+    expect(screen.getByRole('button', { name: /Tự động \(Dễ\)/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Tự di cọ \(Khó\)/i })).toBeInTheDocument();
+    
+    // Default mode is Tự động
+    expect(screen.getByText(/chạm vào các vùng trống trong hình để tô màu nhé/i)).toBeInTheDocument();
+    
+    // Switch to Tự di cọ
+    const brushBtn = screen.getByRole('button', { name: /Tự di cọ \(Khó\)/i });
+    fireEvent.click(brushBtn);
+    
+    expect(screen.getByText(/di chuột\/ngón tay để tô màu bên trong hình nhé/i)).toBeInTheDocument();
+  });
 });

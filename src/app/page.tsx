@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { subjects } from '@/data/subjects';
+import { useSubjects } from '@/contexts/SubjectsContext';
 import SubjectSelector from '@/components/SubjectSelector';
 import HeroSlideBanner from '@/components/HeroSlideBanner';
 import { useRouter } from 'next/navigation';
@@ -15,6 +15,7 @@ import Logo from '@/components/Logo';
 import DinoMascot from '@/components/DinoMascot';
 import VisualWorldBackground from '@/components/VisualWorldBackground';
 import { TactileStarBadge } from '@/components/BadgeElements';
+import SyncStatusIndicator from '@/components/SyncStatusIndicator';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
@@ -44,12 +45,9 @@ const renderTaskIcon = (iconName: string) => {
 export default function Home() {
   const router = useRouter();
   const { playSound } = useSound();
-  const { studentInfo, setIsOpenConfig } = useStudent();
+  const { studentInfo, setIsOpenConfig, xp, streak, avgWpm, avgAccuracy } = useStudent();
+  const { subjects } = useSubjects();
   
-  const [xp, setXp] = useState<number>(0);
-  const [streak, setStreak] = useState<number>(0);
-  const [avgWpm, setAvgWpm] = useState<number>(0);
-  const [avgAccuracy, setAvgAccuracy] = useState<number>(0);
   const [typedText, setTypedText] = useState('');
   const [titleIndex, setTitleIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -58,21 +56,9 @@ export default function Home() {
   const [activeMenu, setActiveMenu] = useState<'home' | 'lesson' | 'tasks' | 'shop' | 'leaderboard'>('home');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Đọc dữ liệu gamification từ localStorage
+  // Đọc dữ liệu gamification
   useEffect(() => {
     setIsMounted(true);
-    try {
-      const savedXp = parseInt(localStorage.getItem('typing_xp') || '0', 10);
-      const savedStreak = parseInt(localStorage.getItem('typing_streak') || '0', 10);
-      const savedWpm = parseInt(localStorage.getItem('typing_avg_wpm') || '0', 10);
-      const savedAcc = parseInt(localStorage.getItem('typing_avg_accuracy') || '0', 10);
-      setXp(savedXp);
-      setStreak(savedStreak);
-      setAvgWpm(savedWpm);
-      setAvgAccuracy(savedAcc);
-    } catch (e) {
-      console.error('Failed to load learning progress:', e);
-    }
   }, []);
 
   // Xử lý hiệu ứng chữ chạy tự động thay đổi
@@ -263,6 +249,9 @@ export default function Home() {
             {/* Stars/Coins */}
             <TactileStarBadge color="yellow" value={xp >= 1000 ? `${(xp / 1000).toFixed(1)} XP` : `${xp} XP`} className="scale-105" />
 
+            {/* Trạng thái đồng bộ đám mây */}
+            <SyncStatusIndicator />
+
             {/* Profile Info & Config Button */}
             <button
               onClick={() => {
@@ -302,6 +291,9 @@ export default function Home() {
               <span className="animate-blink text-[var(--color-primary-depth)] font-normal">|</span>
             </h1>
           </div>
+
+          {/* Hero Slide Banner */}
+          <HeroSlideBanner />
 
           {/* Block 1: Banner Chào Mừng Cấp Độ Học Sinh */}
           <div className="bg-[var(--color-surface)] border-2 border-[var(--color-foreground)] rounded-[24px] shadow-[4px_4px_0px_0px_var(--color-foreground)] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden transition-colors">

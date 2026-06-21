@@ -379,6 +379,12 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
     return 'text-red-600 bg-red-50 border-red-100/50 animate-pulse';
   };
 
+  const getCountdownBarColor = () => {
+    if (timeLeftPercent > 50) return 'bg-emerald-500';
+    if (timeLeftPercent > 20) return 'bg-yellow-400';
+    return 'bg-red-500';
+  };
+
   const getAnimal = () => {
     if (wpm === 0) return '🐢';
     if (wpm < 10) return '🐢';
@@ -511,6 +517,22 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+
+        {/* Time Attack Countdown Bar */}
+        <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden border-2 border-slate-800 mb-4 relative shadow-inner">
+          <motion.div
+            className={`h-full rounded-full transition-colors duration-300 ${getCountdownBarColor()}`}
+            animate={{ width: `${timeLeftPercent}%` }}
+            transition={{ duration: 1, ease: "linear" }}
+          />
+          {timeLeftPercent <= 20 && (
+            <motion.div
+              className="absolute inset-0 bg-red-500/20"
+              animate={{ opacity: [0, 1, 0] }}
+              transition={{ repeat: Infinity, duration: 1 }}
+            />
+          )}
         </div>
 
         {/* Typing Display Area: Cỡ chữ siêu khổng lồ cho bé 6 tuổi */}

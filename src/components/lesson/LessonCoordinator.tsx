@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,8 @@ import TypingPractice from "@/components/TypingPractice";
 import RealWorldMathGame from "@/components/RealWorldMathGame";
 import ColoringCanvas from "@/components/ColoringCanvas";
 import { useSound } from "@/contexts/SoundContext";
+import { QuizActivity, ReadingActivity, DrawingActivity, ListeningActivity, MathActivity } from "@/components/activities";
+import { Topic } from "@/types/subject";
 
 const formatTime = (seconds: number) => {
   const mins = Math.floor(seconds / 60);
@@ -25,20 +27,132 @@ const formatTime = (seconds: number) => {
 };
 
 export interface LessonCoordinatorProps {
-  config: LessonConfig;
+  config?: LessonConfig;
+  topicConfig?: Topic;
   studentNickname?: string;
   currentXP?: number;
   onActivityComplete?: (activityId: string, telemetry: TelemetryPayload) => void;
   onAllActivitiesComplete: (summary: LessonSummary) => void;
+  backUrl?: string;
   initialStep?: LessonStep;
 }
 
+const mapTopicToLessonConfig = (topic: Topic): LessonConfig => {
+  const flashcards: any[] = [];
+  
+  topic.activities.forEach((act) => {
+    if (act.type === 'game' && act.data?.flashcards) {
+      act.data.flashcards.forEach((fc: any) => {
+        if (!flashcards.some((f) => f.word.toLowerCase() === fc.word.toLowerCase())) {
+          flashcards.push({
+            word: fc.word,
+            word_uppercase: fc.word.toUpperCase(),
+            spelling_guide: fc.spelling_guide || `bờ - a - ba`,
+            example_sentence: fc.example_sentence || `Bé gõ từ ${fc.word}.`,
+            image_prompt: fc.image_prompt || fc.word,
+            image_url: fc.image_url || "🦁"
+          });
+        }
+      });
+    }
+  });
+
+  if (flashcards.length === 0) {
+    topic.activities.forEach((act) => {
+      if (act.type === 'typing') {
+        const words = act.content.split(/\s+/).filter(w => w.length > 0 && w.length < 15);
+        words.forEach((w) => {
+          const cleanWord = w.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").toLowerCase();
+          if (cleanWord && !flashcards.some((f) => f.word.toLowerCase() === cleanWord)) {
+            flashcards.push({
+              word: cleanWord,
+              word_uppercase: cleanWord.toUpperCase(),
+              spelling_guide: `bờ - a - ba`,
+              example_sentence: `Bé tập gõ từ ${cleanWord}.`,
+              image_prompt: cleanWord,
+              image_url: "🦁"
+            });
+          }
+        });
+      }
+    });
+  }
+
+  // Fallback: nếu vẫn không có flashcards nào, tự tạo một cái tượng trưng
+  if (flashcards.length === 0) {
+    flashcards.push({
+      word: "bé",
+      word_uppercase: "BÉ",
+      spelling_guide: "bờ - e - be - sắc - bé",
+      example_sentence: "Bé chăm chỉ luyện gõ phím.",
+      image_prompt: "a cute happy cartoon baby boy, vibrant colors",
+      image_url: "👶"
+    });
+  }
+
+  const typingPractice = topic.activities
+    .filter((act) => act.type === 'typing')
+    .map((act) => ({
+      content: act.content,
+      type: (act.content.includes(' ') ? 'sentence' : 'word') as 'word' | 'sentence',
+      description: act.title || act.instructions || "Luyện gõ",
+      time_limit_seconds: act.timeLimit || 30
+    }));
+
+  const miniGames = topic.activities
+    .filter((act) => act.type !== 'typing')
+    .map((act) => {
+      if (act.type === 'game') {
+        const subtype = act.data?.subtype;
+        let mappedType: any = "matching_game";
+        if (subtype === 'true_false') mappedType = "true_false_game";
+        else if (subtype === 'spinwheel') mappedType = "spin_wheel_items";
+        else if (subtype === 'fill_in_the_blank') mappedType = "fill_in_the_blank";
+        else if (subtype === 'multiple_choice') mappedType = "multiple_choice";
+        else if (subtype === 'mouse_practice') mappedType = "mouse_practice";
+
+        return {
+          id: act.id,
+          type: mappedType,
+          items: act.data?.items || [],
+          flashcards: act.data?.flashcards || []
+        };
+      } else {
+        return {
+          id: act.id,
+          type: 'traditional_activity' as const,
+          activity: act
+        };
+      }
+    });
+
+  return {
+    lesson_title: topic.title,
+    topic: topic.description || "",
+    flashcards,
+    typing_practice: typingPractice,
+    summary_config: {
+      show_typing_summary: true,
+      celebration_message: "Chúc mừng con đã hoàn thành xuất sắc bài học!"
+    },
+    mini_games: miniGames as any,
+    base_rewards: {
+      completion_xp: 100,
+      badge_unlock_id: `badge_${topic.id}`,
+      badge_name_vi: `Huy hiệu ${topic.title}`,
+      celebration_type: "fireworks"
+    }
+  };
+};
+
 export default function LessonCoordinator({
   config,
+  topicConfig,
   studentNickname,
   currentXP = 0,
   onActivityComplete,
   onAllActivitiesComplete,
+  backUrl = "/",
   initialStep = "flashcards",
 }: LessonCoordinatorProps) {
   const router = useRouter();
@@ -71,6 +185,8 @@ export default function LessonCoordinator({
   const [idleTime, setIdleTime] = useState(0);
   const [showIdleReminder, setShowIdleReminder] = useState(false);
   const [breakType, setBreakType] = useState<"stretch" | "music">("stretch");
+  const [totalIdleSeconds, setTotalIdleSeconds] = useState(0);
+  const [focusScore, setFocusScore] = useState(100);
 
   const pomodoroIntervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -101,8 +217,22 @@ export default function LessonCoordinator({
   useEffect(() => {
     if (step === "summary") {
       playAudio('/audio/chuc-mung-be-yeu-go-chu-rat-gioi.wav');
+      // Bắn pháo hoa ăn mừng cho Sao Tập Tập Trung nếu đạt điểm tập trung cao
+      const fScore = Math.max(10, Math.min(100, 100 - Math.round(totalIdleSeconds * 0.5)));
+      if (fScore >= 90) {
+        setTimeout(() => {
+          import("canvas-confetti").then((module) => {
+            const confetti = module.default;
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 }
+            });
+          });
+        }, 1000);
+      }
     }
-  }, [step, playAudio]);
+  }, [step, playAudio, totalIdleSeconds]);
 
   // Phát âm thanh giọng nhắc nhở bé học tiếp khi bé không hoạt động (Idle)
   useEffect(() => {
@@ -135,10 +265,14 @@ export default function LessonCoordinator({
     const idleInterval = setInterval(() => {
       if (pomodoroState === "FOCUS") {
         setIdleTime((prev) => {
-          if (prev >= 30) {
+          const newVal = prev + 1;
+          if (newVal >= 30) {
             setShowIdleReminder(true);
           }
-          return prev + 1;
+          if (newVal > 15) {
+            setTotalIdleSeconds((t) => t + 1);
+          }
+          return newVal;
         });
       }
     }, 1000);
@@ -185,7 +319,21 @@ export default function LessonCoordinator({
     };
   }, [pomodoroState]);
 
-  const { flashcards, typing_practice, mini_games } = config;
+  const activeConfig = useMemo(() => {
+    if (config) return config;
+    if (topicConfig) return mapTopicToLessonConfig(topicConfig);
+    return null;
+  }, [config, topicConfig]);
+
+  if (!activeConfig) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-soft-cream">
+        <div className="w-12 h-12 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  const { flashcards, typing_practice, mini_games } = activeConfig;
   const totalActivities = 1 + (typing_practice?.length || 0) + (mini_games?.length || 0);
 
   // 1. Calculate overall progress percentage
@@ -297,6 +445,9 @@ export default function LessonCoordinator({
   const triggerAllActivitiesComplete = (finalResults: ActivityResult[]) => {
     const totalScore = finalResults.reduce((sum, r) => sum + r.score, 0);
     const totalDuration = finalResults.reduce((sum, r) => sum + r.durationSeconds, 0);
+
+    const fScore = Math.max(10, Math.min(100, 100 - Math.round(totalIdleSeconds * 0.5)));
+    setFocusScore(fScore);
 
     onAllActivitiesComplete({
       totalScore,
@@ -500,6 +651,76 @@ export default function LessonCoordinator({
                 />
               );
 
+            case "traditional_activity": {
+              const act = (currentGame as any).activity;
+              if (!act) return null;
+              
+              switch (act.type) {
+                case 'quiz':
+                  return (
+                    <QuizActivity
+                      key={act.id}
+                      activity={act}
+                      onComplete={(telemetry) => handleGameComplete(currentGame.id, {
+                        score: telemetry.score,
+                        durationSeconds: telemetry.duration,
+                        metadata: telemetry.rawPayload
+                      })}
+                    />
+                  );
+                case 'listening':
+                  return (
+                    <ListeningActivity
+                      key={act.id}
+                      activity={act}
+                      onComplete={(telemetry) => handleGameComplete(currentGame.id, {
+                        score: telemetry.score,
+                        durationSeconds: telemetry.duration,
+                        metadata: telemetry.rawPayload
+                      })}
+                    />
+                  );
+                case 'math':
+                  return (
+                    <MathActivity
+                      key={act.id}
+                      activity={act}
+                      onComplete={(telemetry) => handleGameComplete(currentGame.id, {
+                        score: telemetry.score,
+                        durationSeconds: telemetry.duration,
+                        metadata: telemetry.rawPayload
+                      })}
+                    />
+                  );
+                case 'reading':
+                  return (
+                    <ReadingActivity
+                      key={act.id}
+                      activity={act}
+                      onComplete={(telemetry) => handleGameComplete(currentGame.id, {
+                        score: 100,
+                        durationSeconds: telemetry.duration,
+                        metadata: telemetry.rawPayload
+                      })}
+                    />
+                  );
+                case 'drawing':
+                  return (
+                    <DrawingActivity
+                      key={act.id}
+                      activity={act}
+                      onComplete={(telemetry) => handleGameComplete(currentGame.id, {
+                        score: telemetry.score,
+                        durationSeconds: telemetry.duration,
+                        metadata: telemetry.rawPayload
+                      })}
+                    />
+                  );
+                default:
+                  return null;
+              }
+            }
+
             default:
               return (
                 <div className="text-center p-6 bg-white/85 rounded-3xl shadow-lg border border-purple-100 max-w-md w-full">
@@ -541,8 +762,8 @@ export default function LessonCoordinator({
       case "summary": {
         const totalScore = results.reduce((sum, r) => sum + r.score, 0);
         const totalDuration = results.reduce((sum, r) => sum + r.durationSeconds, 0);
-        const completionXp = config.base_rewards?.completion_xp || 100;
-        const badgeName = config.base_rewards?.badge_name_vi || "Huy hiệu xuất sắc";
+        const completionXp = activeConfig.base_rewards?.completion_xp || 100;
+        const badgeName = activeConfig.base_rewards?.badge_name_vi || "Huy hiệu xuất sắc";
 
         return (
           <motion.div
@@ -576,7 +797,7 @@ export default function LessonCoordinator({
             </h2>
             <p className="text-gray-600 mb-6 font-bold text-lg">
               {(() => {
-                const rawMessage = config.summary_config?.celebration_message || "Chúc mừng bé yêu gõ chữ rất giỏi!";
+                const rawMessage = activeConfig.summary_config?.celebration_message || "Chúc mừng bé yêu gõ chữ rất giỏi!";
                 if (studentNickname) {
                   return rawMessage
                     .replace(/bé yêu/gi, `${studentNickname} yêu`)
@@ -620,6 +841,25 @@ export default function LessonCoordinator({
                   <div className="text-2xl font-black text-yellow-700">+{completionXp} XP</div>
                 </div>
               </motion.div>
+
+              {/* Focus Star reward */}
+              {focusScore >= 90 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="bg-emerald-50 rounded-2xl p-4 border border-emerald-250 flex items-center gap-4 shadow-sm"
+                >
+                  <div className="w-12 h-12 bg-emerald-400 rounded-xl flex items-center justify-center text-white text-2xl shadow-inner font-bold animate-bounce">
+                    🧘‍♂️
+                  </div>
+                  <div className="text-left flex-1">
+                    <div className="text-xs text-emerald-600 font-bold uppercase tracking-wider">Thành tích đặc biệt</div>
+                    <div className="text-[15px] font-black text-emerald-800">Sao Tập Trung 🌟</div>
+                    <p className="text-[10px] text-emerald-600 font-semibold leading-tight mt-0.5">Bé đã rèn luyện kiên trì và tập trung rất tốt!</p>
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             {/* Performance Stats */}
@@ -633,6 +873,10 @@ export default function LessonCoordinator({
                 <span className="text-base font-black text-yellow-700 bg-yellow-100/60 px-3 py-1 rounded-full">{totalScore} sao</span>
               </div>
               <div className="flex justify-between items-center text-purple-700 font-bold">
+                <span>Điểm tập trung (Focus):</span>
+                <span className="text-base font-black text-emerald-700 bg-emerald-100/60 px-3 py-1 rounded-full">{focusScore}%</span>
+              </div>
+              <div className="flex justify-between items-center text-purple-700 font-bold">
                 <span>Thời gian học tập:</span>
                 <span className="text-base font-black bg-purple-200/50 px-3 py-1 rounded-full">{totalDuration} giây</span>
               </div>
@@ -644,15 +888,15 @@ export default function LessonCoordinator({
               whileTap={{ scale: 0.95 }}
             >
               <Link
-                href="/"
+                href={backUrl}
                 className="w-full inline-block bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white font-black text-lg py-3 rounded-2xl shadow-[0_6px_0_0_#059669] hover:shadow-[0_3px_0_0_#059669] transition-all hover:translate-y-[3px] active:shadow-none active:translate-y-[6px]"
               >
-                Tuyệt vời! Quay lại trang chủ
+                {backUrl === "/" ? "Tuyệt vời! Quay lại trang chủ" : "Tuyệt vời! Quay lại bài học"}
               </Link>
             </motion.div>
 
             <p className="text-xs text-gray-400 mt-4 italic">
-              Chúc mừng bé đã học xong bài: {config.lesson_title}
+              Chúc mừng bé đã học xong bài: {activeConfig.lesson_title}
             </p>
           </motion.div>
         );
@@ -694,13 +938,22 @@ export default function LessonCoordinator({
         <header className={`py-2 md:py-3 px-4 flex items-center justify-between relative z-20 w-full mx-auto gap-3 transition-all duration-300 ${
           step === "typing_practice" ? "max-w-none" : "max-w-7xl"
         }`}>
-          <Link
-            href="/"
-            className="flex items-center gap-2 bg-[var(--color-surface)] px-4 py-2.5 rounded-xl text-[var(--color-foreground)] font-black hover:translate-y-[-1px] active:translate-y-[1px] transition-all shadow-[2px_2px_0px_0px_var(--color-foreground)] border-2 border-[var(--color-foreground)] text-sm md:text-base cursor-pointer shrink-0"
-          >
-            <IoChevronBack size={20} className="stroke-[2px]" />
-            <span className="hidden sm:inline">Quay lại</span>
-          </Link>
+          {pomodoroState === "FOCUS" ? (
+            <div
+              className="flex items-center gap-1.5 bg-slate-100 px-4 py-2.5 rounded-xl text-slate-400 font-black border-2 border-slate-300 text-xs md:text-sm cursor-default select-none shrink-0"
+              title="Đang trong giờ học Pomodoro tập trung!"
+            >
+              <span>🔒 Học tập trung</span>
+            </div>
+          ) : (
+            <Link
+              href="/"
+              className="flex items-center gap-2 bg-[var(--color-surface)] px-4 py-2.5 rounded-xl text-[var(--color-foreground)] font-black hover:translate-y-[-1px] active:translate-y-[1px] transition-all shadow-[2px_2px_0px_0px_var(--color-foreground)] border-2 border-[var(--color-foreground)] text-sm md:text-base cursor-pointer shrink-0"
+            >
+              <IoChevronBack size={20} className="stroke-[2px]" />
+              <span className="hidden sm:inline">Quay lại</span>
+            </Link>
+          )}
           
           {/* Tiêu đề trò chơi/bài học ở giữa */}
           <div className="flex-1 text-center px-1">
@@ -765,18 +1018,18 @@ export default function LessonCoordinator({
           >
             <div className="max-w-md bg-[#fffdfa] border-4 border-slate-800 rounded-[40px] p-8 shadow-[8px_8px_0px_0px_#1e293b] flex flex-col items-center text-slate-800">
               <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-                className="text-8xl mb-6"
+                animate={breakType === "stretch" ? { scale: [1, 1.15, 1], y: [0, -10, 0] } : { rotate: [0, 10, -10, 0] }}
+                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                className="text-7xl mb-4"
               >
                 {breakType === "stretch" ? "🧘‍♀️" : "🎵"}
               </motion.div>
               
-              <h2 className="text-3xl font-black mb-3 text-amber-600">
+              <h2 className="text-2xl md:text-3xl font-black mb-2 text-indigo-700">
                 {breakType === "stretch" ? "Bé ơi, giải lao giãn cơ nhé!" : "Bé ơi, hát cùng nhạc nhé!"}
               </h2>
               
-              <p className="text-sm text-slate-650 font-bold mb-6">
+              <p className="text-xs md:text-sm text-slate-500 font-bold mb-4 max-w-sm">
                 {breakType === "stretch" 
                   ? "Hãy đứng dậy vươn vai thật cao, quay cổ nhẹ nhàng và chớp mắt 5 lần để đôi mắt bé được nghỉ ngơi nhé!"
                   : "Lắng nghe giai điệu vui tai dưới đây, lẩm nhẩm hát theo để rèn luyện giọng hát đúng giai điệu của bé!"
@@ -784,26 +1037,66 @@ export default function LessonCoordinator({
               </p>
 
               {breakType === "music" && (
-                <div className="w-full bg-slate-50 border-2 border-slate-800 rounded-2xl p-4 mb-6 shadow-[3px_3px_0px_0px_#1e293b] flex items-center justify-center gap-3">
-                  <span className="text-2xl animate-bounce">🎵</span>
-                  <div className="text-left flex-1 text-xs">
-                    <div className="font-bold text-indigo-700">Đồ - Rê - Mi - Pha - Son - La - Si</div>
-                    <div className="text-slate-500 italic">Bé tập đọc nốt nhạc theo nhịp nhé!</div>
+                <div className="w-full flex flex-col items-center gap-3">
+                  <div className="flex gap-2.5 h-10 items-end mb-1">
+                    {["🎵", "🎶", "🎼", "🎵"].map((note, idx) => (
+                      <motion.span
+                        key={idx}
+                        animate={{ y: [0, -12, 0], scale: [1, 1.2, 1] }}
+                        transition={{ repeat: Infinity, duration: 1 + idx * 0.2, ease: "easeInOut" }}
+                        className="text-2xl"
+                      >
+                        {note}
+                      </motion.span>
+                    ))}
                   </div>
-                  <IoMusicalNotesOutline className="text-2xl text-indigo-600 animate-pulse" />
+
+                  <div className="w-full bg-slate-50 border-2 border-slate-800 rounded-2xl p-4 mb-4 shadow-[3px_3px_0px_0px_#1e293b] flex flex-col items-center gap-2">
+                    <div className="font-black text-indigo-700 text-xs flex gap-1 justify-center flex-wrap">
+                      {["Đồ", "Rê", "Mi", "Pha", "Son", "La", "Si"].map((note, idx) => (
+                        <motion.span
+                          key={note}
+                          animate={{ color: ["#4f46e5", "#db2777", "#ea580c", "#16a34a", "#2563eb", "#4f46e5"][idx % 6] }}
+                          transition={{ repeat: Infinity, duration: 2, delay: idx * 0.1 }}
+                          className="px-2 py-1 bg-white border border-slate-350 rounded-lg shadow-sm"
+                        >
+                          {note}
+                        </motion.span>
+                      ))}
+                    </div>
+                    <div className="text-slate-400 italic text-[9px] font-bold">Bé tập hát và nhận biết nốt nhạc theo nhịp nhé!</div>
+                  </div>
                 </div>
               )}
 
               {breakType === "stretch" && (
-                <div className="w-full bg-slate-50 border-2 border-slate-800 rounded-2xl p-4 mb-6 shadow-[3px_3px_0px_0px_#1e293b] flex flex-wrap justify-center gap-4 text-xs font-bold text-slate-700">
-                  <span className="bg-white border-2 border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-[2px_2px_0px_0px_#1e293b]">🙆‍♂️ Vươn vai</span>
-                  <span className="bg-white border-2 border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-[2px_2px_0px_0px_#1e293b]">👀 Nhắm mắt</span>
-                  <span className="bg-white border-2 border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-[2px_2px_0px_0px_#1e293b]">🚶‍♂️ Đứng dậy</span>
+                <div className="w-full flex flex-col items-center gap-3">
+                  <div className="flex gap-4 mb-1">
+                    <motion.span 
+                      animate={{ scale: [1, 1.2, 1], rotate: [0, 8, -8, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.5 }}
+                      className="text-4xl"
+                    >
+                      🦖
+                    </motion.span>
+                    <motion.span 
+                      animate={{ y: [0, -12, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.2 }}
+                      className="text-4xl"
+                    >
+                      👶
+                    </motion.span>
+                  </div>
+                  <div className="w-full bg-slate-50 border-2 border-slate-800 rounded-2xl p-3 mb-4 shadow-[3px_3px_0px_0px_#1e293b] flex flex-wrap justify-center gap-3 text-[10px] font-bold text-slate-700">
+                    <span className="bg-white border-2 border-slate-800 px-2.5 py-1.5 rounded-xl flex items-center gap-1 shadow-[2px_2px_0px_0px_#1e293b]">🙆‍♂️ Vươn vai</span>
+                    <span className="bg-white border-2 border-slate-800 px-2.5 py-1.5 rounded-xl flex items-center gap-1 shadow-[2px_2px_0px_0px_#1e293b]">👀 Nhắm mắt</span>
+                    <span className="bg-white border-2 border-slate-800 px-2.5 py-1.5 rounded-xl flex items-center gap-1 shadow-[2px_2px_0px_0px_#1e293b]">🧘‍♂️ Quay cổ</span>
+                  </div>
                 </div>
               )}
 
-              <div className="flex items-center gap-2 text-base font-black text-slate-800 bg-white border-2 border-slate-800 px-6 py-2.5 rounded-full shadow-[3px_3px_0px_0px_#1e293b]">
-                <IoTimeOutline className="text-xl animate-spin" />
+              <div className="flex items-center gap-2 text-sm font-black text-slate-800 bg-white border-2 border-slate-800 px-6 py-2 rounded-full shadow-[3px_3px_0px_0px_#1e293b] shrink-0">
+                <IoTimeOutline className="text-lg animate-spin" />
                 <span>Học tiếp sau: {pomodoroTimeLeft} giây</span>
               </div>
             </div>
@@ -834,6 +1127,34 @@ export default function LessonCoordinator({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Focus Garden Widget */}
+      {step !== "summary" && pomodoroState === "FOCUS" && (
+        <div className="fixed bottom-4 left-4 z-40 bg-white/95 border-3 border-slate-800 rounded-3xl p-3 shadow-[4px_4px_0px_0px_#1e293b] flex flex-col items-center max-w-[145px] select-none text-center">
+          <div className="text-[10px] font-black text-emerald-800 uppercase tracking-wider mb-1">Mầm tập trung</div>
+          <div className="relative w-16 h-16 flex items-center justify-center bg-emerald-50 rounded-2xl border-2 border-slate-800/20 mb-1 overflow-hidden">
+            <motion.div
+              key={focusProgress < 25 ? "seed" : focusProgress < 60 ? "sprout" : focusProgress < 85 ? "bud" : "tree"}
+              initial={{ scale: 0.5, y: 10, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 100, damping: 10 }}
+              className="text-4xl"
+            >
+              {focusProgress < 25 ? "🌱" : focusProgress < 60 ? "🌿" : focusProgress < 85 ? "🌸" : "🌳"}
+            </motion.div>
+          </div>
+          <div className="text-[9px] text-slate-500 font-bold leading-tight">
+            {focusProgress < 25 ? "Đang nảy mầm" : focusProgress < 60 ? "Đang lớn lên" : focusProgress < 85 ? "Đang ra hoa" : "Đã lớn khôn!"}
+          </div>
+          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden border border-slate-200 mt-1.5">
+            <div 
+              className="bg-emerald-500 h-full rounded-full transition-all duration-300"
+              style={{ width: `${focusProgress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
 
       {/* Main Content Area */}
       <div className="w-full flex justify-center px-4">

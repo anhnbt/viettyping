@@ -4,8 +4,8 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudent, StudentInfo } from "@/contexts/StudentContext";
 import { useSound } from "@/contexts/SoundContext";
-import { X, Sparkles, User, GraduationCap } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
 import confettiActual from "canvas-confetti";
 
 const THEME_TO_EMOJI: Record<string, string> = {
@@ -28,6 +28,7 @@ const MASCOTS = [
 
 export default function StudentConfigModal() {
   const router = useRouter();
+  const pathname = usePathname();
   const { studentInfo, isConfigured, isOpenConfig, setIsOpenConfig, updateStudentInfo, isLoaded } = useStudent();
   const { playSound } = useSound();
 
@@ -83,7 +84,7 @@ export default function StudentConfigModal() {
 
     if (!nickname.trim()) {
       playSound("incorrect");
-      setError("Bé hãy điền biệt danh hoặc tên gọi yêu thích nhé! 💕");
+      setError("Vui lòng điền biệt danh hoặc tên gọi yêu thích!");
       return;
     }
 
@@ -118,7 +119,7 @@ export default function StudentConfigModal() {
   // Bắt buộc cấu hình nếu chưa từng có thông tin
   const canClose = isConfigured;
 
-  if (!isLoaded || !isOpenConfig) return null;
+  if (!isLoaded || !isOpenConfig || pathname?.startsWith("/admin")) return null;
 
   return (
     <AnimatePresence>
@@ -137,13 +138,12 @@ export default function StudentConfigModal() {
           className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
         />
 
-        {/* Modal Box */}
         <motion.div
           initial={{ scale: 0.9, y: 20, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.9, y: 20, opacity: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 350 }}
-          className="relative w-full max-w-lg max-h-[90vh] bg-amber-50 border-4 border-slate-800 rounded-[32px] shadow-[8px_8px_0px_0px_#1e293b] overflow-hidden z-10 flex flex-col"
+          className="relative w-full max-w-lg max-h-[90vh] bg-amber-50/98 backdrop-blur-md border border-amber-200/80 rounded-[32px] shadow-[0_24px_48px_-12px_rgba(30,41,59,0.15)] overflow-hidden z-10 flex flex-col"
         >
           {/* Nút Đóng (chỉ hiện khi đã cấu hình xong) */}
           {canClose && (
@@ -152,37 +152,31 @@ export default function StudentConfigModal() {
                 playSound("click");
                 setIsOpenConfig(false);
               }}
-              className="absolute top-4 right-4 p-2 bg-white hover:bg-rose-100 text-slate-700 hover:text-rose-650 border-2 border-slate-800 rounded-full shadow-[2px_2px_0px_0px_#1e293b] active:translate-y-[1px] active:shadow-none transition-all cursor-pointer z-20"
+              className="absolute top-4 right-4 p-2 bg-white/90 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200/60 rounded-full shadow-sm hover:shadow active:scale-95 transition-all cursor-pointer z-20"
             >
               <X className="w-5 h-5" />
             </button>
           )}
 
-          {/* Dải màu trang trí phía trên */}
-          <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-red-400 via-yellow-400 to-indigo-400 z-20" />
-
           {/* Vùng nội dung cuộn */}
           <div className="overflow-y-auto p-6 md:p-8 pt-10 md:pt-10 w-full flex-1 custom-scrollbar">
             {/* Tiêu đề */}
             <div className="text-center mt-2 mb-6">
-              <span className="text-5xl inline-block animate-bounce mb-2">🎉</span>
-              <h2 className="text-3xl font-black text-indigo-950 tracking-wide flex items-center justify-center gap-2">
-                <span>Hồ Sơ Của Bé</span>
-                <Sparkles className="w-6 h-6 text-amber-500 fill-amber-300 animate-pulse" />
+              <h2 className="text-2xl font-bold text-slate-800 tracking-wide">
+                Hồ Sơ Của Bé
               </h2>
-              <p className="text-slate-600 text-sm font-bold mt-1">
-                {isConfigured ? "Cập nhật thông tin học tập của bé" : "Bé hãy điền thông tin để bắt đầu học nhé!"}
+              <p className="text-slate-500 text-xs mt-1">
+                {isConfigured ? "Cập nhật thông tin học tập của bé" : "Vui lòng hoàn thành thông tin để bắt đầu"}
               </p>
             </div>
 
             <form onSubmit={handleSave} className="space-y-5">
               {/* Lựa chọn Bạn đồng hành & Theme */}
               <div>
-                <label className="block text-slate-800 font-extrabold text-base mb-2.5 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-amber-500 fill-amber-300 animate-pulse" />
-                  <span>1. Chọn bạn linh vật và giao diện học tập (Theme):</span>
+                <label className="block text-slate-700 font-bold text-sm mb-2">
+                  1. Chọn bạn đồng hành và giao diện:
                 </label>
-                <div className="grid grid-cols-5 gap-2 p-2 bg-white border-2 border-slate-800 rounded-2xl shadow-[3px_3px_0px_0px_#1e293b]">
+                <div className="grid grid-cols-3 gap-3 p-3 bg-white/80 border border-slate-200/60 rounded-2xl shadow-sm">
                   {MASCOTS.map((m) => {
                     const isUnlocked = unlockedMascots.includes(m.id);
                     return (
@@ -201,29 +195,29 @@ export default function StudentConfigModal() {
                             setTheme(m.id as any);
                           }
                         }}
-                        className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all relative border-2 ${
+                        className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all relative border ${
                           !isUnlocked
-                            ? "bg-slate-100 opacity-60 border-slate-350 cursor-pointer"
+                            ? "bg-slate-100/50 opacity-60 border-slate-200/60 cursor-pointer"
                             : theme === m.id
-                              ? "bg-amber-100 border-slate-800 scale-105 shadow-[2px_2px_0px_0px_var(--color-foreground)]"
-                              : "bg-slate-50/50 hover:bg-slate-100 border-transparent hover:scale-105"
+                              ? "bg-amber-100 border-2 border-amber-400 scale-105 shadow-md shadow-amber-200/60"
+                              : "bg-slate-50/50 hover:bg-white/95 border-transparent hover:border-slate-200/50 hover:scale-105"
                         }`}
                         title={isUnlocked ? m.desc : `${m.name} - Bị khóa (Mở ở Cửa hàng)`}
                       >
                         {isUnlocked && theme === m.id && (
-                          <span className="absolute -top-1.5 -right-1.5 text-xs bg-indigo-600 text-white rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                          <span className="absolute -top-1.5 -right-1.5 text-xs bg-indigo-600 text-white rounded-full w-4 h-4 flex items-center justify-center font-bold shadow-sm">
                             ✓
                           </span>
                         )}
                         {!isUnlocked && (
-                          <span className="absolute -top-1.5 -right-1.5 text-xs bg-slate-200 border border-slate-400 text-slate-500 rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-sm">
+                          <span className="absolute -top-1.5 -right-1.5 text-xs bg-slate-100 border border-slate-350 text-slate-500 rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-sm">
                             🔒
                           </span>
                         )}
-                        <span className={`text-3xl mb-1 transform hover:rotate-12 transition-transform ${!isUnlocked ? "grayscale" : ""}`}>
+                        <span className={`text-4xl mb-1 transform hover:rotate-12 transition-transform ${!isUnlocked ? "grayscale" : ""}`}>
                           {m.emoji}
                         </span>
-                        <span className="text-[10px] font-black text-slate-700 text-center leading-tight truncate w-full">{m.name}</span>
+                        <span className="text-xs font-bold text-slate-700 text-center leading-tight w-full mt-1">{m.name}</span>
                       </button>
                     );
                   })}
@@ -232,9 +226,8 @@ export default function StudentConfigModal() {
 
               {/* Biệt danh / Tên ở nhà */}
               <div>
-                <label className="block text-slate-800 font-extrabold text-base mb-2 flex items-center gap-1.5">
-                  <User className="w-4 h-4 text-indigo-500" />
-                  <span>2. Tên ở nhà / Biệt danh của bé:</span>
+                <label className="block text-slate-700 font-bold text-sm mb-2">
+                  2. Biệt danh của bé:
                 </label>
                 <input
                   type="text"
@@ -242,15 +235,14 @@ export default function StudentConfigModal() {
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   maxLength={15}
-                  className="w-full px-5 py-3.5 bg-white border-2 border-slate-800 rounded-2xl text-lg font-black text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/50 focus:border-indigo-600 transition-all shadow-[3px_3px_0px_0px_#1e293b]"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-base font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all shadow-sm"
                 />
               </div>
 
               {/* Tên đầy đủ trên lớp */}
               <div>
-                <label className="block text-slate-800 font-extrabold text-base mb-2 flex items-center gap-1.5">
-                  <GraduationCap className="w-4 h-4 text-indigo-500" />
-                  <span>3. Tên đầy đủ trên lớp (tùy chọn):</span>
+                <label className="block text-slate-700 font-bold text-sm mb-2">
+                  3. Họ và tên đầy đủ (tùy chọn):
                 </label>
                 <input
                   type="text"
@@ -258,15 +250,14 @@ export default function StudentConfigModal() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   maxLength={30}
-                  className="w-full px-5 py-3.5 bg-white border-2 border-slate-800 rounded-2xl text-lg font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/50 focus:border-indigo-600 transition-all shadow-[3px_3px_0px_0px_#1e293b]"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-base font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all shadow-sm"
                 />
               </div>
 
               {/* Bé học lớp mấy */}
               <div>
-                <label className="block text-slate-800 font-extrabold text-base mb-2 flex items-center gap-1.5">
-                  <GraduationCap className="w-4 h-4 text-indigo-500" />
-                  <span>4. Bé đang học lớp mấy nhỉ?</span>
+                <label className="block text-slate-700 font-bold text-sm mb-2">
+                  4. Lớp học của bé:
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {GRADES.map((g) => (
@@ -274,10 +265,10 @@ export default function StudentConfigModal() {
                       key={g}
                       type="button"
                       onClick={() => handleSelectGrade(g)}
-                      className={`flex-1 min-w-[70px] py-2.5 rounded-xl text-sm font-black transition-all cursor-pointer ${
+                      className={`flex-1 min-w-[70px] py-2 rounded-xl text-sm font-bold transition-all cursor-pointer border ${
                         grade === g
-                          ? "keycap-btn-primary py-2.5 rounded-xl shadow-[0_3px_0_0_var(--color-primary-depth)] text-sm"
-                          : "keycap-btn-surface py-2.5 rounded-xl shadow-[0_3px_0_0_var(--color-outline-variant)] text-sm active:translate-y-0.5"
+                          ? "bg-indigo-600 text-white border-indigo-700 shadow-md shadow-indigo-100 scale-102"
+                          : "bg-white text-slate-650 border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-sm active:translate-y-0.5"
                       }`}
                     >
                       {g}
@@ -291,9 +282,9 @@ export default function StudentConfigModal() {
                 <motion.div
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-sm font-bold text-rose-500 bg-rose-50 border-2 border-rose-200 px-4 py-2.5 rounded-xl"
+                  className="text-sm font-semibold text-rose-600 bg-rose-50 border border-rose-200/80 px-4 py-2.5 rounded-xl"
                 >
-                  ⚠️ {error}
+                  {error}
                 </motion.div>
               )}
 
@@ -301,9 +292,9 @@ export default function StudentConfigModal() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="keycap-btn-secondary w-full py-4 text-xl rounded-2xl cursor-pointer flex items-center justify-center gap-2 text-white"
+                  className="w-full py-3 text-base rounded-xl cursor-pointer flex items-center justify-center gap-2 text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm hover:shadow transition-all font-bold"
                 >
-                  <span>Bắt Đầu Học Thôi! 🚀</span>
+                  <span>Lưu hồ sơ</span>
                 </button>
               </div>
             </form>
