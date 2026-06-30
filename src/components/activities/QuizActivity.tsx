@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ActivityAdapterProps } from '@/types/activity';
 import { useSubjectTheme } from '@/hooks/useSubjectTheme';
+import { useSound } from '@/contexts/SoundContext';
 
 export const QuizActivity: React.FC<ActivityAdapterProps> = ({ activity, onComplete, onProgressUpdate }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -8,6 +9,7 @@ export const QuizActivity: React.FC<ActivityAdapterProps> = ({ activity, onCompl
   const [startTime, setStartTime] = useState<number>(0);
   const [wrongAnswers, setWrongAnswers] = useState<string[]>([]);
   const theme = useSubjectTheme();
+  const { playSound } = useSound();
 
   useEffect(() => {
     setStartTime(Date.now());
@@ -17,6 +19,7 @@ export const QuizActivity: React.FC<ActivityAdapterProps> = ({ activity, onCompl
     setSelectedOption(answer);
     if (answer === activity.correctAnswer) {
       setFeedback('correct');
+      playSound('coin');
       const duration = Math.round((Date.now() - startTime) / 1000);
       
       // Calculate score based on wrong answers (simple logic: -10% for each wrong answer, min 50%)
@@ -37,6 +40,7 @@ export const QuizActivity: React.FC<ActivityAdapterProps> = ({ activity, onCompl
       }, 1500);
     } else {
       setFeedback('incorrect');
+      playSound('boing'); // Tiếng Roblox oof hài hước giảm áp lực
       if (!wrongAnswers.includes(answer)) {
         setWrongAnswers(prev => [...prev, answer]);
       }
