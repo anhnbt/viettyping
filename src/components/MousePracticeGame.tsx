@@ -288,7 +288,7 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
     setBubbles(prev => 
       prev.map(b => {
         if (b.id === bubbleId && !b.popped) {
-          playSound('pop');
+          playAudio('/audio/pop_7e9Is8L.mp3');
           setPoppedBubblesCount(c => {
             const newCount = c + 1;
             if (newCount >= bubbles.length) {
@@ -313,7 +313,7 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
     setAnimals(prev => 
       prev.map(a => {
         if (a.id === animalId && !a.awake) {
-          playSound('pop');
+          playAudio('/audio/comedy_pop_finger_in_mouth_001.mp3');
           confetti({
             particleCount: 15,
             spread: 20,

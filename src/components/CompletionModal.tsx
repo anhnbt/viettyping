@@ -125,10 +125,12 @@ export default function CompletionModal({
 
                     // Phát âm thanh giọng nói tiếng Việt theo số sao đạt được
                     if (stars === 3) {
+                        playAudio('/audio/kids-saying-yay-sound-effect_3.mp3');
                         playAudio('/audio/tuyet-voi-con-lam-tot-lam.wav');
                     } else if (stars === 2) {
                         playAudio('/audio/rat-tot-con-co-gang-them-chut-nua-nhe.wav');
                     } else {
+                        playAudio('/audio/studio-audience-awwww-sound-fx.mp3');
                         playAudio('/audio/co-len-con-lam-duoc-ma.wav');
                     }
                 }

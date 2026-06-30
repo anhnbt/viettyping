@@ -9,6 +9,7 @@ interface SoundContextType {
   toggleMute: () => void;
   playSound: (type: SoundType) => void;
   playAudio: (src: string) => void;
+  stopAudio: (src: string) => void;
 }
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
@@ -80,25 +81,14 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       case 'wrong':
       case 'incorrect':
       case 'boing': {
-        // Tiếng lò xo "boing" vui nhộn thay thế cho tiếng buzz còi hú đáng sợ
-        const osc = audioContext.createOscillator();
-        const gn = audioContext.createGain();
-        osc.connect(gn);
-        gn.connect(audioContext.destination);
-
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(180, now);
-        // Quét lên quét xuống nhanh tạo độ nẩy của lò xo
-        osc.frequency.linearRampToValueAtTime(320, now + 0.06);
-        osc.frequency.linearRampToValueAtTime(200, now + 0.12);
-        osc.frequency.linearRampToValueAtTime(280, now + 0.18);
-        osc.frequency.linearRampToValueAtTime(220, now + 0.24);
-
-        gn.gain.setValueAtTime(0.25, now);
-        gn.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-
-        osc.start(now);
-        osc.stop(now + 0.3);
+        // Tiếng Roblox "oof" vui nhộn, hài hước thay thế cho tiếng còi hú/lò xo để giảm áp lực cho bé
+        const audio = getCachedAudio('/audio/roblox-death-sound_1.mp3');
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((err) => {
+            console.warn("Failed to play Roblox oof sound", err);
+          });
+        }
         break;
       }
 
@@ -312,8 +302,19 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [isMuted]);
 
+  const stopAudio = useCallback((src: string) => {
+    const audio = getCachedAudio(src);
+    if (!audio) return;
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+    } catch (err) {
+      console.warn(`Failed to stop audio: ${src}`, err);
+    }
+  }, []);
+
   return (
-    <SoundContext.Provider value={{ isMuted, toggleMute, playSound, playAudio }}>
+    <SoundContext.Provider value={{ isMuted, toggleMute, playSound, playAudio, stopAudio }}>
       {children}
     </SoundContext.Provider>
   );

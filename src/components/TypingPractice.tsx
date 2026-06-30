@@ -95,7 +95,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const wrongSoundTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const { playCorrectSound, playWrongSound } = useTypingSound();
-  const { playAudio } = useSound();
+  const { playAudio, stopAudio, playSound } = useSound();
 
   // Tự động ẩn bàn phím ảo trên màn hình có chiều cao thấp
   useEffect(() => {
@@ -233,12 +233,18 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
   };
 
   const startTimer = () => {
+    if (task.time_limit_seconds) {
+      playAudio('/audio/jeopardy-themelq.mp3');
+    }
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           const stats = calculateStats();
           completeLesson(stats);
           return 0;
+        }
+        if (prev - 1 <= 5) {
+          playSound('tick');
         }
         return prev - 1;
       });
@@ -275,6 +281,9 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
   const completeLesson = (stats: { wpm: number; accuracy: number; incorrectCount: number }) => {
     setIsComplete(true);
     clearInterval(timerRef.current);
+    if (task.time_limit_seconds) {
+      stopAudio('/audio/jeopardy-themelq.mp3');
+    }
 
     const durationSeconds = startTime ? Math.round((Date.now() - startTime) / 1000) : 0;
 
@@ -308,6 +317,9 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
     setIsComplete(false);
     setTimeLeft(task.time_limit_seconds || 60);
     clearInterval(timerRef.current);
+    if (task.time_limit_seconds) {
+      stopAudio('/audio/jeopardy-themelq.mp3');
+    }
     setShowSuccessModal(false);
     setFinalStats(null);
     setTimeout(() => {
@@ -317,8 +329,11 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
 
   useEffect(() => {
     inputRef.current?.focus();
-    return () => clearInterval(timerRef.current);
-  }, []);
+    return () => {
+      clearInterval(timerRef.current);
+      stopAudio('/audio/jeopardy-themelq.mp3');
+    };
+  }, [stopAudio]);
 
   useEffect(() => {
     handleRestart();

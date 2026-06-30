@@ -74,7 +74,7 @@ const SHOP_MASCOTS: MascotItem[] = [
 
 export default function ShopPage() {
   const router = useRouter();
-  const { playSound } = useSound();
+  const { playSound, playAudio } = useSound();
   const { studentInfo, updateStudentInfo } = useStudent();
 
   const [xp, setXp] = useState<number>(0);
@@ -126,7 +126,7 @@ export default function ShopPage() {
       setXp(newXp);
       setUnlockedMascots(newUnlocked);
       
-      playSound('coin');
+      playAudio('/audio/money-soundfx.mp3');
       setTimeout(() => playSound('tada'), 150);
 
       confetti({

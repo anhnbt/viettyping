@@ -30,7 +30,7 @@ export default function Flashcard({
   imageUrl,
 }: FlashcardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
-  const { playSound: playAppSound } = useSound();
+  const { playSound: playAppSound, playAudio } = useSound();
   
   // States cho các chế độ học nâng cao
   const [isDictationMode, setIsDictationMode] = useState(false);
@@ -53,6 +53,7 @@ export default function Flashcard({
     // Chỉ lật thẻ khi không đang trong tiến trình ghi âm giọng nói để tránh gây nhầm lẫn
     if (isListening) return;
     setIsFlipped(!isFlipped);
+    playAudio('/audio/swoosh-sound-effects.mp3');
   };
 
   const playWordSound = (e: React.MouseEvent) => {

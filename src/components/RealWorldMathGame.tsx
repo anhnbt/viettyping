@@ -283,7 +283,7 @@ export default function RealWorldMathGame({ gameConfig, onComplete }: GameAdapte
       setIsError(true);
       setErrorContainers(newErrorContainers);
       mathRetriesRef.current += 1;
-      playAudioCue("/buzz.mp3", 0.5);
+      playAudioCue("/audio/roblox-death-sound_1.mp3", 0.5);
 
       errorsRef.current.push({
         questionId: `${gameId}_q_${currentQuestionIndex}`,
