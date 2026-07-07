@@ -4,8 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ArrowLeft, Volume2, Mic, Check, ChevronLeft, ChevronRight, 
-  Sparkles, Trophy, RotateCcw, BookOpen, Star, X, Award
+  ArrowLeft, Check, RotateCcw, BookOpen, Star, X, Award, Trophy, Sparkles
 } from 'lucide-react';
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
@@ -271,45 +270,45 @@ const ALPHABET_DATA: AlphabetLetter[] = [
   }
 ];
 
-// Định nghĩa các trang của cuốn sách: 6 item trên 1 tờ giấy (trang) - Grid 2x3 cực kỳ thoáng và cân đối
-const SPREADS = [
-  { 
-    left: [ALPHABET_DATA[0], ALPHABET_DATA[1], ALPHABET_DATA[2], ALPHABET_DATA[3], ALPHABET_DATA[4], ALPHABET_DATA[5]], // a ă â b c d
-    right: [ALPHABET_DATA[6], ALPHABET_DATA[7], ALPHABET_DATA[8], ALPHABET_DATA[9], ALPHABET_DATA[10], ALPHABET_DATA[11]] // đ e ê g h i
-  },
-  { 
-    left: [ALPHABET_DATA[12], ALPHABET_DATA[13], ALPHABET_DATA[14], ALPHABET_DATA[15], ALPHABET_DATA[16], ALPHABET_DATA[17]], // k l m n o ô
-    right: [ALPHABET_DATA[18], ALPHABET_DATA[19], ALPHABET_DATA[20], ALPHABET_DATA[21], ALPHABET_DATA[22], ALPHABET_DATA[23]] // ơ p q r s t
-  },
-  { 
-    left: [ALPHABET_DATA[24], ALPHABET_DATA[25], ALPHABET_DATA[26]], // u ư v
-    right: [ALPHABET_DATA[27], ALPHABET_DATA[28]] // x y
-  }
-];
-
 export default function AlphabetBookPage() {
   const router = useRouter();
-  const { playSound, playAudio } = useSound();
+  const { playSound } = useSound();
   const { studentInfo, queueProgress, xp } = useStudent();
   
-  // States quản lý sách và hiệu ứng lật trang 3D Flipbook
-  const [currentSpreadIndex, setCurrentSpreadIndex] = useState(0);
-  const [targetSpreadIndex, setTargetSpreadIndex] = useState(0);
-  const [isFlipping, setIsFlipping] = useState(false);
-  const [flipDirection, setFlipDirection] = useState<'next' | 'prev' | null>(null);
-
-  const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
   const [exploredLetters, setExploredLetters] = useState<Record<string, boolean>>({});
   const [activeListeningId, setActiveListeningId] = useState<string | null>(null);
   const [isBookCompleted, setIsBookCompleted] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
-  const [speakSuccessId, setSpeakSuccessId] = useState<string | null>(null);
-  const [speakErrorId, setSpeakErrorId] = useState<string | null>(null);
 
   // States quản lý Bản đồ tư duy từ vựng (Mindmap)
   const [activeMindmapLetter, setActiveMindmapLetter] = useState<AlphabetLetter | null>(null);
   const [selectedExampleIndex, setSelectedExampleIndex] = useState<number>(0);
   const [masteredBranches, setMasteredBranches] = useState<Record<string, boolean>>({});
+
+  // Hook phát âm web-speech tiếng Việt
+  const { speak, stopSpeaking, stopListening } = useWebSpeech();
+
+  // Load tiến trình đã học từ localStorage
+  useEffect(() => {
+    try {
+      const savedExplored = localStorage.getItem('viettyping_explored_letters');
+      if (savedExplored) {
+        setExploredLetters(JSON.parse(savedExplored));
+      }
+      
+      const savedMastered = localStorage.getItem('viettyping_mastered_branches');
+      if (savedMastered) {
+        setMasteredBranches(JSON.parse(savedMastered));
+      }
+
+      const savedCompleted = localStorage.getItem('viettyping_alphabet_book_completed');
+      if (savedCompleted === 'true') {
+        setIsBookCompleted(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
   // Số lượng chữ cái đã khám phá và phần trăm tiến độ
   const exploredCount = ALPHABET_DATA.filter(item => exploredLetters[item.id]).length;
@@ -329,219 +328,25 @@ export default function AlphabetBookPage() {
         setTimeout(() => {
           playSound('tada');
           setShowCompletionModal(true);
-        }, 1500);
+          confetti({
+            particleCount: 150,
+            spread: 90,
+            origin: { y: 0.5 }
+          });
+        }, 1200);
       }
+      
+      // Đồng bộ tiến trình lên Firebase/StudentContext
+      const currentPercent = Math.round((Object.keys(updated).length / ALPHABET_DATA.length) * 100);
+      queueProgress('viettyping_alphabet_book', currentPercent, 10, xp + 10);
       
       return updated;
     });
   };
 
-  // Khởi động Web Speech
-  const {
-    isSpeechSupported,
-    isListening,
-    transcript,
-    error: speechError,
-    speak,
-    stopSpeaking,
-    startListening,
-    stopListening
-  } = useWebSpeech({ lang: 'vi-VN', rate: 0.82, pitch: 1.15 });
-
-  // Tải danh sách chữ cái bé đã từng tương tác ở local
-  useEffect(() => {
-    try {
-      const savedExplored = localStorage.getItem('viettyping_explored_letters');
-      if (savedExplored) {
-        setExploredLetters(JSON.parse(savedExplored));
-      }
-      
-      const savedBookComplete = localStorage.getItem('viettyping_alphabet_book_completed');
-      if (savedBookComplete === 'true') {
-        setIsBookCompleted(true);
-      }
-
-      const savedMastered = localStorage.getItem('viettyping_mastered_branches');
-      if (savedMastered) {
-        setMasteredBranches(JSON.parse(savedMastered));
-      }
-    } catch (e) {
-      console.error('Lỗi đọc tiến trình sách:', e);
-    }
-  }, []);
-
-  // Xử lý Speech Recognition khi bé luyện đọc
-  useEffect(() => {
-    if (!transcript || !activeListeningId) return;
-
-    const isMindmapListen = activeListeningId.startsWith('mindmap-');
-    let currentLetter: AlphabetLetter | undefined;
-    let targetSentence = '';
-    let targetWord = '';
-    let exampleIndex = 0;
-
-    if (isMindmapListen) {
-      const parts = activeListeningId.split('-');
-      const letterId = parts[1];
-      exampleIndex = parseInt(parts[2], 10);
-      currentLetter = ALPHABET_DATA.find(item => item.id === letterId);
-      if (currentLetter && currentLetter.examples[exampleIndex]) {
-        targetSentence = currentLetter.examples[exampleIndex].sentence;
-        targetWord = currentLetter.examples[exampleIndex].word;
-      }
-    } else {
-      currentLetter = ALPHABET_DATA.find(item => item.id === activeListeningId);
-      if (currentLetter) {
-        targetSentence = currentLetter.sentence;
-        targetWord = currentLetter.word;
-      }
-    }
-
-    if (!currentLetter || !targetSentence) return;
-
-    const cleanString = (str: string) => {
-      return str
-        .toLowerCase()
-        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
-    };
-
-    const cleanTranscript = cleanString(transcript);
-    const cleanTarget = cleanString(targetSentence);
-
-    // Kiểm tra độ tương đồng
-    const targetWords = cleanTarget.split(' ');
-    const spokenWords = cleanTranscript.split(' ');
-    
-    let matchCount = 0;
-    targetWords.forEach(w => {
-      if (spokenWords.includes(w)) matchCount++;
-    });
-
-    const isMatch = (matchCount / targetWords.length) >= 0.65 || cleanTranscript.includes(cleanString(targetWord));
-
-    if (isMatch) {
-      setSpeakSuccessId(activeListeningId);
-      playSound('correct');
-      
-      confetti({
-        particleCount: 30,
-        spread: 60,
-        origin: { y: 0.75 }
-      });
-
-      if (isMindmapListen) {
-        const letterId = currentLetter.id;
-        const branchKey = `${letterId}-${exampleIndex}`;
-        
-        if (!masteredBranches[branchKey]) {
-          // Thưởng 5 XP cho nhánh này
-          queueProgress('viettyping_alphabet_book', progressPercent, 5, xp + 5);
-          
-          setMasteredBranches(prev => {
-            const updated = { ...prev, [branchKey]: true };
-            localStorage.setItem('viettyping_mastered_branches', JSON.stringify(updated));
-            
-            // Kiểm tra xem đã làm chủ cả 3 nhánh chưa
-            const has0 = !!updated[`${letterId}-0`];
-            const has1 = !!updated[`${letterId}-1`];
-            const has2 = !!updated[`${letterId}-2`];
-            
-            if (has0 && has1 && has2) {
-              setTimeout(() => {
-                playSound('tada');
-                confetti({
-                  particleCount: 80,
-                  spread: 80,
-                  origin: { y: 0.6 }
-                });
-              }, 600);
-              
-              // Đánh dấu đã học chữ cái
-              markLetterAsExplored(letterId);
-            }
-            
-            return updated;
-          });
-        }
-      } else {
-        markLetterAsExplored(currentLetter.id);
-      }
-
-      setTimeout(() => {
-        setSpeakSuccessId(null);
-        if (!isMindmapListen) {
-          setTimeout(() => {
-            setFlippedCards(prev => ({ ...prev, [activeListeningId]: false }));
-          }, 1000);
-        }
-        setActiveListeningId(null);
-      }, 2500);
-    } else {
-      setSpeakErrorId(activeListeningId);
-      playSound('wrong');
-      
-      setTimeout(() => {
-        setSpeakErrorId(null);
-      }, 2500);
-    }
-  }, [transcript, activeListeningId, masteredBranches, progressPercent, xp, queueProgress, playSound, markLetterAsExplored]);
-
-
-
-  // Phát âm chữ cái ngắn gọn: "A - quả na"
-  const handlePlayAudio = (e: React.MouseEvent, letter: AlphabetLetter) => {
-    e.stopPropagation();
-    stopSpeaking();
-    stopListening();
-    setActiveListeningId(null);
-    
-    const textToSpeak = `${letter.uppercase}, ${letter.word}.`;
-    speak(textToSpeak, 'vi-VN');
-    markLetterAsExplored(letter.id);
-  };
-
-  // Phát âm câu ví dụ
-  const handlePlaySentence = (e: React.MouseEvent, letter: AlphabetLetter) => {
-    e.stopPropagation();
-    stopSpeaking();
-    speak(letter.sentence, 'vi-VN');
-  };
-
-  // Kích hoạt Micro luyện đọc
-  const handleStartMic = (e: React.MouseEvent, letter: AlphabetLetter) => {
-    e.stopPropagation();
-    if (activeListeningId === letter.id && isListening) {
-      stopListening();
-      setActiveListeningId(null);
-      playSound('click');
-    } else {
-      playSound('click');
-      setActiveListeningId(letter.id);
-      startListening('vi-VN');
-    }
-  };
-
-  // Lật card 3D
-  const handleCardFlip = (id: string) => {
-    if (activeListeningId) {
-      stopListening();
-      setActiveListeningId(null);
-    }
-    playSound('pop');
-    setFlippedCards(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
-
-  // Hàm xử lý chọn ví dụ từ vựng và tự động phát âm + tính điểm
+  // Chọn ví dụ trong Mindmap và Tự động phát âm ngay
   const handleSelectExample = (letterId: string, index: number, word: string, sentence: string) => {
     setSelectedExampleIndex(index);
-    stopSpeaking();
-    stopListening();
-    setActiveListeningId(null);
     playSound('pop');
     
     // Tự động phát âm từ và câu ví dụ
@@ -568,7 +373,7 @@ export default function AlphabetBookPage() {
           setTimeout(() => {
             playSound('tada');
             confetti({
-              particleCount: 80,
+              particleCount: 85,
               spread: 80,
               origin: { y: 0.6 }
             });
@@ -587,37 +392,10 @@ export default function AlphabetBookPage() {
       const timer = setTimeout(() => {
         const firstExample = activeMindmapLetter.examples[0];
         handleSelectExample(activeMindmapLetter.id, 0, firstExample.word, firstExample.sentence);
-      }, 400);
+      }, 450);
       return () => clearTimeout(timer);
     }
   }, [activeMindmapLetter]);
-
-  // Kích hoạt hiệu ứng lật trang 3D Flipbook
-  const changeSpread = (direction: 'next' | 'prev') => {
-    if (isFlipping) return;
-
-    stopSpeaking();
-    stopListening();
-    setActiveListeningId(null);
-
-    const nextIndex = direction === 'next' ? currentSpreadIndex + 1 : currentSpreadIndex - 1;
-    if (nextIndex < 0 || nextIndex >= SPREADS.length) return;
-
-    playSound('click');
-    
-    setFlipDirection(direction);
-    setIsFlipping(true);
-    setTargetSpreadIndex(nextIndex);
-
-    setTimeout(() => {
-      setCurrentSpreadIndex(nextIndex);
-    }, 300);
-
-    setTimeout(() => {
-      setIsFlipping(false);
-      setFlipDirection(null);
-    }, 600);
-  };
 
   // Hoàn thành cuốn sách, nhận thưởng 200 XP
   const handleClaimReward = () => {
@@ -632,156 +410,13 @@ export default function AlphabetBookPage() {
     if (confirm('Bé có muốn học lại Cuốn Sách Chữ Cái từ đầu không?')) {
       playSound('click');
       setExploredLetters({});
-      setFlippedCards({});
       setIsBookCompleted(false);
       localStorage.removeItem('viettyping_explored_letters');
       localStorage.removeItem('viettyping_alphabet_book_completed');
-      setCurrentSpreadIndex(0);
-      setTargetSpreadIndex(0);
+      localStorage.removeItem('viettyping_mastered_branches');
+      setMasteredBranches({});
     }
   };
-
-
-
-  // Render các chữ cái trên một trang (Lưới 2x3 rộng rãi thoải mái)
-  const renderPageSide = (letters: AlphabetLetter[], pageNum: number, isRightPage: boolean) => {
-    return (
-      <div className={`flex flex-col justify-between h-full p-5 md:p-7 bg-amber-50/20 rounded-2xl relative select-none ${isRightPage ? 'border-l border-stone-200' : ''}`}>
-        
-        {/* Lưới 6 chữ cái trong trang sách - Grid 2x3 cực thoáng */}
-        <div className="grid grid-cols-3 gap-4 md:gap-6 flex-1 items-stretch py-2">
-          {letters.map((item) => {
-            const isFlipped = !!flippedCards[item.id];
-            const isExplored = !!exploredLetters[item.id];
-            const isMastered = !!masteredBranches[`${item.id}-0`] && 
-                               !!masteredBranches[`${item.id}-1`] && 
-                               !!masteredBranches[`${item.id}-2`];
-            const isListeningThis = activeListeningId === item.id;
-            const isSuccess = speakSuccessId === item.id;
-            const isError = speakErrorId === item.id;
-
-            return (
-              <div 
-                key={item.id}
-                className="h-full w-full perspective-1000 cursor-pointer"
-                onClick={() => handleCardFlip(item.id)}
-              >
-                <motion.div
-                  className="w-full h-full relative preserve-3d transition-transform duration-500"
-                  animate={{ rotateY: isFlipped ? 180 : 0 }}
-                  style={{ transformStyle: 'preserve-3d' }}
-                >
-                  
-                  {/* MẶT TRƯỚC: Grid chứa chữ cái, hình ảnh, từ vựng và câu ví dụ hiển thị rõ ràng */}
-                  <div
-                    className={`absolute inset-0 backface-hidden rounded-3xl p-3 md:p-4 flex flex-col items-center justify-between border-3 bg-gradient-to-b ${item.color} ${item.borderColor} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)]`}
-                    style={{ backfaceVisibility: 'hidden' }}
-                  >
-                    {/* Badge đã học hoặc Đã Làm Chủ */}
-                    {isMastered ? (
-                      <span className="absolute top-2 right-2 text-yellow-500 bg-white border-2 border-yellow-400 rounded-full p-0.5 shadow-md text-xs animate-bounce" title="Bé đã làm chủ chữ cái!">
-                        <Star size={12} className="fill-yellow-400 stroke-yellow-650" />
-                      </span>
-                    ) : isExplored ? (
-                      <span className="absolute top-2 right-2 text-emerald-500 bg-white border border-emerald-300 rounded-full p-0.5 shadow-sm text-xs" title="Bé đã học xong">
-                        <Check size={11} className="stroke-[3]" />
-                      </span>
-                    ) : null}
-
-                    {/* Chữ cái in hoa + in thường */}
-                    <div className="text-center">
-                      <span className="text-4xl sm:text-5xl md:text-6xl font-black tracking-wide drop-shadow-sm select-none">
-                        {item.uppercase} {item.letter}
-                      </span>
-                    </div>
-
-                    {/* Hình ảnh Emoji lớn rõ nét */}
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white/80 rounded-full border border-white/60 flex items-center justify-center text-4xl sm:text-5xl md:text-6xl shadow-inner transform hover:scale-105 transition-transform select-none">
-                      {item.emoji}
-                    </div>
-
-                    {/* Từ khóa + Nút phát âm */}
-                    <div className="w-full flex items-center justify-between px-1 shrink-0">
-                      <span className="text-xs sm:text-sm md:text-base font-black text-slate-800 tracking-wide capitalize truncate max-w-[80%]">
-                        {item.word}
-                      </span>
-                      <motion.button
-                        onClick={(e) => handlePlayAudio(e, item)}
-                        whileHover={{ scale: 1.15 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="p-1.5 bg-white rounded-full text-slate-700 border border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 cursor-pointer"
-                        title="Nghe phát âm"
-                      >
-                        <Volume2 size={12} className="stroke-[2.5]" />
-                      </motion.button>
-                    </div>
-
-                    {/* Câu ví dụ hiển thị to rõ nét ở mặt trước */}
-                    <div className="w-full bg-white/40 border border-white/50 rounded-xl px-2 py-1 text-center shrink-0 min-h-[36px] md:min-h-[42px] flex items-center justify-center">
-                      <p className="text-xs sm:text-sm font-bold text-slate-700 leading-snug line-clamp-2">
-                        {item.sentence}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* MẶT SAU: Tối giản cho bé, tập trung vào Khám phá Từ vựng */}
-                  <div
-                    className="absolute inset-0 backface-hidden rounded-3xl p-3 md:p-4 flex flex-col justify-between border-3 bg-gradient-to-b from-indigo-50 to-purple-100 border-indigo-300 shadow-[3px_3px_0px_0px_rgba(99,102,241,0.15)]"
-                    style={{ 
-                      backfaceVisibility: 'hidden',
-                      transform: 'rotateY(180deg)' 
-                    }}
-                  >
-                    {/* Phần giữa: Thiết kế trực quan, sinh động cho bé */}
-                    <div className="flex-1 flex flex-col items-center justify-center gap-2 select-none">
-                      <motion.div 
-                        animate={{ y: [0, -6, 0] }}
-                        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                        className="text-4xl sm:text-5xl md:text-6xl drop-shadow-md"
-                      >
-                        🗺️
-                      </motion.div>
-                      <span className="text-xs sm:text-sm font-black text-indigo-700 uppercase tracking-wider text-center">
-                        Bản đồ từ vựng
-                      </span>
-                      <p className="text-[10px] sm:text-xs font-bold text-slate-500 text-center leading-snug max-w-[90%]">
-                        Bé bấm nút dưới để học thêm từ mới nhé!
-                      </p>
-                    </div>
-
-                    {/* Nút lớn mở Modal Mindmap */}
-                    <div className="shrink-0 pb-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedExampleIndex(0);
-                          setActiveMindmapLetter(item);
-                          playSound('click');
-                          markLetterAsExplored(item.id);
-                        }}
-                        className="w-full py-2.5 px-3 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-black text-xs sm:text-sm rounded-xl shadow-md border-2 border-indigo-650 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer animate-pulse"
-                      >
-                        <span>Thám Hiểm 🚀</span>
-                      </button>
-                    </div>
-                  </div>
-
-                </motion.div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Số trang sách */}
-        <div className={`text-[10px] font-bold text-slate-400 absolute bottom-2 ${isRightPage ? 'right-6' : 'left-6'}`}>
-          Trang {pageNum}
-        </div>
-      </div>
-    );
-  };
-
-  const currentSpread = SPREADS[currentSpreadIndex];
-  const targetSpread = SPREADS[targetSpreadIndex];
 
   return (
     <VisualWorldBackground>
@@ -807,7 +442,7 @@ export default function AlphabetBookPage() {
               </h1>
               {/* Dòng hướng dẫn chạy phụ nhỏ */}
               <p className="hidden md:block text-[9px] font-bold text-slate-500 mt-0.5 leading-none">
-                Bé bấm chữ nghe Dino đọc mẫu (ví dụ: <strong className="text-amber-600">"A, quả na"</strong>). Lật card để luyện nói!
+                Bé chạm vào từng chữ cái để nghe phát âm và thám hiểm Bản đồ từ vựng nhé!
               </p>
             </div>
           </div>
@@ -815,7 +450,7 @@ export default function AlphabetBookPage() {
           {/* Khối Tiến trình học của bé tích hợp ngay trung tâm Header */}
           <div className="hidden lg:flex flex-col items-center gap-1.5 flex-1 max-w-sm px-6">
             <div className="flex justify-between w-full text-[10px] font-black text-slate-700 leading-none">
-              <span>🎒 Bé đã học: <strong className="text-indigo-660">{exploredCount} / 29</strong> chữ cái</span>
+              <span>🎒 Bé đã học: <strong className="text-indigo-600">{exploredCount} / 29</strong> chữ cái</span>
               <span className="text-indigo-600">{progressPercent}%</span>
             </div>
             {/* Progress Bar tinh xảo nằm gọn trong Header */}
@@ -856,137 +491,82 @@ export default function AlphabetBookPage() {
           </div>
         </header>
 
-        {/* Nội dung chính: Thiết kế FLUID khổng lồ, để quyển sách nổi bật nhất chiếm trọn trung tâm */}
+        {/* Nội dung chính: Thiết kế phẳng, tối giản để bé tập trung vào chữ cái */}
         <main className="flex-1 w-full max-w-[95vw] lg:max-w-[90vw] mx-auto px-1 md:px-4 pt-4 pb-2 flex flex-col justify-center items-center relative">
           
           {/* Lớp hiển thị tiến độ trên mobile (nếu màn hình nhỏ hơn lg) */}
           <div className="lg:hidden flex items-center justify-between w-full max-w-xl bg-white/70 backdrop-blur-sm border-2 border-slate-800 rounded-xl px-3 py-1.5 mb-3 text-[10px] font-black text-slate-700 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
-            <span>🎒 Bé học: <strong className="text-indigo-600">{exploredCount}/29</strong> chữ</span>
+            <span>🎒 Bé học: <strong className="text-indigo-600">{exploredCount} / 29</strong> chữ</span>
             <div className="w-24 bg-slate-100 border border-slate-800 rounded-full h-2 overflow-hidden">
               <div className="h-full bg-gradient-to-r from-emerald-400 to-indigo-500" style={{ width: `${progressPercent}%` }} />
             </div>
             <span>{progressPercent}%</span>
           </div>
 
-          {/* QUYỂN SÁCH MỞ ĐÔI FLUID KHỔNG LỒ */}
-          <div className="w-full flex items-stretch h-[calc(100vh-160px)] min-h-[500px] max-h-[800px] relative">
-            
-            {/* Nút lật trang trái absolute ở rìa trái sách */}
-            <div className="absolute left-1 md:-left-6 top-1/2 -translate-y-1/2 z-30">
-              <motion.button
-                whileHover={{ scale: currentSpreadIndex > 0 ? 1.08 : 1 }}
-                whileTap={{ scale: currentSpreadIndex > 0 ? 0.92 : 1 }}
-                onClick={() => changeSpread('prev')}
-                disabled={currentSpreadIndex === 0 || isFlipping}
-                className={`w-11 h-11 sm:w-14 sm:h-14 bg-white border-3 border-slate-800 rounded-full flex items-center justify-center text-slate-800 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none hover:bg-indigo-50 transition-all cursor-pointer ${
-                  currentSpreadIndex === 0 || isFlipping ? 'opacity-30 cursor-not-allowed shadow-none border-slate-300 text-slate-300 bg-slate-50' : ''
-                }`}
-                title="Trang trước"
-              >
-                <ChevronLeft size={24} className="stroke-[3]" />
-              </motion.button>
+          {/* LƯỚI CHỮ CÁI PHẲNG TRÀN MÀN HÌNH */}
+          <div className="w-full overflow-y-auto max-h-[calc(100vh-180px)] pr-2 py-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-4 sm:gap-6 w-full justify-center">
+              {ALPHABET_DATA.map((item) => {
+                const isExplored = !!exploredLetters[item.id];
+                const isMastered = !!masteredBranches[`${item.id}-0`] && 
+                                   !!masteredBranches[`${item.id}-1`] && 
+                                   !!masteredBranches[`${item.id}-2`];
+
+                return (
+                  <motion.div
+                    key={item.id}
+                    whileHover={{ scale: 1.05, y: -4 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      stopSpeaking();
+                      stopListening();
+                      setActiveListeningId(null);
+                      
+                      // Phát âm chữ cái và từ chính
+                      speak(`${item.uppercase}, ${item.word}.`, 'vi-VN');
+                      markLetterAsExplored(item.id);
+                      
+                      // Mở thẳng Bản đồ từ vựng Mindmap
+                      setSelectedExampleIndex(0);
+                      setActiveMindmapLetter(item);
+                      playSound('click');
+                    }}
+                    className={`relative rounded-[24px] p-4 flex flex-col items-center justify-between border-3 bg-gradient-to-b ${item.color} ${item.borderColor} shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] cursor-pointer select-none transition-all duration-300 min-h-[150px] sm:min-h-[170px]`}
+                  >
+                    {/* Badge đã học hoặc Đã Làm Chủ */}
+                    {isMastered ? (
+                      <span className="absolute top-2.5 right-2.5 text-yellow-500 bg-white border-2 border-yellow-400 rounded-full p-0.5 shadow-md text-xs animate-bounce" title="Bé đã làm chủ chữ cái!">
+                        <Star size={11} className="fill-yellow-400 stroke-yellow-650" />
+                      </span>
+                    ) : isExplored ? (
+                      <span className="absolute top-2.5 right-2.5 text-emerald-500 bg-white border border-emerald-300 rounded-full p-0.5 shadow-sm text-xs" title="Bé đã học xong">
+                        <Check size={10} className="stroke-[3]" />
+                      </span>
+                    ) : null}
+
+                    {/* Chữ cái in hoa + in thường */}
+                    <div className="text-center mt-1">
+                      <span className="text-3xl sm:text-4xl md:text-5xl font-black tracking-wide drop-shadow-sm">
+                        {item.uppercase} {item.letter}
+                      </span>
+                    </div>
+
+                    {/* Hình ảnh Emoji lớn rõ nét */}
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/80 rounded-full border border-white/60 flex items-center justify-center text-3xl sm:text-4xl shadow-inner transform hover:scale-105 transition-transform">
+                      {item.emoji}
+                    </div>
+
+                    {/* Từ khóa */}
+                    <div className="w-full text-center shrink-0 mb-1">
+                      <span className="text-[11px] sm:text-xs md:text-sm font-black text-slate-800 tracking-wide capitalize truncate block max-w-full">
+                        {item.word}
+                      </span>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
-
-            {/* Vỏ bìa sách giả lập gỗ dày dặn */}
-            <div className="bg-[#783e16] p-2 md:p-3 rounded-[30px] shadow-[0_24px_56px_rgba(0,0,0,0.3)] border-4 border-amber-950/80 w-full h-full flex relative overflow-hidden z-10">
-              
-              {/* Trang ruột sách giấy cổ điển mở đôi */}
-              <div className="bg-[#fdf9f4] border-4 border-amber-900 rounded-[20px] w-full h-full flex flex-col md:flex-row overflow-hidden relative shadow-inner">
-                
-                {/* TRANG TRÁI TĨNH */}
-                <div className="flex-1 h-full md:block">
-                  <div className="md:hidden w-full h-full">
-                    {renderPageSide(currentSpread.left, currentSpreadIndex * 2 + 1, false)}
-                  </div>
-                  <div className="hidden md:block w-full h-full">
-                    {renderPageSide(currentSpread.left, currentSpreadIndex * 2 + 1, false)}
-                  </div>
-                </div>
-
-                {/* GÁY SÁCH Ở GIỮA */}
-                <div className="hidden md:flex w-7.5 bg-gradient-to-r from-stone-200 via-stone-400 to-stone-200 border-l border-r border-stone-300/80 flex-col items-center justify-between py-8 shrink-0 relative z-30">
-                  <div className="absolute inset-y-0 left-1/2 w-0.5 bg-amber-900/20 border-dashed border-r border-amber-900/10" />
-                  <div className="w-2.5 h-2.5 bg-slate-500/80 rounded-full border border-slate-650 shadow-md" />
-                  <div className="w-2.5 h-2.5 bg-slate-500/80 rounded-full border border-slate-650 shadow-md" />
-                  <div className="w-2.5 h-2.5 bg-slate-500/80 rounded-full border border-slate-650 shadow-md" />
-                  <div className="w-2.5 h-2.5 bg-slate-500/80 rounded-full border border-slate-650 shadow-md" />
-                  <div className="w-2.5 h-2.5 bg-slate-500/80 rounded-full border border-slate-650 shadow-md" />
-                </div>
-
-                {/* TRANG PHẢI TĨNH */}
-                <div className="flex-1 h-full hidden md:block">
-                  {currentSpread.right ? renderPageSide(currentSpread.right, currentSpreadIndex * 2 + 2, true) : null}
-                </div>
-
-                {/* TRANG GIẤY LẬT 3D GIẢ LẬP (FLIPPING PAGE) */}
-                <AnimatePresence>
-                  {isFlipping && flipDirection && (
-                    <motion.div
-                      className="absolute top-0 bottom-0 z-20 pointer-events-none hidden md:block"
-                      style={{
-                        left: '50%',
-                        width: '50%',
-                        transformStyle: 'preserve-3d',
-                        originX: 0,
-                      }}
-                      initial={{ rotateY: flipDirection === 'next' ? 0 : -180 }}
-                      animate={{ rotateY: flipDirection === 'next' ? -180 : 0 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.6, ease: 'easeInOut' }}
-                    >
-                      {/* Mặt trước của trang lật */}
-                      <div 
-                        className="absolute inset-0 bg-[#fdf9f4] rounded-r-[20px] border-r-4 border-amber-900 backface-hidden"
-                        style={{ 
-                          backfaceVisibility: 'hidden',
-                          transformStyle: 'preserve-3d'
-                        }}
-                      >
-                        {flipDirection === 'next' 
-                          ? (SPREADS[targetSpreadIndex - 1].right ? renderPageSide(SPREADS[targetSpreadIndex - 1].right, (targetSpreadIndex - 1) * 2 + 2, true) : null)
-                          : renderPageSide(SPREADS[targetSpreadIndex].left, targetSpreadIndex * 2 + 1, false)
-                        }
-                      </div>
-
-                      {/* Mặt sau của trang lật */}
-                      <div 
-                        className="absolute inset-0 bg-[#fdf9f4] rounded-l-[20px] border-l-4 border-amber-900 backface-hidden"
-                        style={{ 
-                          backfaceVisibility: 'hidden',
-                          transform: 'rotateY(180deg) scaleX(-1)',
-                          transformStyle: 'preserve-3d'
-                        }}
-                      >
-                        {flipDirection === 'next'
-                          ? renderPageSide(SPREADS[targetSpreadIndex].left, targetSpreadIndex * 2 + 1, false)
-                          : (SPREADS[targetSpreadIndex + 1]?.right ? renderPageSide(SPREADS[targetSpreadIndex + 1].right, (targetSpreadIndex + 1) * 2 + 2, true) : null)
-                        }
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-              </div>
-            </div>
-
-            {/* Nút lật trang phải absolute ở rìa phải sách */}
-            <div className="absolute right-1 md:-right-6 top-1/2 -translate-y-1/2 z-30">
-              <motion.button
-                whileHover={{ scale: currentSpreadIndex < SPREADS.length - 1 ? 1.08 : 1 }}
-                whileTap={{ scale: currentSpreadIndex < SPREADS.length - 1 ? 0.92 : 1 }}
-                onClick={() => changeSpread('next')}
-                disabled={currentSpreadIndex === SPREADS.length - 1 || isFlipping}
-                className={`w-11 h-11 sm:w-14 sm:h-14 bg-white border-3 border-slate-800 rounded-full flex items-center justify-center text-slate-800 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none hover:bg-indigo-50 transition-all cursor-pointer ${
-                  currentSpreadIndex === SPREADS.length - 1 || isFlipping ? 'opacity-30 cursor-not-allowed shadow-none border-slate-300 text-slate-300 bg-slate-50' : ''
-                }`}
-                title="Trang tiếp"
-              >
-                <ChevronRight size={24} className="stroke-[3]" />
-              </motion.button>
-            </div>
-
           </div>
-
         </main>
 
         {/* MODAL BẢN ĐỒ TỪ VỰNG MINDMAP (Thám hiểm 3 ví dụ) */}
@@ -1001,7 +581,6 @@ export default function AlphabetBookPage() {
                 onClick={() => {
                   stopSpeaking();
                   stopListening();
-                  setActiveListeningId(null);
                   setActiveMindmapLetter(null);
                 }}
                 className="absolute inset-0 bg-slate-900/70 backdrop-blur-md cursor-pointer"
@@ -1028,7 +607,6 @@ export default function AlphabetBookPage() {
                       playSound('click');
                       stopSpeaking();
                       stopListening();
-                      setActiveListeningId(null);
                       setActiveMindmapLetter(null);
                     }}
                     className="w-10 h-10 rounded-full bg-rose-100 hover:bg-rose-200 border-2 border-slate-800 text-rose-700 hover:text-rose-800 flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[1px] active:shadow-none transition-all cursor-pointer"
@@ -1209,7 +787,7 @@ export default function AlphabetBookPage() {
                         </span>
                       )}
                       <span className="text-3xl md:text-4xl select-none">{activeMindmapLetter.examples[2].emoji}</span>
-                      <span className="text-[10px] md:text-xs font-black text-slate-800 mt-1 capitalize">{activeMindmapLetter.examples[2].word}</span>
+                      <span className="text-[10px] md:text-xs font-black text-slate-850 mt-1 capitalize">{activeMindmapLetter.examples[2].word}</span>
                     </motion.div>
                   </div>
 

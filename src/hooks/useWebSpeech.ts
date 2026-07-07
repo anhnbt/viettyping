@@ -14,6 +14,7 @@ export function useWebSpeech(options: UseWebSpeechOptions = {}) {
 
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const isSpeechSupported = typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
   // Khởi tạo SpeechRecognition
@@ -57,6 +58,67 @@ export function useWebSpeech(options: UseWebSpeechOptions = {}) {
     };
   }, [isSpeechSupported]);
 
+  // Hàm thực sự chạy native SpeechSynthesis (dành cho fallback)
+  const fallbackToNativeTts = useCallback((cleanText: string, customLang?: string) => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = customLang || lang;
+    utterance.rate = rate;
+    utterance.pitch = pitch;
+    window.speechSynthesis.speak(utterance);
+  }, [lang, rate, pitch]);
+
+  // Hàm thực sự chạy TTS (thử API trước, nếu lỗi hoặc bị hủy thì fallback)
+  const playTts = useCallback(async (text: string, customLang?: string) => {
+    if (typeof window === 'undefined') return;
+
+    const cleanText = text.replace(/[_]/g, '').trim();
+    if (!cleanText) return;
+
+    // Hủy request cũ đang chạy nếu có
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    try {
+      // 1. Thử gọi API proxy Google Cloud TTS
+      const response = await fetch('/api/v1/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: cleanText }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) throw new Error('API TTS error');
+
+      const data = await response.json();
+      if (!data.audioContent) throw new Error('No audio content returned');
+
+      // Tạo Audio object và gán vào audioRef để quản lý dừng phát
+      const audioUrl = `data:audio/mp3;base64,${data.audioContent}`;
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+
+      if (!controller.signal.aborted) {
+        await audio.play();
+      }
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        // Hủy yêu cầu do bấm nút khác, không thực hiện fallback
+        return;
+      }
+      console.warn('Google TTS failed, falling back to browser SpeechSynthesis:', err);
+      fallbackToNativeTts(cleanText, customLang);
+    } finally {
+      if (abortControllerRef.current === controller) {
+        abortControllerRef.current = null;
+      }
+    }
+  }, [fallbackToNativeTts]);
+
   // Hàm phát âm thanh (Text-To-Speech hoặc audioUrl)
   const speak = useCallback((text: string, customLang?: string, audioUrl?: string) => {
     if (typeof window === 'undefined') return;
@@ -71,7 +133,6 @@ export function useWebSpeech(options: UseWebSpeechOptions = {}) {
         audioRef.current = audio;
         audio.play().catch((err) => {
           console.warn('Failed to play static audio, falling back to TTS:', err);
-          // Fallback sang TTS nếu play file tĩnh lỗi
           playTts(text, customLang);
         });
         return;
@@ -82,27 +143,15 @@ export function useWebSpeech(options: UseWebSpeechOptions = {}) {
 
     // Phát bằng TTS
     playTts(text, customLang);
-  }, [lang, rate, pitch]);
-
-  // Hàm thực sự chạy TTS
-  const playTts = (text: string, customLang?: string) => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
-
-    // Lọc bỏ các dấu gạch dưới hoặc ký tự đặc biệt không mong muốn trước khi đọc
-    const cleanText = text.replace(/[_]/g, '').trim();
-    if (!cleanText) return;
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = customLang || lang;
-    utterance.rate = rate;
-    utterance.pitch = pitch;
-
-    window.speechSynthesis.speak(utterance);
-  };
+  }, [playTts]);
 
   // Dừng phát âm thanh
   const stopSpeaking = useCallback(() => {
     if (typeof window !== 'undefined') {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
       if (window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
