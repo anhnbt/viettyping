@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSound } from '@/contexts/SoundContext';
+import { useWebSpeech } from '@/hooks/useWebSpeech';
 import { 
   Monitor, 
   Laptop, 
@@ -45,6 +46,7 @@ interface DeviceQuestion {
 export default function MousePracticeGame({ onComplete }: MousePracticeGameProps) {
   const [step, setStep] = useState<StepType>('welcome');
   const { playSound, playAudio } = useSound();
+  const { speak: speakTts, stopSpeaking } = useWebSpeech({ lang: 'vi-VN' });
   
   // Telemetry
   const startTimeRef = useRef<number>(Date.now());
@@ -132,18 +134,9 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
   const dinoRef = useRef<HTMLDivElement>(null);
   const deviceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Phát âm tiếng Việt sử dụng Web Speech API
+  // Phát âm tiếng Việt sử dụng Web Speech API và Google Cloud TTS
   const speakVietnamese = (text: string) => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'vi-VN';
-      const voices = window.speechSynthesis.getVoices();
-      const viVoice = voices.find(v => v.lang.startsWith('vi'));
-      if (viVoice) utterance.voice = viVoice;
-      utterance.rate = 0.95;
-      window.speechSynthesis.speak(utterance);
-    }
+    speakTts(text);
   };
 
   // Phát âm khi câu hỏi thiết bị thay đổi
@@ -198,11 +191,9 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
       if (deviceTimeoutRef.current) {
         clearTimeout(deviceTimeoutRef.current);
       }
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
+      stopSpeaking();
     };
-  }, []);
+  }, [stopSpeaking]);
 
   // Phát âm thanh chúc mừng khi hoàn thành tất cả bài luyện tập chuột
   useEffect(() => {
@@ -234,9 +225,7 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
       setDeviceFeedback(null);
       setActiveHoveredPart(null);
     } else {
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
+      stopSpeaking();
       playSound('complete');
       initBubbles();
       setStep('move');
