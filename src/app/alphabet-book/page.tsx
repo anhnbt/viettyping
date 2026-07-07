@@ -536,6 +536,62 @@ export default function AlphabetBookPage() {
     }));
   };
 
+  // Hàm xử lý chọn ví dụ từ vựng và tự động phát âm + tính điểm
+  const handleSelectExample = (letterId: string, index: number, word: string, sentence: string) => {
+    setSelectedExampleIndex(index);
+    stopSpeaking();
+    stopListening();
+    setActiveListeningId(null);
+    playSound('pop');
+    
+    // Tự động phát âm từ và câu ví dụ
+    speak(`${word}. ${sentence}`, 'vi-VN');
+    
+    // Đánh dấu đã làm chủ nhánh này
+    const branchKey = `${letterId}-${index}`;
+    if (!masteredBranches[branchKey]) {
+      setMasteredBranches(prev => {
+        const updated = { ...prev, [branchKey]: true };
+        localStorage.setItem('viettyping_mastered_branches', JSON.stringify(updated));
+        
+        // Cộng 5 XP cho bé
+        const updatedExploredCount = ALPHABET_DATA.filter(item => exploredLetters[item.id]).length;
+        const currentProgressPercent = Math.round((updatedExploredCount / ALPHABET_DATA.length) * 100);
+        queueProgress('viettyping_alphabet_book', currentProgressPercent, 5, xp + 5);
+        
+        // Kiểm tra xem đã làm chủ cả 3 nhánh chưa
+        const has0 = !!updated[`${letterId}-0`];
+        const has1 = !!updated[`${letterId}-1`];
+        const has2 = !!updated[`${letterId}-2`];
+        
+        if (has0 && has1 && has2) {
+          setTimeout(() => {
+            playSound('tada');
+            confetti({
+              particleCount: 80,
+              spread: 80,
+              origin: { y: 0.6 }
+            });
+            markLetterAsExplored(letterId);
+          }, 800);
+        }
+        
+        return updated;
+      });
+    }
+  };
+
+  // Tự động phát âm ví dụ đầu tiên khi mở bản đồ từ vựng
+  useEffect(() => {
+    if (activeMindmapLetter) {
+      const timer = setTimeout(() => {
+        const firstExample = activeMindmapLetter.examples[0];
+        handleSelectExample(activeMindmapLetter.id, 0, firstExample.word, firstExample.sentence);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [activeMindmapLetter]);
+
   // Kích hoạt hiệu ứng lật trang 3D Flipbook
   const changeSpread = (direction: 'next' | 'prev') => {
     if (isFlipping) return;
@@ -668,29 +724,28 @@ export default function AlphabetBookPage() {
                     </div>
                   </div>
 
-                  {/* MẶT SAU: Bento Grid Đánh vần, Mẹo nhớ và Nút Mở Mindmap */}
+                  {/* MẶT SAU: Tối giản cho bé, tập trung vào Khám phá Từ vựng */}
                   <div
-                    className="absolute inset-0 backface-hidden rounded-3xl p-3 flex flex-col justify-between border-3 bg-white border-indigo-200 shadow-[3px_3px_0px_0px_rgba(99,102,241,0.1)]"
+                    className="absolute inset-0 backface-hidden rounded-3xl p-3 md:p-4 flex flex-col justify-between border-3 bg-gradient-to-b from-indigo-50 to-purple-100 border-indigo-300 shadow-[3px_3px_0px_0px_rgba(99,102,241,0.15)]"
                     style={{ 
                       backfaceVisibility: 'hidden',
                       transform: 'rotateY(180deg)' 
                     }}
                   >
-                    {/* Khối Bento 1: Mẹo nhớ & Đánh vần (Viền nét đứt màu cam ấm) */}
-                    <div className="border-2 border-dashed border-amber-400 bg-amber-50/50 rounded-2xl p-2.5 shrink-0 flex flex-col gap-1.5">
-                      <div className="text-[10px] sm:text-xs font-black text-amber-800 leading-snug">
-                        💡 <span className="text-amber-600 uppercase font-extrabold">Mẹo nhớ:</span> {item.tip}
-                      </div>
-                      <div className="text-[10px] sm:text-xs font-black text-indigo-800 border-t border-dashed border-amber-300 pt-1.5">
-                        🗣️ <span className="text-indigo-600 uppercase font-extrabold">Đánh vần:</span> <span className="text-rose-600 underline decoration-wavy decoration-rose-300">{item.spelling}</span>
-                      </div>
-                    </div>
-
-                    {/* Phần giữa: Giới thiệu ngắn về Kho báu từ vựng */}
-                    <div className="flex-1 flex flex-col items-center justify-center my-1.5 p-1.5 bg-indigo-50/30 border border-dashed border-indigo-100 rounded-2xl">
-                      <span className="text-[9px] font-black text-indigo-500 uppercase tracking-wider mb-0.5">🗺️ Bản đồ từ vựng:</span>
-                      <p className="text-[10px] font-bold text-slate-650 text-center leading-tight">
-                        Chứa 3 ví dụ thú vị để bé khám phá và nhận sao vàng!
+                    {/* Phần giữa: Thiết kế trực quan, sinh động cho bé */}
+                    <div className="flex-1 flex flex-col items-center justify-center gap-2 select-none">
+                      <motion.div 
+                        animate={{ y: [0, -6, 0] }}
+                        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                        className="text-4xl sm:text-5xl md:text-6xl drop-shadow-md"
+                      >
+                        🗺️
+                      </motion.div>
+                      <span className="text-xs sm:text-sm font-black text-indigo-700 uppercase tracking-wider text-center">
+                        Bản đồ từ vựng
+                      </span>
+                      <p className="text-[10px] sm:text-xs font-bold text-slate-500 text-center leading-snug max-w-[90%]">
+                        Bé bấm nút dưới để học thêm từ mới nhé!
                       </p>
                     </div>
 
@@ -704,9 +759,9 @@ export default function AlphabetBookPage() {
                           playSound('click');
                           markLetterAsExplored(item.id);
                         }}
-                        className="w-full py-2.5 px-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-black text-xs rounded-xl shadow-md border-2 border-indigo-600 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer animate-pulse"
+                        className="w-full py-2.5 px-3 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-black text-xs sm:text-sm rounded-xl shadow-md border-2 border-indigo-650 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer animate-pulse"
                       >
-                        <span>Thám Hiểm Từ Vựng 🗺️</span>
+                        <span>Thám Hiểm 🚀</span>
                       </button>
                     </div>
                   </div>
@@ -1073,13 +1128,12 @@ export default function AlphabetBookPage() {
                     <motion.div
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        setSelectedExampleIndex(0);
-                        stopSpeaking();
-                        stopListening();
-                        setActiveListeningId(null);
-                        playSound('pop');
-                      }}
+                      onClick={() => handleSelectExample(
+                        activeMindmapLetter.id,
+                        0,
+                        activeMindmapLetter.examples[0].word,
+                        activeMindmapLetter.examples[0].sentence
+                      )}
                       className={`w-20 h-20 md:w-28 md:h-28 rounded-full border-4 flex flex-col items-center justify-center cursor-pointer transition-all shadow-[4px_4px_0_0_rgba(0,0,0,0.15)] relative ${
                         selectedExampleIndex === 0
                           ? 'border-pink-500 bg-pink-100 scale-105 shadow-pink-200 shadow-md ring-4 ring-pink-200'
@@ -1104,13 +1158,12 @@ export default function AlphabetBookPage() {
                     <motion.div
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        setSelectedExampleIndex(1);
-                        stopSpeaking();
-                        stopListening();
-                        setActiveListeningId(null);
-                        playSound('pop');
-                      }}
+                      onClick={() => handleSelectExample(
+                        activeMindmapLetter.id,
+                        1,
+                        activeMindmapLetter.examples[1].word,
+                        activeMindmapLetter.examples[1].sentence
+                      )}
                       className={`w-20 h-20 md:w-28 md:h-28 rounded-full border-4 flex flex-col items-center justify-center cursor-pointer transition-all shadow-[4px_4px_0_0_rgba(0,0,0,0.15)] relative ${
                         selectedExampleIndex === 1
                           ? 'border-pink-500 bg-pink-100 scale-105 shadow-pink-200 shadow-md ring-4 ring-pink-200'
@@ -1135,13 +1188,12 @@ export default function AlphabetBookPage() {
                     <motion.div
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        setSelectedExampleIndex(2);
-                        stopSpeaking();
-                        stopListening();
-                        setActiveListeningId(null);
-                        playSound('pop');
-                      }}
+                      onClick={() => handleSelectExample(
+                        activeMindmapLetter.id,
+                        2,
+                        activeMindmapLetter.examples[2].word,
+                        activeMindmapLetter.examples[2].sentence
+                      )}
                       className={`w-20 h-20 md:w-28 md:h-28 rounded-full border-4 flex flex-col items-center justify-center cursor-pointer transition-all shadow-[4px_4px_0_0_rgba(0,0,0,0.15)] relative ${
                         selectedExampleIndex === 2
                           ? 'border-pink-500 bg-pink-100 scale-105 shadow-pink-200 shadow-md ring-4 ring-pink-200'
@@ -1166,50 +1218,21 @@ export default function AlphabetBookPage() {
                 {/* BẢNG ĐIỀU KHIỂN CHI TIẾT TỪ VỰNG DƯỚI ĐÁY */}
                 {activeMindmapLetter.examples[selectedExampleIndex] && (() => {
                   const example = activeMindmapLetter.examples[selectedExampleIndex];
-                  const listenId = `mindmap-${activeMindmapLetter.id}-${selectedExampleIndex}`;
-                  const isListeningThis = activeListeningId === listenId;
-                  const isSuccess = speakSuccessId === listenId;
-                  const isError = speakErrorId === listenId;
                   const isBranchMastered = !!masteredBranches[`${activeMindmapLetter.id}-${selectedExampleIndex}`];
 
-                  // Nghe phát âm từ vựng ngắn
-                  const handlePlayWordAudio = (e: React.MouseEvent) => {
-                    e.stopPropagation();
-                    stopSpeaking();
-                    stopListening();
-                    setActiveListeningId(null);
-                    speak(example.word, 'vi-VN');
-                  };
-
-                  // Nghe phát âm cả câu ví dụ
-                  const handlePlaySentenceAudio = (e: React.MouseEvent) => {
-                    e.stopPropagation();
-                    stopSpeaking();
-                    stopListening();
-                    setActiveListeningId(null);
-                    speak(example.sentence, 'vi-VN');
-                  };
-
-                  // Luyện nói micro
-                  const handleStartMicLocal = (e: React.MouseEvent) => {
-                    e.stopPropagation();
-                    if (isListeningThis && isListening) {
-                      stopListening();
-                      setActiveListeningId(null);
-                      playSound('click');
-                    } else {
-                      playSound('click');
-                      setActiveListeningId(listenId);
-                      startListening('vi-VN');
-                    }
-                  };
-
                   return (
-                    <div className="bg-white border-3 border-slate-800 rounded-3xl p-3 md:p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                    <div className="bg-white border-3 border-slate-800 rounded-3xl p-3 md:p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0">
                       
                       {/* Trái: Tên từ vựng */}
-                      <div className="flex items-center gap-3 text-left w-full md:w-auto">
-                        <span className="text-4xl md:text-5xl bg-slate-100 rounded-2xl w-14 h-14 md:w-16 md:h-16 flex items-center justify-center border border-slate-200">
+                      <div className="flex items-center gap-3 text-left w-full sm:w-auto">
+                        <span 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            speak(`${example.word}. ${example.sentence}`, 'vi-VN');
+                          }}
+                          className="text-4xl md:text-5xl bg-slate-100 rounded-2xl w-14 h-14 md:w-16 md:h-16 flex items-center justify-center border border-slate-200 cursor-pointer hover:scale-105 active:scale-95 transition-all shadow-inner select-none"
+                          title="Bấm để nghe lại phát âm"
+                        >
                           {example.emoji}
                         </span>
                         <div>
@@ -1222,77 +1245,16 @@ export default function AlphabetBookPage() {
                               </span>
                             )}
                           </div>
-                          <button
-                            onClick={handlePlayWordAudio}
-                            className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 mt-1 hover:underline cursor-pointer"
-                          >
-                            <Volume2 size={11} />
-                            <span>Nghe phát âm từ</span>
-                          </button>
+                          <span className="text-[10px] font-bold text-slate-400 mt-1 block">💡 Bé bấm vào hình để nghe lại</span>
                         </div>
                       </div>
 
-                      {/* Giữa: Câu ví dụ để luyện nói */}
-                      <div className="flex-1 bg-indigo-50/30 border border-indigo-100 rounded-2xl p-2.5 w-full text-center md:text-left">
-                        <span className="text-[9px] font-black text-indigo-500 uppercase tracking-wider block mb-0.5">📖 Câu luyện đọc của bé:</span>
-                        <p className="text-xs md:text-sm font-black text-slate-800 leading-snug">
+                      {/* Giữa: Câu ví dụ */}
+                      <div className="flex-1 bg-indigo-50/30 border border-indigo-100 rounded-2xl p-2.5 w-full text-center sm:text-left">
+                        <span className="text-[9px] font-black text-indigo-500 uppercase tracking-wider block mb-0.5">📖 Câu ví dụ của bé:</span>
+                        <p className="text-sm md:text-base font-black text-slate-850 leading-snug">
                           "{example.sentence}"
                         </p>
-                      </div>
-
-                      {/* Phải: Các nút Micro và Phát âm mẫu */}
-                      <div className="flex items-center justify-center gap-3 w-full md:w-auto shrink-0">
-                        {/* Nghe mẫu câu */}
-                        <button
-                          onClick={handlePlaySentenceAudio}
-                          className="w-10 h-10 rounded-full border-2 border-slate-200 bg-slate-50 text-slate-650 flex items-center justify-center shadow-sm hover:bg-slate-100 active:scale-95 cursor-pointer"
-                          title="Nghe câu mẫu"
-                        >
-                          <Volume2 size={16} className="stroke-[2.5]" />
-                        </button>
-
-                        {/* Mic ghi âm */}
-                        {isSpeechSupported && (
-                          <button
-                            onClick={handleStartMicLocal}
-                            className={`w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md active:scale-95 transition-all cursor-pointer relative ${
-                              isListeningThis
-                                ? 'bg-rose-500 ring-4 ring-rose-200 animate-pulse'
-                                : isSuccess
-                                  ? 'bg-emerald-500'
-                                  : isError
-                                    ? 'bg-amber-500'
-                                    : 'bg-indigo-600 hover:bg-indigo-700'
-                            }`}
-                            title="Bấm để ghi âm luyện đọc"
-                          >
-                            {isSuccess ? (
-                              <Check size={20} className="stroke-[3]" />
-                            ) : (
-                              <>
-                                <Mic size={20} />
-                                {isListeningThis && (
-                                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                                  </span>
-                                )}
-                              </>
-                            )}
-                          </button>
-                        )}
-                        
-                        {/* Phản hồi trạng thái */}
-                        <div className="w-24 text-center leading-tight">
-                          {isListeningThis && <span className="text-[9px] text-red-500 font-extrabold animate-pulse block">⚡ Bé hãy đọc to...</span>}
-                          {isSuccess && <span className="text-[9px] text-emerald-600 font-black animate-bounce block">✨ Bé đọc giỏi quá! (+5 XP)</span>}
-                          {isError && <span className="text-[9px] text-amber-600 font-bold block">😅 Bé hãy đọc lại câu trên nhé!</span>}
-                          {!isListeningThis && !isSuccess && !isError && (
-                            <span className="text-[9px] text-slate-450 font-bold block">
-                              {isBranchMastered ? '✨ Đã làm chủ' : '🎙️ Nhấn để đọc'}
-                            </span>
-                          )}
-                        </div>
                       </div>
 
                     </div>
