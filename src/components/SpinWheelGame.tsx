@@ -7,6 +7,7 @@ import confetti from 'canvas-confetti';
 import { GameAdapterProps, TelemetryPayload, Flashcard, SpinWheelItem } from "@/types/lesson";
 import { useStudent } from "@/contexts/StudentContext";
 import { useSound } from "@/contexts/SoundContext";
+import { useWebSpeech } from "@/hooks/useWebSpeech";
 
 const isEmoji = (url: string) => {
   if (!url) return false;
@@ -16,6 +17,7 @@ const isEmoji = (url: string) => {
 export default function SpinWheelGame({ gameConfig, flashcards = [], onComplete }: GameAdapterProps<SpinWheelItem>) {
   const { id: gameId, items } = gameConfig;
   const { studentInfo } = useStudent();
+  const { speak: speakTts, stopSpeaking } = useWebSpeech({ lang: 'vi-VN', rate: 0.8 });
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
@@ -76,12 +78,7 @@ export default function SpinWheelGame({ gameConfig, flashcards = [], onComplete 
   };
 
   const playTTS = (text: string) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'vi-VN';
-      utterance.rate = 0.8; // Slower for kids
-      window.speechSynthesis.speak(utterance);
-    }
+    speakTts(text);
   };
 
   // When popup opens, auto play TTS
@@ -89,7 +86,10 @@ export default function SpinWheelGame({ gameConfig, flashcards = [], onComplete 
     if (showPopup && selectedItem) {
       playTTS(selectedItem);
     }
-  }, [showPopup, selectedItem]);
+    return () => {
+      stopSpeaking();
+    };
+  }, [showPopup, selectedItem, stopSpeaking]);
 
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto py-8">

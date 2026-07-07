@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { GameAdapterProps, TelemetryPayload, FillInTheBlankItem } from "@/types/lesson";
 import { useSound } from "@/contexts/SoundContext";
+import { useWebSpeech } from "@/hooks/useWebSpeech";
 
 const VIETNAMESE_CHARS = "aăâeêioôơuưyáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵbcdđghklmnpqrstvx".split("");
 
@@ -15,6 +16,7 @@ export default function FillInTheBlankGame({ gameConfig, flashcards = [], onComp
   const [feedback, setFeedback] = useState<"none" | "correct" | "incorrect">("none");
 
   const { playSound } = useSound();
+  const { speak: speakTts, stopSpeaking } = useWebSpeech({ lang: "vi-VN", rate: 0.8 });
 
   // Telemetry state
   const startTimeRef = useRef<number>(Date.now());
@@ -57,15 +59,14 @@ export default function FillInTheBlankGame({ gameConfig, flashcards = [], onComp
 
   // Handle Text to Speech
   const speakWord = (text: string) => {
-    if ("speechSynthesis" in window) {
-      // Cancel any ongoing speech
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "vi-VN";
-      utterance.rate = 0.8; // Speak slightly slower for kids
-      window.speechSynthesis.speak(utterance);
-    }
+    speakTts(text);
   };
+
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, [stopSpeaking]);
 
   const handleKeyPress = (char: string) => {
     if (feedback !== "none") return;

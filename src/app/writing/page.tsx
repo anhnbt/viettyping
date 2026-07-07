@@ -11,6 +11,7 @@ import { WRITING_ALPHABET_DATA, AlphabetWritingData, WritingStroke, Point } from
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
 import DinoMascot from '@/components/DinoMascot';
+import { useWebSpeech } from '@/hooks/useWebSpeech';
 
 // Hàm tính khoảng cách từ một điểm P đến một đoạn thẳng AB
 function getDistanceToSegment(p: Point, a: Point, b: Point): number {
@@ -39,6 +40,7 @@ export default function WritingPractice() {
   const router = useRouter();
   const { playSound } = useSound();
   const { queueProgress, xp } = useStudent();
+  const { speak: speakTts, stopSpeaking } = useWebSpeech({ lang: 'vi-VN', rate: 0.85 });
 
   // Chữ cái đang được chọn để tập viết
   const [currentLetterIdx, setCurrentLetterIdx] = useState(0);
@@ -74,26 +76,8 @@ export default function WritingPractice() {
 
   // Phát âm chữ cái khi thay đổi chữ cái hoặc bấm nút
   const speakLetter = (letter: string, word: string) => {
-    if (typeof window === 'undefined') return;
-    const synth = window.speechSynthesis;
-    if (!synth) return;
-    
-    synth.cancel();
-    
-    // Theo yêu cầu của bé 6 tuổi, phát âm gọn gàng: ví dụ "a, quả na"
     const textToSpeak = `${letter}, ${word}`;
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.lang = 'vi-VN';
-    
-    // Tìm giọng đọc tiếng Việt sinh động
-    const voices = synth.getVoices();
-    const viVoice = voices.find(v => v.lang.includes('vi') || v.lang.includes('VN'));
-    if (viVoice) {
-      utterance.voice = viVoice;
-    }
-    utterance.rate = 0.85; // Đọc chậm rãi, rõ ràng cho bé dễ nghe
-    
-    synth.speak(utterance);
+    speakTts(textToSpeak);
   };
 
   // Tự động phát âm thanh khi đổi chữ cái
@@ -112,6 +96,12 @@ export default function WritingPractice() {
       return () => clearTimeout(timer);
     }
   }, [currentLetterIdx]);
+
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, [stopSpeaking]);
 
   // Load danh sách các chữ cái đã hoàn thành từ LocalStorage khi khởi động
   useEffect(() => {
