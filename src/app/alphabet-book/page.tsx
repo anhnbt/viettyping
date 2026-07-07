@@ -270,6 +270,38 @@ const ALPHABET_DATA: AlphabetLetter[] = [
   }
 ];
 
+const VIETNAMESE_LETTER_SOUNDS: Record<string, string> = {
+  'A': 'a',
+  'Ă': 'ă',
+  'Â': 'â',
+  'B': 'bờ',
+  'C': 'cờ',
+  'D': 'dờ',
+  'Đ': 'đờ',
+  'E': 'e',
+  'Ê': 'ê',
+  'G': 'gờ',
+  'H': 'hờ',
+  'I': 'i',
+  'K': 'cờ',
+  'L': 'lờ',
+  'M': 'mờ',
+  'N': 'nờ',
+  'O': 'o',
+  'Ô': 'ô',
+  'Ơ': 'ơ',
+  'P': 'pờ',
+  'Q': 'quờ',
+  'R': 'rờ',
+  'S': 'sờ',
+  'T': 'tờ',
+  'U': 'u',
+  'Ư': 'ư',
+  'V': 'vờ',
+  'X': 'xờ',
+  'Y': 'i'
+};
+
 export default function AlphabetBookPage() {
   const router = useRouter();
   const { playSound } = useSound();
@@ -523,7 +555,8 @@ export default function AlphabetBookPage() {
                       setActiveListeningId(null);
                       
                       // Phát âm chữ cái và từ chính
-                      speak(`${item.uppercase}, ${item.word}.`, 'vi-VN');
+                      const letterSound = VIETNAMESE_LETTER_SOUNDS[item.uppercase] || item.letter;
+                      speak(`${letterSound}, ${item.word}.`, 'vi-VN');
                       markLetterAsExplored(item.id);
                       
                       // Mở thẳng Bản đồ từ vựng Mindmap
@@ -691,7 +724,14 @@ export default function AlphabetBookPage() {
                   {/* NÚT TÂM: Chữ cái khổng lồ */}
                   <motion.div
                     whileHover={{ scale: 1.05 }}
-                    className={`absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-slate-800 bg-white flex flex-col items-center justify-center shadow-[4px_4px_0_0_rgba(0,0,0,1)] select-none bg-gradient-to-br ${activeMindmapLetter.color}`}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      playSound('click');
+                      const letterSound = VIETNAMESE_LETTER_SOUNDS[activeMindmapLetter.uppercase] || activeMindmapLetter.letter;
+                      speak(`${letterSound}, ${activeMindmapLetter.word}.`, 'vi-VN');
+                    }}
+                    className={`absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-slate-800 bg-white flex flex-col items-center justify-center shadow-[4px_4px_0_0_rgba(0,0,0,1)] select-none bg-gradient-to-br ${activeMindmapLetter.color} cursor-pointer`}
+                    title="Nghe lại chữ cái chính"
                   >
                     <span className="text-4xl md:text-5xl font-black drop-shadow-sm leading-none">
                       {activeMindmapLetter.uppercase}
