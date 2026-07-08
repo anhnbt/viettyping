@@ -33,7 +33,7 @@ Mục tiêu buổi 1: live-build lại ý tưởng cốt lõi của VietTyping (
 | 54–60 | Demo trực tiếp, mời khán giả xem — có thể rút ngắn nếu các phần trước tràn giờ |
 | +30 | Q&A tự do cùng mentor, bắt đầu đúng giờ đã hẹn dù các phần trước có tràn — **không CTA** |
 
-**Nguồn của khung giờ mới:** tập dượt lần 1 (07/07/2026, xem mục 10) cho thấy brainstorm + tinh chỉnh thật tốn tới 13 vòng hỏi-đáp, không phải 2-3 như giả định ban đầu. Khung 6–24 (18 phút) là ước tính suy ra từ số vòng đó, **chưa được đo bằng đồng hồ thật** — cần tập dượt lần 2 có bấm giờ để hiệu chỉnh lại con số này trước ngày diễn.
+**Nguồn của khung giờ mới:** tập dượt lần 1 (07/07/2026, xem mục 10) cho thấy brainstorm + tinh chỉnh thật tốn tới 13 vòng hỏi-đáp, không phải 2-3 như giả định ban đầu. Khung 6–24 (18 phút) là ước tính suy ra từ số vòng đó — **nhưng tập dượt 1 dùng bản prompt mở đầu chi tiết hơn bản hiện tại ở mục 4** (đã rút gọn sau đó vì đọc trên sân khấu quá giống kịch bản soạn sẵn). Với bản prompt rút gọn mới, số vòng hỏi-đáp nhiều khả năng sẽ khác — khung giờ này **chưa được đo lại**, cần tập dượt lần 2 có bấm giờ, dùng đúng prompt rút gọn ở mục 4, để hiệu chỉnh lại con số trước ngày diễn.
 
 **Chính sách tràn giờ:** nếu bất kỳ bước nào (đặc biệt là brainstorm ở mục 6–24, vì gọi skill thật không giới hạn cứng thời gian) chạy quá dự kiến, thứ tự cắt giảm là: (1) rút ngắn demo (54–60) trước, (2) giữ nguyên phần build (24–54) vì đó là nơi truyền tải giá trị giáo dục, (3) không bao giờ lùi giờ bắt đầu Q&A.
 
@@ -47,13 +47,13 @@ Mục tiêu buổi 1: live-build lại ý tưởng cốt lõi của VietTyping (
 
 ## 4. Brainstorm cùng Claude (phút 6–24)
 
-Gọi **thật** skill `/brainstorming` của Claude trên sân khấu (không phải kịch bản hỏi-đáp giả lập) — để đúng nghĩa "trải nghiệm công cụ AI thực tế". Câu gõ mở đầu — **đã kiểm chứng ở tập dượt 1, giữ nguyên văn, không ứng biến**:
+Gọi **thật** skill `/brainstorming` của Claude trên sân khấu (không phải kịch bản hỏi-đáp giả lập) — để đúng nghĩa "trải nghiệm công cụ AI thực tế". Câu gõ mở đầu — **bản rút gọn tối thiểu, CHƯA kiểm chứng bằng tập dượt** (bản chi tiết đã test ở tập dượt 1 bị thay vì cảm giác đọc trên sân khấu quá giống kịch bản soạn sẵn; bản mới này ưu tiên tự nhiên hơn, đổi lại số vòng hỏi-đáp thực tế chưa biết trước):
 
 ```
-/brainstorming Mình muốn build một app demo nhỏ cho các bé học sinh lớp 1 — một phần trong bộ VietTyping, app học tập kết hợp gõ phím cho trẻ em. App demo hôm nay: 1 màn hình đơn giản, không cần đăng nhập, không lưu tiến trình, trẻ em vừa chơi vừa ôn từ vựng tiếng Anh cơ bản kèm gamification (XP, streak, confetti khi hoàn thành). Bạn cứ hỏi mình những câu cần thiết để chốt ý tưởng nhé — kết quả brainstorm này mình sẽ dùng làm prompt cho Stitch để thiết kế giao diện rồi AI Studio để sinh code ngay sau.
+/brainstorming Mình muốn làm một app nhỏ giúp các bé học sinh lớp 1 vừa chơi vừa học, nằm trong bộ VietTyping. Bạn hỏi mình để chốt ý tưởng nhé.
 ```
 
-**Không giới hạn cứng số câu hỏi** (kế hoạch ban đầu "2-3 câu hỏi" đã bị bỏ sau khi tập dượt 1 cho thấy phiên tự do thật sự cần ~8 câu hỏi trước khi Claude trình bày thiết kế lần đầu, rồi thêm một vòng phản hồi/tinh chỉnh nữa để đạt đúng đặc tả mục 5 — tổng ~13 vòng hỏi-đáp, xem mục 10).
+**Không giới hạn cứng số câu hỏi.** Kế hoạch ban đầu "2-3 câu hỏi" đã bị bỏ. Tập dượt 1 (dùng bản prompt chi tiết hơn, xem mục 10) cho ra ~8 câu hỏi trước khi Claude trình bày thiết kế lần đầu, rồi thêm một vòng phản hồi/tinh chỉnh nữa — tổng ~13 vòng. **Số vòng này KHÔNG áp dụng cho bản prompt rút gọn ở trên** vì ít ràng buộc hơn đồng nghĩa Claude nhiều khả năng sẽ hỏi thêm để bù (ví dụ có cần đăng nhập không, giới hạn màn hình...) — cần chạy tập dượt lần 2 với đúng câu prompt rút gọn này để đo lại số vòng và cập nhật khung giờ mục 2 cho chính xác.
 
 **Nguyên tắc nhất quán (quan trọng):** người trình bày đã tự chạy thử phiên brainstorm này trước (mục 7), biết trước các câu hỏi Claude có khả năng hỏi và trả lời đúng như lần tập dượt — để kết quả live hội tụ về đúng spec đã dùng làm input cho Stitch/AI Studio ở bản dự phòng (mục 8). Không ứng biến câu trả lời khác đi. Danh sách câu hỏi/trả lời đầy đủ đã dùng ở tập dượt 1 nằm ở mục 10 — ôn lại trước giờ diễn.
 
