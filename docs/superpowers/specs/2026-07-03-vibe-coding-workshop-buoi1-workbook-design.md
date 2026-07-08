@@ -50,7 +50,7 @@ Mục tiêu buổi 1: live-build lại ý tưởng cốt lõi của VietTyping (
 Gọi **thật** skill `/brainstorming` của Claude trên sân khấu (không phải kịch bản hỏi-đáp giả lập) — để đúng nghĩa "trải nghiệm công cụ AI thực tế". Câu gõ mở đầu — **bản rút gọn tối thiểu, CHƯA kiểm chứng bằng tập dượt** (bản chi tiết đã test ở tập dượt 1 bị thay vì cảm giác đọc trên sân khấu quá giống kịch bản soạn sẵn; bản mới này ưu tiên tự nhiên hơn, đổi lại số vòng hỏi-đáp thực tế chưa biết trước):
 
 ```
-/brainstorming Mình muốn làm một app nhỏ giúp các bé học sinh lớp 1 vừa chơi vừa học, nằm trong bộ VietTyping. Bạn hỏi mình để chốt ý tưởng nhé.
+/brainstorming Mình muốn làm một app nhỏ giúp các bé học sinh lớp 1 vừa chơi vừa học. Bạn hỏi mình để chốt ý tưởng nhé.
 ```
 
 **Không giới hạn cứng số câu hỏi.** Kế hoạch ban đầu "2-3 câu hỏi" đã bị bỏ. Tập dượt 1 (dùng bản prompt chi tiết hơn, xem mục 10) cho ra ~8 câu hỏi trước khi Claude trình bày thiết kế lần đầu, rồi thêm một vòng phản hồi/tinh chỉnh nữa — tổng ~13 vòng. **Số vòng này KHÔNG áp dụng cho bản prompt rút gọn ở trên** vì ít ràng buộc hơn đồng nghĩa Claude nhiều khả năng sẽ hỏi thêm để bù (ví dụ có cần đăng nhập không, giới hạn màn hình...) — cần chạy tập dượt lần 2 với đúng câu prompt rút gọn này để đo lại số vòng và cập nhật khung giờ mục 2 cho chính xác.
