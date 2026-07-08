@@ -24,18 +24,20 @@ Mục tiêu buổi 1: live-build lại ý tưởng cốt lõi của VietTyping (
 
 | Phút | Nội dung |
 |---|---|
-| 0–8 | Vibe Coding là gì, tư duy AI-Native, đặt kỳ vọng cho 60 phút tới |
-| 8–15 | Brainstorm rút gọn — gọi thật skill `/brainstorming` của Claude, tự giới hạn còn 2-3 câu hỏi để chốt nhanh spec app từ vựng |
-| 15–25 | Thiết kế giao diện bằng Stitch MCP, dựa trên spec vừa chốt |
-| 25–35 | Đồng bộ thiết kế từ Stitch sang Google AI Studio, sinh code |
-| 35–40 | Tải source về local, mở bằng editor (dùng bản đã cài đặt sẵn từ lần tập dượt để tránh chờ cài đặt) |
-| 40–50 | Hoàn thiện bằng Claude Code: thêm/chỉnh gamification (XP, streak, confetti) |
-| 50–60 | Demo trực tiếp, mời khán giả xem — có thể rút ngắn nếu các phần trước tràn giờ |
+| 0–6 | Vibe Coding là gì, tư duy AI-Native, đặt kỳ vọng cho 60 phút tới |
+| 6–24 | Brainstorm + tinh chỉnh cùng Claude — gọi thật skill `/brainstorming`, **không giới hạn cứng số câu hỏi** (xem mục 4), đi hết vòng hỏi-đáp đầu tới khi Claude trình bày thiết kế, rồi phản hồi để tinh chỉnh tới khi khớp đặc tả mục 5 |
+| 24–32 | Thiết kế giao diện bằng Stitch, dựa trên spec vừa chốt |
+| 32–40 | Đồng bộ thiết kế từ Stitch sang Google AI Studio, sinh code |
+| 40–44 | Tải source về local, mở bằng editor (dùng bản đã cài đặt sẵn từ lần tập dượt để tránh chờ cài đặt) |
+| 44–54 | Hoàn thiện bằng Claude Code: thêm/chỉnh gamification (XP, confetti) |
+| 54–60 | Demo trực tiếp, mời khán giả xem — có thể rút ngắn nếu các phần trước tràn giờ |
 | +30 | Q&A tự do cùng mentor, bắt đầu đúng giờ đã hẹn dù các phần trước có tràn — **không CTA** |
 
-**Chính sách tràn giờ:** nếu bất kỳ bước nào (đặc biệt là brainstorm ở mục 8–15, vì gọi skill thật không giới hạn cứng thời gian) chạy quá dự kiến, thứ tự cắt giảm là: (1) rút ngắn demo (50–60) trước, (2) giữ nguyên phần build (15–50) vì đó là nơi truyền tải giá trị giáo dục, (3) không bao giờ lùi giờ bắt đầu Q&A.
+**Nguồn của khung giờ mới:** tập dượt lần 1 (07/07/2026, xem mục 10) cho thấy brainstorm + tinh chỉnh thật tốn tới 13 vòng hỏi-đáp, không phải 2-3 như giả định ban đầu. Khung 6–24 (18 phút) là ước tính suy ra từ số vòng đó, **chưa được đo bằng đồng hồ thật** — cần tập dượt lần 2 có bấm giờ để hiệu chỉnh lại con số này trước ngày diễn.
 
-## 3. Talking points — Khám phá (phút 0–8)
+**Chính sách tràn giờ:** nếu bất kỳ bước nào (đặc biệt là brainstorm ở mục 6–24, vì gọi skill thật không giới hạn cứng thời gian) chạy quá dự kiến, thứ tự cắt giảm là: (1) rút ngắn demo (54–60) trước, (2) giữ nguyên phần build (24–54) vì đó là nơi truyền tải giá trị giáo dục, (3) không bao giờ lùi giờ bắt đầu Q&A.
+
+## 3. Talking points — Khám phá (phút 0–6)
 
 - Mở đầu bằng câu hỏi cho khán giả: "Ai đã từng nhờ AI viết giúp một đoạn code chưa?"
 - Vibe Coding: lập trình bằng cách *trò chuyện* với AI để mô tả điều mình muốn, thay vì tự gõ từng dòng cú pháp — AI lo phần "dịch ý tưởng thành code".
@@ -43,11 +45,17 @@ Mục tiêu buổi 1: live-build lại ý tưởng cốt lõi của VietTyping (
 - Nhấn mạnh sẽ thấy **nhiều công cụ AI thực tế phối hợp với nhau**, đúng tinh thần "trải nghiệm các công cụ AI đang được sử dụng trong thực tế": Claude để tư duy & brainstorm, Stitch để thiết kế giao diện, Google AI Studio để sinh code, quay lại Claude Code để hoàn thiện.
 - Đặt kỳ vọng rõ ràng (quản lý rủi ro lệch kỳ vọng): "60 phút tới, mình sẽ dựng **lõi** (core loop) của một app thật đang chạy — VietTyping, một app luyện gõ phím cho trẻ em. Bản đầy đủ có nhiều tháng phát triển với mascot 3D, âm thanh, hàng chục mini-game — hôm nay ta tập trung vào lõi để thấy tốc độ AI mang lại."
 
-## 4. Brainstorm cùng Claude (phút 8–15)
+## 4. Brainstorm cùng Claude (phút 6–24)
 
-Gọi **thật** skill `/brainstorming` của Claude trên sân khấu (không phải kịch bản hỏi-đáp giả lập) — để đúng nghĩa "trải nghiệm công cụ AI thực tế". Ngay câu đầu tiên, báo cho Claude biết đây là phiên rút gọn: chỉ cần tối đa 2-3 câu hỏi rồi chốt thẳng sang thiết kế, không cần đầy đủ các bước của skill.
+Gọi **thật** skill `/brainstorming` của Claude trên sân khấu (không phải kịch bản hỏi-đáp giả lập) — để đúng nghĩa "trải nghiệm công cụ AI thực tế". Câu gõ mở đầu — **đã kiểm chứng ở tập dượt 1, giữ nguyên văn, không ứng biến**:
 
-**Nguyên tắc nhất quán (quan trọng):** người trình bày đã tự chạy thử phiên brainstorm này trước (mục 7), biết trước các câu hỏi Claude có khả năng hỏi và trả lời đúng như lần tập dượt — để kết quả live hội tụ về đúng spec đã dùng làm input cho Stitch/AI Studio ở bản dự phòng (mục 8). Không ứng biến câu trả lời khác đi.
+```
+/brainstorming Mình muốn build một app demo nhỏ cho các bé học sinh lớp 1 — một phần trong bộ VietTyping, app học tập kết hợp gõ phím cho trẻ em. App demo hôm nay: 1 màn hình đơn giản, không cần đăng nhập, không lưu tiến trình, trẻ em vừa chơi vừa ôn từ vựng tiếng Anh cơ bản kèm gamification (XP, streak, confetti khi hoàn thành). Bạn cứ hỏi mình những câu cần thiết để chốt ý tưởng nhé — kết quả brainstorm này mình sẽ dùng làm prompt cho Stitch để thiết kế giao diện rồi AI Studio để sinh code ngay sau.
+```
+
+**Không giới hạn cứng số câu hỏi** (kế hoạch ban đầu "2-3 câu hỏi" đã bị bỏ sau khi tập dượt 1 cho thấy phiên tự do thật sự cần ~8 câu hỏi trước khi Claude trình bày thiết kế lần đầu, rồi thêm một vòng phản hồi/tinh chỉnh nữa để đạt đúng đặc tả mục 5 — tổng ~13 vòng hỏi-đáp, xem mục 10).
+
+**Nguyên tắc nhất quán (quan trọng):** người trình bày đã tự chạy thử phiên brainstorm này trước (mục 7), biết trước các câu hỏi Claude có khả năng hỏi và trả lời đúng như lần tập dượt — để kết quả live hội tụ về đúng spec đã dùng làm input cho Stitch/AI Studio ở bản dự phòng (mục 8). Không ứng biến câu trả lời khác đi. Danh sách câu hỏi/trả lời đầy đủ đã dùng ở tập dượt 1 nằm ở mục 10 — ôn lại trước giờ diễn.
 
 Kết quả mong đợi: hội tụ về đúng đặc tả chức năng ở mục 5.
 
