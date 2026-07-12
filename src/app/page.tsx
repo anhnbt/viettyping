@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Trophy, Flame, Keyboard, ArrowRight, Smile, Menu, X, Gift, Award, Home as HomeIcon, CheckSquare, BookOpen, Users, Gamepad2, TrendingUp, User } from 'lucide-react';
+import { Sparkles, Trophy, Flame, Keyboard, ArrowRight, Smile, Menu, X, Gift, Award, Home as HomeIcon, CheckSquare, BookOpen, Users, Gamepad2, TrendingUp, User, Printer } from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import Logo from '@/components/Logo';
 import DinoMascot from '@/components/DinoMascot';
@@ -144,6 +144,7 @@ export default function Home() {
           { id: 'home', label: 'Trang chủ', icon: <HomeIcon className="w-5 h-5" />, path: '/' },
           { id: 'alphabet-book', label: 'Sách chữ cái', icon: <BookOpen className="w-5 h-5 animate-pulse" />, path: '/alphabet-book' },
           { id: 'writing', label: 'Tập viết chữ', icon: <Award className="w-5 h-5 animate-bounce" />, path: '/writing' },
+          { id: 'worksheet-generator', label: 'In phiếu tập viết', icon: <Printer className="w-5 h-5" />, path: '/writing?tab=generator' },
           { id: 'lesson', label: 'Bài học của bé', icon: <BookOpen className="w-5 h-5" />, path: '/lesson' },
           { id: 'tasks', label: 'Đảo Gõ Phím', icon: <Keyboard className="w-5 h-5" />, path: '/typing' },
           { id: 'shop', label: 'Cửa hàng', icon: <Gift className="w-5 h-5" />, path: '/shop' },

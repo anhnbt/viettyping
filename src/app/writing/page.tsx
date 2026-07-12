@@ -12,6 +12,8 @@ import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
 import DinoMascot from '@/components/DinoMascot';
 import { useWebSpeech } from '@/hooks/useWebSpeech';
+import WorksheetGenerator from './WorksheetGenerator';
+
 
 // Hàm tính khoảng cách từ một điểm P đến một đoạn thẳng AB
 function getDistanceToSegment(p: Point, a: Point, b: Point): number {
@@ -71,6 +73,20 @@ export default function WritingPractice() {
 
   // Trạng thái hiển thị chúc mừng hoàn thành chữ cái
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  // Tab hiện tại ('practice': Bé tập viết chữ, 'generator': In phiếu ô ly)
+  const [activeTab, setActiveTab] = useState<'practice' | 'generator'>('practice');
+
+  // Đọc tab từ URL query param để chuyển tab tự động
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab === 'generator') {
+        setActiveTab('generator');
+      }
+    }
+  }, []);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -453,8 +469,39 @@ export default function WritingPractice() {
         </div>
       </header>
 
-      {/* Main Grid Container */}
-      <div className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
+      {/* Tab Switcher - Neo-brutalism Style */}
+      <div className="bg-[var(--color-surface)] border-b-2 border-[var(--color-foreground)]/10 px-4 md:px-6 py-2 flex gap-4 no-print select-none">
+        <button
+          onClick={() => {
+            playSound('click');
+            setActiveTab('practice');
+          }}
+          className={`px-4 py-2.5 rounded-xl font-black text-sm transition-all border-2 cursor-pointer ${
+            activeTab === 'practice'
+              ? 'bg-[var(--color-primary)] text-white border-[var(--color-foreground)] shadow-[2px_2px_0px_var(--color-foreground)]'
+              : 'border-transparent text-[var(--color-foreground)]/60 hover:text-[var(--color-foreground)]'
+          }`}
+        >
+          ✏️ Bé Tập Viết Trên Bảng
+        </button>
+        <button
+          onClick={() => {
+            playSound('click');
+            setActiveTab('generator');
+          }}
+          className={`px-4 py-2.5 rounded-xl font-black text-sm transition-all border-2 cursor-pointer ${
+            activeTab === 'generator'
+              ? 'bg-[var(--color-primary)] text-white border-[var(--color-foreground)] shadow-[2px_2px_0px_var(--color-foreground)]'
+              : 'border-transparent text-[var(--color-foreground)]/60 hover:text-[var(--color-foreground)]'
+          }`}
+        >
+          📄 In Phiếu Tập Viết (Ô Ly)
+        </button>
+      </div>
+
+      {activeTab === 'practice' ? (
+        /* Main Grid Container */
+        <div className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
         
         {/* CỘT TRÁI: Bảng đen viết phấn (chiếm 7/12 cột) */}
         <div className="lg:col-span-7 flex flex-col items-center justify-center gap-4">
@@ -789,6 +836,12 @@ export default function WritingPractice() {
         </div>
 
       </div>
+      ) : (
+        /* Printable Worksheet Generator */
+        <div className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 relative z-10">
+          <WorksheetGenerator />
+        </div>
+      )}
 
       {/* MODAL CHÚC MỪNG HOÀN THÀNH CHỮ CÁI */}
       <AnimatePresence>

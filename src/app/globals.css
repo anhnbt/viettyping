@@ -1,5 +1,123 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'HP001';
+  src: url('/fonts/HP001_4_hang_normal.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HP001';
+  src: url('/fonts/HP001_4_hang_bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HP001Dashed';
+  src: url('/fonts/HP001TD4H.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'UNITapviet0';
+  src: url('/fonts/UNITapviet_0_ly.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'UNITapviet5';
+  src: url('/fonts/UNITapviet_5_ly.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-hp001 {
+  font-family: 'HP001', var(--font-plus-jakarta-sans), cursive, sans-serif;
+}
+
+.font-hp001-dashed {
+  font-family: 'HP001Dashed', cursive, sans-serif;
+}
+
+.font-unitapviet0 {
+  font-family: 'UNITapviet0', cursive, sans-serif;
+}
+
+.font-unitapviet5 {
+  font-family: 'UNITapviet5', cursive, sans-serif;
+}
+
+/* Print-optimized layout CSS */
+@media print {
+  @page {
+    size: A4;
+    margin: 0mm; /* Loại bỏ tiêu đề, chân trang và lề mặc định của trình duyệt */
+  }
+
+  /* Ẩn hoàn toàn các phần giao diện web không cần in */
+  header, footer, aside, nav, .no-print, button, input, textarea, select {
+    display: none !important;
+  }
+  
+  /* Reset toàn bộ các phần tử bao bọc bên ngoài để không chiếm diện tích */
+  html, body, main, div:not(.print-container):not(.print-area):not(.no-print), section:not(.no-print) {
+    background: transparent !important;
+    background-color: transparent !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    transform: none !important;
+    display: block !important; /* Tránh Flexbox/Grid làm vỡ trang khi in */
+  }
+
+  /* Chỉ hiển thị và tối ưu hóa khung giấy in A4 */
+  .print-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: start !important;
+    width: 210mm !important; /* Khổ rộng A4 chuẩn */
+    min-height: 297mm !important; /* Chiều cao tối thiểu 1 trang A4 */
+    margin: 0 auto !important; /* Căn giữa */
+    padding: 15mm !important; /* Căn lề giấy in */
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+    break-after: avoid !important;
+    break-before: avoid !important;
+  }
+  
+  /* Khống chế phần thân in ấn */
+  .print-area {
+    display: block !important;
+    width: 100% !important;
+  }
+  
+  /* Bắt buộc in màu nền/hình nền lưới ô ly */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+
 :root, [data-theme="dino"] {
   --color-background: #fdfbf7; /* Soft Cream */
   --color-foreground: #231a11; /* Deep Charcoal-Brown */
