@@ -157,8 +157,16 @@ dist
 - [ ] **Step 7: Create `src/setupTests.ts`**
 
 ```ts
+import { afterEach } from "vitest";
+import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
+
+afterEach(() => {
+  cleanup();
+});
 ```
+
+(`globals: true` is intentionally off in `vite.config.ts`, so Testing Library's automatic cleanup-after-each-test never registers unless it's wired explicitly here — without this, a second `render()` in the same test file leaves stale DOM nodes from the previous test, causing "multiple elements found" failures.)
 
 - [ ] **Step 8: Create `src/App.tsx`** (placeholder — Task 8 replaces the body with the real game screen)
 
@@ -868,7 +876,7 @@ git commit -m "feat: add CompletionModal with confetti and restart"
 
 `src/components/GameScreen.test.tsx`:
 ```tsx
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GameScreen } from "./GameScreen";
 import * as deck from "../game/deck";
@@ -946,13 +954,14 @@ describe("GameScreen", () => {
       );
     }
 
-    expect(
-      screen.getByRole("dialog", { name: "Hoàn thành lượt chơi" })
-    ).toBeInTheDocument();
-    expect(screen.getByText(/50/)).toBeInTheDocument();
+    const dialog = screen.getByRole("dialog", { name: "Hoàn thành lượt chơi" });
+    expect(dialog).toBeInTheDocument();
+    expect(within(dialog).getByText(/50/)).toBeInTheDocument();
   });
 });
 ```
+
+(The header keeps showing `{xp} XP` even after the round completes, so a bare `screen.getByText(/50/)` matches both the header and the modal — scope the query to the dialog with `within`.)
 
 - [ ] **Step 2: Run test to verify it fails**
 
