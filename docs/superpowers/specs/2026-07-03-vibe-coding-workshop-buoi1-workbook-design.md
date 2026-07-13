@@ -18,7 +18,7 @@ Ba cam kết cụ thể của buổi (theo mô tả sự kiện):
 
 Mục tiêu buổi 1: live-build lại ý tưởng cốt lõi của VietTyping (app luyện gõ phím cho trẻ em) **từ con số 0**, trong 60 phút, trước khán giả trình độ hỗn hợp (mới học lập trình → đã biết code cơ bản → có kinh nghiệm). Khán giả quan sát (không hands-on). Sản phẩm không cần đầy đủ tính năng như bản gốc — chỉ cần chứng minh vòng lặp "ý tưởng → sản phẩm chạy được" bằng AI là có thật, và cho thấy nhiều công cụ AI thực tế phối hợp với nhau (không chỉ một công cụ duy nhất).
 
-**Toolchain trình diễn:** Claude (brainstorm) → Stitch MCP (thiết kế giao diện) → Google AI Studio (đồng bộ thiết kế, sinh code) → tải source về local → Claude Code (hoàn thiện, thêm gamification).
+**Toolchain trình diễn:** Claude, dùng skill mở nguồn `/brainstorming` (bộ [obra/superpowers](https://github.com/obra/superpowers)) → Stitch (thiết kế giao diện) → Google AI Studio (đồng bộ thiết kế, sinh code) → tải source về local → Claude Code, dùng skill `/writing-plans` + `/executing-plans` (cùng bộ obra/superpowers) để hoàn thiện gamification.
 
 ## 2. Khung thời gian (60 phút build + 30 phút Q&A)
 
@@ -29,7 +29,7 @@ Mục tiêu buổi 1: live-build lại ý tưởng cốt lõi của VietTyping (
 | 24–32 | Thiết kế giao diện bằng Stitch, dựa trên spec vừa chốt |
 | 32–40 | Đồng bộ thiết kế từ Stitch sang Google AI Studio, sinh code |
 | 40–44 | Tải source về local, mở bằng editor (dùng bản đã cài đặt sẵn từ lần tập dượt để tránh chờ cài đặt) |
-| 44–54 | Hoàn thiện bằng Claude Code: thêm/chỉnh gamification (XP, confetti) |
+| 44–54 | Hoàn thiện bằng Claude Code: gọi `/writing-plans` để tạo plan ngắn, rồi `/executing-plans` để thực thi thêm/chỉnh gamification (XP, confetti) — xem mục 6. **Thời lượng 10 phút chưa được kiểm chứng, chưa tập dượt bước này.** |
 | 54–60 | Demo trực tiếp, mời khán giả xem — có thể rút ngắn nếu các phần trước tràn giờ |
 | +30 | Q&A tự do cùng mentor, bắt đầu đúng giờ đã hẹn dù các phần trước có tràn — **không CTA** |
 
@@ -44,6 +44,7 @@ Mục tiêu buổi 1: live-build lại ý tưởng cốt lõi của VietTyping (
 - Tư duy AI-Native: kỹ năng quan trọng nhất không còn là "thuộc cú pháp" mà là biết đặt câu hỏi đúng, biết đọc/review kết quả AI đưa ra, và biết lặp lại nhanh khi chưa đúng ý.
 - Nhấn mạnh sẽ thấy **nhiều công cụ AI thực tế phối hợp với nhau**, đúng tinh thần "trải nghiệm các công cụ AI đang được sử dụng trong thực tế": Claude để tư duy & brainstorm, Stitch để thiết kế giao diện, Google AI Studio để sinh code, quay lại Claude Code để hoàn thiện.
 - Đặt kỳ vọng rõ ràng (quản lý rủi ro lệch kỳ vọng): "60 phút tới, mình sẽ dựng **lõi** (core loop) của một app thật đang chạy — VietTyping, một app luyện gõ phím cho trẻ em. Bản đầy đủ có nhiều tháng phát triển với mascot 3D, âm thanh, hàng chục mini-game — hôm nay ta tập trung vào lõi để thấy tốc độ AI mang lại."
+- **Ghi nhận nguồn (khớp trụ cột "Cơ hội" ở mục 1):** các skill dùng hôm nay không phải nội bộ tự chế — `/brainstorming`, `/writing-plans`, `/executing-plans` đến từ bộ mở nguồn [obra/superpowers](https://github.com/obra/superpowers); riêng bước lên kịch bản cho chính buổi workshop này, người trình bày đã dùng thêm skill `/grill-me` của [mattpocock](https://www.skills.sh/mattpocock/skills/grill-me) (không nằm trong live demo, chỉ dùng ở khâu chuẩn bị). Khán giả có thể tự cài và dùng ngay sau buổi — đây chính là "cơ hội" cụ thể mang về, không chỉ xem trình diễn.
 
 ## 4. Brainstorm cùng Claude (phút 6–24)
 
@@ -84,6 +85,7 @@ Mỗi minigame hoàn thành → confetti + tổng XP + nút "Chơi lại"/"Về 
 - **Các bước "chờ đợi/cơ học" được rút gọn bằng bản pre-bake:** cài đặt dependencies, tải file, mở project lần đầu — dùng bản đã chuẩn bị sẵn từ lần tập dượt thay vì chờ live.
 - **Prompt live phải giống hệt prompt đã dùng khi tập dượt** — không ứng biến — để nếu cần chuyển sang bản dự phòng giữa chừng, không bị lệch tông với những gì vừa trình bày.
 - **Đăng nhập tài khoản Google (Stitch, AI Studio) và giữ phiên còn hiệu lực trước giờ diễn** — tránh rủi ro màn hình đăng nhập/xác thực xuất hiện giữa lúc live.
+- **Bước hoàn thiện bằng Claude Code (phút 44–54) dùng đúng quy trình chuẩn obra/superpowers:** gọi `/writing-plans` trên source vừa tải về để tạo 1 plan ngắn cho phần gamification (XP, confetti) cần thêm/chỉnh, rồi gọi `/executing-plans` để thực thi plan đó — không tự sửa code tùy hứng ngoài quy trình 2 skill này, để đúng tinh thần "trải nghiệm công cụ AI thực tế" đã nêu ở mục 3. **Bước này chưa được tập dượt** — thời lượng, số bước trong plan, và việc plan có chạy trôi chảy với source do AI Studio sinh ra hay không đều còn là ẩn số, cần tập dượt lần 2 để kiểm chứng.
 
 ## 7. Chuẩn bị trước giờ (không làm trên sân khấu)
 
@@ -110,6 +112,7 @@ Mỗi minigame hoàn thành → confetti + tổng XP + nút "Chơi lại"/"Về 
 | Brainstorm dùng skill thật tràn giờ | Cao (đã chấp nhận) | Cắt vào phần demo trước, giữ nguyên build và giờ Q&A (mục 2) |
 | Khán giả so sánh với bản VietTyping đầy đủ, thấy bản demo "đơn giản hơn" | Trung bình | Nói rõ phạm vi ngay từ phút đầu (mục 3) |
 | Nội dung "gõ từ vựng cho trẻ" có thể thiếu "wow" với người đã biết code | Thấp–Trung bình | Gamification (XP/streak/confetti) đã bù một phần; có thể thêm 1 chi tiết bất ngờ nhỏ nếu còn thời gian dư |
+| `/writing-plans` + `/executing-plans` ở bước Claude Code (phút 44–54) chưa từng tập dượt — có thể tốn nhiều/ít hơn 10 phút, hoặc plan không khớp trôi chảy với source do AI Studio sinh ra | Trung bình (chưa kiểm chứng) | Tập dượt lần 2 phải chạy hết bước này để đo thời gian thật; nếu không kịp tập dượt trước giờ diễn, cân nhắc bỏ qua writing-plans/executing-plans và để Claude Code sửa tự do như phương án dự phòng |
 
 ## 10. Nhật ký tập dượt
 
