@@ -1,3 +1,5 @@
+
+
 # VietTyping - Luyện Gõ Phím Đa Môn Học Cho Học Sinh Lớp 1
 
 Một ứng dụng web tương tác được thiết kế chuyên biệt để giúp trẻ em (đặc biệt là học sinh lớp 1) rèn luyện kỹ năng **gõ phím máy tính**, đồng thời ôn tập và tiếp thu kiến thức của **tất cả các môn học cơ bản** một cách thú vị và hiệu quả.
@@ -51,7 +53,7 @@ Toàn bộ hệ thống bài học và mini-game được tối ưu hóa cho tha
 
 ```bash
 # Clone repository
-git clone [repository-url]
+git clone https://github.com/anhnbt/viettyping.git
 
 # Di chuyển vào thư mục dự án
 cd viettyping
@@ -160,4 +162,3 @@ Nếu bạn có thắc mắc hoặc đề xuất, vui lòng tạo issue trên Gi
 ---
 
 **Chúc các bé học tập vui vẻ và hiệu quả! 🎉**
-
