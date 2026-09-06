@@ -141,13 +141,19 @@ export async function POST(
       avgAccuracy = Math.round((avgAccuracy * (totalLessons - 1) + accuracy) / totalLessons);
 
       // d. Kiểm tra điều kiện mở khóa Huy hiệu (Badges)
-      if (score === 100) badgesToUnlock.add("accuracy_100");
+      if (score === 100 || accuracy === 100) badgesToUnlock.add("accuracy_100");
+      if (wpm > 0 && wpm < 10) badgesToUnlock.add("speed_turtle");
+      if (wpm >= 10 && wpm < 25) badgesToUnlock.add("speed_bunny");
+      if (wpm >= 25) badgesToUnlock.add("speed_leopard");
       if (wpm >= 10) badgesToUnlock.add("speed_10");
       if (wpm >= 20) badgesToUnlock.add("speed_20");
       if (wpm >= 30) badgesToUnlock.add("speed_30");
       if (wpm >= 40) badgesToUnlock.add("speed_40");
       if (wpm >= 50) badgesToUnlock.add("speed_50");
+      if (totalLessons >= 1) badgesToUnlock.add("first_lesson");
       if (lessonId === "turtle_rescue") badgesToUnlock.add("turtle_rescue");
+      if (lessonId === "matching_game") badgesToUnlock.add("game_matching");
+      if (lessonId === "mouse_practice") badgesToUnlock.add("practice_master");
 
       // e. Tính toán Daily Streak phía máy chủ theo múi giờ địa phương của trẻ
       const streakResult = calculateStreak(currentStreak, lastActiveDate, timestamp, timezone);

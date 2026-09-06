@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSound } from '@/contexts/SoundContext';
+import { useStudent } from '@/contexts/StudentContext';
 import { useWebSpeech } from '@/hooks/useWebSpeech';
 import { 
   Monitor, 
@@ -46,6 +47,7 @@ interface DeviceQuestion {
 export default function MousePracticeGame({ onComplete }: MousePracticeGameProps) {
   const [step, setStep] = useState<StepType>('welcome');
   const { playSound, playAudio } = useSound();
+  const { unlockBadge } = useStudent();
   const { speak: speakTts, stopSpeaking } = useWebSpeech({ lang: 'vi-VN' });
   
   // Telemetry
@@ -199,8 +201,9 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
   useEffect(() => {
     if (step === 'finish') {
       playAudio('/audio/tuyet-voi-ong-mat-troi-be-da-hoan-thanh-xuat-sac-tat-ca-cac-bai-luyen-tap-roi-do.wav');
+      unlockBadge('practice_master');
     }
-  }, [step, playAudio]);
+  }, [step, playAudio, unlockBadge]);
 
   // Xử lý khi bắt đầu học
   const startLearning = () => {
@@ -283,6 +286,7 @@ export default function MousePracticeGame({ onComplete }: MousePracticeGameProps
             if (newCount >= bubbles.length) {
               // Phát âm thanh giọng chúc mừng hoàn thành bong bóng
               playAudio('/audio/tuyet-voi-be-da-lam-vo-toan-bo-bong-bong-roi.wav');
+              unlockBadge('game_bubble');
               setTimeout(() => {
                 playSound('complete');
                 setStep('click');

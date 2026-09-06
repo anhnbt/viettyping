@@ -4,6 +4,7 @@ import { IoTimeOutline, IoRefreshOutline, IoWarning, IoSpeedometerOutline, IoChe
 import { Keyboard } from 'lucide-react';
 import { useTypingSound } from '@/hooks/useTypingSound';
 import { useSound } from '@/contexts/SoundContext';
+import { useStudent } from '@/contexts/StudentContext';
 import VirtualKeyboard from './VirtualKeyboard';
 import { TelemetryPayload } from '@/types/lesson';
 import { stringToTelexKeys, buildCharMappings, validateInput, getNextHighlightKey, getCharColorStates } from '@/utils/telex';
@@ -96,6 +97,7 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
   const wrongSoundTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const { playCorrectSound, playWrongSound } = useTypingSound();
   const { playAudio, stopAudio, playSound } = useSound();
+  const { unlockBadge } = useStudent();
 
   // Tự động ẩn bàn phím ảo trên màn hình có chiều cao thấp
   useEffect(() => {
@@ -111,26 +113,33 @@ export default function TypingPractice({ task, onComplete, onStatsChange, hideSt
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Phát âm thanh tiếng Việt khi hoàn thành bài tập luyện gõ
+  // Phát âm thanh tiếng Việt và mở khóa huy hiệu khi hoàn thành bài tập luyện gõ
   useEffect(() => {
     if (showSuccessModal && finalStats) {
-      // 1. Phát âm thanh "Quá xuất sắc bé ơi!"
+      // 1. Phát âm thanh "Quá xuất sắc bé ơi!" và mở khóa huy hiệu
       playAudio('/audio/xuat_sac.wav');
+      unlockBadge('first_lesson');
+      if (finalStats.accuracy === 100) {
+        unlockBadge('accuracy_100');
+      }
 
-      // 2. Sau 1.5 giây, phát âm thanh nhận xét về tốc độ gõ (Rùa, Thỏ, Báo)
+      // 2. Sau 1.5 giây, phát âm thanh nhận xét về tốc độ gõ (Rùa, Thỏ, Báo) và mở khóa huy hiệu
       const timer = setTimeout(() => {
         if (finalStats.wpm < 10) {
           playAudio('/audio/be-go-cham-rai-va-rat-can-than-nhu-chu-rua-dang-yeu.wav');
+          unlockBadge('speed_turtle');
         } else if (finalStats.wpm < 25) {
           playAudio('/audio/be-go-nhip-nhang-va-nhanh-nhen-nhu-chu-tho-tinh-nghich.wav');
+          unlockBadge('speed_bunny');
         } else {
           playAudio('/audio/be-go-sieu-toc-do-nhu-chu-bao-dung-manh.wav');
+          unlockBadge('speed_leopard');
         }
       }, 1500);
 
       return () => clearTimeout(timer);
     }
-  }, [showSuccessModal, finalStats, playAudio]);
+  }, [showSuccessModal, finalStats, playAudio, unlockBadge]);
 
   const targetTelexKeys = useMemo(() => stringToTelexKeys(task.content), [task.content]);
   const charMappings = useMemo(() => buildCharMappings(task.content), [task.content]);

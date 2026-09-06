@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { GameAdapterProps, TelemetryPayload, MatchingGameItem } from "@/types/lesson";
 import { useSound } from "@/contexts/SoundContext";
+import { useStudent } from "@/contexts/StudentContext";
 
 export interface MappedMatchingItem {
   word: string;
@@ -126,6 +127,7 @@ function DroppableSlot({
 export default function MatchingGame({ gameConfig, flashcards = [], onComplete }: GameAdapterProps<MatchingGameItem>) {
   const { id: gameId, items: rawItems } = gameConfig;
   const { playSound, playAudio } = useSound();
+  const { unlockBadge } = useStudent();
   const [matches, setMatches] = useState<Record<string, string>>({}); // Slot ID -> Word ID
   const [unmatchedWords, setUnmatchedWords] = useState<string[]>([]);
   const [errorSlot, setErrorSlot] = useState<string | null>(null);
@@ -191,6 +193,7 @@ export default function MatchingGame({ gameConfig, flashcards = [], onComplete }
         if (unmatchedWords.length === 1) {
           // Phát âm thanh giọng nói chúc mừng ghép đúng toàn bộ
           playAudio('/audio/tuyet-voi-ban-da-ghep-dung-het.wav');
+          unlockBadge('game_matching');
 
           // Add a small delay so user can see the final match effect before completing
           setTimeout(() => {

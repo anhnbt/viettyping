@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Trophy, Flame, Crown, Sparkles, Medal, Play, Calendar, Zap, Heart, Lock } from 'lucide-react';
+import { ArrowLeft, Trophy, Flame, Crown, Sparkles, Medal, Play, Calendar, Zap, Heart, Lock, Volume2 } from 'lucide-react';
 import { useSound } from '@/contexts/SoundContext';
 import { useStudent } from '@/contexts/StudentContext';
 import { LeaderboardUser } from '@/data/leaderboard';
+import { ANIMAL_SPEED_BADGES, ACHIEVEMENT_BADGES } from '@/data/badges';
 import { supabase } from '@/utils/supabase';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 
@@ -17,7 +18,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export default function LeaderboardPage() {
   const router = useRouter();
-  const { playSound } = useSound();
+  const { playSound, playAudio } = useSound();
   const { studentInfo } = useStudent();
   
   const [activeTab, setActiveTab] = useState<'weekly' | 'alltime'>('weekly');
@@ -34,13 +35,7 @@ export default function LeaderboardPage() {
   const [completedCount, setCompletedCount] = useState<number>(0);
   const [hasAccuracyBadge, setHasAccuracyBadge] = useState<boolean>(false);
   const [hasTurtleBadge, setHasTurtleBadge] = useState<boolean>(false);
-  
-  // 5 mốc tốc độ gõ phím
-  const [hasSpeed10, setHasSpeed10] = useState<boolean>(false);
-  const [hasSpeed20, setHasSpeed20] = useState<boolean>(false);
-  const [hasSpeed30, setHasSpeed30] = useState<boolean>(false);
-  const [hasSpeed40, setHasSpeed40] = useState<boolean>(false);
-  const [hasSpeed50, setHasSpeed50] = useState<boolean>(false);
+  const [unlockedMap, setUnlockedMap] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setIsMounted(true);
@@ -59,12 +54,18 @@ export default function LeaderboardPage() {
       setHasAccuracyBadge(localStorage.getItem('viettyping_badge_accuracy_100') === 'true');
       setHasTurtleBadge(localStorage.getItem('viettyping_badge_turtle_rescue') === 'true');
       
-      // Load các cờ mốc tốc độ gõ
-      setHasSpeed10(localStorage.getItem('viettyping_badge_speed_10') === 'true');
-      setHasSpeed20(localStorage.getItem('viettyping_badge_speed_20') === 'true');
-      setHasSpeed30(localStorage.getItem('viettyping_badge_speed_30') === 'true');
-      setHasSpeed40(localStorage.getItem('viettyping_badge_speed_40') === 'true');
-      setHasSpeed50(localStorage.getItem('viettyping_badge_speed_50') === 'true');
+      // Load tất cả các cờ huy hiệu
+      const keys = [
+        'speed_turtle', 'speed_bunny', 'speed_leopard',
+        'speed_10', 'speed_20', 'speed_30', 'speed_40', 'speed_50',
+        'first_lesson', 'accuracy_100', 'streak_3', 'turtle_rescue',
+        'game_matching', 'game_bubble', 'practice_master'
+      ];
+      const map: Record<string, boolean> = {};
+      keys.forEach((k) => {
+        map[k] = localStorage.getItem(`viettyping_badge_${k}`) === 'true';
+      });
+      setUnlockedMap(map);
 
       // Check user session
       supabase.auth.getSession().then(({ data: { session } }) => {
@@ -86,7 +87,6 @@ export default function LeaderboardPage() {
           .select('id, nickname, avatar, xp, streak');
 
         if (activeTab === 'weekly') {
-          // Lấy các bé hoạt động trong 7 ngày gần nhất
           const sevenDaysAgo = new Date();
           sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
           query = query.gte('updated_at', sevenDaysAgo.toISOString());
@@ -98,21 +98,21 @@ export default function LeaderboardPage() {
 
         if (error) throw error;
 
-        // Nếu bảng xếp hạng tuần rỗng (chưa có ai active trong 7 ngày), fallback lấy top chung
-        if (activeTab === 'weekly' && (!data || data.length === 0)) {
-          const { data: fallbackData, error: fallbackError } = await supabase
-            .from('student_profiles')
-            .select('id, nickname, avatar, xp, streak')
-            .order('xp', { ascending: false })
-            .limit(20);
-
-          if (fallbackError) throw fallbackError;
-          setLeaderboardData((fallbackData || []) as LeaderboardUser[]);
+        if (data && data.length > 0) {
+          const mappedUsers: LeaderboardUser[] = data.map((u, index) => ({
+            id: u.id,
+            nickname: u.nickname || 'Bạn Nhỏ',
+            avatar: u.avatar || '🦁',
+            xp: u.xp || 0,
+            streak: u.streak || 0,
+            rank: index + 1
+          }));
+          setLeaderboardData(mappedUsers);
         } else {
-          setLeaderboardData((data || []) as LeaderboardUser[]);
+          setLeaderboardData([]);
         }
       } catch (err) {
-        console.error('Lỗi khi fetch bảng xếp hạng từ Supabase:', err);
+        console.error('Lỗi khi tải bảng xếp hạng:', err);
       } finally {
         setIsLoading(false);
       }
@@ -122,89 +122,31 @@ export default function LeaderboardPage() {
       fetchLeaderboard();
     }
   }, [activeTab, isMounted]);
-
-  const speedBadges = [
-    {
-      id: 'speed_10',
-      wpm: 10,
-      name: 'Ốc Sên Nhỏ Nhẹ',
-      emoji: '🐌',
-      desc: 'Đạt tốc độ gõ trên 10 WPM',
-      unlocked: hasSpeed10,
-      color: 'bg-orange-50 border-orange-300 text-orange-850 shadow-orange-100'
-    },
-    {
-      id: 'speed_20',
-      wpm: 20,
-      name: 'Thỏ Con Nhanh Nhảu',
-      emoji: '🐰',
-      desc: 'Đạt tốc độ gõ trên 20 WPM',
-      unlocked: hasSpeed20,
-      color: 'bg-green-50 border-green-300 text-green-850 shadow-green-100'
-    },
-    {
-      id: 'speed_30',
-      wpm: 30,
-      name: 'Sóc Nhỏ Siêu Tốc',
-      emoji: '🐿️',
-      desc: 'Đạt tốc độ gõ trên 30 WPM',
-      unlocked: hasSpeed30,
-      color: 'bg-purple-50 border-purple-300 text-purple-850 shadow-purple-100'
-    },
-    {
-      id: 'speed_40',
-      wpm: 40,
-      name: 'Báo Gấm Bay Lượn',
-      emoji: '🐆',
-      desc: 'Đạt tốc độ gõ trên 40 WPM',
-      unlocked: hasSpeed40,
-      color: 'bg-rose-50 border-rose-300 text-rose-850 shadow-rose-100'
-    },
-    {
-      id: 'speed_50',
-      wpm: 50,
-      name: 'Tên Lửa Vũ Trụ',
-      emoji: '🚀',
-      desc: 'Đạt tốc độ gõ trên 50 WPM',
-      unlocked: hasSpeed50,
-      color: 'bg-sky-50 border-sky-300 text-sky-850 shadow-sky-100'
+  const speedBadges = ANIMAL_SPEED_BADGES.map((badge) => {
+    let unlocked = unlockedMap[badge.id] || false;
+    if (badge.id === 'speed_turtle') {
+      unlocked = unlocked || userWpm > 0;
+    } else if (badge.id === 'speed_bunny') {
+      unlocked = unlocked || userWpm >= 10 || unlockedMap['speed_10'] || unlockedMap['speed_20'];
+    } else if (badge.id === 'speed_leopard') {
+      unlocked = unlocked || userWpm >= 25 || unlockedMap['speed_30'] || unlockedMap['speed_40'] || unlockedMap['speed_50'];
     }
-  ];
+    return { ...badge, unlocked };
+  });
 
-  const achievementBadges = [
-    {
-      id: 'explore',
-      name: 'Khám Phá',
-      emoji: '🦖',
-      desc: 'Hoàn thành bài luyện gõ đầu tiên',
-      unlocked: completedCount >= 1,
-      color: 'bg-emerald-50 border-emerald-300 text-emerald-850 shadow-emerald-100'
-    },
-    {
-      id: 'accuracy',
-      name: 'Chính Xác',
-      emoji: '🎯',
-      desc: 'Gõ chuẩn xác 100% trong bài tập',
-      unlocked: hasAccuracyBadge,
-      color: 'bg-pink-50 border-pink-300 text-pink-850 shadow-pink-100'
-    },
-    {
-      id: 'streak',
-      name: 'Chăm Chỉ',
-      emoji: '🔥',
-      desc: 'Chuỗi học tập đạt từ 3 ngày',
-      unlocked: userStreak >= 3,
-      color: 'bg-amber-50 border-amber-300 text-amber-850 shadow-amber-100'
-    },
-    {
-      id: 'rescue',
-      name: 'Hiệp Sĩ Rùa',
-      emoji: '🐢',
-      desc: 'Giải cứu thành công Rùa con',
-      unlocked: hasTurtleBadge,
-      color: 'bg-sky-50 border-sky-300 text-sky-850 shadow-sky-100'
+  const achievementBadges = ACHIEVEMENT_BADGES.map((badge) => {
+    let unlocked = unlockedMap[badge.id] || false;
+    if (badge.id === 'first_lesson') {
+      unlocked = unlocked || completedCount >= 1;
+    } else if (badge.id === 'accuracy_100') {
+      unlocked = unlocked || hasAccuracyBadge || userAccuracy === 100;
+    } else if (badge.id === 'streak_3') {
+      unlocked = unlocked || userStreak >= 3;
+    } else if (badge.id === 'turtle_rescue') {
+      unlocked = unlocked || hasTurtleBadge;
     }
-  ];
+    return { ...badge, unlocked };
+  });
 
   const handleBack = () => {
     playSound('click');
@@ -520,29 +462,35 @@ export default function LeaderboardPage() {
               <span>Hành Trình Tốc Độ (WPM)</span>
               <span className="text-[10px] md:text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full border border-indigo-200 font-extrabold uppercase tracking-wider">Bé gõ càng nhanh, huy hiệu càng xịn!</span>
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {speedBadges.map((badge) => (
                 <div 
                   key={badge.id}
-                  className={`border-3 border-slate-850 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center transition-all min-h-[160px] ${
+                  onClick={() => {
+                    if (badge.unlocked && badge.audioFile) {
+                      playSound('click');
+                      playAudio(badge.audioFile);
+                    }
+                  }}
+                  className={`border-3 border-slate-850 rounded-2xl p-4 flex flex-col items-center justify-between text-center transition-all min-h-[170px] select-none ${
                     badge.unlocked 
-                      ? `${badge.color} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] hover:scale-103` 
-                      : 'bg-slate-100/70 border-slate-300 text-slate-400 opacity-60'
+                      ? `${badge.color} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] hover:scale-102 active:translate-y-1 cursor-pointer` 
+                      : 'bg-slate-100/70 border-slate-300 text-slate-400 opacity-60 cursor-not-allowed'
                   }`}
                   title={badge.desc}
                 >
                   {/* Thumbnail Huy hiệu tròn chứa số WPM to ở chính giữa */}
-                  <div className="relative w-16 h-16 md:w-20 md:h-20 flex flex-col items-center justify-center rounded-full border-4 border-slate-850 bg-white shadow-inner mb-3">
+                  <div className="relative w-18 h-18 md:w-20 md:h-20 flex flex-col items-center justify-center rounded-full border-4 border-slate-850 bg-white shadow-inner mb-2">
                     {/* Số WPM to chính giữa */}
                     <span className={`text-2xl md:text-3xl font-black leading-none ${badge.unlocked ? 'text-slate-900' : 'text-slate-400 grayscale'}`}>
-                      {badge.wpm}
+                      {badge.wpmRequirement}
                     </span>
                     <span className={`text-[8px] font-black tracking-wider uppercase leading-none mt-0.5 ${badge.unlocked ? 'text-indigo-600' : 'text-slate-400'}`}>
                       WPM
                     </span>
                     
                     {/* Con vật nhỏ đính kèm góc dưới bên phải */}
-                    <span className={`absolute -bottom-1 -right-1 text-xl md:text-2xl select-none transition-transform ${badge.unlocked ? 'animate-pulse' : 'grayscale opacity-60'}`}>
+                    <span className={`absolute -bottom-1 -right-1 text-2xl md:text-3xl select-none transition-transform ${badge.unlocked ? 'animate-bounce' : 'grayscale opacity-60'}`}>
                       {badge.emoji}
                     </span>
                     
@@ -555,12 +503,18 @@ export default function LeaderboardPage() {
                   </div>
                   
                   <div>
-                    <h4 className="font-black text-xs text-slate-850 leading-tight mb-1">
+                    <h4 className="font-black text-sm text-slate-850 leading-tight mb-1">
                       {badge.name}
                     </h4>
-                    <p className="text-[10px] font-bold text-slate-500 leading-tight leading-relaxed max-w-[110px] mx-auto">
+                    <p className="text-[11px] font-bold text-slate-500 leading-tight max-w-[180px] mx-auto">
                       {badge.desc}
                     </p>
+                    {badge.unlocked && badge.audioFile && (
+                      <div className="mt-2.5 inline-flex items-center gap-1 text-[10px] font-black text-indigo-700 bg-white/90 px-2.5 py-0.5 rounded-full border border-indigo-200 shadow-xs">
+                        <Volume2 className="w-3 h-3 text-indigo-600 animate-pulse" />
+                        <span>Chạm để nghe cô khen 🔊</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -578,15 +532,21 @@ export default function LeaderboardPage() {
               {achievementBadges.map((badge) => (
                 <div 
                   key={badge.id}
-                  className={`border-3 border-slate-850 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center transition-all min-h-[140px] ${
+                  onClick={() => {
+                    if (badge.unlocked && badge.audioFile) {
+                      playSound('click');
+                      playAudio(badge.audioFile);
+                    }
+                  }}
+                  className={`border-3 border-slate-850 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center transition-all min-h-[150px] select-none ${
                     badge.unlocked 
-                      ? `${badge.color} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] hover:scale-103` 
-                      : 'bg-slate-100/70 border-slate-300 text-slate-400 opacity-60'
+                      ? `${badge.color} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] hover:scale-102 active:translate-y-1 cursor-pointer` 
+                      : 'bg-slate-100/70 border-slate-300 text-slate-400 opacity-60 cursor-not-allowed'
                   }`}
                   title={badge.desc}
                 >
                   <div className="relative">
-                    <span className={`text-4.5xl inline-block mb-2 ${badge.unlocked ? 'animate-bounce' : 'grayscale'}`}>
+                    <span className={`text-4xl inline-block mb-1 ${badge.unlocked ? 'animate-bounce' : 'grayscale'}`}>
                       {badge.emoji}
                     </span>
                     {!badge.unlocked && (
@@ -600,9 +560,15 @@ export default function LeaderboardPage() {
                     <h4 className="font-black text-xs text-slate-850 leading-tight mb-1">
                       {badge.name}
                     </h4>
-                    <p className="text-[10px] font-bold text-slate-500 leading-tight leading-relaxed max-w-[110px] mx-auto">
+                    <p className="text-[10px] font-bold text-slate-500 leading-tight max-w-[120px] mx-auto">
                       {badge.desc}
                     </p>
+                    {badge.unlocked && badge.audioFile && (
+                      <div className="mt-1.5 inline-flex items-center gap-1 text-[9px] font-black text-pink-700 bg-white/90 px-2 py-0.5 rounded-full border border-pink-200 shadow-xs">
+                        <Volume2 className="w-2.5 h-2.5 text-pink-600" />
+                        <span>Nghe cô khen</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

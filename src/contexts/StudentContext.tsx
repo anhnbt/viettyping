@@ -526,13 +526,17 @@ export function StudentProvider({ children }: { children: ReactNode }) {
       setAvgAccuracy(newAvgAcc);
 
       // Mở khóa các Badge cục bộ
-      if (score === 100) localStorage.setItem("viettyping_badge_accuracy_100", "true");
+      if (score === 100 || accuracy === 100) localStorage.setItem("viettyping_badge_accuracy_100", "true");
+      if (wpm > 0 && wpm < 10) localStorage.setItem("viettyping_badge_speed_turtle", "true");
+      if (wpm >= 10 && wpm < 25) localStorage.setItem("viettyping_badge_speed_bunny", "true");
+      if (wpm >= 25) localStorage.setItem("viettyping_badge_speed_leopard", "true");
       if (wpm >= 10) localStorage.setItem("viettyping_badge_speed_10", "true");
       if (wpm >= 20) localStorage.setItem("viettyping_badge_speed_20", "true");
       if (wpm >= 30) localStorage.setItem("viettyping_badge_speed_30", "true");
       if (wpm >= 40) localStorage.setItem("viettyping_badge_speed_40", "true");
       if (wpm >= 50) localStorage.setItem("viettyping_badge_speed_50", "true");
       if (lessonId === "turtle_rescue") localStorage.setItem("viettyping_badge_turtle_rescue", "true");
+      localStorage.setItem("viettyping_badge_first_lesson", "true");
 
       // 3. Kích hoạt đồng bộ hóa ngầm
       setTimeout(() => {
