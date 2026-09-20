@@ -2,90 +2,94 @@
 
 import React from 'react';
 import { useStudent } from '@/contexts/StudentContext';
+import { InteractiveMascot, MascotReaction } from './InteractiveMascot';
 
-interface DinoMascotProps {
+export interface DinoMascotProps {
   className?: string;
   variant?: 'cheer' | 'victory';
+  reactionOverride?: MascotReaction | null;
+  speechText?: string | null;
+  showBubbleOnBoop?: boolean;
+  onBoop?: () => void;
 }
 
-const MASCOT_IMAGES = {
-  turtle: "/assets/turtle-3d.png",
-  bunny: "/assets/bunny-3d.png",
-  panda: "/assets/panda-3d.png",
-  leopard: "/assets/leopard-3d.png"
+// Bảng ánh xạ Theme của học sinh sang Sprite Sheets tương ứng
+export const MASCOT_SHEETS: Record<
+  string,
+  { directions: string; reactions: string; label: string }
+> = {
+  dino: {
+    directions: '/mascots/dino-directions.webp',
+    reactions: '/mascots/dino-reactions.webp',
+    label: 'Khủng long xanh Dino',
+  },
+  bunny: {
+    directions: '/mascots/bunny-directions.webp',
+    reactions: '/mascots/bunny-reactions.webp',
+    label: 'Thỏ trắng Bunny',
+  },
+  panda: {
+    directions: '/mascots/panda-directions.webp',
+    reactions: '/mascots/panda-reactions.webp',
+    label: 'Gấu trúc Panda',
+  },
+  leopard: {
+    directions: '/mascots/tiger-directions.webp',
+    reactions: '/mascots/tiger-reactions.webp',
+    label: 'Hổ dũng mãnh Tiger',
+  },
+  turtle: {
+    directions: '/mascots/frog-directions.webp',
+    reactions: '/mascots/frog-reactions.webp',
+    label: 'Ếch xanh Frog',
+  },
+  penguin: {
+    directions: '/mascots/penguin-directions.webp',
+    reactions: '/mascots/penguin-reactions.webp',
+    label: 'Cánh cụt Penguin',
+  },
+  cat: {
+    directions: '/mascots/cat-directions.webp',
+    reactions: '/mascots/cat-reactions.webp',
+    label: 'Mèo con Kitty',
+  },
+  bear: {
+    directions: '/mascots/bear-directions.webp',
+    reactions: '/mascots/bear-reactions.webp',
+    label: 'Gấu nâu Bear',
+  },
+  fox: {
+    directions: '/mascots/fox-directions.webp',
+    reactions: '/mascots/fox-reactions.webp',
+    label: 'Cáo cam Fox',
+  },
 };
 
-export const DinoMascot: React.FC<DinoMascotProps> = ({ 
-  className = 'w-32 h-32', 
-  variant = 'cheer' 
+export const DinoMascot: React.FC<DinoMascotProps> = ({
+  className = 'w-32 h-32',
+  variant = 'cheer',
+  reactionOverride = null,
+  speechText = null,
+  showBubbleOnBoop = true,
+  onBoop,
 }) => {
   const { studentInfo } = useStudent();
   const theme = studentInfo?.theme || 'dino';
 
-  if (theme !== 'dino') {
-    const imgUrl = MASCOT_IMAGES[theme as keyof typeof MASCOT_IMAGES];
-    if (imgUrl) {
-      return (
-        <div className={`relative select-none flex items-center justify-center ${className}`}>
-          <style jsx global>{`
-            @keyframes dino-breathing {
-              0%, 100% { transform: translateY(0px) scaleY(1); }
-              50% { transform: translateY(-4px) scaleY(1.02); }
-            }
-            @keyframes victory-jump {
-              0%, 100% { transform: translateY(0px) rotate(0deg); }
-              25% { transform: translateY(-12px) rotate(5deg); }
-              75% { transform: translateY(-12px) rotate(-5deg); }
-            }
-            .animate-dino-body {
-              animation: dino-breathing 3s ease-in-out infinite;
-              transform-origin: bottom center;
-            }
-            .animate-dino-victory {
-              animation: victory-jump 0.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-              transform-origin: bottom center;
-            }
-          `}</style>
-          <img
-            src={imgUrl}
-            alt={`${theme} mascot`}
-            className={`w-full h-full object-contain ${
-              variant === 'victory' ? 'animate-dino-victory' : 'animate-dino-body'
-            }`}
-          />
-        </div>
-      );
-    }
-  }
+  const sheetConfig = MASCOT_SHEETS[theme] || MASCOT_SHEETS['dino'];
 
   return (
-    <div className={`relative select-none flex items-center justify-center ${className}`}>
-      {/* CSS Animations */}
-      <style jsx global>{`
-        @keyframes dino-breathing {
-          0%, 100% { transform: translateY(0px) scaleY(1); }
-          50% { transform: translateY(-4px) scaleY(1.02); }
-        }
-        @keyframes victory-jump {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          25% { transform: translateY(-12px) rotate(5deg); }
-          75% { transform: translateY(-12px) rotate(-5deg); }
-        }
-        .animate-dino-body {
-          animation: dino-breathing 3s ease-in-out infinite;
-          transform-origin: bottom center;
-        }
-        .animate-dino-victory {
-          animation: victory-jump 0.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-          transform-origin: bottom center;
-        }
-      `}</style>
-      <img
-        src="/assets/dino-3d.png"
-        alt="dino mascot"
-        className={`w-full h-full object-contain ${
-          variant === 'victory' ? 'animate-dino-victory' : 'animate-dino-body'
-        }`}
+    <div className={`relative flex items-center justify-center ${className}`}>
+      <InteractiveMascot
+        directions={sheetConfig.directions}
+        reactions={sheetConfig.reactions}
+        label={sheetConfig.label}
+        size="100%"
+        variant={variant}
+        reactionOverride={reactionOverride}
+        speechText={speechText}
+        showBubbleOnBoop={showBubbleOnBoop}
+        onBoop={onBoop}
       />
     </div>
   );

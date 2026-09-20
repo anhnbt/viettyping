@@ -9,19 +9,21 @@ import { useStudent } from '@/contexts/StudentContext';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import confetti from 'canvas-confetti';
 
+import { InteractiveMascot } from '@/components/InteractiveMascot';
+import { MASCOT_SHEETS } from '@/components/DinoMascot';
+
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
   weight: ['400', '500', '600', '700', '800']
 });
 
 interface MascotItem {
-  id: 'dino' | 'turtle' | 'bunny' | 'panda' | 'leopard';
+  id: 'dino' | 'turtle' | 'bunny' | 'panda' | 'leopard' | 'penguin' | 'cat' | 'bear' | 'fox';
   name: string;
   emoji: string;
   desc: string;
   price: number;
   colorClass: string;
-  image: string;
 }
 
 const SHOP_MASCOTS: MascotItem[] = [
@@ -32,16 +34,14 @@ const SHOP_MASCOTS: MascotItem[] = [
     desc: 'Mạnh mẽ & nhanh nhẹn, luôn đồng hành cùng bé!',
     price: 0,
     colorClass: 'border-emerald-300 bg-emerald-50 text-emerald-800 shadow-emerald-200',
-    image: '/assets/dino-3d.png' 
   },
   {
     id: 'turtle',
-    name: 'Rùa Con Chăm Chỉ',
+    name: 'Ếch & Rùa Chăm Chỉ',
     emoji: '🐢',
     desc: 'Chậm mà chắc, nền tảng gõ chuẩn 100%!',
     price: 0,
     colorClass: 'border-teal-300 bg-teal-50 text-teal-850 shadow-teal-200',
-    image: '/assets/turtle-3d.png'
   },
   {
     id: 'bunny',
@@ -50,7 +50,6 @@ const SHOP_MASCOTS: MascotItem[] = [
     desc: 'Nhanh như chớp, vượt mọi thử thách gõ phím!',
     price: 500,
     colorClass: 'border-pink-300 bg-pink-50 text-pink-850 shadow-pink-200',
-    image: '/assets/bunny-3d.png'
   },
   {
     id: 'panda',
@@ -59,16 +58,46 @@ const SHOP_MASCOTS: MascotItem[] = [
     desc: 'Đáng yêu & kiên trì, vui vẻ gõ phím tiếng Việt!',
     price: 800,
     colorClass: 'border-red-300 bg-red-50 text-red-850 shadow-red-200',
-    image: '/assets/panda-3d.png'
   },
   {
     id: 'leopard',
-    name: 'Báo Đốm Thần Tốc',
+    name: 'Hổ Báo Thần Tốc',
     emoji: '🐆',
     desc: 'Dũng mãnh & điêu luyện, vận tốc của nhà vô địch!',
     price: 1200,
     colorClass: 'border-purple-300 bg-purple-50 text-purple-850 shadow-purple-200',
-    image: '/assets/leopard-3d.png'
+  },
+  {
+    id: 'penguin',
+    name: 'Cánh Cụt Băng Giá',
+    emoji: '🐧',
+    desc: 'Bền bỉ & khéo léo, lướt phím như trượt băng tuyết!',
+    price: 1500,
+    colorClass: 'border-cyan-300 bg-cyan-50 text-cyan-850 shadow-cyan-200',
+  },
+  {
+    id: 'cat',
+    name: 'Mèo Con Tinh Nghịch',
+    emoji: '🐱',
+    desc: 'Đôi mắt tinh tường, không một lỗi gõ phím nào thoát khỏi!',
+    price: 1800,
+    colorClass: 'border-amber-300 bg-amber-50 text-amber-850 shadow-amber-200',
+  },
+  {
+    id: 'bear',
+    name: 'Gấu Nâu Dũng Cảm',
+    emoji: '🐻',
+    desc: 'Ấm áp & kiên định, giúp bé tự tin vượt mọi bài khó!',
+    price: 2000,
+    colorClass: 'border-orange-300 bg-orange-50 text-orange-850 shadow-orange-200',
+  },
+  {
+    id: 'fox',
+    name: 'Cáo Cam Thông Minh',
+    emoji: '🦊',
+    desc: 'Nhanh trí & linh hoạt, bậc thầy của các tổ hợp phím Telex!',
+    price: 2500,
+    colorClass: 'border-rose-300 bg-rose-50 text-rose-850 shadow-rose-200',
   }
 ];
 
@@ -247,6 +276,7 @@ export default function ShopPage() {
             const isUnlocked = unlockedMascots.includes(mascot.id);
             const isSelected = currentTheme === mascot.id;
             const canAfford = xp >= mascot.price;
+            const sheetConfig = MASCOT_SHEETS[mascot.id];
 
             return (
               <motion.div
@@ -263,18 +293,24 @@ export default function ShopPage() {
                 )}
 
                 <div>
-                  {/* Khung hiển thị Mascot Avatar */}
-                  <div className={`w-full h-36 rounded-2xl border-2 border-slate-800 ${mascot.colorClass.split(' ')[1]} flex items-center justify-center relative mb-4 shadow-[inner_0_3px_0_rgba(0,0,0,0.05)] overflow-hidden`}>
-                    {mascot.image ? (
-                      <img 
-                        src={mascot.image} 
-                        alt={mascot.name} 
-                        className="w-24 h-24 object-contain animate-pulse"
-                      />
+                  {/* Khung hiển thị Mascot Avatar tương tác cao */}
+                  <div className={`w-full h-40 rounded-2xl border-2 border-slate-800 ${mascot.colorClass.split(' ')[1]} flex items-center justify-center relative mb-4 shadow-[inner_0_3px_0_rgba(0,0,0,0.05)] overflow-hidden group`}>
+                    {sheetConfig ? (
+                      <div className="w-28 h-28 flex items-center justify-center filter drop-shadow-md cursor-pointer transition-transform group-hover:scale-105">
+                        <InteractiveMascot
+                          directions={sheetConfig.directions}
+                          reactions={sheetConfig.reactions}
+                          size={110}
+                          label={mascot.name}
+                          variant={isSelected ? 'victory' : 'cheer'}
+                          speechText={isSelected ? 'Đang chọn 💖' : undefined}
+                          showBubbleOnBoop={true}
+                        />
+                      </div>
                     ) : (
-                      <span className="text-6xl animate-bounce">🦖</span>
+                      <span className="text-6xl animate-bounce">{mascot.emoji}</span>
                     )}
-                    <span className="absolute bottom-2 left-2 text-2xl filter drop-shadow-sm">{mascot.emoji}</span>
+                    <span className="absolute bottom-2 left-2 text-2xl filter drop-shadow-sm pointer-events-none">{mascot.emoji}</span>
                   </div>
 
                   {/* Tên & mô tả */}

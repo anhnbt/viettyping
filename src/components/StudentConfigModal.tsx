@@ -13,7 +13,11 @@ const THEME_TO_EMOJI: Record<string, string> = {
   turtle: "🐢",
   bunny: "🐰",
   panda: "🐼",
-  leopard: "🐆"
+  leopard: "🐆",
+  penguin: "🐧",
+  cat: "🐱",
+  bear: "🐻",
+  fox: "🦊",
 };
 
 const GRADES = ["Lớp 1", "Lớp 2", "Lớp 3", "Lớp 4", "Lớp 5"];
@@ -23,7 +27,11 @@ const MASCOTS = [
   { id: "turtle", name: "Rùa Con", emoji: "🐢", desc: "Rùa con đại dương" },
   { id: "bunny", name: "Thỏ Ngọc", emoji: "🐰", desc: "Thỏ con cà rốt" },
   { id: "panda", name: "Gấu Trúc", emoji: "🐼", desc: "Gấu trúc thông minh" },
-  { id: "leopard", name: "Báo Đốm", emoji: "🐆", desc: "Báo đốm thần tốc" }
+  { id: "leopard", name: "Báo Đốm", emoji: "🐆", desc: "Báo đốm thần tốc" },
+  { id: "penguin", name: "Cánh Cụt", emoji: "🐧", desc: "Cánh cụt băng giá" },
+  { id: "cat", name: "Mèo Con", emoji: "🐱", desc: "Mèo con tinh nghịch" },
+  { id: "bear", name: "Gấu Nâu", emoji: "🐻", desc: "Gấu nâu dũng cảm" },
+  { id: "fox", name: "Cáo Cam", emoji: "🦊", desc: "Cáo cam thông minh" },
 ];
 
 export default function StudentConfigModal() {
@@ -35,7 +43,7 @@ export default function StudentConfigModal() {
   const [nickname, setNickname] = useState("");
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("Lớp 1");
-  const [theme, setTheme] = useState<'dino' | 'turtle' | 'bunny' | 'panda' | 'leopard'>("dino");
+  const [theme, setTheme] = useState<'dino' | 'turtle' | 'bunny' | 'panda' | 'leopard' | 'penguin' | 'cat' | 'bear' | 'fox'>("dino");
   const [error, setError] = useState("");
   const [unlockedMascots, setUnlockedMascots] = useState<string[]>(["dino", "turtle"]);
 
